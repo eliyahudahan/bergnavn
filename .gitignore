@@ -1,0 +1,33 @@
+# Python
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.db
+
+# Environment files
+.env
+
+# Virtual environment
+/myenv/
+
+# IDEs
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Database files
+*.sqlite3
+
+# Flask instance folder
+instance/
+
+# coverage reports
+.coverage
+*.cover
+
+# Pytest
+.cache/
+node_modules
