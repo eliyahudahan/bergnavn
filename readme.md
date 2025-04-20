@@ -1,113 +1,112 @@
-## 🇬🇧 English version:
-
 ```markdown
-# BergNavn
+# 🇬🇧 English Version
 
-BergNavn is a project tailored for travelers, couples, and families.  
+```bash
+git clone ...
+```
+
+# **BergNavn**
+
+**BergNavn** is a project tailored for travelers, couples, and families.  
 It offers personalized cruise planning with a focus on safety and precise timing.
 
 ---
 
-## Quickstart
+## 🚀 Quickstart
 
-> 🛠️ It is recommended to run this project in a Linux environment or using WSL on Windows.  
-> However, it can also run on Windows as long as Python and pip are properly installed.
+> 🛠️ Recommended: Run this project in a Linux environment or use WSL on Windows.  
+> It also works on Windows as long as Python and pip are properly installed.
 
 1. Clone the repository:
-```bash
-git clone https://github.com/your-username/bergnavn.git
-cd bergnavn
+   ```bash
+   git clone ...
+   cd bergnavn
+   ```
+
 2. Create a virtual environment:
-python3 -m venv venv
-source venv/bin/activate  # Linux / WSL
-venv\Scripts\activate     # Windows without WSL
+   ```bash
+   python3 -m venv venv
+   source venv/bin/activate    # Linux / WSL
+   venv\Scripts\activate       # Windows
+   ```
+
 3. Install dependencies:
-pip install -r requirements.txt
+   ```bash
+   pip install -r requirements.txt
+   ```
+
 4. Run the server:
-flask run
-Note: You should now see the server running at: http://127.0.0.1:5000/
+   ```bash
+   flask run
+   ```
+   The server will run at: http://127.0.0.1:5000/
 
-Project Structure
-The project directory is organized as follows:
-
-bergnavn/
-│
-├── backend/                   # Server-side code
-│   ├── models/                # Database models
-│   │   ├── user.py            # User model
-│   │   └── cruise.py          # Cruise model
-│   │
-│   ├── routes/                # API files (Blueprints)
-│   │   ├── user_routes.py     # User routes
-│   │   └── cruise_routes.py   # Cruise routes
-│   │
-│   ├── controllers/           # Business logic (processes data between Routes and Models)
-│   │   ├── user_controller.py
-│   │   └── cruise_controller.py
-│   │
-│   ├── services/              # External services (if any, e.g. email service or external APIs)
-│   │
-│   ├── middleware/            # Security and authorization layer
-│   │
-│   ├── config/                # Configuration files (DB, API keys, secrets)
-│   │   └── config.py          # Environment settings (from .env file)
-│   │
-│   ├── tests/                 # Unit tests
-│   │   ├── test_user.py       # User module tests
-│   │   └── test_cruise.py     # Cruise module tests
-│   │
-│   ├── app.py                 # Main server file
-│   ├── .env                   # Environment file with secret variables (not tracked by git)
-│   └── requirements.txt       # Dependency file for Flask (to set up the virtual environment)
-│
-├── frontend/                  # Client-side code (if applicable, this is where UI files would go)
-│
-├── database/                  # Database setup (if you have an initial schema import file)
-│
-├── .gitignore                 # Git ignore file (specifies files not to be tracked by git)
-│
-├── readme.md                  # Project documentation (what the system does, how to run it, API documentation, etc.)
-│
-└── config.py                  # Configuration file (if not placed inside backend/config)
+---
 
 ## 🧰 Technologies
 
-The project uses the following technologies and libraries:
+The project uses the following libraries and tools:
 
-🔹 **Flask** - A Python framework for building lightweight and fast web applications.  
-🔹 **Flask-SQLAlchemy** - A module that allows easy integration with databases using ORM (Object-Relational Mapping).  
-🔹 **Flask-Login** - For managing user authentication and sessions.  
-🔹 **PostgreSQL** - A high-performance relational database.  
-🔹 **Python** - The main programming language used for the project.  
-🔹 **Jinja2** - A templating engine that helps separate logic from the user interface code in Flask.  
-🔹 **SQLAlchemy** - A Python ORM library for working with relational databases.  
-🔹 **pytest** - A framework for running automated unit tests.  
-🔹 **dotenv** - To manage environment variables securely and conveniently.
+- **Flask** – Lightweight Python framework for building web applications  
+- **Flask-SQLAlchemy** – ORM layer for database interaction  
+- **Flask-Login** – User authentication management  
+- **PostgreSQL** – Relational database  
+- **Python** – Main programming language  
+- **Jinja2** – Templating engine for separating logic and UI  
+- **SQLAlchemy** – Advanced ORM toolkit  
+- **pytest** – Unit testing framework  
+- **python-dotenv** – For managing environment variables securely
 
-## 📂 Project Structure
+---
 
-The project is organized in a modular way, with a clear folder structure to ease development and maintenance:
+## 📁 Project Structure
 
-🔹 **backend/** - Contains all server-side code. This includes models, API routes, logic, and status management.  
-🔹 **frontend/** - If applicable, this folder would contain all client-side code (e.g., React, Vue). Currently, this folder might be empty in this project.  
-🔹 **database/** - Contains database-related files (schemas, setup scripts).  
-🔹 **.gitignore** - Specifies which files and folders should be excluded from version control (e.g., environment files, virtual environments).  
-🔹 **readme.md** - Provides comprehensive documentation for the project, setup instructions, and API details.  
-🔹 **config.py** - Global configuration settings (e.g., API keys, environment configurations).
+The project is organized into modular folders for clarity and scalability:
 
-## 🗺️ Future Vision
+```
+bergnavn/
+├── backend/                   # Server-side code
+│   ├── models/                # Database models (user, cruise)
+│   ├── routes/                # API endpoints using Flask Blueprints
+│   ├── controllers/           # Business logic connecting routes and models
+│   ├── services/              # External integrations (e.g., APIs, email)
+│   ├── middleware/            # Security and authorization layers
+│   ├── config/                # Configuration (env, secrets)
+│   ├── tests/                 # Unit tests (pytest)
+│   ├── app.py                 # Flask entry point
+│   └── .env                   # Environment variables (not tracked by git)
+│
+├── frontend/                  # React-based UI (currently under development)
+│   ⚠️ Note: May contain legacy `react-scripts` warnings; not critical for functionality
+│
+├── database/                  # DB schema setup (optional)
+├── .gitignore                 # Excludes env files, logs, venvs, etc.
+├── config.py                  # Global configuration (if not in backend/config)
+└── readme.md                  # This documentation
+```
 
-Some future goals for the project include:
+---
 
-🔹 **User Interface Enhancement** - Develop a more advanced client-side application with dynamic and modular UI components.  
-🔹 **Integration with External APIs** - Add third-party services (e.g., real-time weather data).  
-🔹 **Performance Optimization** - Implement advanced data management techniques, like caching, to improve performance.  
-🔹 **Support for Different Navigation Systems** - Add features such as real-time navigation and map integrations for users.
+## 🗺️ Vision & Roadmap
+
+**BergNavn** aspires to become a trusted digital companion for modern travelers — combining safety, clarity, and elegance in cruise planning.
+
+Future development goals include:
+
+- **Smart User Interface** – Dynamic cruise planning UI with real-time feedback  
+- **API Integrations** – Real-time weather data, maps, and navigation services  
+- **Performance Optimization** – Caching and advanced query handling  
+- **Multi-language Support** – Especially for Nordic and Central European users  
+- **Mobile-ready Experience** – PWA support for seamless use on all devices
+
+> _"This project started with a passion for the sea, and a desire to bring clarity to complex journeys. With every feature, we aim to make travel feel more human, more informed — and more beautiful."_
+
+---
 
 ## 👤 Project Creator
 
-This project was created by:  
-🔹 **Eli**  
-🔹 [GitHub Profile](https://github.com/eliyahudahan)  
-🔹 Email: framgangsrik747@gmail.com
-
+Created by:  
+**Eli**  
+[GitHub Profile](https://github.com/eliyahudahan)  
+Email: framgangsrik747@gmail.com
+```
