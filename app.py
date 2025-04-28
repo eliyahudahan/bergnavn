@@ -44,8 +44,8 @@ def create_app():
         logging.error(f"Could not connect to database: {e}")
 
     # Register the routes
-    app.register_blueprint(user_blueprint)
-    app.register_blueprint(cruise_blueprint)
+    app.register_blueprint(user_blueprint)  # Register user blueprint
+    app.register_blueprint(cruise_blueprint)  # Register cruise blueprint
 
     # Initialize login manager
     login_manager = LoginManager(app)
@@ -62,6 +62,8 @@ def create_app():
 if __name__ == "__main__":
     app = create_app()  # Create the app instance
     app.run(debug=True)
+
+
 
 
 
