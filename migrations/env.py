@@ -1,6 +1,6 @@
 import logging
 from logging.config import fileConfig
-
+from backend.config.config import Config
 from flask import current_app
 
 from alembic import context
