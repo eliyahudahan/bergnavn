@@ -1,11 +1,9 @@
 from flask import Flask
 from backend.routes.user_routes import user_blueprint  # ➜ Import Blueprints for user and cruise routes
 from backend.routes.cruise_routes import cruise_blueprint
-from flask_sqlalchemy import SQLAlchemy
-from flask_mail import Mail
-from flask_login import LoginManager
+from flask_migrate import Migrate  # Import Migrate globally
+from backend import db, mail, login_manager  # ➜ Use the global instances
 from backend.models.user import User
-from backend import db
 import logging
 from dotenv import load_dotenv
 
@@ -15,8 +13,8 @@ load_dotenv()
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 
-# Initialize the mail extension (will be linked to app later)
-mail = Mail()
+# Initialize Migrate globally
+migrate = Migrate()
 
 def create_app():
     # Import configuration class
@@ -31,6 +29,12 @@ def create_app():
     # Initialize the services (database and mail)
     db.init_app(app)
     mail.init_app(app)  # Initialize mail extension here
+
+    # Initialize login manager
+    login_manager.init_app(app)  # Use the global login_manager
+
+    # Initialize Migrate with the app and db
+    migrate.init_app(app, db)  # Now Migrate is initialized globally
 
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # ➜ Disable SQLAlchemy modification tracking for better performance
 
@@ -47,10 +51,6 @@ def create_app():
     app.register_blueprint(user_blueprint)  # Register user blueprint
     app.register_blueprint(cruise_blueprint)  # Register cruise blueprint
 
-    # Initialize login manager
-    login_manager = LoginManager(app)
-    login_manager.login_view = 'user.login'  # ➜ Set the login route for unauthenticated users
-
     # Define how to load a user from the database
     @login_manager.user_loader
     def load_user(user_id):
@@ -62,6 +62,9 @@ def create_app():
 if __name__ == "__main__":
     app = create_app()  # Create the app instance
     app.run(debug=True)
+
+
+
 
 
 
