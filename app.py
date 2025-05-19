@@ -1,8 +1,10 @@
+from backend.routes.system_routes import health_bp
 from flask import Flask
+from backend.routes.booking_routes import booking_blueprint
 from backend.routes.user_routes import user_blueprint  # ➜ Import Blueprints for user and cruise routes
 from backend.routes.cruise_routes import cruise_blueprint
 from flask_migrate import Migrate  # Import Migrate globally
-from backend import db, mail, login_manager  # ➜ Use the global instances
+from backend import db, mail, login_manager, migrate # ➜ Use the global instances
 from backend.models.user import User
 import logging
 from dotenv import load_dotenv
@@ -12,9 +14,6 @@ load_dotenv()
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
-
-# Initialize Migrate globally
-migrate = Migrate()
 
 def create_app():
     # Import configuration class
@@ -36,8 +35,6 @@ def create_app():
     # Initialize Migrate with the app and db
     migrate.init_app(app, db)  # Now Migrate is initialized globally
 
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # ➜ Disable SQLAlchemy modification tracking for better performance
-
     # ➜ Create all tables in the database (if they don't already exist)
     try:
         with app.app_context():
@@ -50,7 +47,9 @@ def create_app():
     # Register the routes
     app.register_blueprint(user_blueprint)  # Register user blueprint
     app.register_blueprint(cruise_blueprint)  # Register cruise blueprint
-
+    app.register_blueprint(health_bp)  # ➜ Health check-up registration
+    # Register the booking routes
+    app.register_blueprint(booking_blueprint, url_prefix='/booking')
     # Define how to load a user from the database
     @login_manager.user_loader
     def load_user(user_id):

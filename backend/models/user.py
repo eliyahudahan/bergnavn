@@ -15,6 +15,9 @@ class User(db.Model, UserMixin):
     is_verified = db.Column(db.Boolean, default=False)  # Email verification flag
     is_admin = db.Column(db.Boolean, default=False)  # For distinguishing admins from regular users
     
+    bookings = db.relationship("Booking", back_populates="user")
+
+
     # Relationship to bookings (if applicable)
     # bookings = db.relationship('Booking', backref='user', lazy=True)
 

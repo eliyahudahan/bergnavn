@@ -1,37 +1,45 @@
 import os
 from dotenv import load_dotenv
 
+# טען מחדש את קובץ ה־.env
 load_dotenv()
 
-class Config:
-    SECRET_KEY = os.getenv('SECRET_KEY')
-    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-    DEBUG = os.getenv('DEBUG') == 'True'
+DATABASE_URL = os.getenv("DATABASE_URL")
 
-    # Email settings
-    MAIL_USERNAME = os.getenv('MAIL_USERNAME')
-    MAIL_PASSWORD = os.getenv('MAIL_PASSWORD')
-    MAIL_USE_TLS = True
-    MAIL_PORT = 587
-# backend/config/config.py
-import os
-from dotenv import load_dotenv
+# בדוק האם הערך תקין
+print(f"🔍 Loaded DATABASE_URL: {repr(DATABASE_URL)}")
 
-# Load environment variables from .env
-load_dotenv()
+if not DATABASE_URL:
+    raise ValueError("❌ DATABASE_URL לא נטען כראוי! בדוק את קובץ .env")
+
+# הדפסת DATABASE_URL לאימות
+print("Loaded DATABASE_URL:", os.getenv("DATABASE_URL"))
 
 class Config:
-    # === Core settings ===
-    SECRET_KEY = os.getenv('SECRET_KEY')
-    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-    DEBUG = os.getenv('DEBUG', 'False') == 'True'  # Safer default to False
+    # מפתח סוד
+    SECRET_KEY = os.getenv('SECRET_KEY', 'default-secret-key')
 
-    # === Email settings ===
-    MAIL_SERVER = os.getenv('MAIL_SERVER', 'smtp.gmail.com')  # Default to Gmail
-    MAIL_PORT = int(os.getenv('MAIL_PORT', 587))  # Default TLS port
+    # טוען את כתובת ה-URL של בסיס הנתונים
+    DATABASE_URL = os.getenv('DATABASE_URL')
+    
+    # מגדיר את URL של SQLAlchemy
+    SQLALCHEMY_DATABASE_URI = DATABASE_URL
+    
+    # מונע עדכון לא נחוץ של מודל ה-SQLAlchemy
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    
+    # מצב דיבוג
+    DEBUG = os.getenv('DEBUG', 'False') == 'True'  # ברירת מחדל היא False אם לא הוגדר
+
+    # הגדרות דוא"ל
+    MAIL_SERVER = os.getenv('MAIL_SERVER', 'smtp.gmail.com')  # ברירת מחדל היא Gmail
+    MAIL_PORT = int(os.getenv('MAIL_PORT', 587))  # פורט ברירת מחדל הוא 587 (TLS)
     MAIL_USE_TLS = os.getenv('MAIL_USE_TLS', 'True') == 'True'
     MAIL_USE_SSL = os.getenv('MAIL_USE_SSL', 'False') == 'True'
     MAIL_USERNAME = os.getenv('MAIL_USERNAME')
     MAIL_PASSWORD = os.getenv('MAIL_PASSWORD')
+
+
+
+
+
