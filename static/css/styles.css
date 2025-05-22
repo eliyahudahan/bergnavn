@@ -1,0 +1,63 @@
+     body {
+            font-family: Arial, sans-serif;
+            padding: 1em;
+        }
+        form {
+            margin-bottom: 2em;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1em;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+        }
+        input, select {
+            padding: 0.5em;
+            width: 100%;
+            max-width: 200px;
+        }
+        button {
+            padding: 0.6em 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1em;
+        }
+        th, td {
+            padding: 0.75em;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+        @media (max-width: 600px) {
+            form {
+                flex-direction: column;
+            }
+            table, thead, tbody, th, td, tr {
+                display: block;
+            }
+            thead tr {
+                display: none;
+            }
+            tr {
+                margin-bottom: 1em;
+                border: 1px solid #ccc;
+                padding: 0.5em;
+            }
+            td {
+                border: none;
+                padding-left: 50%;
+                position: relative;
+            }
+            td::before {
+                position: absolute;
+                left: 1em;
+                top: 0.75em;
+                white-space: nowrap;
+                font-weight: bold;
+                content: attr(data-label);
+            }
+        }

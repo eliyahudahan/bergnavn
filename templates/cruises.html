@@ -4,69 +4,97 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Cruise List</title>
-    <style>
-        /* Basic responsive table styling */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1em;
-        }
-        th, td {
-            padding: 0.75em;
-            border: 1px solid #ccc;
-            text-align: left;
-        }
-        @media (max-width: 600px) {
-            table, thead, tbody, th, td, tr {
-                display: block;
-            }
-            thead tr {
-                display: none; /* Hide headers on small screens */
-            }
-            tr {
-                margin-bottom: 1em;
-                border: 1px solid #ccc;
-                padding: 0.5em;
-            }
-            td {
-                border: none;
-                padding-left: 50%;
-                position: relative;
-            }
-            td::before {
-                position: absolute;
-                left: 1em;
-                top: 0.75em;
-                white-space: nowrap;
-                font-weight: bold;
-                content: attr(data-label);
-            }
-        }
-    </style>
+
+    <!-- Bootstrap 5.3 CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Your custom styles (loaded last to override Bootstrap if needed) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
-    <h1>Cruise List</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>Title</th>
-                <th>Description</th>
-                <th>Departure Date</th>
-                <th>Return Date</th>
-                <th>Price (€)</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for cruise in cruises %}
-            <tr>
-                <td data-label="Title">{{ cruise.title }}</td>
-                <td data-label="Description">{{ cruise.description }}</td>
-                <td data-label="Departure Date">{{ cruise.departure_date.strftime('%Y-%m-%d') }}</td>
-                <td data-label="Return Date">{{ cruise.return_date.strftime('%Y-%m-%d') }}</td>
-                <td data-label="Price (€)">€{{ '{:.2f}'.format(cruise.price) }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="container my-5">
+        <h1 class="mb-4 text-center">Cruise List</h1>
+
+        <!-- Filter Form UI -->
+        <div class="card mb-5">
+            <div class="card-body">
+                <form method="get" action="{{ url_for('cruise.view_cruises') }}">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label for="departure_date" class="form-label">Departure After</label>
+                            <input type="date" id="departure_date" name="departure_date" class="form-control" />
+                        </div>
+                        <div class="col-md-3">
+                            <label for="return_date" class="form-label">Return Before</label>
+                            <input type="date" id="return_date" name="return_date" class="form-control" />
+                        </div>
+                        <div class="col-md-3">
+                            <label for="min_price" class="form-label">Min Price (€)</label>
+                            <input type="number" id="min_price" name="min_price" step="0.01" class="form-control" />
+                        </div>
+                        <div class="col-md-3">
+                            <label for="max_price" class="form-label">Max Price (€)</label>
+                            <input type="number" id="max_price" name="max_price" step="0.01" class="form-control" />
+                        </div>
+                        <div class="col-md-4">
+                            <label for="region" class="form-label">Region</label>
+                            <select id="region" name="region" class="form-select">
+                                <option value="">-- All Regions --</option>
+                                <option value="denmark">Denmark</option>
+                                <option value="sweden">Sweden</option>
+                                <option value="Norway">Norway</option>
+                                <option value="faroe_islands">Faroe Islands</option>
+                                <option value="germany">Germany</option>
+                                <option value="iceland">Iceland</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="availability" class="form-label">Availability</label>
+                            <select id="availability" name="availability" class="form-select">
+                                <option value="">-- Any --</option>
+                                <option value="available">Available</option>
+                                <option value="almost_full">Almost Full</option>
+                                <option value="last_places">Last Places</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary w-100">Search Cruises</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Cruise Table -->
+        <div class="table-responsive">
+            <table class="table table-striped table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col">Title</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Departure Date</th>
+                        <th scope="col">Return Date</th>
+                        <th scope="col">Price (€)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cruise in cruises %}
+                    <tr>
+                        <td>{{ cruise.title }}</td>
+                        <td>{{ cruise.description }}</td>
+                        <td>{{ cruise.departure_date.strftime('%Y-%m-%d') }}</td>
+                        <td>{{ cruise.return_date.strftime('%Y-%m-%d') }}</td>
+                        <td>€{{ '{:.2f}'.format(cruise.price) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS (Optional, for components like dropdowns if used later) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
+
