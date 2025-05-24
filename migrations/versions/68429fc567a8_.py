@@ -37,7 +37,7 @@ def upgrade():
                existing_type=postgresql.TIMESTAMP(),
                nullable=True)
         batch_op.drop_column('destination')
-        batch_op.drop_column('name')
+        #batch_op.drop_column('name')
         batch_op.drop_column('status')
 
     with op.batch_alter_table('users', schema=None) as batch_op:
