@@ -1,13 +1,15 @@
-from backend.routes.system_routes import health_bp
-from flask import Flask
-from backend.routes.booking_routes import booking_blueprint
-from backend.routes.user_routes import user_blueprint  # ➜ Import Blueprints for user and cruise routes
-from backend.routes.cruise_routes import cruise_blueprint
-from flask_migrate import Migrate  # Import Migrate globally
-from backend import db, mail, login_manager, migrate # ➜ Use the global instances
-from backend.models.user import User
 import logging
+import os
+from flask import Flask
 from dotenv import load_dotenv
+
+from backend.routes.system_routes import health_bp
+from backend.routes.booking_routes import booking_blueprint
+from backend.routes.user_routes import user_blueprint
+from backend.routes.cruise_routes import cruise_blueprint
+
+from backend import db, mail, login_manager, migrate
+from backend.models.user import User
 
 # Load environment variables from .env file
 load_dotenv()
@@ -15,66 +17,53 @@ load_dotenv()
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 
-def create_app():
-    # Import configuration class
-    from backend.config.config import Config
-    
+
+def create_app(config_name=None):
+    """Create and configure the Flask application."""
+    from backend.config.config import Config, TestingConfig
+
+    # If no config_name is passed, fallback to FLASK_ENV or 'default'
+    if config_name is None:
+        config_name = os.getenv('FLASK_ENV', 'default')
+
     # Create the Flask app instance
     app = Flask(__name__)
 
-    # Load configuration from the Config class    
-    app.config.from_object(Config)
+    # Load configuration based on environment
+    if config_name == 'testing':
+        app.config.from_object(TestingConfig)
+    else:
+        app.config.from_object(Config)
 
-    # Initialize the services (database and mail)
+    # Initialize extensions
     db.init_app(app)
-    mail.init_app(app)  # Initialize mail extension here
+    mail.init_app(app)
+    login_manager.init_app(app)
+    migrate.init_app(app, db)
 
-    # Initialize login manager
-    login_manager.init_app(app)  # Use the global login_manager
-
-    # Initialize Migrate with the app and db
-    migrate.init_app(app, db)  # Now Migrate is initialized globally
-
-    # ➜ Create all tables in the database (if they don't already exist)
+    # Create database tables if they do not exist
     try:
         with app.app_context():
-            db.create_all()  # Create all tables in the database
+            from backend import models  # Ensures all models are loaded and registered
+            db.create_all()
             logging.info("Database connected and tables created.")
-        
     except Exception as e:
         logging.error(f"Could not connect to database: {e}")
 
-    # Register the routes
-    app.register_blueprint(user_blueprint)  # Register user blueprint
-    app.register_blueprint(cruise_blueprint)  # Register cruise blueprint
-    app.register_blueprint(health_bp)  # ➜ Health check-up registration
-    # Register the booking routes
+    # Register blueprints
+    app.register_blueprint(user_blueprint)
+    app.register_blueprint(cruise_blueprint)
+    app.register_blueprint(health_bp)
     app.register_blueprint(booking_blueprint, url_prefix='/booking')
-    # Define how to load a user from the database
+
+    # User loader for Flask-Login
     @login_manager.user_loader
     def load_user(user_id):
         return User.query.get(int(user_id))
 
     return app
 
-# Run the app with debugging enabled (only in development)
+
 if __name__ == "__main__":
-    app = create_app()  # Create the app instance
+    app = create_app()
     app.run(debug=True)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

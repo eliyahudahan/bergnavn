@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, UTC
 from backend import db
 
 class Cruise(db.Model):
@@ -16,8 +16,9 @@ class Cruise(db.Model):
     price = db.Column(db.Float, nullable=False)
     capacity = db.Column(db.Integer, nullable=False, default=0)
     is_active = db.Column(db.Boolean, default=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(UTC))
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
+    clock = db.relationship("backend.models.clock.Clock", uselist=False, back_populates="cruise")
 
     # Future relationship with bookings
     bookings = db.relationship("Booking", back_populates="cruise")
