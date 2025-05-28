@@ -1,23 +1,20 @@
 import os
 from dotenv import load_dotenv
+from sqlalchemy.ext.declarative import declarative_base
 
 # Load environment variables from .env file
 load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-# Validate database URL
-print(f"🔍 Loaded DATABASE_URL: {repr(DATABASE_URL)}")
-
 if not DATABASE_URL:
     raise ValueError("❌ DATABASE_URL was not loaded properly! Check your .env file.")
 
-print("Loaded DATABASE_URL:", DATABASE_URL)
-
+Base = declarative_base()  # <-- הוסף כאן את ההגדרה הזו
 
 class Config:
     SECRET_KEY = os.getenv('SECRET_KEY', 'default-secret-key')
-    DATABASE_URL = os.getenv('DATABASE_URL')
+    DATABASE_URL = DATABASE_URL
     SQLALCHEMY_DATABASE_URI = DATABASE_URL
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     DEBUG = os.getenv('DEBUG', 'False') == 'True'
@@ -38,6 +35,7 @@ class TestingConfig(Config):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     WTF_CSRF_ENABLED = False  # Optional: disable CSRF protection for tests
     DATABASE_URL = 'sqlite:///:memory:'  # Override just in case
+
 
 
 
