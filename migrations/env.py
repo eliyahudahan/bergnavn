@@ -1,6 +1,6 @@
 import logging
-import sys
 import os
+import sys
 from logging.config import fileConfig
 
 from alembic import context
@@ -11,39 +11,25 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from app import create_app  # Flask factory method
 
-# Alembic Config Object
+# Alembic Config object
 config = context.config
 
-# Setup logging from alembic.ini path
-alembic_ini_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'alembic.ini')
-fileConfig(alembic_ini_path)
+# Setup logging
+fileConfig(config.config_file_name)
 logger = logging.getLogger('alembic.env')
 
-def get_engine():
-    """Create SQLAlchemy engine from config or Flask app context."""
-    from backend.config.config import Config
-    from sqlalchemy import create_engine
-    try:
-        return create_engine(Config.SQLALCHEMY_DATABASE_URI)
-    except Exception:
-        return current_app.extensions['migrate'].db.engine
-
-def get_engine_url():
-    """Return DB URL string, escaping percent signs."""
-    try:
-        return get_engine().url.render_as_string(hide_password=False).replace('%', '%%')
-    except Exception:
-        return str(get_engine().url).replace('%', '%%')
-
-def get_metadata():
-    """Get metadata from Flask-Migrate extension."""
-    db = current_app.extensions['migrate'].db
-    return getattr(db, 'metadatas', {None: db.metadata}).get(None)
-
+# Create Flask app
 app = create_app()
 
+def get_engine_url():
+    db = current_app.extensions['migrate'].db
+    return db.engine.url.render_as_string(hide_password=False).replace('%', '%%')
+
+def get_metadata():
+    db = current_app.extensions['migrate'].db
+    return db.metadata
+
 with app.app_context():
-    # Override sqlalchemy.url dynamically
     config.set_main_option('sqlalchemy.url', get_engine_url())
 
     def run_migrations_offline():
@@ -57,19 +43,20 @@ with app.app_context():
             context.run_migrations()
 
     def run_migrations_online():
-
         def process_revision_directives(context, revision, directives):
             if getattr(config.cmd_opts, 'autogenerate', False):
                 script = directives[0]
                 if script.upgrade_ops.is_empty():
                     directives[:] = []
-                    logger.info("No changes in schema detected.")
+                    logger.info("No schema changes detected.")
+
+        db = current_app.extensions['migrate'].db
+        connectable = db.engine
 
         conf_args = current_app.extensions['migrate'].configure_args
         if conf_args.get("process_revision_directives") is None:
             conf_args["process_revision_directives"] = process_revision_directives
 
-        connectable = get_engine()
         with connectable.connect() as connection:
             context.configure(
                 connection=connection,
@@ -83,4 +70,5 @@ with app.app_context():
         run_migrations_offline()
     else:
         run_migrations_online()
+
 

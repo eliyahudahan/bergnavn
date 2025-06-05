@@ -44,6 +44,16 @@ def view_cruises():
     cruises = Cruise.query.all()  # Query all cruises from DB
     return render_template('cruises.html', cruises=cruises)
 
+# Route for deleting a cruise by ID (DELETE)
+@cruise_blueprint.route('/cruises/<int:cruise_id>', methods=['DELETE'])
+def delete_cruise(cruise_id):
+    cruise = Cruise.query.get(cruise_id)
+    if not cruise:
+        return jsonify({'error': 'Cruise not found'}), 404
+
+    db.session.delete(cruise)
+    db.session.commit()
+    return jsonify({'message': f'Cruise with ID {cruise_id} deleted successfully'}), 200
 
 
 

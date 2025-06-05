@@ -1,6 +1,7 @@
 import logging
 import os
 from flask import Flask
+from backend.routes.route_routes import routes_bp 
 from dotenv import load_dotenv
 
 from backend.routes.system_routes import health_bp
@@ -44,26 +45,44 @@ def create_app(config_name=None):
     # Create database tables if they do not exist
     try:
         with app.app_context():
-            from backend import models  # Ensures all models are loaded and registered
-            db.create_all()
-            logging.info("Database connected and tables created.")
+           from backend import models
+           logging.info("App context initialized. Models imported.")
     except Exception as e:
-        logging.error(f"Could not connect to database: {e}")
+         logging.error(f"Could not import models or initialize app context: {e}")
 
     # Register blueprints
     app.register_blueprint(user_blueprint)
-    app.register_blueprint(cruise_blueprint)
+    app.register_blueprint(cruise_blueprint, url_prefix='/api')
     app.register_blueprint(health_bp)
     app.register_blueprint(booking_blueprint, url_prefix='/booking')
+    app.register_blueprint(routes_bp, url_prefix='/api/routes')
+    logging.info("Blueprint for routes registered")
+
 
     # User loader for Flask-Login
     @login_manager.user_loader
     def load_user(user_id):
         return User.query.get(int(user_id))
+ 
+
+ # CLI command to list all routes
+    @app.cli.command("list-routes")
+    def list_routes():
+        import urllib
+        output = []
+        for rule in app.url_map.iter_rules():
+            methods = ','.join(rule.methods)
+            line = urllib.parse.unquote(f"{rule.endpoint:30s} {methods:20s} {rule}")
+            output.append(line)
+        for line in sorted(output):
+            print(line)
 
     return app
+
 
 
 if __name__ == "__main__":
     app = create_app()
     app.run(debug=True)
+
+

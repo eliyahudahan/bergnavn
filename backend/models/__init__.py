@@ -5,6 +5,7 @@ from .booking import Booking
 from .port import Port
 from .locations import Location
 from .payments import Payment
+from .route import Route, RouteLeg
 # וכו'
 
 
