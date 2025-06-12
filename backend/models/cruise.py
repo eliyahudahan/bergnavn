@@ -23,6 +23,15 @@ class Cruise(db.Model):
     # Future relationship with bookings
     bookings = db.relationship("Booking", back_populates="cruise")
     
+     # New: relationship with voyage legs
+    legs = db.relationship(
+        "backend.models.voyage_leg.VoyageLeg",
+        back_populates="cruise",
+        cascade="all, delete-orphan",
+        order_by="VoyageLeg.leg_order"
+    )
+
+
 
     def __repr__(self):
         return f"<Cruise {self.title} ({self.origin} → {self.destination})>"
