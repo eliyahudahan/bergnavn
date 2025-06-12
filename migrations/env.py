@@ -6,7 +6,7 @@ from logging.config import fileConfig
 from alembic import context
 from flask import current_app
 
-# Add project root to sys.path
+# Ensure project root is in path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from app import create_app  # Flask factory method
@@ -14,48 +14,62 @@ from app import create_app  # Flask factory method
 # Alembic Config object
 config = context.config
 
-# Setup logging
-fileConfig(config.config_file_name)
+# Setup logging - load config from root alembic.ini
+root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+ini_path = os.path.join(root_dir, 'alembic.ini')
+fileConfig(ini_path)
 logger = logging.getLogger('alembic.env')
 
-# Create Flask app
+# Create Flask app and load models
 app = create_app()
 
 def get_engine_url():
-    db = current_app.extensions['migrate'].db
-    return db.engine.url.render_as_string(hide_password=False).replace('%', '%%')
+    """
+    Retrieve the database URL from Flask-Migrate's extension.
+    """
+    db_ext = current_app.extensions['migrate']
+    return db_ext.db.engine.url.render_as_string(hide_password=False).replace('%', '%%')
 
 def get_metadata():
-    db = current_app.extensions['migrate'].db
-    return db.metadata
+    """
+    Retrieve SQLAlchemy metadata for autogenerate.
+    """
+    db_ext = current_app.extensions['migrate']
+    return db_ext.db.metadata
 
 with app.app_context():
+    # Override URL from alembic.ini
     config.set_main_option('sqlalchemy.url', get_engine_url())
 
     def run_migrations_offline():
-        url = config.get_main_option("sqlalchemy.url")
+        """
+        Run migrations in 'offline' mode.
+        """
+        url = config.get_main_option('sqlalchemy.url')
         context.configure(
             url=url,
             target_metadata=get_metadata(),
-            literal_binds=True
+            literal_binds=True,
         )
         with context.begin_transaction():
             context.run_migrations()
 
     def run_migrations_online():
+        """
+        Run migrations in 'online' mode.
+        """
         def process_revision_directives(context, revision, directives):
             if getattr(config.cmd_opts, 'autogenerate', False):
                 script = directives[0]
                 if script.upgrade_ops.is_empty():
                     directives[:] = []
-                    logger.info("No schema changes detected.")
+                    logger.info('No schema changes detected.')
 
-        db = current_app.extensions['migrate'].db
-        connectable = db.engine
-
-        conf_args = current_app.extensions['migrate'].configure_args
-        if conf_args.get("process_revision_directives") is None:
-            conf_args["process_revision_directives"] = process_revision_directives
+        db_ext = current_app.extensions['migrate']
+        connectable = db_ext.db.engine
+        conf_args = db_ext.configure_args
+        if conf_args.get('process_revision_directives') is None:
+            conf_args['process_revision_directives'] = process_revision_directives
 
         with connectable.connect() as connection:
             context.configure(
@@ -70,5 +84,6 @@ with app.app_context():
         run_migrations_offline()
     else:
         run_migrations_online()
+
 
 

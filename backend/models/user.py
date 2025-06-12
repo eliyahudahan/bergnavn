@@ -1,7 +1,7 @@
 from datetime import datetime, UTC
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
-from backend import db  # Assuming SQLAlchemy is already configured
+from backend.extensions import db  # Assuming SQLAlchemy is already configured
 
 # Model to store user information
 class User(db.Model, UserMixin):
@@ -16,6 +16,8 @@ class User(db.Model, UserMixin):
     is_admin = db.Column(db.Boolean, default=False)  # For distinguishing admins from regular users
     
     bookings = db.relationship("Booking", back_populates="user")
+    ##payments = db.relationship("Payment", back_populates="user")
+
 
 
     # Relationship to bookings (if applicable)

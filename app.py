@@ -2,6 +2,7 @@ import logging
 import os
 from flask import Flask
 from backend.routes.route_routes import routes_bp 
+from backend import models
 from dotenv import load_dotenv
 
 from backend.routes.system_routes import health_bp
@@ -9,7 +10,7 @@ from backend.routes.booking_routes import booking_blueprint
 from backend.routes.user_routes import user_blueprint
 from backend.routes.cruise_routes import cruise_blueprint
 
-from backend import db, mail, login_manager, migrate
+from backend.extensions import db, mail, login_manager, migrate
 from backend.models.user import User
 
 # Load environment variables from .env file
@@ -17,7 +18,6 @@ load_dotenv()
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
-
 
 def create_app(config_name=None):
     """Create and configure the Flask application."""
@@ -45,10 +45,10 @@ def create_app(config_name=None):
     # Create database tables if they do not exist
     try:
         with app.app_context():
-           from backend import models
-           logging.info("App context initialized. Models imported.")
+            from backend import models
+            logging.info("App context initialized. Models imported.")
     except Exception as e:
-         logging.error(f"Could not import models or initialize app context: {e}")
+        logging.error(f"Could not import models or initialize app context: {e}")
 
     # Register blueprints
     app.register_blueprint(user_blueprint)
@@ -58,14 +58,12 @@ def create_app(config_name=None):
     app.register_blueprint(routes_bp, url_prefix='/api/routes')
     logging.info("Blueprint for routes registered")
 
-
     # User loader for Flask-Login
     @login_manager.user_loader
     def load_user(user_id):
         return User.query.get(int(user_id))
- 
 
- # CLI command to list all routes
+    # CLI command to list all routes
     @app.cli.command("list-routes")
     def list_routes():
         import urllib
@@ -79,10 +77,9 @@ def create_app(config_name=None):
 
     return app
 
-
-
 if __name__ == "__main__":
     app = create_app()
     app.run(debug=True)
+
 
 

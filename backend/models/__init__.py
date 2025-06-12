@@ -9,5 +9,6 @@ from .route import Route, RouteLeg
 # וכו'
 
 
-__all__ = ['User', 'Clock', 'Cruise', 'Booking', 'Port', 'Location', 'Payment']
+__all__ = ['User', 'Clock', 'Cruise', 'Booking', 'Port', 'Location', 'Payment', 'Route', 'RouteLeg']
+
 

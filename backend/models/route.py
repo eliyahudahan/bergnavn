@@ -1,4 +1,4 @@
-from backend import db  # זה החלק החסר שהיה גורם ל-NameError
+from backend.extensions import db  # זה החלק החסר שהיה גורם ל-NameError
 
 class Route(db.Model):
     __tablename__ = 'routes'
@@ -22,4 +22,4 @@ class RouteLeg(db.Model):
     arrival_city = db.Column(db.String(100), nullable=False)
     distance_nm = db.Column(db.Float)
     estimated_time_days = db.Column(db.Float)
-    order = db.Column(db.Integer)
+    leg_order = db.Column(db.Integer)

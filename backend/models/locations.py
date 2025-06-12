@@ -1,12 +1,11 @@
-from sqlalchemy import Column, Integer, String, Float
-from backend.config.config import Base  # או מאיפה שאתה מייבא את Base
-from sqlalchemy.ext.declarative import declarative_base
-Base = declarative_base()
+from backend.extensions import db
 
-class Location(Base):
-    __tablename__ = 'locations'
-    id = Column(Integer, primary_key=True)
-    name = Column(String)
-    country = Column(String)
-    lat = Column(Float)
-    lon = Column(Float)
+class Location(db.Model):
+    __tablename__ = "locations"
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    country = db.Column(db.String(50), nullable=True)
+
+    def __repr__(self):
+        return f"<Location {self.name}, {self.country}>"

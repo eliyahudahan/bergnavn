@@ -1,5 +1,5 @@
 from datetime import datetime, UTC
-from backend import db
+from backend.extensions import db
 
 class Clock(db.Model):
     __tablename__ = 'clocks'
