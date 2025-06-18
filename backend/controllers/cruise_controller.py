@@ -1,32 +1,40 @@
+from flask import jsonify
 from datetime import datetime
-from flask import Blueprint, request, jsonify
-from backend import db
 from backend.models.cruise import Cruise
+from backend.extensions import db
 
-# Define the Blueprint for cruise-related routes
-cruise_bp = Blueprint('cruise', __name__)
-
-# Function to get all cruises from the database
-def get_all_cruises():
-    return Cruise.query.all()
-
-# Route for creating a new cruise
-@cruise_bp.route('/cruises', methods=['POST'])
-def create_cruise():
-    data = request.get_json()  # Get the data from the request in JSON format
+def create_cruise(data):
     try:
-        # Create a new cruise object using the data from the request
         new_cruise = Cruise(
             title=data['title'],
-            description=data.get('description'),  # Use get to handle missing description gracefully
-            departure_date=datetime.fromisoformat(data['departure_date']),  # Convert string to datetime object
-            return_date=datetime.fromisoformat(data['return_date']),  # Convert string to datetime object
+            description=data.get('description'),
+            departure_date=datetime.fromisoformat(data['departure_date']),
+            return_date=datetime.fromisoformat(data['return_date']),
             price=data['price']
         )
-        db.session.add(new_cruise)  # Add the new cruise to the database session
-        db.session.commit()  # Commit the session to save changes to the database
-        return jsonify({'message': 'Cruise created successfully'}), 201  # Return success response
+        db.session.add(new_cruise)
+        db.session.commit()
+        return jsonify({'message': 'Cruise created successfully'}), 201
     except Exception as e:
-        # Return an error message in case of failure
         return jsonify({'error': str(e)}), 400
+
+def get_all_cruises():
+    cruises = Cruise.query.all()
+    cruises_data = [{
+        'id': cruise.id,
+        'title': cruise.title,
+        'description': cruise.description,
+        'departure_date': cruise.departure_date.isoformat() if cruise.departure_date else None,
+        'return_date': cruise.return_date.isoformat() if cruise.return_date else None,
+        'price': cruise.price
+    } for cruise in cruises]
+    return jsonify(cruises_data), 200
+
+def delete_cruise_by_id(cruise_id):
+    cruise = Cruise.query.get(cruise_id)
+    if not cruise:
+        return jsonify({'error': 'Cruise not found'}), 404
+    db.session.delete(cruise)
+    db.session.commit()
+    return jsonify({'message': f'Cruise with ID {cruise_id} deleted successfully'}), 200
 
