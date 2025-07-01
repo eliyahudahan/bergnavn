@@ -4,7 +4,7 @@ from flask import Flask
 from backend.routes.route_routes import routes_bp 
 from backend import models
 from dotenv import load_dotenv
-
+from backend.controllers.route_leg_controller import route_leg_bp
 from backend.routes.system_routes import health_bp
 from backend.routes.booking_routes import booking_blueprint
 from backend.routes.user_routes import user_blueprint
@@ -56,6 +56,8 @@ def create_app(config_name=None):
     app.register_blueprint(health_bp)
     app.register_blueprint(booking_blueprint, url_prefix='/booking')
     app.register_blueprint(routes_bp, url_prefix='/api/routes')
+    app.register_blueprint(route_leg_bp, url_prefix='/api/route')
+
     logging.info("Blueprint for routes registered")
 
     # User loader for Flask-Login

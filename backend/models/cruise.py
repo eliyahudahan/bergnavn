@@ -13,6 +13,8 @@ class Cruise(db.Model):
     destination = db.Column(db.String(100), nullable=False)
     origin_lat = db.Column(db.Float, nullable=True)  # Optional: for weather API (latitude)
     origin_lon = db.Column(db.Float, nullable=True)  # Optional: for weather API (longitude)
+    destination_lat = db.Column(db.Float, nullable=True)
+    destination_lon = db.Column(db.Float, nullable=True)
     price = db.Column(db.Float, nullable=False)
     capacity = db.Column(db.Integer, nullable=False, default=0)
     is_active = db.Column(db.Boolean, default=True)
