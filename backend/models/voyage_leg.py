@@ -5,7 +5,8 @@ class VoyageLeg(db.Model):
     __tablename__ = 'voyage_legs'
 
     id = db.Column(db.Integer, primary_key=True)
-    cruise_id = db.Column(db.Integer, db.ForeignKey('cruises.id'), nullable=False)
+    cruise_id = db.Column(db.Integer, db.ForeignKey('cruises.id'), nullable=True)
+    route_id = db.Column(db.Integer, db.ForeignKey('routes.id'), nullable=True)
     departure_port_id = db.Column(db.Integer, db.ForeignKey('ports.id'), nullable=True)
     arrival_port_id   = db.Column(db.Integer, db.ForeignKey('ports.id'), nullable=True)
     departure_port = db.relationship("Port", foreign_keys=[departure_port_id])
@@ -17,6 +18,8 @@ class VoyageLeg(db.Model):
     departure_time = db.Column(db.DateTime, nullable=False)
     arrival_time = db.Column(db.DateTime, nullable=False)
     leg_order = db.Column(db.Integer, nullable=False)
+    distance_nm = db.Column(db.Float, nullable=True)
+
 
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(UTC))
     updated_at = db.Column(db.DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
