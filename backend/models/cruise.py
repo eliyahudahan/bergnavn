@@ -33,7 +33,11 @@ class Cruise(db.Model):
         order_by="VoyageLeg.leg_order"
     )
 
-
+    @property
+    def duration_days(self):
+        if self.departure_date and self.return_date:
+            return (self.return_date - self.departure_date).days
+        return None
 
     def __repr__(self):
         return f"<Cruise {self.title} ({self.origin} → {self.destination})>"
