@@ -2,7 +2,8 @@ from flask import Blueprint, request, jsonify, render_template
 from backend.services.route_leg_service import create_route_leg
 from backend.models.route import Route
 from backend.models.voyage_leg import VoyageLeg
-from backend import db
+from backend.services.route_evaluator import evaluate_route
+from backend.extensions import db
 
 routes_bp = Blueprint('routes_bp', __name__)
 
@@ -58,7 +59,6 @@ def create_route():
 
     return jsonify({'message': 'Route created with legs', 'id': new_route.id}), 201
 
-
 @routes_bp.route('/<int:route_id>/legs', methods=['POST'])
 def add_route_leg(route_id):
     route = Route.query.get_or_404(route_id)
@@ -76,9 +76,30 @@ def add_route_leg(route_id):
 
     return jsonify({'message': 'Leg added', 'leg_id': new_leg.id}), 201
 
-
 @routes_bp.route('/view')
 def view_routes():
     routes = Route.query.options(db.joinedload(Route.legs)).all()
     return render_template('routes.html', routes=routes)
 
+@routes_bp.route('/evaluate/<int:route_id>', methods=['GET'])
+def evaluate(route_id):
+    result = evaluate_route(route_id)
+    return jsonify(result)
+
+@routes_bp.route('/evaluate/view')
+def evaluate_view():
+    routes = Route.query.options(db.joinedload(Route.legs)).all()
+    evaluated_routes = []
+
+    for route in routes:
+        result = evaluate_route(route.id)
+        evaluated_routes.append({
+            'id': route.id,
+            'name': route.name,
+            'description': route.description,
+            'legs': route.legs,
+            'status': result.get('status'),
+            'issues': result.get('issues', [])
+        })
+
+    return render_template('evaluate_dashboard.html', routes=evaluated_routes)

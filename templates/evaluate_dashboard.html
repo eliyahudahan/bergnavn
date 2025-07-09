@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Route Evaluation Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        .alert-green { background-color: #d4edda; }
+        .alert-yellow { background-color: #fff3cd; }
+        .alert-red { background-color: #f8d7da; }
+        table td, table th {
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body class="container mt-5">
+    <h2 class="mb-4">🛳️ Route Evaluation Dashboard</h2>
+    <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Route ID</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Number of Legs</th>
+                <th>Status</th>
+                <th>Issues</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for route in routes %}
+            <tr class="{% if route.status == 'OK' %}alert-green
+                      {% elif route.status == 'REROUTE_NEEDED' %}alert-red
+                      {% else %}alert-yellow
+                      {% endif %}">
+                <td>{{ route.id }}</td>
+                <td>{{ route.name }}</td>
+                <td>{{ route.description or '-' }}</td>
+                <td>{{ route.legs|length }}</td>
+                <td>{{ route.status }}</td>
+                <td>
+                    {% if route.issues %}
+                    <ul class="mb-0">
+                        {% for issue in route.issues %}
+                        <li>{{ issue }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    -
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
