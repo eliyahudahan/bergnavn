@@ -19,7 +19,7 @@ class VoyageLeg(db.Model):
     arrival_time = db.Column(db.DateTime, nullable=False)
     leg_order = db.Column(db.Integer, nullable=False)
     distance_nm = db.Column(db.Float, nullable=True)
-
+    is_active = db.Column(db.Boolean, default=True)
 
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(UTC))
     updated_at = db.Column(db.DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))

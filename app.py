@@ -23,21 +23,24 @@ load_dotenv()
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 
-scheduler = APScheduler()  # מוגדר מחוץ ל־create_app
+# Scheduler instance
+scheduler = APScheduler()
 
-def create_app(config_name=None):
-    """Create and configure the Flask application."""
-    from backend.config.config import Config, TestingConfig
+def create_app(config_name=None, testing=False, start_scheduler=False):
+    from backend.services.cleanup import deactivate_old_weather_status
 
     if config_name is None:
         config_name = os.getenv('FLASK_ENV', 'default')
 
-    app = Flask(__name__)
+    app = Flask(__name__)  # <--- שורה שחסרה! יצירת אפליקציה
 
-    if config_name == 'testing':
-        app.config.from_object(TestingConfig)
+    # טוענים קונפיגורציה לפי מצב
+    if testing:
+        app.config.from_object('backend.config.config.TestingConfig')
+    elif config_name == 'testing':
+        app.config.from_object('backend.config.config.TestingConfig')
     else:
-        app.config.from_object(Config)
+        app.config.from_object('backend.config.config.Config')
 
     # Init extensions
     db.init_app(app)
@@ -45,12 +48,29 @@ def create_app(config_name=None):
     login_manager.init_app(app)
     migrate.init_app(app, db)
 
+    # Scheduler setup (רק אם לא במצב בדיקות ובמקרה שמאפשרים)
+    if start_scheduler and not testing and os.getenv("FLASK_SKIP_SCHEDULER") != "1":
+       scheduler.init_app(app)
+       if not scheduler.running:
+          scheduler.start()
+
+    # בדיקה אם ה-job כבר קיים
+    existing_job = scheduler.get_job('weekly_cleanup')
+    if existing_job is None:
+        scheduler.add_job(
+            id='weekly_cleanup',
+            func=lambda: deactivate_old_weather_status(days=30),
+            trigger='interval',
+            weeks=1
+        )
+
+
     # Init models
     with app.app_context():
         from backend import models
         logging.info("App context initialized. Models imported.")
 
-    # Blueprints
+    # Register Blueprints
     app.register_blueprint(user_blueprint)
     app.register_blueprint(cruise_blueprint, url_prefix='/api')
     app.register_blueprint(health_bp)
@@ -59,14 +79,14 @@ def create_app(config_name=None):
     app.register_blueprint(route_leg_bp, url_prefix='/api/route')
     app.register_blueprint(ml_bp, url_prefix='/api/ml')
     app.register_blueprint(weather_bp)
-
     logging.info("Blueprints registered")
 
+    # User loader
     @login_manager.user_loader
     def load_user(user_id):
         return User.query.get(int(user_id))
 
-    # CLI command to list routes
+    # CLI: list routes
     @app.cli.command("list-routes")
     def list_routes():
         import urllib
@@ -78,24 +98,12 @@ def create_app(config_name=None):
         for line in sorted(output):
             print(line)
 
-    # Init scheduler
-    scheduler.init_app(app)
-    scheduler.start()
-
-    # Add weekly cleanup job
-    scheduler.add_job(
-        id='weekly_cleanup',
-        func=lambda: deactivate_old_weather_status(days=30),
-        trigger='interval',
-        weeks=1
-    )
-
     return app
 
-# Create app outside for CLI access
+# Create app for CLI/WSGI (production mode)
 app = create_app()
 
-# CLI cleanup command (✅ מוגדר מחוץ ל־create_app)
+# CLI: manual cleanup
 @app.cli.command("run-cleanup")
 def run_cleanup():
     """Deactivate old weather statuses manually."""
@@ -103,7 +111,3 @@ def run_cleanup():
 
 if __name__ == "__main__":
     app.run(debug=True)
-
-
-
-
