@@ -4,14 +4,30 @@ from backend.models.weather_status import WeatherStatus
 from backend.models.port import Port
 
 
+def get_status_color(status):
+    color_map = {
+        "OK": "green",
+        "REROUTE_NEEDED": "yellow",
+        "CANCELLED": "red",
+        "NOT_FOUND": "black",
+        "NO_LEGS": "black"
+    }
+    return color_map.get(status, "grey")
+
 def evaluate_route(route_id):
     route = Route.query.get(route_id)
     if not route or not route.is_active:
-        return {"status": "NOT_FOUND"}
+        return {
+            "status": "NOT_FOUND",
+            "color": get_status_color("NOT_FOUND")
+        }
 
     legs = [leg for leg in route.legs if leg.is_active]
     if not legs:
-        return {"status": "NO_LEGS"}
+        return {
+            "status": "NO_LEGS",
+            "color": get_status_color("NO_LEGS")
+        }
 
     issues = []
     cancelled_legs = 0
@@ -22,7 +38,6 @@ def evaluate_route(route_id):
                 if not status.is_active:
                     issues.append(f"Port {status.port.name} inactive")
                 elif status.alert_level in ['red', 'black']:
-                    # אם הרגל קריטי, ביטול, אחרת דילוג
                     if leg.is_critical:
                         cancelled_legs += 1
                         issues.append(f"Critical leg cancelled due to alert at {status.port.name}: {status.alert_level}")
@@ -30,18 +45,25 @@ def evaluate_route(route_id):
                         issues.append(f"Non-critical leg skipped due to alert at {status.port.name}: {status.alert_level}")
 
     if cancelled_legs > 0:
-        return {
+        result = {
             "status": "CANCELLED",
             "issues": issues,
             "recommended_action": "Cancel"
         }
+        result["color"] = get_status_color(result["status"])
+        return result
     elif issues:
-        return {
+        result = {
             "status": "REROUTE_NEEDED",
             "issues": issues,
             "recommended_action": "Reroute"
         }
+        result["color"] = get_status_color(result["status"])
+        return result
 
-    return {"status": "OK", "recommended_action": "Continue"}
-
-
+    result = {
+        "status": "OK",
+        "recommended_action": "Continue"
+    }
+    result["color"] = get_status_color(result["status"])
+    return result
