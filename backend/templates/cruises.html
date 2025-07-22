@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Available Cruises{% endblock %}
+
+{% block content %}
+<h1 class="text-center mb-4">Available Cruises</h1>
+<table class="table table-striped table-bordered mx-auto" style="width: 90%;">
+  <thead class="table-primary">
+    <tr>
+      <th>Title</th>
+      <th>Description</th>
+      <th>Departure Date</th>
+      <th>Return Date</th>
+      <th>Price (€)</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for cruise in cruises %}
+    <tr>
+      <td>{{ cruise.title }}</td>
+      <td>{{ cruise.description or 'N/A' }}</td>
+      <td>{{ cruise.departure_date.strftime('%Y-%m-%d') if cruise.departure_date else 'N/A' }}</td>
+      <td>{{ cruise.return_date.strftime('%Y-%m-%d') if cruise.return_date else 'N/A' }}</td>
+      <td>{{ cruise.price }}</td>
+    </tr>
+    {% else %}
+    <tr>
+      <td colspan="5" class="text-center">No cruises found.</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
+
+
+
+

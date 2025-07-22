@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Available Routes - BergNavn{% endblock %}
+
+{% block content %}
+  <h1 class="mb-4 text-center">Available Routes and Legs</h1>
+
+  <table class="table table-bordered table-striped mx-auto" style="width: 90%;">
+    <thead class="table-primary">
+      <tr>
+        <th>Route ID</th>
+        <th>Route Name</th>
+        <th>Description</th>
+        <th>Number of Legs</th>
+        <th>Legs Details</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for route in routes %}
+      <tr>
+        <td>{{ route.id }}</td>
+        <td>{{ route.name }}</td>
+        <td>{{ route.description or 'N/A' }}</td>
+        <td>{{ route.legs|length }}</td>
+        <td>
+          {% if route.legs|length > 0 %}
+          <ul class="list-unstyled mb-0">
+            {% for leg in route.legs|sort(attribute='leg_order') %}
+              <li>
+                <strong>Leg {{ leg.leg_order }}:</strong>
+                {{ leg.departure_city or 'Unknown' }} &rarr; {{ leg.arrival_city or 'Unknown' }},
+                Distance: {{ leg.distance_nm or 'N/A' }} nm,
+                Estimated Days: {{ leg.estimated_time_days or 'N/A' }}
+              </li>
+            {% endfor %}
+          </ul>
+          {% else %}
+            <em class="text-muted">No legs available</em>
+          {% endif %}
+        </td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="5" class="text-center">No routes found.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
+

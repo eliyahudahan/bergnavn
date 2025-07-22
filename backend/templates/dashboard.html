@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - BergNavn{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">🛳️ Voyage Dashboard</h1>
+
+<table class="table table-bordered table-hover">
+  <thead class="table-primary">
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for v in voyages %}
+    <tr>
+      <td>{{ v.id }}</td>
+      <td>{{ v.name }}</td>
+      <td class="{% if v.color == 'green' %}text-success{% elif v.color == 'yellow' %}text-warning{% elif v.color == 'red' %}text-danger{% else %}text-secondary{% endif %}">
+        {{ v.status }}
+      </td>
+    </tr>
+    {% else %}
+    <tr>
+      <td colspan="3" class="text-center">No voyages found.</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
+

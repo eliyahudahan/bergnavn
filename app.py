@@ -4,11 +4,10 @@ from flask import Flask
 from flask_apscheduler import APScheduler
 from dotenv import load_dotenv
 
-from backend.extensions import db, mail, login_manager, migrate
-from backend.models.user import User
-from backend.services.cleanup import deactivate_old_weather_status
-
-from backend.routes.route_routes import routes_bp 
+# Blueprints
+from backend.routes.dashboard_routes import dashboard_bp
+from backend.routes.main_routes import main_bp
+from backend.routes.route_routes import routes_bp
 from backend.routes.ml_routes import ml_bp
 from backend.controllers.route_leg_controller import route_leg_bp
 from backend.routes.system_routes import health_bp
@@ -17,27 +16,32 @@ from backend.routes.user_routes import user_blueprint
 from backend.routes.cruise_routes import cruise_blueprint
 from backend.routes.weather_routes import weather_bp
 
-# Load environment variables from .env file
+# Extensions
+from backend.extensions import db, mail, login_manager, migrate
+from backend.models.user import User
+from backend.services.cleanup import deactivate_old_weather_status
+
+# Load environment variables
 load_dotenv()
 
-# Configure logging
+# Logging
 logging.basicConfig(level=logging.INFO)
 
-# Scheduler instance
+# Scheduler
 scheduler = APScheduler()
 
 def create_app(config_name=None, testing=False, start_scheduler=False):
-    from backend.services.cleanup import deactivate_old_weather_status
-
     if config_name is None:
         config_name = os.getenv('FLASK_ENV', 'default')
 
-    app = Flask(__name__)  # <--- שורה שחסרה! יצירת אפליקציה
+    app = Flask(
+        __name__,
+        template_folder=os.path.join('backend', 'templates'),
+        static_folder=os.path.join('backend', 'static')
+    )
 
-    # טוענים קונפיגורציה לפי מצב
-    if testing:
-        app.config.from_object('backend.config.config.TestingConfig')
-    elif config_name == 'testing':
+    # Configuration
+    if testing or config_name == 'testing':
         app.config.from_object('backend.config.config.TestingConfig')
     else:
         app.config.from_object('backend.config.config.Config')
@@ -48,15 +52,14 @@ def create_app(config_name=None, testing=False, start_scheduler=False):
     login_manager.init_app(app)
     migrate.init_app(app, db)
 
-    # Scheduler setup (רק אם לא במצב בדיקות ובמקרה שמאפשרים)
+    # Scheduler setup
     if start_scheduler and not testing and os.getenv("FLASK_SKIP_SCHEDULER") != "1":
-       scheduler.init_app(app)
-       if not scheduler.running:
-          scheduler.start()
+        scheduler.init_app(app)
+        if not scheduler.running:
+            scheduler.start()
 
-    # בדיקה אם ה-job כבר קיים
-    existing_job = scheduler.get_job('weekly_cleanup')
-    if existing_job is None:
+    # Add cleanup job if not exists
+    if scheduler.get_job('weekly_cleanup') is None:
         scheduler.add_job(
             id='weekly_cleanup',
             func=lambda: deactivate_old_weather_status(days=30),
@@ -64,21 +67,23 @@ def create_app(config_name=None, testing=False, start_scheduler=False):
             weeks=1
         )
 
-
-    # Init models
+    # Models
     with app.app_context():
         from backend import models
         logging.info("App context initialized. Models imported.")
 
     # Register Blueprints
-    app.register_blueprint(user_blueprint)
-    app.register_blueprint(cruise_blueprint, url_prefix='/api')
-    app.register_blueprint(health_bp)
-    app.register_blueprint(booking_blueprint, url_prefix='/booking')
-    app.register_blueprint(routes_bp, url_prefix='/api/routes')
+    app.register_blueprint(user_blueprint)  # למשל /login, /logout, וכו'
+    app.register_blueprint(main_bp)  # כולל route '/' שמחזיר home.html
+    app.register_blueprint(cruise_blueprint)       # למשל /cruises/view
+    app.register_blueprint(routes_bp, url_prefix="/routes")  # למשל /routes/view
     app.register_blueprint(route_leg_bp, url_prefix='/api/route')
     app.register_blueprint(ml_bp, url_prefix='/api/ml')
     app.register_blueprint(weather_bp)
+    app.register_blueprint(health_bp)
+    app.register_blueprint(booking_blueprint, url_prefix='/booking')
+    app.register_blueprint(dashboard_bp)  # למשל /dashboard
+
     logging.info("Blueprints registered")
 
     # User loader
@@ -100,7 +105,7 @@ def create_app(config_name=None, testing=False, start_scheduler=False):
 
     return app
 
-# Create app for CLI/WSGI (production mode)
+# Create app
 app = create_app()
 
 # CLI: manual cleanup
@@ -111,3 +116,5 @@ def run_cleanup():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+
