@@ -8,6 +8,6 @@ user_blueprint = Blueprint('user', __name__)
 def get_users():
     return "List of users"
 
-@user_blueprint.route("/")
+@user_blueprint.route('/users/home')
 def home():
     return "Welcome to the Bergnavn API 🎉"

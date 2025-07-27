@@ -82,7 +82,7 @@ def create_app(config_name=None, testing=False, start_scheduler=False):
     app.register_blueprint(weather_bp)
     app.register_blueprint(health_bp)
     app.register_blueprint(booking_blueprint, url_prefix='/booking')
-    app.register_blueprint(dashboard_bp)  # למשל /dashboard
+    app.register_blueprint(dashboard_bp, url_prefix='/dashboard')
 
     logging.info("Blueprints registered")
 
