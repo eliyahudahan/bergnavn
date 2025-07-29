@@ -8,5 +8,6 @@ from .payments import Payment
 from .route import Route
 from .voyage_leg import VoyageLeg
 from .weather_status import WeatherStatus  # ✅ חדש!
+from .dummy_user import DummyUser
 
-__all__ = ['User', 'Clock', 'Cruise', 'Booking', 'Port', 'Location', 'Payment', 'Route', 'VoyageLeg', 'WeatherStatus']
+__all__ = ['User', 'Clock', 'Cruise', 'Booking', 'Port', 'Location', 'Payment', 'Route', 'VoyageLeg', 'WeatherStatus', 'DummyUser']
