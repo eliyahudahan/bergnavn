@@ -11,15 +11,18 @@ def list_dummy_users():
 @dummy_user_bp.route('/', methods=['POST'])
 def create_user():
     data = request.get_json()
-    user = create_dummy_user(
-        username=data['username'],
-        email=data.get('email'),
-        scenario=data.get('scenario'),
-        flags=data.get('flags', {}),
-        gender=data.get('gender'),
-        nationality=data.get('nationality'),
-        language=data.get('language'),
-        preferred_sailing_areas=data.get('preferred_sailing_areas')
-    )
-    return jsonify({'id': user.id, 'username': user.username})
+    try: 
+        user = create_dummy_user(
+            username=data['username'],
+            email=data.get('email'),
+            scenario=data.get('scenario'),
+            user_flags=data.get('flags', {}),
+            gender=data.get('gender'),
+            nationality=data.get('nationality'),
+            language=data.get('language'),
+            preferred_sailing_areas=data.get('preferred_sailing_areas')
+        )
+        return jsonify({'id': user.id, 'username': user.username})
 
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400
