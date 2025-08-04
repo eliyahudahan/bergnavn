@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Dummy Users List{% endblock %}
+
+{% block content %}
+  <h2>Dummy Users</h2>
+
+  {% if error %}
+    <div class="alert alert-danger">{{ error }}</div>
+  {% endif %}
+  {% if message %}
+    <div class="alert alert-success">{{ message }}</div>
+  {% endif %}
+
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>Email</th>
+        <th>Scenario</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in users %}
+      <tr>
+        <td>{{ user.username }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.scenario }}</td>
+        <td>
+          <a href="/dummy-users/edit/{{ user.id }}" class="btn btn-sm btn-warning">Edit</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
+
+
+
+

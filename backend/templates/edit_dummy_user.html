@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Dummy User{% endblock %}
+
+{% block content %}
+  <h2>Edit User: {{ user.username }}</h2>
+
+  {% if error %}
+    <div class="alert alert-danger">{{ error }}</div>
+  {% endif %}
+  {% if message %}
+    <div class="alert alert-success">{{ message }}</div>
+  {% endif %}
+
+  <form method="POST" action="/dummy-users/edit/{{ user.id }}">
+    <div class="mb-3">
+      <label for="username">Username</label>
+      <input id="username" name="username" class="form-control" value="{{ user.username }}" required>
+    </div>
+    <div class="mb-3">
+      <label for="email">Email</label>
+      <input id="email" name="email" class="form-control" value="{{ user.email }}">
+    </div>
+    <div class="mb-3">
+      <label for="scenario">Scenario</label>
+      <input id="scenario" name="scenario" class="form-control" value="{{ user.scenario }}">
+    </div>
+    <div class="mb-3">
+      <label for="gender">Gender</label>
+      <input id="gender" name="gender" class="form-control" value="{{ user.gender }}">
+    </div>
+    <div class="mb-3">
+      <label for="nationality">Nationality</label>
+      <input id="nationality" name="nationality" class="form-control" value="{{ user.nationality }}">
+    </div>
+    <div class="mb-3">
+      <label for="language">Language</label>
+      <input id="language" name="language" class="form-control" value="{{ user.language }}">
+    </div>
+    <div class="mb-3">
+      <label for="preferred_sailing_areas">Preferred Sailing Areas (comma-separated)</label>
+      <input id="preferred_sailing_areas" name="preferred_sailing_areas" class="form-control" value="{{ user.preferred_sailing_areas | join(', ') }}">
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+    <a href="/dummy-users/ui" class="btn btn-secondary ms-2">Cancel</a>
+  </form>
+{% endblock %}
