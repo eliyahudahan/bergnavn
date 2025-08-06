@@ -1,3 +1,4 @@
+import re
 from flask import render_template, Blueprint, request, jsonify, redirect, url_for
 from backend.services.dummy_user_service import (
     get_all_dummy_users,
@@ -45,18 +46,34 @@ def list_dummy_users():
         for u in users
     ])
 
-# Create a new user from form submission
+# Create a new dummy user from form submission with validation
 @dummy_user_bp.route('/form', methods=['POST'])
 def create_user_from_form():
     data = request.form
+
+    # Extract and clean inputs
+    username = data.get('username', '').strip()
+    email = data.get('email', '').strip()
+
+    # Validate username
+    if not username:
+        return redirect(url_for('dummy_user_bp.dummy_user_ui', error="Username is required."))
+
+    # Validate email with regex if provided (optional email)
+    email_regex = r'^[^\s@]+@[^\s@]+\.[^\s@]+$'
+    if email and not re.match(email_regex, email):
+        return redirect(url_for('dummy_user_bp.dummy_user_ui', error="Invalid email address."))
+
+    # Parse preferred sailing areas as list, clean whitespace
+    preferred_areas = [area.strip() for area in data.get('preferred_sailing_areas', '').split(',') if area.strip()]
+
     try:
-        preferred_areas = [area.strip() for area in data.get('preferred_sailing_areas', '').split(',') if area.strip()]
-        
+        # Call service function to create user (no password)
         user = create_dummy_user(
-            username=data['username'],
-            email=data.get('email'),
+            username=username,
+            email=email if email else None,
             scenario=data.get('scenario'),
-            user_flags={},  # can be expanded in the future
+            user_flags={},  # reserved for future expansion
             gender=data.get('gender'),
             nationality=data.get('nationality'),
             language=data.get('language'),
@@ -118,6 +135,3 @@ def get_user(user_id):
         'language': user.language,
         'preferred_sailing_areas': user.preferred_sailing_areas,
     })
-
-
-
