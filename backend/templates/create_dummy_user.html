@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Create Dummy User{% endblock %}
+
+{% block content %}
+  <h2>Create New Dummy User</h2>
+
+  {% if error %}
+    <div class="alert alert-danger">{{ error }}</div>
+  {% endif %}
+  {% if message %}
+    <div class="alert alert-success">{{ message }}</div>
+  {% endif %}
+
+  <form method="POST" action="/dummy-users/form" class="mb-4">
+    <div class="mb-3">
+      <label for="username">Username *</label>
+      <input id="username" name="username" class="form-control" required>
+    </div>
+    <div class="mb-3">
+      <label for="email">Email</label>
+      <input id="email" name="email" class="form-control" type="email">
+    </div>
+    <div class="mb-3">
+      <label for="scenario">Scenario</label>
+      <input id="scenario" name="scenario" class="form-control">
+    </div>
+    <div class="mb-3">
+      <label for="gender">Gender</label>
+      <input id="gender" name="gender" class="form-control">
+    </div>
+    <div class="mb-3">
+      <label for="nationality">Nationality</label>
+      <input id="nationality" name="nationality" class="form-control">
+    </div>
+    <div class="mb-3">
+      <label for="language">Language</label>
+      <input id="language" name="language" class="form-control">
+    </div>
+    <div class="mb-3">
+      <label for="preferred_sailing_areas">Preferred Sailing Areas (comma-separated)</label>
+      <input id="preferred_sailing_areas" name="preferred_sailing_areas" class="form-control" placeholder="e.g., Oslo, Bergen">
+    </div>
+
+    <button type="submit" class="btn btn-success">Create User</button>
+  </form>
+
+  <a href="/dummy-users/ui" class="btn btn-secondary">Back to User List</a>
+{% endblock %}
+
