@@ -1,6 +1,6 @@
 # backend/utils/translations.py
 
-# Translation dictionary example, easily extendable
+# Translation dictionary, easily extendable
 TRANSLATIONS = {
     'en': {
         'dummy_users_title': 'Dummy Users',
@@ -12,6 +12,11 @@ TRANSLATIONS = {
         'edit': 'Edit',
         'active': 'Active',
         'inactive': 'Inactive',
+        'dashboard': 'Dashboard',
+        'cruises': 'Cruises',
+        'routes': 'Routes',
+        'footer_credit': 'Powered by BergNavn Maritime Voyages',
+        'license_legal': 'License / Legal',
     },
     'no': {  # Norwegian Bokmål
         'dummy_users_title': 'Dummybrukere',
@@ -23,6 +28,11 @@ TRANSLATIONS = {
         'edit': 'Rediger',
         'active': 'Aktiv',
         'inactive': 'Inaktiv',
+        'dashboard': 'Dashbord',
+        'cruises': 'Cruises',
+        'routes': 'Ruter',
+        'footer_credit': 'Drevet av BergNavn Maritime Voyages',
+        'license_legal': 'Lisens / Juridisk',
     }
 }
 

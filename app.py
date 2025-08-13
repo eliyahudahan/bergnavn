@@ -22,6 +22,9 @@ from backend.extensions import db, mail, login_manager, migrate
 from backend.models.user import User
 from backend.services.cleanup import deactivate_old_weather_status
 
+# Translation utility
+from backend.utils.translations import translate
+
 # Load environment variables
 load_dotenv()
 
@@ -40,6 +43,9 @@ def create_app(config_name=None, testing=False, start_scheduler=False):
         template_folder=os.path.join('backend', 'templates'),
         static_folder=os.path.join('backend', 'static')
     )
+
+    # Register translate as template global
+    app.jinja_env.globals['translate'] = translate
 
     # Configuration
     if testing or config_name == 'testing':
@@ -74,10 +80,10 @@ def create_app(config_name=None, testing=False, start_scheduler=False):
         logging.info("App context initialized. Models imported.")
 
     # Register Blueprints
-    app.register_blueprint(user_blueprint)  # למשל /login, /logout, וכו'
-    app.register_blueprint(main_bp)  # כולל route '/' שמחזיר home.html
-    app.register_blueprint(cruise_blueprint)       # למשל /cruises/view
-    app.register_blueprint(routes_bp, url_prefix="/routes")  # למשל /routes/view
+    app.register_blueprint(user_blueprint)
+    app.register_blueprint(main_bp)
+    app.register_blueprint(cruise_blueprint)
+    app.register_blueprint(routes_bp, url_prefix="/routes")
     app.register_blueprint(route_leg_bp, url_prefix='/api/route')
     app.register_blueprint(ml_bp, url_prefix='/api/ml')
     app.register_blueprint(weather_bp)
@@ -118,5 +124,3 @@ def run_cleanup():
 
 if __name__ == "__main__":
     app.run(debug=True)
-
-
