@@ -1,10 +1,12 @@
 {% extends "base.html" %}
 
-{% block title %}Edit Dummy User{% endblock %}
+{% block title %}{{ translate('edit', lang) }}: {{ user.username }}{% endblock %}
 
 {% block content %}
-  <h2>Edit User: {{ user.username }}</h2>
+  <!-- Page Header -->
+  <h2>{{ translate('edit', lang) }}: {{ user.username }}</h2>
 
+  <!-- Error / Success messages -->
   {% if error %}
     <div class="alert alert-danger">{{ error }}</div>
   {% endif %}
@@ -12,37 +14,38 @@
     <div class="alert alert-success">{{ message }}</div>
   {% endif %}
 
-  <form method="POST" action="/dummy-users/edit/{{ user.id }}">
+  <!-- Edit user form -->
+  <form method="POST" action="{{ url_for('dummy_user_bp.update_dummy_user_form', user_id=user.id) }}">
     <div class="mb-3">
-      <label for="username">Username</label>
+      <label for="username">{{ translate('username', lang) }}</label>
       <input id="username" name="username" class="form-control" value="{{ user.username }}" required>
     </div>
     <div class="mb-3">
-      <label for="email">Email</label>
+      <label for="email">{{ translate('email', lang) }}</label>
       <input id="email" name="email" class="form-control" value="{{ user.email }}">
     </div>
     <div class="mb-3">
-      <label for="scenario">Scenario</label>
+      <label for="scenario">{{ translate('scenario', lang) }}</label>
       <input id="scenario" name="scenario" class="form-control" value="{{ user.scenario }}">
     </div>
     <div class="mb-3">
-      <label for="gender">Gender</label>
+      <label for="gender">{{ translate('gender', lang) }}</label>
       <input id="gender" name="gender" class="form-control" value="{{ user.gender }}">
     </div>
     <div class="mb-3">
-      <label for="nationality">Nationality</label>
+      <label for="nationality">{{ translate('nationality', lang) }}</label>
       <input id="nationality" name="nationality" class="form-control" value="{{ user.nationality }}">
     </div>
     <div class="mb-3">
-      <label for="language">Language</label>
+      <label for="language">{{ translate('language', lang) }}</label>
       <input id="language" name="language" class="form-control" value="{{ user.language }}">
     </div>
     <div class="mb-3">
-      <label for="preferred_sailing_areas">Preferred Sailing Areas (comma-separated)</label>
+      <label for="preferred_sailing_areas">{{ translate('preferred_sailing_areas', lang) }} (comma-separated)</label>
       <input id="preferred_sailing_areas" name="preferred_sailing_areas" class="form-control" value="{{ user.preferred_sailing_areas | join(', ') }}">
     </div>
 
-    <button type="submit" class="btn btn-primary">Save Changes</button>
-    <a href="/dummy-users/ui" class="btn btn-secondary ms-2">Cancel</a>
+    <button type="submit" class="btn btn-primary">{{ translate('apply', lang) }}</button>
+    <a href="{{ url_for('dummy_user_bp.dummy_user_ui') }}" class="btn btn-secondary ms-2">{{ translate('back_to_user_list', lang) }}</a>
   </form>
 {% endblock %}

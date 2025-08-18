@@ -1,44 +1,84 @@
 # backend/utils/translations.py
 
-# Translation dictionary, easily extendable
 TRANSLATIONS = {
     'en': {
         'dummy_users_title': 'Dummy Users',
         'create_new_user': 'Create New User',
         'username': 'Username',
+        'username_required': 'Username is required.',
         'email': 'Email',
+        'invalid_email': 'Invalid email address.',
         'scenario': 'Scenario',
         'actions': 'Actions',
         'edit': 'Edit',
         'active': 'Active',
         'inactive': 'Inactive',
+        'activate': 'Activate',
+        'deactivate': 'Deactivate',
+        'all': 'All',
+        'apply': 'Apply',
         'dashboard': 'Dashboard',
         'cruises': 'Cruises',
         'routes': 'Routes',
         'footer_credit': 'Powered by BergNavn Maritime Voyages',
         'license_legal': 'License / Legal',
+        'user_created': 'User created successfully!',
+        'user_updated': 'User updated successfully!',
+        'user_not_found': 'User not found or inactive.',
+        'limit_dummy': 'Exceeded maximum allowed dummy users (5).',
+        'preferred_areas_limit': 'You can specify up to 3 preferred sailing areas only.',
+        'status': 'Status',
+        'users': 'Users',
+        'manage_dummy_users_info': 'Manage your dummy users here.',
+        'to_add_dummy_user': 'to add a new dummy user.',
+        'back_to_user_list': 'Back to User List',
+        'gender': 'Gender',
+        'nationality': 'Nationality',
+        'language': 'Language',
+        'preferred_sailing_areas': 'Preferred Sailing Areas',
     },
-    'no': {  # Norwegian Bokmål
+    'no': {
         'dummy_users_title': 'Dummybrukere',
         'create_new_user': 'Opprett ny bruker',
         'username': 'Brukernavn',
+        'username_required': 'Brukernavn er påkrevd.',
         'email': 'E-post',
+        'invalid_email': 'Ugyldig e-postadresse.',
         'scenario': 'Scenario',
         'actions': 'Handlinger',
         'edit': 'Rediger',
         'active': 'Aktiv',
         'inactive': 'Inaktiv',
+        'activate': 'Aktiver',
+        'deactivate': 'Deaktiver',
+        'all': 'Alle',
+        'apply': 'Bruk',
         'dashboard': 'Dashbord',
         'cruises': 'Cruises',
         'routes': 'Ruter',
         'footer_credit': 'Drevet av BergNavn Maritime Voyages',
         'license_legal': 'Lisens / Juridisk',
+        'user_created': 'Bruker opprettet!',
+        'user_updated': 'Bruker oppdatert!',
+        'user_not_found': 'Bruker ikke funnet eller inaktiv.',
+        'limit_dummy': 'Maksimalt antall dummybrukere (5) nådd.',
+        'preferred_areas_limit': 'Du kan kun velge opptil 3 foretrukne seilingsområder.',
+        'status': 'Status',
+        'users': 'Brukere',
+        'manage_dummy_users_info': 'Administrer dine dummybrukere her.',
+        'to_add_dummy_user': 'for å legge til en ny dummybruker.',
+        'back_to_user_list': 'Tilbake til brukerlisten',
+        'gender': 'Kjønn',
+        'nationality': 'Nasjonalitet',
+        'language': 'Språk',
+        'preferred_sailing_areas': 'Foretrukne seilingsområder',
     }
 }
 
 def translate(key: str, lang: str = 'en') -> str:
     """
-    Return translated string for the given key and language.
-    Defaults to English if key or language is not found.
+    Safe lookup for translations.
+    If key not found in chosen language, fallback to English.
+    If still not found, return the key itself.
     """
-    return TRANSLATIONS.get(lang, TRANSLATIONS['en']).get(key, key)
+    return TRANSLATIONS.get(lang, TRANSLATIONS['en']).get(key, TRANSLATIONS['en'].get(key, key))

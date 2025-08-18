@@ -1,6 +1,6 @@
 import logging
 import os
-from flask import Flask
+from flask import Flask, session, request
 from flask_apscheduler import APScheduler
 from dotenv import load_dotenv
 
@@ -15,7 +15,7 @@ from backend.routes.booking_routes import booking_blueprint
 from backend.routes.user_routes import user_blueprint
 from backend.routes.cruise_routes import cruise_blueprint
 from backend.routes.weather_routes import weather_bp
-from backend.routes.dummy_user_routes import dummy_user_bp 
+from backend.routes.dummy_user_routes import dummy_user_bp
 
 # Extensions
 from backend.extensions import db, mail, login_manager, migrate
@@ -44,7 +44,7 @@ def create_app(config_name=None, testing=False, start_scheduler=False):
         static_folder=os.path.join('backend', 'static')
     )
 
-    # Register translate as template global
+    # Register translate as template global so templates can call {{ translate('key', lang) }}
     app.jinja_env.globals['translate'] = translate
 
     # Configuration
@@ -74,7 +74,7 @@ def create_app(config_name=None, testing=False, start_scheduler=False):
             weeks=1
         )
 
-    # Models
+    # Import models
     with app.app_context():
         from backend import models
         logging.info("App context initialized. Models imported.")
@@ -94,12 +94,22 @@ def create_app(config_name=None, testing=False, start_scheduler=False):
 
     logging.info("Blueprints registered")
 
-    # User loader
+    # User loader for Flask-Login
     @login_manager.user_loader
     def load_user(user_id):
         return User.query.get(int(user_id))
 
-    # CLI: list routes
+    # Language handling: store in session
+    @app.before_request
+    def set_language():
+        # Check GET param first (e.g., ?lang=no)
+        lang_param = request.args.get('lang')
+        if lang_param in ['en', 'no']:
+            session['lang'] = lang_param
+        # Ensure default language is English
+        session.setdefault('lang', 'en')
+
+    # CLI command to list all routes
     @app.cli.command("list-routes")
     def list_routes():
         import urllib
@@ -113,13 +123,12 @@ def create_app(config_name=None, testing=False, start_scheduler=False):
 
     return app
 
-# Create app
+# Create app instance
 app = create_app()
 
 # CLI: manual cleanup
 @app.cli.command("run-cleanup")
 def run_cleanup():
-    """Deactivate old weather statuses manually."""
     deactivate_old_weather_status()
 
 if __name__ == "__main__":
