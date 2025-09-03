@@ -1,43 +1,35 @@
 {% extends "base.html" %}
 
-{% block title %}License / Legal{% endblock %}
+{% block title %}{{ translate('license_legal', lang, 'global') }}{% endblock %}
 
 {% block content %}
 <div class="my-5">
-  <h2>BergNavn Maritime Voyages – Open License / Åpen Lisens</h2>
+  <h2 class="mb-4">BergNavn Maritime Voyages – {{ translate('open_license', lang, 'legal') }}</h2>
 
   <!-- English Section -->
-  <section class="mb-4">
-    <h3>English</h3>
-    <p>&copy; 2025 Eliyahu Dahan. All rights reserved.</p>
-    <p>This software is provided under an <strong>Open License</strong> with the following conditions:</p>
+  <section class="mb-5">
+    <h3>{{ translate('english', lang, 'legal') }}</h3>
+    <p>&copy; 2025 Eliyahu Dahan. {{ translate('all_rights_reserved', lang, 'legal') }}</p>
+    <p>{{ translate('license_conditions_intro', lang, 'legal') }}</p>
     <ol>
-      <li><strong>Attribution Required</strong> – Any use, copy, or modification of this software must include clear credit:<br>
-      "Powered by BergNavn Maritime Voyages" in the user interface or documentation.</li>
-      <li><strong>Freedom to Modify & Use</strong> – You may use, copy, modify, and distribute this software for personal, commercial, or educational purposes, <strong>as long as attribution is preserved</strong>.</li>
-      <li><strong>No False Claims</strong> – You may not claim that you are the original creator of this software.</li>
-      <li><strong>Disclaimer</strong> – This software is provided “AS IS” without warranty of any kind. The author(s) are not liable for any damages or losses.</li>
+      <li>{{ translate('attribution_required', lang, 'legal') }}</li>
+      <li>{{ translate('freedom_to_modify', lang, 'legal') }}</li>
+      <li>{{ translate('no_false_claims', lang, 'legal') }}</li>
+      <li>{{ translate('disclaimer', lang, 'legal') }}</li>
     </ol>
-
-    <h4>Compliance with Norwegian Regulations</h4>
-    <p>This software uses only public and approved data sources (MET Norway, NMA Ports API) and follows WGS84 standards for coordinates. No personal data is stored without consent, in accordance with GDPR.</p>
   </section>
 
   <!-- Norwegian Section -->
   <section>
-    <h3>Norsk</h3>
-    <p>&copy; 2025 Eliyahu Dahan. Alle rettigheter reservert.</p>
-    <p>Denne programvaren leveres under en <strong>Åpen Lisens</strong> med følgende vilkår:</p>
+    <h3>{{ translate('norwegian', lang, 'legal') }}</h3>
+    <p>&copy; 2025 Eliyahu Dahan. {{ translate('all_rights_reserved', lang, 'legal') }}</p>
+    <p>{{ translate('license_conditions_intro', lang, 'legal') }}</p>
     <ol>
-      <li><strong>Kreditering Påkrevd</strong> – Enhver bruk, kopiering eller modifisering av denne programvaren må inkludere tydelig kreditt:<br>
-      "Powered by BergNavn Maritime Voyages" i brukergrensesnittet eller dokumentasjonen.</li>
-      <li><strong>Frihet til å Modifisere og Bruke</strong> – Du kan bruke, kopiere, modifisere og distribuere programvaren til personlig, kommersiell eller pedagogisk bruk, <strong>så lenge kreditering beholdes</strong>.</li>
-      <li><strong>Ingen Falske Påstander</strong> – Du kan ikke hevde at du er den opprinnelige skaperen av denne programvaren.</li>
-      <li><strong>Ansvarsfraskrivelse</strong> – Denne programvaren leveres “AS IS” uten noen garanti. Forfatter(e) er ikke ansvarlige for skader eller tap.</li>
+      <li>{{ translate('attribution_required', lang, 'legal') }}</li>
+      <li>{{ translate('freedom_to_modify', lang, 'legal') }}</li>
+      <li>{{ translate('no_false_claims', lang, 'legal') }}</li>
+      <li>{{ translate('disclaimer', lang, 'legal') }}</li>
     </ol>
-
-    <h4>Overholdelse av Norske Forskrifter</h4>
-    <p>Denne programvaren bruker kun offentlige og godkjente datakilder (MET Norway, NMA Ports API) og følger WGS84-standarder for koordinater. Ingen personopplysninger lagres uten samtykke, i samsvar med GDPR.</p>
   </section>
 </div>
 {% endblock %}

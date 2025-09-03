@@ -10,17 +10,21 @@ from backend.services.dummy_user_service import (
 )
 from backend.utils.translations import translate
 
+# Create a Blueprint for dummy user management
 dummy_user_bp = Blueprint('dummy_user_bp', __name__, url_prefix='/dummy-users')
 
 # --- UI page ---
 @dummy_user_bp.route('/ui', methods=['GET'])
 def dummy_user_ui():
-    """Show all dummy users page"""
+    """
+    Route: Show all dummy users page
+    Purpose: Render UI page with all dummy users
+    """
     filter_status = request.args.get('filter', 'active')
     users = get_all_dummy_users(filter_status)
     message = request.args.get('message')
     error = request.args.get('error')
-    lang = session.get('lang', 'en')
+    lang = session.get('lang', 'en')  # Get language from session
     return render_template(
         'dummy_users.html',
         users=users,
@@ -33,7 +37,9 @@ def dummy_user_ui():
 # --- Show create form ---
 @dummy_user_bp.route('/create', methods=['GET'])
 def show_create_user_form():
-    """Show the form to create a new dummy user"""
+    """
+    Route: Show form to create a new dummy user
+    """
     error = request.args.get('error')
     message = request.args.get('message')
     lang = session.get('lang', 'en')
@@ -42,7 +48,9 @@ def show_create_user_form():
 # --- Create user form submission ---
 @dummy_user_bp.route('/form', methods=['POST'])
 def create_user_from_form():
-    """Handle form submission for creating dummy user"""
+    """
+    Route: Handle form submission for creating dummy user
+    """
     all_users = get_all_dummy_users()
     lang = session.get('lang', 'en')
 
@@ -84,7 +92,9 @@ def create_user_from_form():
 # --- Edit user GET ---
 @dummy_user_bp.route('/edit/<int:user_id>', methods=['GET'])
 def edit_user_form(user_id):
-    """Show edit form for a specific user"""
+    """
+    Route: Show edit form for a specific user
+    """
     user = get_dummy_user_by_id(user_id)
     lang = session.get('lang', 'en')
     if not user:
@@ -94,7 +104,9 @@ def edit_user_form(user_id):
 # --- Edit user POST ---
 @dummy_user_bp.route('/edit/<int:user_id>', methods=['POST'])
 def update_dummy_user_form(user_id):
-    """Handle edit form submission"""
+    """
+    Route: Handle edit form submission
+    """
     data = request.form
     lang = session.get('lang', 'en')
     preferred_areas = [a.strip() for a in data.get('preferred_sailing_areas', '').split(',') if a.strip()]
@@ -132,7 +144,9 @@ def update_dummy_user_form(user_id):
 # --- Toggle active/inactive ---
 @dummy_user_bp.route('/toggle/<int:user_id>', methods=['POST'])
 def toggle_user_active(user_id):
-    """Toggle active status via JSON request"""
+    """
+    Route: Toggle active status via JSON request
+    """
     set_active = None
     if request.is_json:
         payload = request.get_json(silent=True) or {}
@@ -150,7 +164,9 @@ def toggle_user_active(user_id):
 # --- Delete user (soft) ---
 @dummy_user_bp.route('/<int:user_id>', methods=['DELETE'])
 def delete_user(user_id):
-    """Soft-delete a dummy user"""
+    """
+    Route: Soft-delete a dummy user
+    """
     success = deactivate_dummy_user(user_id)
     if success:
         return jsonify({'message': 'User deactivated'})
@@ -160,7 +176,9 @@ def delete_user(user_id):
 # --- Get specific user JSON ---
 @dummy_user_bp.route('/<int:user_id>', methods=['GET'])
 def get_user(user_id):
-    """Return specific user as JSON"""
+    """
+    Route: Return specific user as JSON
+    """
     user = get_dummy_user_by_id(user_id)
     if not user:
         return jsonify({'error': 'User not found'}), 404

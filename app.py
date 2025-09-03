@@ -34,6 +34,7 @@ logging.basicConfig(level=logging.INFO)
 # Scheduler
 scheduler = APScheduler()
 
+
 def create_app(config_name=None, testing=False, start_scheduler=False):
     if config_name is None:
         config_name = os.getenv('FLASK_ENV', 'default')
@@ -44,7 +45,7 @@ def create_app(config_name=None, testing=False, start_scheduler=False):
         static_folder=os.path.join('backend', 'static')
     )
 
-    # Register translate as template global so templates can call {{ translate('key', lang) }}
+    # Register translate as template global
     app.jinja_env.globals['translate'] = translate
 
     # Configuration
@@ -102,11 +103,9 @@ def create_app(config_name=None, testing=False, start_scheduler=False):
     # Language handling: store in session
     @app.before_request
     def set_language():
-        # Check GET param first (e.g., ?lang=no)
         lang_param = request.args.get('lang')
         if lang_param in ['en', 'no']:
             session['lang'] = lang_param
-        # Ensure default language is English
         session.setdefault('lang', 'en')
 
     # CLI command to list all routes
@@ -123,6 +122,7 @@ def create_app(config_name=None, testing=False, start_scheduler=False):
 
     return app
 
+
 # Create app instance
 app = create_app()
 
@@ -130,6 +130,7 @@ app = create_app()
 @app.cli.command("run-cleanup")
 def run_cleanup():
     deactivate_old_weather_status()
+
 
 if __name__ == "__main__":
     app.run(debug=True)

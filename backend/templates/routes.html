@@ -1,18 +1,19 @@
 {% extends "base.html" %}
 
-{% block title %}Available Routes - BergNavn{% endblock %}
+{% block title %}{{ translate('routes', lang, 'global') }}{% endblock %}
 
 {% block content %}
-  <h1 class="mb-4 text-center">Available Routes and Legs</h1>
+<h1 class="mb-4 text-center">{{ translate('routes_and_legs', lang, 'routes_page') }}</h1>
 
+<div class="table-responsive">
   <table class="table table-bordered table-striped mx-auto" style="width: 90%;">
     <thead class="table-primary">
       <tr>
-        <th>Route ID</th>
-        <th>Route Name</th>
-        <th>Description</th>
-        <th>Number of Legs</th>
-        <th>Legs Details</th>
+        <th>{{ translate('route_id', lang, 'routes_page') }}</th>
+        <th>{{ translate('route_name', lang, 'routes_page') }}</th>
+        <th>{{ translate('description', lang, 'routes_page') }}</th>
+        <th>{{ translate('number_of_legs', lang, 'routes_page') }}</th>
+        <th>{{ translate('legs_details', lang, 'routes_page') }}</th>
       </tr>
     </thead>
     <tbody>
@@ -20,31 +21,32 @@
       <tr>
         <td>{{ route.id }}</td>
         <td>{{ route.name }}</td>
-        <td>{{ route.description or 'N/A' }}</td>
+        <td>{{ route.description or translate('not_available', lang, 'global') }}</td>
         <td>{{ route.legs|length }}</td>
         <td>
           {% if route.legs|length > 0 %}
           <ul class="list-unstyled mb-0">
             {% for leg in route.legs|sort(attribute='leg_order') %}
-              <li>
-                <strong>Leg {{ leg.leg_order }}:</strong>
-                {{ leg.departure_city or 'Unknown' }} &rarr; {{ leg.arrival_city or 'Unknown' }},
-                Distance: {{ leg.distance_nm or 'N/A' }} nm,
-                Estimated Days: {{ leg.estimated_time_days or 'N/A' }}
-              </li>
+            <li>
+              <strong>{{ translate('leg', lang, 'routes_page') }} {{ leg.leg_order }}:</strong>
+              {{ leg.departure_city or translate('unknown', lang, 'global') }} &rarr; 
+              {{ leg.arrival_city or translate('unknown', lang, 'global') }} ,
+              {{ translate('distance_nm', lang, 'routes_page') }}: {{ leg.distance_nm or translate('not_available', lang, 'global') }} nm,
+              {{ translate('estimated_days', lang, 'routes_page') }}: {{ leg.estimated_time_days or translate('not_available', lang, 'global') }}
+            </li>
             {% endfor %}
           </ul>
           {% else %}
-            <em class="text-muted">No legs available</em>
+          <em class="text-muted">{{ translate('no_legs_available', lang, 'routes_page') }}</em>
           {% endif %}
         </td>
       </tr>
       {% else %}
       <tr>
-        <td colspan="5" class="text-center">No routes found.</td>
+        <td colspan="5" class="text-center">{{ translate('no_routes_found', lang, 'routes_page') }}</td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
+</div>
 {% endblock %}
-

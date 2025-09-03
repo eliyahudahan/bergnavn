@@ -4,11 +4,17 @@ from backend.models.route import Route
 from backend.models.voyage_leg import VoyageLeg
 from backend.services.route_evaluator import evaluate_route
 from backend.extensions import db
+from backend.utils.helpers import get_current_language  # ✅ Import language helper
 
+# Blueprint for managing routes
 routes_bp = Blueprint('routes_bp', __name__)
 
 @routes_bp.route('/', methods=['GET'])
 def get_routes():
+    """
+    API Endpoint: Get all active routes
+    Returns JSON with full route and legs details.
+    """
     routes = Route.query.filter_by(is_active=True).all()
     return jsonify([
         {
@@ -33,6 +39,10 @@ def get_routes():
 
 @routes_bp.route('/', methods=['POST'])
 def create_route():
+    """
+    API Endpoint: Create a new route with multiple legs.
+    Automatically calculates total distance.
+    """
     data = request.json
 
     new_route = Route(
@@ -61,6 +71,9 @@ def create_route():
 
 @routes_bp.route('/<int:route_id>/legs', methods=['POST'])
 def add_route_leg(route_id):
+    """
+    API Endpoint: Add a leg to an existing route.
+    """
     route = Route.query.get_or_404(route_id)
     data = request.json
 
@@ -78,16 +91,30 @@ def add_route_leg(route_id):
 
 @routes_bp.route('/view')
 def view_routes():
+    """
+    UI Endpoint: Render the routes view template.
+    Includes language parameter for i18n.
+    """
+    lang = get_current_language()
     routes = Route.query.options(db.joinedload(Route.legs)).all()
-    return render_template('routes.html', routes=routes)
+    return render_template('routes.html', routes=routes, lang=lang)
 
 @routes_bp.route('/evaluate/<int:route_id>', methods=['GET'])
 def evaluate(route_id):
+    """
+    API Endpoint: Evaluate a specific route by ID.
+    Returns JSON with evaluation results.
+    """
     result = evaluate_route(route_id)
     return jsonify(result)
 
 @routes_bp.route('/evaluate/view')
 def evaluate_view():
+    """
+    UI Endpoint: Render the evaluation dashboard for all routes.
+    Includes language parameter for i18n.
+    """
+    lang = get_current_language()
     routes = Route.query.options(db.joinedload(Route.legs)).all()
     evaluated_routes = []
 
@@ -102,4 +129,4 @@ def evaluate_view():
             'issues': result.get('issues', [])
         })
 
-    return render_template('evaluate_dashboard.html', routes=evaluated_routes)
+    return render_template('evaluate_dashboard.html', routes=evaluated_routes, lang=lang)

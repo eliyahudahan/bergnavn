@@ -1,53 +1,49 @@
 {% extends "base.html" %}
 
-{% block title %}{{ translate('create_new_user', lang) }}{% endblock %}
+{% block title %}{{ translate('create_new_user', lang, 'dummy_users') }}{% endblock %}
 
 {% block content %}
-  <!-- Page Header -->
-  <h2>{{ translate('create_new_user', lang) }}</h2>
+<h2>{{ translate('create_new_user', lang, 'dummy_users') }}</h2>
 
-  <!-- Error / Success messages -->
-  {% if error %}
-    <div class="alert alert-danger">{{ error }}</div>
-  {% endif %}
-  {% if message %}
-    <div class="alert alert-success">{{ message }}</div>
-  {% endif %}
+{% if error %}
+  <div class="alert alert-danger">{{ error }}</div>
+{% endif %}
+{% if message %}
+  <div class="alert alert-success">{{ message }}</div>
+{% endif %}
 
-  <!-- User creation form -->
-  <form method="POST" action="{{ url_for('dummy_user_bp.create_user_from_form') }}" class="mb-4">
-    <div class="mb-3">
-      <label for="username">{{ translate('username', lang) }} *</label>
-      <input id="username" name="username" class="form-control" required>
-    </div>
-    <div class="mb-3">
-      <label for="email">{{ translate('email', lang) }}</label>
-      <input id="email" name="email" class="form-control" type="email">
-    </div>
-    <div class="mb-3">
-      <label for="scenario">{{ translate('scenario', lang) }}</label>
-      <input id="scenario" name="scenario" class="form-control">
-    </div>
-    <div class="mb-3">
-      <label for="gender">{{ translate('gender', lang) }}</label>
-      <input id="gender" name="gender" class="form-control">
-    </div>
-    <div class="mb-3">
-      <label for="nationality">{{ translate('nationality', lang) }}</label>
-      <input id="nationality" name="nationality" class="form-control">
-    </div>
-    <div class="mb-3">
-      <label for="language">{{ translate('language', lang) }}</label>
-      <input id="language" name="language" class="form-control">
-    </div>
-    <div class="mb-3">
-      <label for="preferred_sailing_areas">{{ translate('preferred_sailing_areas', lang) }} (comma-separated)</label>
-      <input id="preferred_sailing_areas" name="preferred_sailing_areas" class="form-control" placeholder="e.g., Oslo, Bergen">
-    </div>
+<form method="POST" action="{{ url_for('dummy_user_bp.create_user_from_form') }}" class="mb-4">
+  <div class="mb-3">
+    <label for="username">{{ translate('username', lang, 'dummy_users') }} *</label>
+    <input id="username" name="username" class="form-control" required>
+  </div>
+  <div class="mb-3">
+    <label for="email">{{ translate('email', lang, 'dummy_users') }}</label>
+    <input id="email" name="email" class="form-control" type="email">
+  </div>
+  <div class="mb-3">
+    <label for="scenario">{{ translate('scenario', lang, 'dummy_users') }}</label>
+    <input id="scenario" name="scenario" class="form-control">
+  </div>
+  <div class="mb-3">
+    <label for="gender">{{ translate('gender', lang, 'dummy_users') }}</label>
+    <input id="gender" name="gender" class="form-control">
+  </div>
+  <div class="mb-3">
+    <label for="nationality">{{ translate('nationality', lang, 'dummy_users') }}</label>
+    <input id="nationality" name="nationality" class="form-control">
+  </div>
+  <div class="mb-3">
+    <label for="language">{{ translate('language', lang, 'dummy_users') }}</label>
+    <input id="language" name="language" class="form-control">
+  </div>
+  <div class="mb-3">
+    <label for="preferred_sailing_areas">{{ translate('preferred_sailing_areas', lang, 'dummy_users') }}</label>
+    <input id="preferred_sailing_areas" name="preferred_sailing_areas" class="form-control" placeholder="e.g., Oslo, Bergen">
+  </div>
 
-    <button type="submit" class="btn btn-success">{{ translate('create_new_user', lang) }}</button>
-  </form>
+  <button type="submit" class="btn btn-success">{{ translate('create_new_user', lang, 'dummy_users') }}</button>
+</form>
 
-  <!-- Back button -->
-  <a href="{{ url_for('dummy_user_bp.dummy_user_ui') }}" class="btn btn-secondary">{{ translate('back_to_user_list', lang) }}</a>
+<a href="{{ url_for('dummy_user_bp.dummy_user_ui') }}" class="btn btn-secondary">{{ translate('back_to_user_list', lang, 'dummy_users') }}</a>
 {% endblock %}

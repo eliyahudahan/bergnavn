@@ -2,10 +2,18 @@ from flask import Blueprint, request, jsonify
 from backend.models.booking import Booking
 from backend import db
 
+# Blueprint for bookings
 booking_blueprint = Blueprint('booking', __name__)
 
 @booking_blueprint.route('/book', methods=['POST'])
 def create_booking():
+    """
+    Endpoint: Create a new booking
+    Purpose:
+        - Accept JSON payload with user_id, cruise_id, num_of_people, total_price.
+        - Store the booking in the database.
+        - Return success or error message in JSON.
+    """
     data = request.get_json()
 
     try:
@@ -14,8 +22,14 @@ def create_booking():
         num_of_people = data['num_of_people']
         total_price = data['total_price']
 
-        # Create new booking
-        booking = Booking(user_id=user_id, cruise_id=cruise_id, num_of_people=num_of_people, total_price=total_price)
+        # Create new booking object
+        booking = Booking(
+            user_id=user_id,
+            cruise_id=cruise_id,
+            num_of_people=num_of_people,
+            total_price=total_price
+        )
+
         db.session.add(booking)
         db.session.commit()
 

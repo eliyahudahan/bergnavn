@@ -1,37 +1,34 @@
 {% extends "base.html" %}
 
-{% block title %}Available Cruises{% endblock %}
+{% block title %}{{ translate('cruises_page', lang, 'cruises_page')['title'] }}{% endblock %}
 
 {% block content %}
-<h1 class="text-center mb-4">Available Cruises</h1>
+<h1 class="text-center mb-4">{{ translate('cruises_page', lang, 'cruises_page')['title'] }}</h1>
+
 <table class="table table-striped table-bordered mx-auto" style="width: 90%;">
   <thead class="table-primary">
     <tr>
-      <th>Title</th>
-      <th>Description</th>
-      <th>Departure Date</th>
-      <th>Return Date</th>
-      <th>Price (€)</th>
+      <th>{{ translate('cruises_page', lang, 'cruises_page')['title'] }}</th>
+      <th>{{ translate('cruises_page', lang, 'cruises_page')['description'] }}</th>
+      <th>{{ translate('cruises_page', lang, 'cruises_page')['departure_date'] }}</th>
+      <th>{{ translate('cruises_page', lang, 'cruises_page')['return_date'] }}</th>
+      <th>{{ translate('cruises_page', lang, 'cruises_page')['price_eur'] }}</th>
     </tr>
   </thead>
   <tbody>
     {% for cruise in cruises %}
     <tr>
       <td>{{ cruise.title }}</td>
-      <td>{{ cruise.description or 'N/A' }}</td>
-      <td>{{ cruise.departure_date.strftime('%Y-%m-%d') if cruise.departure_date else 'N/A' }}</td>
-      <td>{{ cruise.return_date.strftime('%Y-%m-%d') if cruise.return_date else 'N/A' }}</td>
+      <td>{{ cruise.description or translate('no_cruises_found', lang, 'cruises_page') }}</td>
+      <td>{{ cruise.departure_date.strftime('%Y-%m-%d') if cruise.departure_date else translate('no_cruises_found', lang, 'cruises_page') }}</td>
+      <td>{{ cruise.return_date.strftime('%Y-%m-%d') if cruise.return_date else translate('no_cruises_found', lang, 'cruises_page') }}</td>
       <td>{{ cruise.price }}</td>
     </tr>
     {% else %}
     <tr>
-      <td colspan="5" class="text-center">No cruises found.</td>
+      <td colspan="5" class="text-center">{{ translate('no_cruises_found', lang, 'cruises_page') }}</td>
     </tr>
     {% endfor %}
   </tbody>
 </table>
 {% endblock %}
-
-
-
-

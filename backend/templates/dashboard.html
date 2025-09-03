@@ -1,33 +1,34 @@
 {% extends "base.html" %}
 
-{% block title %}Dashboard - BergNavn{% endblock %}
+{% block title %}{{ translate('dashboard', lang, 'global') }}{% endblock %}
 
 {% block content %}
-<h1 class="mb-4">🛳️ Voyage Dashboard</h1>
+<h1 class="mb-4">{{ translate('title', lang, 'dashboard_page') }}</h1>
 
-<table class="table table-bordered table-hover">
-  <thead class="table-primary">
-    <tr>
-      <th>ID</th>
-      <th>Name</th>
-      <th>Status</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for v in voyages %}
-    <tr>
-      <td>{{ v.id }}</td>
-      <td>{{ v.name }}</td>
-      <td class="{% if v.color == 'green' %}text-success{% elif v.color == 'yellow' %}text-warning{% elif v.color == 'red' %}text-danger{% else %}text-secondary{% endif %}">
-        {{ v.status }}
-      </td>
-    </tr>
-    {% else %}
-    <tr>
-      <td colspan="3" class="text-center">No voyages found.</td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+<div class="table-responsive">
+  <table class="table table-bordered table-hover">
+    <thead class="table-primary">
+      <tr>
+        <th>{{ translate('id', lang, 'dashboard_page') }}</th>
+        <th>{{ translate('name', lang, 'dashboard_page') }}</th>
+        <th>{{ translate('status', lang, 'dashboard_page') }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for v in voyages %}
+      <tr>
+        <td>{{ v.id }}</td>
+        <td>{{ v.name }}</td>
+        <td class="{% if v.color == 'green' %}text-success{% elif v.color == 'yellow' %}text-warning{% elif v.color == 'red' %}text-danger{% else %}text-secondary{% endif %}">
+          {{ translate(v.status, lang, 'dashboard_page') }}
+        </td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="3" class="text-center">{{ translate('no_voyages', lang, 'dashboard_page') }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
 {% endblock %}
-

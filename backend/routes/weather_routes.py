@@ -2,12 +2,21 @@ from flask import Blueprint, render_template
 from backend.models import WeatherStatus, Route
 from sqlalchemy import desc, and_, func
 from backend.extensions import db
+from backend.utils.helpers import get_current_language  # ✅ Import language helper
 
+# Blueprint for weather-related pages
 weather_bp = Blueprint('weather', __name__, url_prefix='/weather')
 
 @weather_bp.route('/')
 def weather_dashboard():
-    # שליפת התאריך האחרון לכל port_id (רק רשומות פעילות)
+    """
+    UI Endpoint: Weather Dashboard
+    Purpose:
+        - Display the latest active weather statuses per port.
+        - Show all active routes with their ordered legs.
+        - Include current language for i18n.
+    """
+    # Subquery: get the latest datetime for each port_id (only active records)
     subquery = (
         db.session.query(
             WeatherStatus.port_id,
@@ -18,7 +27,7 @@ def weather_dashboard():
         .subquery()
     )
 
-    # שליפת רשומות WeatherStatus העדכניות בלבד
+    # Query: fetch only the most recent WeatherStatus entries
     latest_statuses = (
         db.session.query(WeatherStatus)
         .join(
@@ -31,7 +40,7 @@ def weather_dashboard():
         .all()
     )
 
-    # שליפת מסלולים פעילים כולל הרגליים שלהם ממויינים לפי leg_order
+    # Query: fetch all active routes with legs ordered by leg_order
     routes = (
         Route.query
         .filter(Route.is_active == True)
@@ -39,10 +48,16 @@ def weather_dashboard():
         .all()
     )
 
-    # לטעון את הרגליים עם סדר, לשם כך ניתן לגשת דרך היחס 'legs' ומוודא שהרגליים ממוקדות לפי leg_order:
+    # Ensure each route's legs are sorted by leg_order
     for route in routes:
         route.legs.sort(key=lambda leg: leg.leg_order)
 
-    return render_template('weather_dashboard.html', statuses=latest_statuses, routes=routes)
+    # Get current language for rendering templates
+    lang = get_current_language()
 
-
+    return render_template(
+        'weather_dashboard.html',
+        statuses=latest_statuses,
+        routes=routes,
+        lang=lang
+    )

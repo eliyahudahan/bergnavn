@@ -1,54 +1,49 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Weather Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        .alert-green { background-color: #d4edda; }
-        .alert-red { background-color: #f8d7da; }
-        .alert-black { background-color: #d6d8d9; color: #000; }
-        .inactive { opacity: 0.6; }
-    </style>
-</head>
-<body class="container mt-5">
-    <h2 class="mt-5 mb-4">🛳️ Available Routes and Legs</h2>
-<table class="table table-bordered table-hover">
+{% extends "base.html" %}
+
+{% block title %}{{ translate('weather_dashboard', lang, 'dashboard') }}{% endblock %}
+
+{% block content %}
+<h2 class="mt-5 mb-4">🛳️ {{ translate('available_routes_legs', lang, 'dashboard') }}</h2>
+
+<div class="table-responsive">
+  <table class="table table-bordered table-hover">
     <thead class="table-dark">
-        <tr>
-            <th>Route ID</th>
-            <th>Route Name</th>
-            <th>Description</th>
-            <th>Number of Legs</th>
-            <th>Legs Details</th>
-        </tr>
+      <tr>
+        <th>{{ translate('route_id', lang, 'routes_page') }}</th>
+        <th>{{ translate('route_name', lang, 'routes_page') }}</th>
+        <th>{{ translate('description', lang, 'routes_page') }}</th>
+        <th>{{ translate('number_of_legs', lang, 'routes_page') }}</th>
+        <th>{{ translate('legs_details', lang, 'routes_page') }}</th>
+      </tr>
     </thead>
     <tbody>
-        {% for route in routes %}
-            <tr>
-                <td>{{ route.id }}</td>
-                <td>{{ route.name }}</td>
-                <td>{{ route.description or '-' }}</td>
-                <td>{{ route.legs|length }}</td>
-                <td>
-                    {% if route.legs %}
-                        <ul class="mb-0">
-                        {% for leg in route.legs %}
-                            <li>
-                                Leg {{ leg.leg_order }}: {{ leg.departure_port.name if leg.departure_port else '?' }} → {{ leg.arrival_port.name if leg.arrival_port else '?' }},
-                                Distance: {{ "%.1f"|format(leg.distance_nm or 0) }} nm,
-                                Estimated Days: {{ ((leg.arrival_time - leg.departure_time).days) if leg.arrival_time and leg.departure_time else 'N/A' }}
-                            </li>
-                        {% endfor %}
-                        </ul>
-                    {% else %}
-                        No legs available
-                    {% endif %}
-                </td>
-            </tr>
-        {% endfor %}
+      {% for route in routes %}
+      <tr class="{% if not route.active %}inactive{% endif %}">
+        <td>{{ route.id }}</td>
+        <td>{{ route.name }}</td>
+        <td>{{ route.description or translate('not_available', lang, 'global') }}</td>
+        <td>{{ route.legs|length }}</td>
+        <td>
+          {% if route.legs %}
+          <ul class="mb-0">
+            {% for leg in route.legs %}
+            <li>
+              {{ translate('leg', lang, 'routes_page') }} {{ leg.leg_order }}: 
+              {{ leg.departure_port.name if leg.departure_port else translate('unknown', lang, 'global') }} &rarr; 
+              {{ leg.arrival_port.name if leg.arrival_port else translate('unknown', lang, 'global') }},
+              {{ translate('distance_nm', lang, 'routes_page') }}: {{ "%.1f"|format(leg.distance_nm or 0) }} nm,
+              {{ translate('estimated_days', lang, 'routes_page') }}: 
+              {{ ((leg.arrival_time - leg.departure_time).days) if leg.arrival_time and leg.departure_time else translate('not_available', lang, 'global') }}
+            </li>
+            {% endfor %}
+          </ul>
+          {% else %}
+          <em class="text-muted">{{ translate('no_legs_available', lang, 'routes_page') }}</em>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
     </tbody>
-</table>
-
-</body>
-</html>
+  </table>
+</div>
+{% endblock %}

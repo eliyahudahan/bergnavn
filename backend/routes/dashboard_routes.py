@@ -1,18 +1,20 @@
 from flask import Blueprint, render_template
 from backend.models.route import Route
 from backend.services.route_evaluator import evaluate_route
+from backend.utils.helpers import get_current_language  # ✅ Import language helper
 
-# הגדרת ה‑Blueprint
 dashboard_bp = Blueprint('dashboard_bp', __name__)
 
-# הנתיב הראשי עבור הדשבורד
 @dashboard_bp.route("/")
 def dashboard():
-    # שליפת כל המסלולים מה‑DB
+    # Get current language from query/session
+    lang = get_current_language()
+
+    # Fetch all routes from the database
     routes = Route.query.all()
     voyages = []
 
-    # הרצת הערכת מסלול עבור כל מסלול
+    # Run evaluation for each route and prepare data for the dashboard
     for r in routes:
         eval_result = evaluate_route(r.id)
         voyages.append({
@@ -22,6 +24,5 @@ def dashboard():
             "color": eval_result.get("color", "secondary")
         })
 
-    # החזרת התבנית עם הנתונים
-    return render_template("dashboard.html", voyages=voyages)
-
+    # Render the dashboard template with routes and language
+    return render_template("dashboard.html", voyages=voyages, lang=lang)

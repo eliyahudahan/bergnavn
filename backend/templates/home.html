@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 
-{% block title %}Welcome - BergNavn{% endblock %}
+{% block title %}{{ translate('home_welcome', lang, 'global') }}{% endblock %}
 
 {% block content %}
-  <div class="text-center mt-5">
-    <h1>Welcome to the Bergnavn API 🎉</h1>
-    <p>Your gateway to maritime voyages</p>
-    <p>Use the menu above to navigate through the platform.</p>
-  </div>
+<div class="text-center mt-5">
+  <h1 class="mb-3">{{ translate('home_greeting', lang, 'global') }}</h1>
+  <p class="lead mb-2">{{ translate('home_description', lang, 'global') }}</p>
+  <p class="text-muted">{{ translate('home_navigation_info', lang, 'global') }}</p>
+</div>
 {% endblock %}
