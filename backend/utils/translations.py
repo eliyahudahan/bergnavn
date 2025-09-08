@@ -62,7 +62,7 @@ TRANSLATIONS = {
     "no": {
         "global": {
             "dashboard": "Dashbord",
-            "cruises": "Cruises",
+            "cruises": "Cruise",          # תווית ניווט – מקובל בנורבגית להשתמש "Cruise"
             "routes": "Ruter",
             "users": "Brukere",
             "status": "Status",
@@ -98,29 +98,28 @@ TRANSLATIONS = {
             "back_to_user_list": "Tilbake til brukerlisten",
         },
         "cruises_page": {
-            "title": "Tilgjengelige Cruises",
+            "title": "Tilgjengelige cruise",
             "description": "Beskrivelse",
             "departure_date": "Avreisedato",
             "return_date": "Returdato",
             "price_eur": "Pris (€)",
-            "no_cruises_found": "Ingen cruises funnet.",
+            "no_cruises_found": "Ingen cruise funnet.",
         },
         "dashboard_page": {
-            "title": "🛳️ Reise Dashbord",
+            "title": "🛳️ Reisedashbord",
             "id": "ID",
             "name": "Navn",
             "status": "Status",
             "active": "Aktiv",
             "inactive": "Inaktiv",
             "no_voyages": "Ingen reiser funnet.",
-            "green": "På tid",
+            "green": "I rute",
             "yellow": "Forsinket",
-            "red": "Avlyst",
+            "red": "Kansellert",
             "grey": "Ukjent",
         },
     },
 }
-
 
 def translate(key: str, lang: str = "en", section: str = "global") -> str:
     return (

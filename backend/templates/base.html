@@ -17,7 +17,7 @@
     <div class="container">
       <!-- Brand -->
       <a class="navbar-brand fw-bold" href="{{ url_for('dashboard_bp.dashboard') }}">
-        {{ translate('dashboard', lang, 'global') }}
+        {{ translate('dashboard', lang, 'global')|title }}
       </a>
 
       <!-- Mobile menu button -->
@@ -72,7 +72,7 @@
       &copy; 2025 BergNavn Maritime Voyages. 
       {{ translate('footer_credit', lang, 'global') }} |
       <a href="{{ url_for('main_bp.legal') }}">
-        {{ translate('license_legal', lang, 'global') }}
+        {{ translate('license_legal', lang, 'global')|title }}
       </a>
     </small>
   </footer>

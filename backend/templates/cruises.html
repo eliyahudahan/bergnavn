@@ -1,28 +1,28 @@
 {% extends "base.html" %}
 
-{% block title %}{{ translate('cruises_page', lang, 'cruises_page')['title'] }}{% endblock %}
+{% block title %}{{ translate('title', lang, 'cruises_page') }}{% endblock %}
 
 {% block content %}
-<h1 class="text-center mb-4">{{ translate('cruises_page', lang, 'cruises_page')['title'] }}</h1>
+<h1 class="text-center mb-4">{{ translate('title', lang, 'cruises_page') }}</h1>
 
 <table class="table table-striped table-bordered mx-auto" style="width: 90%;">
   <thead class="table-primary">
     <tr>
-      <th>{{ translate('cruises_page', lang, 'cruises_page')['title'] }}</th>
-      <th>{{ translate('cruises_page', lang, 'cruises_page')['description'] }}</th>
-      <th>{{ translate('cruises_page', lang, 'cruises_page')['departure_date'] }}</th>
-      <th>{{ translate('cruises_page', lang, 'cruises_page')['return_date'] }}</th>
-      <th>{{ translate('cruises_page', lang, 'cruises_page')['price_eur'] }}</th>
+      <th>{{ translate('title', lang, 'cruises_page') }}</th>
+      <th>{{ translate('description', lang, 'cruises_page') }}</th>
+      <th>{{ translate('departure_date', lang, 'cruises_page') }}</th>
+      <th>{{ translate('return_date', lang, 'cruises_page') }}</th>
+      <th>{{ translate('price_eur', lang, 'cruises_page') }}</th>
     </tr>
   </thead>
   <tbody>
     {% for cruise in cruises %}
     <tr>
-      <td>{{ cruise.title }}</td>
-      <td>{{ cruise.description or translate('no_cruises_found', lang, 'cruises_page') }}</td>
-      <td>{{ cruise.departure_date.strftime('%Y-%m-%d') if cruise.departure_date else translate('no_cruises_found', lang, 'cruises_page') }}</td>
-      <td>{{ cruise.return_date.strftime('%Y-%m-%d') if cruise.return_date else translate('no_cruises_found', lang, 'cruises_page') }}</td>
-      <td>{{ cruise.price }}</td>
+      <td>{{ cruise.title or translate('not_available', lang, 'global') }}</td>
+      <td>{{ cruise.description or translate('not_available', lang, 'global') }}</td>
+      <td>{{ cruise.departure_date.strftime('%Y-%m-%d') if cruise.departure_date else translate('not_available', lang, 'global') }}</td>
+      <td>{{ cruise.return_date.strftime('%Y-%m-%d') if cruise.return_date else translate('not_available', lang, 'global') }}</td>
+      <td>{{ cruise.price if cruise.price is not none else translate('not_available', lang, 'global') }}</td>
     </tr>
     {% else %}
     <tr>
