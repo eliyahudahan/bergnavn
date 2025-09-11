@@ -54,7 +54,7 @@ def create_app(config_name=None, testing=False, start_scheduler=False):
     else:
         app.config.from_object('backend.config.config.Config')
 
-    # Init extensions
+    # Initialize extensions
     db.init_app(app)
     mail.init_app(app)
     login_manager.init_app(app)

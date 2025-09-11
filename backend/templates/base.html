@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ lang | default('en') }}">
+<html lang="{{ session.get('lang', 'en') }}">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -17,7 +17,7 @@
     <div class="container">
       <!-- Brand -->
       <a class="navbar-brand fw-bold" href="{{ url_for('dashboard_bp.dashboard') }}">
-        {{ translate('dashboard', lang, 'global')|title }}
+        {{ translate('dashboard', session.get('lang', 'en'), 'global')|title }}
       </a>
 
       <!-- Mobile menu button -->
@@ -30,31 +30,31 @@
         <ul class="navbar-nav ms-auto">
           <li class="nav-item">
             <a class="nav-link" href="{{ url_for('dummy_user_bp.dummy_user_ui') }}">
-              {{ translate('title', lang, 'dummy_users') }}
+              {{ translate('title', session.get('lang', 'en'), 'dummy_users') }}
             </a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="{{ url_for('dashboard_bp.dashboard') }}">
-              {{ translate('dashboard', lang, 'global') }}
+              {{ translate('dashboard', session.get('lang', 'en'), 'global') }}
             </a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="{{ url_for('cruise.view_cruises') }}">
-              {{ translate('cruises', lang, 'global') }}
+              {{ translate('cruises', session.get('lang', 'en'), 'global') }}
             </a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="{{ url_for('routes_bp.view_routes') }}">
-              {{ translate('routes', lang, 'global') }}
+              {{ translate('routes', session.get('lang', 'en'), 'global') }}
             </a>
           </li>
         </ul>
 
         <!-- Language toggle form -->
         <form method="get" action="{{ request.path }}" class="d-flex ms-3">
-          <input type="hidden" name="lang" value="{{ 'no' if lang == 'en' else 'en' }}">
+          <input type="hidden" name="lang" value="{{ 'no' if session.get('lang', 'en') == 'en' else 'en' }}">
           <button type="submit" class="btn btn-light btn-sm">
-            {{ 'NO' if lang == 'en' else 'EN' }}
+            {{ 'NO' if session.get('lang', 'en') == 'en' else 'EN' }}
           </button>
         </form>
       </div>
@@ -70,9 +70,9 @@
   <footer class="bg-light text-center py-3 mt-5">
     <small>
       &copy; 2025 BergNavn Maritime Voyages. 
-      {{ translate('footer_credit', lang, 'global') }} |
+      {{ translate('footer_credit', session.get('lang', 'en'), 'global') }} |
       <a href="{{ url_for('main_bp.legal') }}">
-        {{ translate('license_legal', lang, 'global')|title }}
+        {{ translate('license_legal', session.get('lang', 'en'), 'global')|title }}
       </a>
     </small>
   </footer>
