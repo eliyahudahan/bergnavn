@@ -2,6 +2,7 @@ import re
 from backend.models.dummy_user import DummyUser
 from backend.config import flags
 from backend import db
+from backend.utils.translations import translate
 
 EMAIL_REGEX = r'^[^\s@]+@[^\s@]+\.[^\s@]+$'
 
@@ -14,31 +15,29 @@ def count_active_dummies():
     return DummyUser.query.filter_by(active=True).count()
 
 def create_dummy_user(username, email=None, scenario=None, user_flags=None,
-                      gender=None, nationality=None, language=None, preferred_sailing_areas=None):
+                      gender=None, nationality=None, language=None, preferred_sailing_areas=None, lang='en'):
     """
     Creates a new dummy user with validation:
     - Unique active username and email.
     - Total dummy users (active + inactive) cannot exceed MAX_DUMMY_USERS.
+    - Returns the created user.
     """
     username = username.strip()
     if not username:
-        raise ValueError("Username cannot be empty.")
+        raise ValueError(translate('username_required', lang, section='dummy_users'))
 
-    # Prevent duplicate active usernames
     if DummyUser.query.filter_by(username=username, active=True).first():
-        raise ValueError("Username already exists.")
+        raise ValueError(translate('username_exists', lang, section='dummy_users'))
 
-    # Validate email if provided
     if email:
         email = email.strip()
         if not re.match(EMAIL_REGEX, email):
-            raise ValueError("Invalid email format.")
+            raise ValueError(translate('invalid_email', lang, section='dummy_users'))
         if DummyUser.query.filter_by(email=email, active=True).first():
-            raise ValueError("Email already exists.")
+            raise ValueError(translate('email_exists', lang, section='dummy_users'))
 
-    # Enforce total dummy user limit (active + inactive)
     if count_total_dummies() >= flags.MAX_DUMMY_USERS:
-        raise ValueError(f"Exceeded maximum allowed dummy users ({flags.MAX_DUMMY_USERS})")
+        raise ValueError(translate('limit_dummy', lang, section='dummy_users'))
 
     user = DummyUser(
         username=username,
@@ -56,14 +55,14 @@ def create_dummy_user(username, email=None, scenario=None, user_flags=None,
     db.session.commit()
     return user
 
-def update_dummy_user(user_id, data):
+def update_dummy_user(user_id, data, lang='en'):
     """
     Updates an existing dummy user with validation.
     - Prevents duplicate active usernames/emails.
     """
     user = DummyUser.query.get(user_id)
     if not user:
-        return False
+        raise ValueError(translate('user_not_found', lang, section='dummy_users'))
 
     new_username = data.get('username', user.username).strip()
     new_email = data.get('email', user.email)
@@ -75,18 +74,18 @@ def update_dummy_user(user_id, data):
             DummyUser.id != user_id,
             DummyUser.active == True
         ).first():
-            raise ValueError("Username already exists.")
+            raise ValueError(translate('username_exists', lang, section='dummy_users'))
 
     if new_email:
         if not re.match(EMAIL_REGEX, new_email):
-            raise ValueError("Invalid email format.")
+            raise ValueError(translate('invalid_email', lang, section='dummy_users'))
         if new_email != user.email:
             if DummyUser.query.filter(
                 DummyUser.email == new_email,
                 DummyUser.id != user_id,
                 DummyUser.active == True
             ).first():
-                raise ValueError("Email already exists.")
+                raise ValueError(translate('email_exists', lang, section='dummy_users'))
 
     user.username = new_username
     user.email = new_email
@@ -98,16 +97,16 @@ def update_dummy_user(user_id, data):
     user.preferred_sailing_areas = data.get('preferred_sailing_areas', user.preferred_sailing_areas)
 
     db.session.commit()
-    return True
+    return user
 
-def deactivate_dummy_user(user_id):
+def deactivate_dummy_user(user_id, lang='en'):
     """Sets a dummy user to inactive if active."""
     user = DummyUser.query.get(user_id)
     if user and user.active:
         user.active = False
         db.session.commit()
-        return True
-    return False
+        return user
+    raise ValueError(translate('user_not_found', lang, section='dummy_users'))
 
 def get_dummy_user_by_id(user_id):
     """Returns an active dummy user by ID."""
@@ -129,18 +128,14 @@ def get_all_dummy_users(filter_status='active'):
 
     return query.all()
 
-def toggle_dummy_user_active(user_id, set_active=None):
+def toggle_dummy_user_active(user_id, set_active=None, lang='en'):
     """
     Toggles or explicitly sets the active status of a dummy user.
-    - Always allows toggling active <-> inactive.
-    - Does not check total limit (only creation is limited).
     """
     user = DummyUser.query.get(user_id)
     if not user:
-        return None
+        raise ValueError(translate('user_not_found', lang, section='dummy_users'))
 
-    new_status = not user.active if set_active is None else bool(set_active)
-
-    user.active = new_status
+    user.active = not user.active if set_active is None else bool(set_active)
     db.session.commit()
     return user

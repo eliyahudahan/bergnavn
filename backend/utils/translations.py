@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 TRANSLATIONS = {
     "en": {
         "global": {
@@ -15,14 +17,19 @@ TRANSLATIONS = {
             "not_available": "N/A",
             "footer_credit": "Powered by BergNavn Maritime Voyages",
             "license_legal": "License / Legal",
+            "activate": "Activate",
+            "deactivate": "Deactivate",
+            "all": "All"
         },
         "dummy_users": {
             "title": "Dummy Users",
             "create_new_user": "Create New User",
             "username": "Username",
             "username_required": "Username is required.",
+            "username_exists": "Username already exists.",
             "email": "Email",
             "invalid_email": "Invalid email address.",
+            "email_exists": "Email already exists.",
             "scenario": "Scenario",
             "gender": "Gender",
             "nationality": "Nationality",
@@ -58,7 +65,7 @@ TRANSLATIONS = {
             "red": "Cancelled",
             "grey": "Unknown",
         },
-        "routes_page": {  # New section for routes.html
+        "routes_page": {
             "routes_and_legs": "Routes and Legs",
             "route_id": "Route ID",
             "route_name": "Route Name",
@@ -89,14 +96,19 @@ TRANSLATIONS = {
             "not_available": "N/A",
             "footer_credit": "Drevet av BergNavn Maritime Voyages",
             "license_legal": "Lisens / Juridisk",
+            "activate": "Aktiver",
+            "deactivate": "Deaktiver",
+            "all": "Alle"
         },
         "dummy_users": {
             "title": "Dummybrukere",
             "create_new_user": "Opprett ny bruker",
             "username": "Brukernavn",
             "username_required": "Brukernavn er påkrevd.",
+            "username_exists": "Brukernavn eksisterer allerede.",
             "email": "E-post",
             "invalid_email": "Ugyldig e-postadresse.",
+            "email_exists": "E-post eksisterer allerede.",
             "scenario": "Scenario",
             "gender": "Kjønn",
             "nationality": "Nasjonalitet",
@@ -132,7 +144,7 @@ TRANSLATIONS = {
             "red": "Kansellert",
             "grey": "Ukjent",
         },
-        "routes_page": {  # Ny seksjon for routes.html
+        "routes_page": {
             "routes_and_legs": "Ruter og etapper",
             "route_id": "Rute-ID",
             "route_name": "Rutenavn",
@@ -150,6 +162,10 @@ TRANSLATIONS = {
 }
 
 def translate(key: str, lang: str = "en", section: str = "global") -> str:
+    """
+    Fetch the translated string for a given key, section, and language.
+    Falls back to English if key or language is missing.
+    """
     return (
         TRANSLATIONS.get(lang, TRANSLATIONS["en"])
         .get(section, TRANSLATIONS["en"].get(section, {}))

@@ -76,6 +76,14 @@
 </div>
 
 <script>
+// Translation constants for JS
+const TRANSLATIONS = {
+    activate: "{{ translate('activate', lang, 'global') }}",
+    deactivate: "{{ translate('deactivate', lang, 'global') }}",
+    active: "{{ translate('active', lang, 'global') }}",
+    inactive: "{{ translate('inactive', lang, 'global') }}"
+};
+
 document.addEventListener('DOMContentLoaded', function () {
   const table = document.getElementById('dummy-users-table');
   table.querySelectorAll('.toggle-active-btn').forEach(button => {
@@ -101,13 +109,13 @@ document.addEventListener('DOMContentLoaded', function () {
           const btn = row.querySelector('.toggle-active-btn');
 
           if (data.active) {
-            statusCell.innerHTML = '<span class="badge bg-success">{{ translate("active", lang, "global") }}</span>';
-            btn.textContent = '{{ translate("deactivate", lang, "global") }}';
+            statusCell.innerHTML = `<span class="badge bg-success">${TRANSLATIONS.active}</span>`;
+            btn.textContent = TRANSLATIONS.deactivate;
             btn.classList.remove('btn-success');
             btn.classList.add('btn-danger');
           } else {
-            statusCell.innerHTML = '<span class="badge bg-secondary">{{ translate("inactive", lang, "global") }}</span>';
-            btn.textContent = '{{ translate("activate", lang, "global") }}';
+            statusCell.innerHTML = `<span class="badge bg-secondary">${TRANSLATIONS.inactive}</span>`;
+            btn.textContent = TRANSLATIONS.activate;
             btn.classList.remove('btn-danger');
             btn.classList.add('btn-success');
           }

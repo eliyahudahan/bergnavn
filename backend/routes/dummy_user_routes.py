@@ -10,21 +10,24 @@ from backend.services.dummy_user_service import (
 )
 from backend.utils.translations import translate
 
-# Create a Blueprint for dummy user management
+# Blueprint for dummy user management
 dummy_user_bp = Blueprint('dummy_user_bp', __name__, url_prefix='/dummy-users')
 
-# --- UI page ---
+
+# --- UI page: Display all dummy users ---
 @dummy_user_bp.route('/ui', methods=['GET'])
 def dummy_user_ui():
     """
-    Route: Show all dummy users page
-    Purpose: Render UI page with all dummy users
+    Render the main dummy users page.
+    Allows optional filtering by status: 'active', 'inactive', or 'all'.
+    Passes messages and errors from query parameters.
     """
     filter_status = request.args.get('filter', 'active')
     users = get_all_dummy_users(filter_status)
     message = request.args.get('message')
     error = request.args.get('error')
-    lang = session.get('lang', 'en')  # Get language from session
+    lang = session.get('lang', 'en')  # Fetch user's preferred language
+
     return render_template(
         'dummy_users.html',
         users=users,
@@ -34,45 +37,57 @@ def dummy_user_ui():
         lang=lang
     )
 
-# --- Show create form ---
+
+# --- Show form to create a new dummy user ---
 @dummy_user_bp.route('/create', methods=['GET'])
 def show_create_user_form():
     """
-    Route: Show form to create a new dummy user
+    Display the form for creating a new dummy user.
+    Includes optional error/message feedback.
     """
     error = request.args.get('error')
     message = request.args.get('message')
     lang = session.get('lang', 'en')
+
     return render_template('create_dummy_user.html', error=error, message=message, lang=lang)
 
-# --- Create user form submission ---
+
+# --- Handle form submission for creating dummy user ---
 @dummy_user_bp.route('/form', methods=['POST'])
 def create_user_from_form():
     """
-    Route: Handle form submission for creating dummy user
+    Processes POST request from the create user form.
+    Validates username, email format, preferred sailing areas.
+    Limits maximum number of dummy users to 5.
+    Creates the user via service and redirects with translated messages.
     """
-    all_users = get_all_dummy_users()
     lang = session.get('lang', 'en')
-
-    # Limit max 5 dummy users
-    if len(all_users) >= 5:
-        return redirect(url_for('dummy_user_bp.dummy_user_ui', error=translate('limit_dummy', lang)))
-
     data = request.form
     username = data.get('username', '').strip()
     email = data.get('email', '').strip()
+    preferred_areas = [a.strip() for a in data.get('preferred_sailing_areas', '').split(',') if a.strip()]
 
+    # Validation: username required
     if not username:
-        return redirect(url_for('dummy_user_bp.show_create_user_form', error=translate('username_required', lang)))
+        return redirect(
+            url_for('dummy_user_bp.show_create_user_form',
+                    error=translate('username_required', lang, 'dummy_users'))
+        )
 
-    # Validate email
+    # Validation: maximum 3 preferred sailing areas
+    if len(preferred_areas) > 3:
+        return redirect(
+            url_for('dummy_user_bp.show_create_user_form',
+                    error=translate('preferred_areas_limit', lang, 'dummy_users'))
+        )
+
+    # Validation: email format
     email_regex = r'^[^\s@]+@[^\s@]+\.[^\s@]+$'
     if email and not re.match(email_regex, email):
-        return redirect(url_for('dummy_user_bp.show_create_user_form', error=translate('invalid_email', lang)))
-
-    preferred_areas = [a.strip() for a in data.get('preferred_sailing_areas', '').split(',') if a.strip()]
-    if len(preferred_areas) > 3:
-        return redirect(url_for('dummy_user_bp.show_create_user_form', error=translate('preferred_areas_limit', lang)))
+        return redirect(
+            url_for('dummy_user_bp.show_create_user_form',
+                    error=translate('invalid_email', lang, 'dummy_users'))
+        )
 
     try:
         create_dummy_user(
@@ -83,37 +98,52 @@ def create_user_from_form():
             gender=data.get('gender'),
             nationality=data.get('nationality'),
             language=data.get('language'),
-            preferred_sailing_areas=preferred_areas
+            preferred_sailing_areas=preferred_areas,
+            lang=lang
         )
-        return redirect(url_for('dummy_user_bp.dummy_user_ui', message=translate('user_created', lang)))
+        return redirect(
+            url_for('dummy_user_bp.dummy_user_ui',
+                    message=translate('user_created', lang, 'dummy_users'))
+        )
     except ValueError as e:
         return redirect(url_for('dummy_user_bp.show_create_user_form', error=str(e)))
 
-# --- Edit user GET ---
+
+# --- Show form to edit an existing dummy user ---
 @dummy_user_bp.route('/edit/<int:user_id>', methods=['GET'])
 def edit_user_form(user_id):
     """
-    Route: Show edit form for a specific user
+    Display edit form for a specific user.
+    Shows error if user not found.
     """
-    user = get_dummy_user_by_id(user_id)
     lang = session.get('lang', 'en')
+    user = get_dummy_user_by_id(user_id)
     if not user:
-        return redirect(url_for('dummy_user_bp.dummy_user_ui', error=translate('user_not_found', lang)))
+        return redirect(
+            url_for('dummy_user_bp.dummy_user_ui', error=translate('user_not_found', lang, 'dummy_users'))
+        )
+
     return render_template('edit_dummy_user.html', user=user, lang=lang)
 
-# --- Edit user POST ---
+
+# --- Handle POST request to update an existing dummy user ---
 @dummy_user_bp.route('/edit/<int:user_id>', methods=['POST'])
 def update_dummy_user_form(user_id):
     """
-    Route: Handle edit form submission
+    Processes edit form submission.
+    Validates username, email format, preferred sailing areas.
+    Updates user via service and redirects with translated messages.
     """
-    data = request.form
     lang = session.get('lang', 'en')
+    data = request.form
     preferred_areas = [a.strip() for a in data.get('preferred_sailing_areas', '').split(',') if a.strip()]
 
     if len(preferred_areas) > 3:
-        return redirect(url_for('dummy_user_bp.edit_user_form', user_id=user_id,
-                                error=translate('preferred_areas_limit', lang)))
+        return redirect(
+            url_for('dummy_user_bp.edit_user_form',
+                    user_id=user_id,
+                    error=translate('preferred_areas_limit', lang, 'dummy_users'))
+        )
 
     update_data = {
         'username': data.get('username', '').strip(),
@@ -125,63 +155,83 @@ def update_dummy_user_form(user_id):
         'preferred_sailing_areas': preferred_areas,
     }
 
+    # Validation: username required
     if not update_data['username']:
-        return redirect(url_for('dummy_user_bp.edit_user_form', user_id=user_id, error=translate('username_required', lang)))
+        return redirect(
+            url_for('dummy_user_bp.edit_user_form',
+                    user_id=user_id,
+                    error=translate('username_required', lang, 'dummy_users'))
+        )
 
+    # Validation: email format
     email_regex = r'^[^\s@]+@[^\s@]+\.[^\s@]+$'
     if update_data['email'] and not re.match(email_regex, update_data['email']):
-        return redirect(url_for('dummy_user_bp.edit_user_form', user_id=user_id, error=translate('invalid_email', lang)))
+        return redirect(
+            url_for('dummy_user_bp.edit_user_form',
+                    user_id=user_id,
+                    error=translate('invalid_email', lang, 'dummy_users'))
+        )
 
     try:
-        success = update_dummy_user(user_id, update_data)
-        if success:
-            return redirect(url_for('dummy_user_bp.dummy_user_ui', message=translate('user_updated', lang)))
-        else:
-            return redirect(url_for('dummy_user_bp.dummy_user_ui', error=translate('user_not_found', lang)))
+        update_dummy_user(user_id, update_data, lang=lang)
+        return redirect(
+            url_for('dummy_user_bp.dummy_user_ui',
+                    message=translate('user_updated', lang, 'dummy_users'))
+        )
     except ValueError as e:
         return redirect(url_for('dummy_user_bp.edit_user_form', user_id=user_id, error=str(e)))
 
-# --- Toggle active/inactive ---
+
+# --- Toggle active/inactive status of a user ---
 @dummy_user_bp.route('/toggle/<int:user_id>', methods=['POST'])
 def toggle_user_active(user_id):
     """
-    Route: Toggle active status via JSON request
+    Toggle the active/inactive status via JSON POST request.
+    Returns JSON with success and updated status.
     """
+    lang = session.get('lang', 'en')
     set_active = None
     if request.is_json:
         payload = request.get_json(silent=True) or {}
         if 'active' in payload:
             set_active = bool(payload['active'])
+
     try:
-        user = toggle_dummy_user_active(user_id, set_active)
-        if not user:
-            return jsonify({'error': 'User not found'}), 404
+        user = toggle_dummy_user_active(user_id, set_active, lang=lang)
         return jsonify({'success': True, 'active': bool(user.active)}), 200
     except ValueError as e:
         current_app.logger.exception("Toggle failed")
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': str(e)}), 404
 
-# --- Delete user (soft) ---
+
+# --- Soft delete a dummy user ---
 @dummy_user_bp.route('/<int:user_id>', methods=['DELETE'])
 def delete_user(user_id):
     """
-    Route: Soft-delete a dummy user
+    Soft-delete a dummy user by marking inactive.
+    Returns JSON with success/error message in user's language.
     """
-    success = deactivate_dummy_user(user_id)
-    if success:
-        return jsonify({'message': 'User deactivated'})
-    else:
-        return jsonify({'error': 'User not found or already inactive'}), 404
+    lang = session.get('lang', 'en')
+    try:
+        deactivate_dummy_user(user_id, lang=lang)
+        return jsonify({'message': translate('user_deactivated', lang, 'dummy_users')})
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 404
 
-# --- Get specific user JSON ---
+
+# --- Get a specific user as JSON ---
 @dummy_user_bp.route('/<int:user_id>', methods=['GET'])
 def get_user(user_id):
     """
-    Route: Return specific user as JSON
+    Return a specific user as JSON.
+    Includes all fields and preferred sailing areas.
+    If not found, returns 404 with translated message.
     """
     user = get_dummy_user_by_id(user_id)
     if not user:
-        return jsonify({'error': 'User not found'}), 404
+        lang = session.get('lang', 'en')
+        return jsonify({'error': translate('user_not_found', lang, 'dummy_users')}), 404
+
     return jsonify({
         'id': user.id,
         'username': user.username,
