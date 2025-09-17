@@ -3,8 +3,10 @@
 {% block title %}{{ translate('create_new_user', lang, 'dummy_users') }}{% endblock %}
 
 {% block content %}
-<h2>{{ translate('create_new_user', lang, 'dummy_users') }}</h2>
+<!-- Page Heading -->
+<h2 class="mb-4">{{ translate('create_new_user', lang, 'dummy_users') }}</h2>
 
+<!-- Display error or success messages -->
 {% if error %}
   <div class="alert alert-danger">{{ error }}</div>
 {% endif %}
@@ -12,38 +14,59 @@
   <div class="alert alert-success">{{ message }}</div>
 {% endif %}
 
+<!-- User creation form -->
 <form method="POST" action="{{ url_for('dummy_user_bp.create_user_from_form') }}" class="mb-4">
+  <!-- Username (required) -->
   <div class="mb-3">
     <label for="username">{{ translate('username', lang, 'dummy_users') }} *</label>
     <input id="username" name="username" class="form-control" required>
   </div>
+
+  <!-- Email -->
   <div class="mb-3">
     <label for="email">{{ translate('email', lang, 'dummy_users') }}</label>
     <input id="email" name="email" class="form-control" type="email">
   </div>
+
+  <!-- Scenario -->
   <div class="mb-3">
     <label for="scenario">{{ translate('scenario', lang, 'dummy_users') }}</label>
     <input id="scenario" name="scenario" class="form-control">
   </div>
+
+  <!-- Gender -->
   <div class="mb-3">
     <label for="gender">{{ translate('gender', lang, 'dummy_users') }}</label>
-    <input id="gender" name="gender" class="form-control">
+    <select id="gender" name="gender" class="form-select">
+      <option value="">{{ translate('select', lang, 'global') }}</option>
+      <option value="male">{{ translate('male', lang, 'global') }}</option>
+      <option value="female">{{ translate('female', lang, 'global') }}</option>
+      <option value="other">{{ translate('other', lang, 'global') }}</option>
+    </select>
   </div>
+
+  <!-- Nationality -->
   <div class="mb-3">
     <label for="nationality">{{ translate('nationality', lang, 'dummy_users') }}</label>
     <input id="nationality" name="nationality" class="form-control">
   </div>
+
+  <!-- Language -->
   <div class="mb-3">
     <label for="language">{{ translate('language', lang, 'dummy_users') }}</label>
     <input id="language" name="language" class="form-control">
   </div>
+
+  <!-- Preferred sailing areas -->
   <div class="mb-3">
     <label for="preferred_sailing_areas">{{ translate('preferred_sailing_areas', lang, 'dummy_users') }}</label>
     <input id="preferred_sailing_areas" name="preferred_sailing_areas" class="form-control" placeholder="e.g., Oslo, Bergen">
   </div>
 
+  <!-- Submit button -->
   <button type="submit" class="btn btn-success">{{ translate('create_new_user', lang, 'dummy_users') }}</button>
 </form>
 
+<!-- Back button -->
 <a href="{{ url_for('dummy_user_bp.dummy_user_ui') }}" class="btn btn-secondary">{{ translate('back_to_user_list', lang, 'dummy_users') }}</a>
 {% endblock %}

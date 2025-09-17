@@ -3,9 +3,10 @@
 {% block title %}{{ translate('edit', lang, 'dummy_users') }}: {{ user.username }}{% endblock %}
 
 {% block content %}
+<!-- Page heading -->
 <h2>{{ translate('edit', lang, 'dummy_users') }}: {{ user.username }}</h2>
 
-<!-- Error / Success messages -->
+<!-- Alerts -->
 {% if error %}
   <div class="alert alert-danger">{{ error }}</div>
 {% endif %}
@@ -14,9 +15,9 @@
 {% endif %}
 
 <!-- Edit user form -->
-<form method="POST" action="{{ url_for('dummy_user_bp.update_dummy_user_form', user_id=user.id) }}">
+<form method="POST" action="{{ url_for('dummy_user_bp.update_dummy_user_form', user_id=user.id) }}" class="mb-4">
   <div class="mb-3">
-    <label for="username">{{ translate('username', lang, 'dummy_users') }}</label>
+    <label for="username">{{ translate('username', lang, 'dummy_users') }} *</label>
     <input id="username" name="username" class="form-control" value="{{ user.username }}" required>
   </div>
   <div class="mb-3">
@@ -41,10 +42,15 @@
   </div>
   <div class="mb-3">
     <label for="preferred_sailing_areas">{{ translate('preferred_sailing_areas', lang, 'dummy_users') }}</label>
-    <input id="preferred_sailing_areas" name="preferred_sailing_areas" class="form-control" value="{{ user.preferred_sailing_areas | join(', ') }}">
+    <input id="preferred_sailing_areas" name="preferred_sailing_areas" class="form-control" 
+           placeholder="e.g., Oslo, Bergen" 
+           value="{{ user.preferred_sailing_areas | join(', ') }}">
   </div>
 
+  <!-- Action buttons -->
   <button type="submit" class="btn btn-primary">{{ translate('apply', lang, 'global') }}</button>
-  <a href="{{ url_for('dummy_user_bp.dummy_user_ui') }}" class="btn btn-secondary ms-2">{{ translate('back_to_user_list', lang, 'dummy_users') }}</a>
+  <a href="{{ url_for('dummy_user_bp.dummy_user_ui', lang=lang) }}" class="btn btn-secondary ms-2">
+    {{ translate('back_to_user_list', lang, 'dummy_users') }}
+  </a>
 </form>
 {% endblock %}

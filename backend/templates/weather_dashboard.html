@@ -30,7 +30,7 @@
             <li>
               {{ translate('leg', lang, 'routes_page') }} {{ leg.leg_order }}: 
               {{ leg.departure_port.name if leg.departure_port else translate('unknown', lang, 'global') }} &rarr; 
-              {{ leg.arrival_port.name if leg.arrival_port else translate('unknown', lang, 'global') }},
+              {{ leg.arrival_port.name if leg.arrival_port else translate('unknown', lang, 'global') }} ,
               {{ translate('distance_nm', lang, 'routes_page') }}: {{ "%.1f"|format(leg.distance_nm or 0) }} nm,
               {{ translate('estimated_days', lang, 'routes_page') }}: 
               {{ ((leg.arrival_time - leg.departure_time).days) if leg.arrival_time and leg.departure_time else translate('not_available', lang, 'global') }}

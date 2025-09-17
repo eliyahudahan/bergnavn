@@ -36,6 +36,7 @@ scheduler = APScheduler()
 
 
 def create_app(config_name=None, testing=False, start_scheduler=False):
+    """Factory method to create and configure the Flask app."""
     if config_name is None:
         config_name = os.getenv('FLASK_ENV', 'default')
 
@@ -45,10 +46,10 @@ def create_app(config_name=None, testing=False, start_scheduler=False):
         static_folder=os.path.join('backend', 'static')
     )
 
-    # Register translate as template global
+    # Register translation function
     app.jinja_env.globals['translate'] = translate
 
-    # Configuration
+    # Load configuration
     if testing or config_name == 'testing':
         app.config.from_object('backend.config.config.TestingConfig')
     else:
@@ -66,7 +67,7 @@ def create_app(config_name=None, testing=False, start_scheduler=False):
         if not scheduler.running:
             scheduler.start()
 
-    # Add cleanup job if not exists
+    # Add periodic cleanup job if missing
     if scheduler.get_job('weekly_cleanup') is None:
         scheduler.add_job(
             id='weekly_cleanup',
@@ -75,7 +76,7 @@ def create_app(config_name=None, testing=False, start_scheduler=False):
             weeks=1
         )
 
-    # Import models
+    # Import models to ensure registration
     with app.app_context():
         from backend import models
         logging.info("App context initialized. Models imported.")
@@ -93,14 +94,14 @@ def create_app(config_name=None, testing=False, start_scheduler=False):
     app.register_blueprint(dashboard_bp, url_prefix='/dashboard')
     app.register_blueprint(dummy_user_bp)
 
-    logging.info("Blueprints registered")
+    logging.info("Blueprints registered successfully.")
 
-    # User loader for Flask-Login
+    # Flask-Login user loader
     @login_manager.user_loader
     def load_user(user_id):
         return User.query.get(int(user_id))
 
-    # Language handling: store in session
+    # Language selection per request
     @app.before_request
     def set_language():
         lang_param = request.args.get('lang')
@@ -108,7 +109,7 @@ def create_app(config_name=None, testing=False, start_scheduler=False):
             session['lang'] = lang_param
         session.setdefault('lang', 'en')
 
-    # CLI command to list all routes
+    # CLI: list routes
     @app.cli.command("list-routes")
     def list_routes():
         import urllib

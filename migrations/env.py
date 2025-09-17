@@ -23,6 +23,7 @@ logger = logging.getLogger('alembic.env')
 # Create Flask app and load models
 app = create_app()
 
+
 def get_engine_url():
     """
     Retrieve the database URL from Flask-Migrate's extension.
@@ -30,12 +31,28 @@ def get_engine_url():
     db_ext = current_app.extensions['migrate']
     return db_ext.db.engine.url.render_as_string(hide_password=False).replace('%', '%%')
 
+
 def get_metadata():
     """
     Retrieve SQLAlchemy metadata for autogenerate.
     """
     db_ext = current_app.extensions['migrate']
     return db_ext.db.metadata
+
+
+# List of PostGIS system tables we want Alembic to ignore
+EXCLUDE_TABLES = {"spatial_ref_sys", "geometry_columns", "geography_columns", "raster_columns", "raster_overviews"}
+
+
+def include_object(object, name, type_, reflected, compare_to):
+    """
+    Hook for Alembic's autogenerate to decide which objects to include.
+    We skip PostGIS internal tables.
+    """
+    if type_ == "table" and name in EXCLUDE_TABLES:
+        return False
+    return True
+
 
 with app.app_context():
     # Override URL from alembic.ini
@@ -50,6 +67,7 @@ with app.app_context():
             url=url,
             target_metadata=get_metadata(),
             literal_binds=True,
+            include_object=include_object,  # prevent PostGIS deletion
         )
         with context.begin_transaction():
             context.run_migrations()
@@ -75,6 +93,7 @@ with app.app_context():
             context.configure(
                 connection=connection,
                 target_metadata=get_metadata(),
+                include_object=include_object,  # prevent PostGIS deletion
                 **conf_args
             )
             with context.begin_transaction():
@@ -84,6 +103,3 @@ with app.app_context():
         run_migrations_offline()
     else:
         run_migrations_online()
-
-
-

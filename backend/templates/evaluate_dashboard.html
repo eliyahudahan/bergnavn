@@ -5,9 +5,9 @@
 {% block content %}
 <h2 class="mb-4">🛳️ {{ translate('route_evaluation_dashboard', lang, 'dashboard') }}</h2>
 
-<div class="table-responsive">
-  <table class="table table-bordered table-hover">
-    <thead class="table-dark">
+<div class="table-responsive mx-auto" style="max-width: 95%;">
+  <table class="table table-bordered table-hover align-middle" id="routes-table">
+    <thead class="table-dark text-center">
       <tr>
         <th>{{ translate('route_id', lang, 'routes_page') }}</th>
         <th>{{ translate('route_name', lang, 'routes_page') }}</th>
@@ -20,20 +20,28 @@
     <tbody>
       {% for route in routes %}
       <tr class="{% if route.status == 'OK' %}table-success{% elif route.status == 'REROUTE_NEEDED' %}table-danger{% else %}table-warning{% endif %}">
-        <td>{{ route.id }}</td>
-        <td>{{ route.name }}</td>
-        <td>{{ route.description or translate('not_available', lang, 'global') }}</td>
-        <td>{{ route.legs|length }}</td>
-        <td>{{ translate(route.status.lower(), lang, 'dashboard') }}</td>
-        <td>
-          {% if route.issues %}
-          <ul class="mb-0">
-            {% for issue in route.issues %}
-            <li>{{ issue }}</li>
-            {% endfor %}
-          </ul>
+        <td data-label="{{ translate('route_id', lang, 'routes_page') }}">{{ route.id }}</td>
+        <td data-label="{{ translate('route_name', lang, 'routes_page') }}">{{ route.name }}</td>
+        <td data-label="{{ translate('description', lang, 'routes_page') }}">{{ route.description or translate('not_available', lang, 'global') }}</td>
+        <td data-label="{{ translate('number_of_legs', lang, 'routes_page') }}">{{ route.legs|length }}</td>
+        <td data-label="{{ translate('status', lang, 'dashboard') }}">
+          {% if route.status == 'OK' %}
+            ✅ {{ translate('ok', lang, 'dashboard') }}
+          {% elif route.status == 'REROUTE_NEEDED' %}
+            ⚠️ {{ translate('reroute_needed', lang, 'dashboard') }}
           {% else %}
-          -
+            ⚠️ {{ translate('warning', lang, 'dashboard') }}
+          {% endif %}
+        </td>
+        <td data-label="{{ translate('issues', lang, 'dashboard') }}">
+          {% if route.issues %}
+            <ul class="mb-0">
+              {% for issue in route.issues %}
+                <li>{{ issue }}</li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            -
           {% endif %}
         </td>
       </tr>
@@ -45,4 +53,37 @@
     </tbody>
   </table>
 </div>
+
+<style>
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  #routes-table, #routes-table thead, #routes-table tbody, #routes-table th, #routes-table td, #routes-table tr {
+    display: block;
+    width: 100%;
+  }
+  #routes-table thead tr {
+    display: none;
+  }
+  #routes-table tbody tr {
+    margin-bottom: 1rem;
+    border: 1px solid #dee2e6;
+    padding: 0.5em;
+  }
+  #routes-table tbody td {
+    border: none;
+    position: relative;
+    padding-left: 50%;
+    text-align: left;
+  }
+  #routes-table tbody td::before {
+    position: absolute;
+    left: 0.75em;
+    top: 0.5em;
+    width: 45%;
+    white-space: nowrap;
+    font-weight: bold;
+    content: attr(data-label);
+  }
+}
+</style>
 {% endblock %}

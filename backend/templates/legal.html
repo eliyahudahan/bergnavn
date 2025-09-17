@@ -11,7 +11,7 @@
     <h3>{{ translate('english', lang, 'legal') }}</h3>
     <p>&copy; 2025 Eliyahu Dahan. {{ translate('all_rights_reserved', lang, 'legal') }}</p>
     <p>{{ translate('license_conditions_intro', lang, 'legal') }}</p>
-    <ol>
+    <ol class="ps-4">
       <li>{{ translate('attribution_required', lang, 'legal') }}</li>
       <li>{{ translate('freedom_to_modify', lang, 'legal') }}</li>
       <li>{{ translate('no_false_claims', lang, 'legal') }}</li>
@@ -20,16 +20,26 @@
   </section>
 
   <!-- Norwegian Section -->
-  <section>
+  <section class="mb-5">
     <h3>{{ translate('norwegian', lang, 'legal') }}</h3>
     <p>&copy; 2025 Eliyahu Dahan. {{ translate('all_rights_reserved', lang, 'legal') }}</p>
     <p>{{ translate('license_conditions_intro', lang, 'legal') }}</p>
-    <ol>
+    <ol class="ps-4">
       <li>{{ translate('attribution_required', lang, 'legal') }}</li>
       <li>{{ translate('freedom_to_modify', lang, 'legal') }}</li>
       <li>{{ translate('no_false_claims', lang, 'legal') }}</li>
       <li>{{ translate('disclaimer', lang, 'legal') }}</li>
     </ol>
   </section>
+
+  <!-- Footer / Navigation -->
+  <div class="mt-5 text-center">
+    <a href="{{ url_for('main_bp.home') }}" class="btn btn-primary">
+      {{ translate('back_to_home', lang, 'global') }}
+    </a>
+    <p class="text-muted mt-3 small">
+      {{ translate('legal_note_institutional', lang, 'legal') }}
+    </p>
+  </div>
 </div>
 {% endblock %}

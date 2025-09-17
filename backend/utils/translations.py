@@ -19,7 +19,8 @@ TRANSLATIONS = {
             "license_legal": "License / Legal",
             "activate": "Activate",
             "deactivate": "Deactivate",
-            "all": "All"
+            "all": "All",
+            "back_to_home": "Back to Home"
         },
         "dummy_users": {
             "title": "Dummy Users",
@@ -79,6 +80,18 @@ TRANSLATIONS = {
             "no_routes_found": "No routes found",
             "unknown": "Unknown",
         },
+        "legal": {
+            "open_license": "Open License",
+            "english": "English",
+            "norwegian": "Norwegian",
+            "all_rights_reserved": "All rights reserved",
+            "license_conditions_intro": "The license conditions apply to the use, copying, and distribution of this material:",
+            "attribution_required": "Attribution is required when reusing.",
+            "freedom_to_modify": "Freedom to modify content for personal use.",
+            "no_false_claims": "No false claims of authorship.",
+            "disclaimer": "All content is provided as-is, without warranties.",
+            "legal_note_institutional": "This document may be used for official, academic, or institutional purposes."
+        }
     },
     "no": {
         "global": {
@@ -98,7 +111,8 @@ TRANSLATIONS = {
             "license_legal": "Lisens / Juridisk",
             "activate": "Aktiver",
             "deactivate": "Deaktiver",
-            "all": "Alle"
+            "all": "Alle",
+            "back_to_home": "Tilbake til Hjem"
         },
         "dummy_users": {
             "title": "Dummybrukere",
@@ -158,6 +172,18 @@ TRANSLATIONS = {
             "no_routes_found": "Ingen ruter funnet",
             "unknown": "Ukjent",
         },
+        "legal": {
+            "open_license": "Åpen lisens",
+            "english": "Engelsk",
+            "norwegian": "Norsk",
+            "all_rights_reserved": "Alle rettigheter reservert",
+            "license_conditions_intro": "Lisensbetingelsene gjelder for bruk, kopiering og distribusjon av dette materialet:",
+            "attribution_required": "Kreditering kreves ved gjenbruk.",
+            "freedom_to_modify": "Frihet til å modifisere innholdet for eget bruk.",
+            "no_false_claims": "Ingen falske påstander om forfatterskap.",
+            "disclaimer": "Alt innhold leveres som det er, uten garantier.",
+            "legal_note_institutional": "Dette dokumentet kan brukes til offisielle, akademiske eller institusjonelle formål."
+        }
     },
 }
 

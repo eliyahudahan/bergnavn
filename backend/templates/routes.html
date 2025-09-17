@@ -49,4 +49,12 @@
     </tbody>
   </table>
 </div>
+
+<!-- Back to home link -->
+<div class="mt-4 text-center">
+  <a href="{{ url_for('user.home') }}" class="btn btn-primary">
+    {{ translate('back_to_home', lang, 'global') }}
+  </a>
+</div>
+
 {% endblock %}
