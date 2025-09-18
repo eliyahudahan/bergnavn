@@ -18,10 +18,10 @@
   <!-- Navigation bar -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
     <div class="container">
-      <!-- Brand with logo -->
-      <a class="navbar-brand d-flex align-items-center" href="{{ url_for('dashboard_bp.dashboard') }}">
+      <!-- Brand with logo (FIXED: now links to homepage) -->
+      <a class="navbar-brand d-flex align-items-center" href="{{ url_for('main_bp.home') }}">
         <img src="{{ url_for('static', filename='images/bergnavn_icon.png') }}" alt="BergNavn Logo" />
-        <span>{{ translate('dashboard', session.get('lang', 'en'), 'global')|title }}</span>
+        <span>{{ translate('home_welcome', session.get('lang', 'en'), 'global')|title }}</span>
       </a>
 
       <!-- Mobile toggle button -->
