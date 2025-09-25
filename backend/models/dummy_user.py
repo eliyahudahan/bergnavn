@@ -2,7 +2,6 @@ from backend import db
 from datetime import datetime
 from sqlalchemy.ext.mutable import MutableList
 from sqlalchemy import JSON
-import os
 
 class DummyUser(db.Model):
     __tablename__ = 'dummy_users'
@@ -19,16 +18,16 @@ class DummyUser(db.Model):
     nationality = db.Column(db.String(50))
     language = db.Column(db.String(10))
 
-    # Use JSON + MutableList for testing and SQLite compatibility
-    if os.environ.get('TESTING') == '1':
-        preferred_sailing_areas = db.Column(MutableList.as_mutable(JSON), default=[])
-    else:
-        from sqlalchemy.dialects.postgresql import ARRAY
-        preferred_sailing_areas = db.Column(ARRAY(db.String), default=[])
+    # Always JSON – works both with SQLite and PostgreSQL
+    preferred_sailing_areas = db.Column(
+        MutableList.as_mutable(JSON),
+        nullable=False,
+        default=list
+    )
 
     def __repr__(self):
         return f'<DummyUser {self.username}>'
 
-    # helper method to safely set preferred sailing areas
+    # Helper method to safely set preferred sailing areas
     def set_preferred_sailing_areas(self, areas):
         self.preferred_sailing_areas = areas or []
