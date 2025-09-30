@@ -1,0 +1,42 @@
+{
+  "id": "egersund",
+  "name": "Egersund Harbor",
+  "category": "harbor",
+  "coordinates": [
+    58.4511509,
+    6.0073074
+  ],
+  "coordinates_approximate": true,
+  "operational_status": "ACTIVE",
+  "timezone": "Europe/Oslo",
+  "harbor_code": "NOGES",
+  "nav_points": [
+    [
+      58.4509,
+      6.0055
+    ],
+    [
+      58.45115,
+      6.0073
+    ]
+  ],
+  "description": "Small coastal harbor, used as a stopover between Kristiansand and Stavanger.",
+  "related_ports": [
+    "stavanger",
+    "kristiansand"
+  ],
+  "accessibility": "sea access",
+  "family_suitability": "unknown",
+  "difficulty": "unknown",
+  "facilities": {
+    "passenger_terminal": true,
+    "cargo_terminal": false,
+    "customs": true,
+    "fuel": true
+  },
+  "last_verified": null,
+  "source": "user-entry",
+  "sunrise_local": null,
+  "sunset_local": null,
+  "notes": "Important waypoint in southern Norway, fishing and maritime hub."
+}

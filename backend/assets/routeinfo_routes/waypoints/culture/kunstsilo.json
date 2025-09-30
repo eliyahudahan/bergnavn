@@ -1,0 +1,25 @@
+{
+  "id": "kunstsilo",
+  "name": "Kunstsilo",
+  "category": "culture",
+  "coordinates": [
+    58.1469,
+    7.9956
+  ],
+  "coordinates_approximate": false,
+  "description": "Modern art museum in Kristiansand, housed in a converted grain silo.",
+  "related_ports": [
+    "kristiansand"
+  ],
+  "accessibility": "walk from port",
+  "family_suitability": "true",
+  "difficulty": "easy",
+  "last_verified": "2025-09-29",
+  "source": "norgeskart.no",
+  "timezone": "Europe/Oslo",
+  "notes": "New flagship cultural site in southern Norway.",
+  "operational_status": "ACTIVE",
+  "nav_points": [],
+  "sunrise_local": null,
+  "sunset_local": null
+}

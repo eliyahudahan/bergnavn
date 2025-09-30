@@ -1,0 +1,27 @@
+{
+  "id": "trolltunga",
+  "name": "Trolltunga",
+  "category": "nature",
+  "coordinates": [
+    60.13083,
+    6.75417
+  ],
+  "coordinates_approximate": true,
+  "description": "Famous rock formation jutting over Ringedalsvatnet, dramatic view.",
+  "related_ports": [
+    "odda",
+    "bergen",
+    "trondheim"
+  ],
+  "accessibility": "boat+road+hike",
+  "family_suitability": "conditional",
+  "difficulty": "challenging",
+  "last_verified": null,
+  "source": "norgeskart.no",
+  "timezone": "Europe/Oslo",
+  "notes": "Challenging hike, recommended only in summer months.",
+  "operational_status": "ACTIVE",
+  "nav_points": [],
+  "sunrise_local": null,
+  "sunset_local": null
+}

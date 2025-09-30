@@ -1,0 +1,25 @@
+{
+  "id": "preikestolen",
+  "name": "Preikestolen",
+  "category": "nature",
+  "coordinates": [
+    58.9861,
+    6.19
+  ],
+  "coordinates_approximate": true,
+  "description": "Iconic cliff overlooking Lysefjord, popular shore excursion from Stavanger.",
+  "related_ports": [
+    "stavanger"
+  ],
+  "accessibility": "boat+bus+hike",
+  "family_suitability": "conditional",
+  "difficulty": "challenging",
+  "last_verified": null,
+  "source": "norgeskart.no",
+  "timezone": "Europe/Oslo",
+  "notes": "Major natural attraction with seasonal access limitations.",
+  "operational_status": "ACTIVE",
+  "nav_points": [],
+  "sunrise_local": null,
+  "sunset_local": null
+}

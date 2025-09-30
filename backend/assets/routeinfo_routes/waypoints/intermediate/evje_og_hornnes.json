@@ -1,0 +1,25 @@
+{
+  "id": "evje_og_hornnes",
+  "name": "Evje og Hornnes",
+  "category": "intermediate",
+  "coordinates": [
+    58.5833,
+    7.8
+  ],
+  "coordinates_approximate": true,
+  "description": "Inland municipality along the Otra river, offering calm natural surroundings and outdoor activities.",
+  "related_ports": [
+    "kristiansand"
+  ],
+  "accessibility": "road",
+  "family_suitability": "true",
+  "difficulty": "easy",
+  "last_verified": null,
+  "source": "norgeskart.no",
+  "timezone": "Europe/Oslo",
+  "notes": "Recreational area with cultural and outdoor relevance.",
+  "operational_status": "ACTIVE",
+  "nav_points": [],
+  "sunrise_local": null,
+  "sunset_local": null
+}
