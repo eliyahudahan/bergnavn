@@ -1,0 +1,42 @@
+[
+  {
+    "name": "Breisunddjupet",
+    "latitude": 62.51022878,
+    "longitude": 5.68239097
+  },
+  {
+    "name": "Breisundet",
+    "latitude": 62.44828561,
+    "longitude": 5.91428191
+  },
+  {
+    "name": "Eltraneset lt",
+    "latitude": 62.44618084,
+    "longitude": 6.05318243
+  },
+  {
+    "name": "Hessafjorden",
+    "latitude": 62.44636362,
+    "longitude": 6.11197795
+  },
+  {
+    "name": "Rognholmen lt",
+    "latitude": 62.4551797,
+    "longitude": 6.17622405
+  },
+  {
+    "name": "Gasholmen",
+    "latitude": 62.45634169,
+    "longitude": 6.20368526
+  },
+  {
+    "name": "Bogneset",
+    "latitude": 62.45173133,
+    "longitude": 6.24948118
+  },
+  {
+    "name": "Spjelkavik",
+    "latitude": 62.45783276,
+    "longitude": 6.3449976
+  }
+]

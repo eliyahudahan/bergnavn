@@ -1,0 +1,37 @@
+[
+  {
+    "name": "Skudefjorden",
+    "latitude": 59.07453632,
+    "longitude": 5.34574312
+  },
+  {
+    "name": "Sveinane",
+    "latitude": 59.10844223,
+    "longitude": 5.46654488
+  },
+  {
+    "name": "Arsgrunnen",
+    "latitude": 59.09974633,
+    "longitude": 5.51121158
+  },
+  {
+    "name": "Bragen lt",
+    "latitude": 59.04546091,
+    "longitude": 5.58532745
+  },
+  {
+    "name": "Mekjarvik",
+    "latitude": 59.02928999,
+    "longitude": 5.62065085
+  },
+  {
+    "name": "Dusaviga",
+    "latitude": 59.00260332,
+    "longitude": 5.68410413
+  },
+  {
+    "name": "Stavanger",
+    "latitude": 58.97757596,
+    "longitude": 5.72596554
+  }
+]

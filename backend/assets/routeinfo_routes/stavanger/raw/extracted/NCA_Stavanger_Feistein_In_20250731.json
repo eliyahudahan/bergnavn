@@ -1,0 +1,52 @@
+[
+  {
+    "name": "Skotemedgrunnen",
+    "latitude": 58.79532251,
+    "longitude": 5.39650141
+  },
+  {
+    "name": "Feistein pilot boarding",
+    "latitude": 58.85413962,
+    "longitude": 5.51533482
+  },
+  {
+    "name": "Midtfjaera",
+    "latitude": 58.92975588,
+    "longitude": 5.55001726
+  },
+  {
+    "name": "Dalhaugflua",
+    "latitude": 58.98092821,
+    "longitude": 5.55315073
+  },
+  {
+    "name": "Boskjenane",
+    "latitude": 59.00735737,
+    "longitude": 5.54951155
+  },
+  {
+    "name": "Bragen lt",
+    "latitude": 59.04250287,
+    "longitude": 5.55235971
+  },
+  {
+    "name": "Bragen lt",
+    "latitude": 59.04788543,
+    "longitude": 5.56516194
+  },
+  {
+    "name": "Mekjarvik",
+    "latitude": 59.02928999,
+    "longitude": 5.62065085
+  },
+  {
+    "name": "Dusaviga",
+    "latitude": 59.00260332,
+    "longitude": 5.68410413
+  },
+  {
+    "name": "Stavanger",
+    "latitude": 58.97757596,
+    "longitude": 5.72596554
+  }
+]

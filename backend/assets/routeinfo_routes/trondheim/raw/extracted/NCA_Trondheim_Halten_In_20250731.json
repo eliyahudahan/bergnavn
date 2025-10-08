@@ -1,0 +1,87 @@
+[
+  {
+    "name": "Frohavet",
+    "latitude": 64.25626858,
+    "longitude": 9.75179652
+  },
+  {
+    "name": "Tarva lt",
+    "latitude": 63.82722217,
+    "longitude": 9.26903527
+  },
+  {
+    "name": "Svissaflua 16 m",
+    "latitude": 63.7006193,
+    "longitude": 9.24036868
+  },
+  {
+    "name": "Flesa pilot boarding",
+    "latitude": 63.65054591,
+    "longitude": 9.24847105
+  },
+  {
+    "name": "Kommersoy",
+    "latitude": 63.62132461,
+    "longitude": 9.30684108
+  },
+  {
+    "name": "Smellingflua",
+    "latitude": 63.6141898,
+    "longitude": 9.49231755
+  },
+  {
+    "name": "Roysaneset lt",
+    "latitude": 63.6276,
+    "longitude": 9.58473333
+  },
+  {
+    "name": "Hogholmen lt",
+    "latitude": 63.65451667,
+    "longitude": 9.6863
+  },
+  {
+    "name": "Kjerringa",
+    "latitude": 63.65545,
+    "longitude": 9.72803333
+  },
+  {
+    "name": "Ringflua lt",
+    "latitude": 63.65016342,
+    "longitude": 9.7631476
+  },
+  {
+    "name": "Hysneset lt",
+    "latitude": 63.62456759,
+    "longitude": 9.77597641
+  },
+  {
+    "name": "Storneset",
+    "latitude": 63.49520805,
+    "longitude": 9.90840994
+  },
+  {
+    "name": "Rodbergneset",
+    "latitude": 63.47576245,
+    "longitude": 9.9787621
+  },
+  {
+    "name": "Flakkfjorden",
+    "latitude": 63.46752128,
+    "longitude": 10.19017705
+  },
+  {
+    "name": "Digermulen",
+    "latitude": 63.45845001,
+    "longitude": 10.30423466
+  },
+  {
+    "name": "Nordneset",
+    "latitude": 63.45073333,
+    "longitude": 10.34578333
+  },
+  {
+    "name": "Trondheim",
+    "latitude": 63.44545,
+    "longitude": 10.36245
+  }
+]

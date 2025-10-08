@@ -1,0 +1,297 @@
+[
+  {
+    "name": "Ottersoya",
+    "latitude": 64.85848333,
+    "longitude": 11.25641667
+  },
+  {
+    "name": "Maroyskjer lt",
+    "latitude": 64.85703333,
+    "longitude": 11.23763333
+  },
+  {
+    "name": "Rorvik",
+    "latitude": 64.85283333,
+    "longitude": 11.22413333
+  },
+  {
+    "name": "Naeroysundet lt",
+    "latitude": 64.84155,
+    "longitude": 11.19825
+  },
+  {
+    "name": "Naeroysundet",
+    "latitude": 64.79233564,
+    "longitude": 11.08758932
+  },
+  {
+    "name": "Grinna lt",
+    "latitude": 64.75396518,
+    "longitude": 11.01470258
+  },
+  {
+    "name": "Grinna pilot boarding",
+    "latitude": 64.73494268,
+    "longitude": 10.9640142
+  },
+  {
+    "name": "Gjaeslingan S",
+    "latitude": 64.69176762,
+    "longitude": 10.78735538
+  },
+  {
+    "name": "Langroa lt",
+    "latitude": 64.47170985,
+    "longitude": 10.42725392
+  },
+  {
+    "name": "Buholmrasa",
+    "latitude": 64.42262919,
+    "longitude": 10.44930023
+  },
+  {
+    "name": "Nordre Nesvagflua",
+    "latitude": 64.41261667,
+    "longitude": 10.44068333
+  },
+  {
+    "name": "Saksa lt",
+    "latitude": 64.40185318,
+    "longitude": 10.43136417
+  },
+  {
+    "name": "Saksa lt",
+    "latitude": 64.39914709,
+    "longitude": 10.43235449
+  },
+  {
+    "name": "Oksholmen lt",
+    "latitude": 64.37561225,
+    "longitude": 10.4637894
+  },
+  {
+    "name": "Oksholmen lt",
+    "latitude": 64.36730317,
+    "longitude": 10.46354527
+  },
+  {
+    "name": "Bjorsneset lt",
+    "latitude": 64.35503703,
+    "longitude": 10.43864239
+  },
+  {
+    "name": "Ramsoyodden lt",
+    "latitude": 64.33206988,
+    "longitude": 10.44795111
+  },
+  {
+    "name": "Ramsoysundet",
+    "latitude": 64.32627323,
+    "longitude": 10.4375797
+  },
+  {
+    "name": "Finnmarkstoyten",
+    "latitude": 64.31466566,
+    "longitude": 10.406931
+  },
+  {
+    "name": "Mosterskjeret lt",
+    "latitude": 64.29287586,
+    "longitude": 10.3359438
+  },
+  {
+    "name": "Drogsholmen lt",
+    "latitude": 64.27840619,
+    "longitude": 10.32305589
+  },
+  {
+    "name": "Bessaker lt",
+    "latitude": 64.25409586,
+    "longitude": 10.32480693
+  },
+  {
+    "name": "Bessaker lt",
+    "latitude": 64.25059982,
+    "longitude": 10.31571116
+  },
+  {
+    "name": "Bessakersundet lt",
+    "latitude": 64.24832585,
+    "longitude": 10.29656479
+  },
+  {
+    "name": "Bessakersundet lt",
+    "latitude": 64.24553939,
+    "longitude": 10.28562354
+  },
+  {
+    "name": "Terningen lt",
+    "latitude": 64.22751477,
+    "longitude": 10.22407808
+  },
+  {
+    "name": "Kjeoya lt",
+    "latitude": 64.19208301,
+    "longitude": 10.1671343
+  },
+  {
+    "name": "Marflesa lt",
+    "latitude": 64.16464868,
+    "longitude": 10.12188332
+  },
+  {
+    "name": "Krosskjera lt",
+    "latitude": 64.14577098,
+    "longitude": 10.10910921
+  },
+  {
+    "name": "Galten lt",
+    "latitude": 64.13341722,
+    "longitude": 10.09110026
+  },
+  {
+    "name": "Storskjeret lt",
+    "latitude": 64.05781529,
+    "longitude": 9.8353776
+  },
+  {
+    "name": "Langtaren",
+    "latitude": 64.03402477,
+    "longitude": 9.78175505
+  },
+  {
+    "name": "Trebaan",
+    "latitude": 64.00208309,
+    "longitude": 9.77486833
+  },
+  {
+    "name": "Nautflu lt",
+    "latitude": 63.9299738,
+    "longitude": 9.78761047
+  },
+  {
+    "name": "Treholmen lt",
+    "latitude": 63.89180962,
+    "longitude": 9.76071426
+  },
+  {
+    "name": "Kvaloya lt",
+    "latitude": 63.8759423,
+    "longitude": 9.71046929
+  },
+  {
+    "name": "Torramuren bn",
+    "latitude": 63.85839234,
+    "longitude": 9.66349164
+  },
+  {
+    "name": "Hestvadfluene lt",
+    "latitude": 63.83286762,
+    "longitude": 9.62331332
+  },
+  {
+    "name": "Valsholmflua lt",
+    "latitude": 63.81311788,
+    "longitude": 9.57844581
+  },
+  {
+    "name": "Vettabaen lt",
+    "latitude": 63.79813091,
+    "longitude": 9.56888423
+  },
+  {
+    "name": "Bjugnskjaeret lt",
+    "latitude": 63.76196902,
+    "longitude": 9.53183869
+  },
+  {
+    "name": "Kjeungskjaeret lt",
+    "latitude": 63.72799338,
+    "longitude": 9.53924168
+  },
+  {
+    "name": "Ribeflua lt",
+    "latitude": 63.70395306,
+    "longitude": 9.50928355
+  },
+  {
+    "name": "Haflua 5 m",
+    "latitude": 63.69621667,
+    "longitude": 9.50610665
+  },
+  {
+    "name": "Raudsidegrunnen",
+    "latitude": 63.6615539,
+    "longitude": 9.47290521
+  },
+  {
+    "name": "Tjuvholmen",
+    "latitude": 63.64324902,
+    "longitude": 9.48498826
+  },
+  {
+    "name": "Nebbtaren",
+    "latitude": 63.63377173,
+    "longitude": 9.48463763
+  },
+  {
+    "name": "Smellingflua",
+    "latitude": 63.62582586,
+    "longitude": 9.49850887
+  },
+  {
+    "name": "Roysaneset lt",
+    "latitude": 63.6276,
+    "longitude": 9.58473333
+  },
+  {
+    "name": "Hogholmen lt",
+    "latitude": 63.65451667,
+    "longitude": 9.6863
+  },
+  {
+    "name": "Kjerringa",
+    "latitude": 63.65545,
+    "longitude": 9.72803333
+  },
+  {
+    "name": "Ringflua lt",
+    "latitude": 63.65016342,
+    "longitude": 9.7631476
+  },
+  {
+    "name": "Hysneset lt",
+    "latitude": 63.62456759,
+    "longitude": 9.77597641
+  },
+  {
+    "name": "Storneset",
+    "latitude": 63.49520805,
+    "longitude": 9.90840994
+  },
+  {
+    "name": "Rodbergneset",
+    "latitude": 63.47576245,
+    "longitude": 9.9787621
+  },
+  {
+    "name": "Flakkfjorden",
+    "latitude": 63.46752128,
+    "longitude": 10.19017705
+  },
+  {
+    "name": "Digermulen",
+    "latitude": 63.45845001,
+    "longitude": 10.30423466
+  },
+  {
+    "name": "Nordneset",
+    "latitude": 63.45073333,
+    "longitude": 10.34578333
+  },
+  {
+    "name": "Trondheim",
+    "latitude": 63.44545,
+    "longitude": 10.36245
+  }
+]

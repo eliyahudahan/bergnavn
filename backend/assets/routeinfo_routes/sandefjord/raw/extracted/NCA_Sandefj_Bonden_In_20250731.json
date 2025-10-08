@@ -1,0 +1,32 @@
+[
+  {
+    "name": "Bonden",
+    "latitude": 58.96650203,
+    "longitude": 10.26037728
+  },
+  {
+    "name": "Leikarhausen",
+    "latitude": 59.00672609,
+    "longitude": 10.26409337
+  },
+  {
+    "name": "Holtskjaeret",
+    "latitude": 59.03986166,
+    "longitude": 10.2547104
+  },
+  {
+    "name": "Bueroya",
+    "latitude": 59.08792901,
+    "longitude": 10.24113205
+  },
+  {
+    "name": "Thoroya",
+    "latitude": 59.10482164,
+    "longitude": 10.23231757
+  },
+  {
+    "name": "Ranvik",
+    "latitude": 59.11361029,
+    "longitude": 10.22580123
+  }
+]

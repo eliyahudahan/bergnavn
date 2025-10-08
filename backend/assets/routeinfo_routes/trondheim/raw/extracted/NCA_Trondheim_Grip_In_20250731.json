@@ -1,0 +1,117 @@
+[
+  {
+    "name": "Grip outer pilot boarding",
+    "latitude": 63.25096667,
+    "longitude": 7.5957
+  },
+  {
+    "name": "Grip inner pilot boarding",
+    "latitude": 63.23285672,
+    "longitude": 7.70226658
+  },
+  {
+    "name": "Godtaren lt",
+    "latitude": 63.22408419,
+    "longitude": 7.76305131
+  },
+  {
+    "name": "Baeflua",
+    "latitude": 63.21593032,
+    "longitude": 7.86628357
+  },
+  {
+    "name": "Hammarsundet lt",
+    "latitude": 63.22406531,
+    "longitude": 7.955446
+  },
+  {
+    "name": "Edoy lt",
+    "latitude": 63.27350456,
+    "longitude": 8.15418194
+  },
+  {
+    "name": "Kyrhaug lt",
+    "latitude": 63.30301326,
+    "longitude": 8.23864242
+  },
+  {
+    "name": "Klakksbroren lt",
+    "latitude": 63.3620164,
+    "longitude": 8.39161336
+  },
+  {
+    "name": "Skipnesstranda",
+    "latitude": 63.39426323,
+    "longitude": 8.51450151
+  },
+  {
+    "name": "Terningen lt",
+    "latitude": 63.48809477,
+    "longitude": 9.04547051
+  },
+  {
+    "name": "Storaflu lt",
+    "latitude": 63.55761794,
+    "longitude": 9.33332465
+  },
+  {
+    "name": "Bjornoyflua lt",
+    "latitude": 63.58326667,
+    "longitude": 9.44231667
+  },
+  {
+    "name": "Roysaneset lt",
+    "latitude": 63.6276,
+    "longitude": 9.58473333
+  },
+  {
+    "name": "Hogholmen lt",
+    "latitude": 63.65451667,
+    "longitude": 9.6863
+  },
+  {
+    "name": "Kjerringa",
+    "latitude": 63.65545,
+    "longitude": 9.72803333
+  },
+  {
+    "name": "Ringflua lt",
+    "latitude": 63.65016342,
+    "longitude": 9.7631476
+  },
+  {
+    "name": "Hysneset lt",
+    "latitude": 63.62456759,
+    "longitude": 9.77597641
+  },
+  {
+    "name": "Storneset",
+    "latitude": 63.49520805,
+    "longitude": 9.90840994
+  },
+  {
+    "name": "Rodbergneset",
+    "latitude": 63.47576245,
+    "longitude": 9.9787621
+  },
+  {
+    "name": "Flakkfjorden",
+    "latitude": 63.46752128,
+    "longitude": 10.19017705
+  },
+  {
+    "name": "Digermulen",
+    "latitude": 63.45845001,
+    "longitude": 10.30423466
+  },
+  {
+    "name": "Nordneset",
+    "latitude": 63.45073333,
+    "longitude": 10.34578333
+  },
+  {
+    "name": "Trondheim",
+    "latitude": 63.44545,
+    "longitude": 10.36245
+  }
+]

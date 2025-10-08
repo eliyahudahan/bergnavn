@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<route xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="1.0" xmlns="https://cirm.org/rtz-xml-schemas">
+  <routeInfo routeName="NCA_Bergen_Marstein_Vatlestr_In_20250801" validityPeriodStart="2025-08-01T00:00:00" validityPeriodStop="2026-08-05T00:00:00" />
+  <waypoints>
+    <defaultWaypoint radius="0.3">
+      <leg starboardXTD="0.1" portsideXTD="0.1" safetyContour="20" safetyDepth="20" geometryType="Loxodrome" staticUKC="0" dynamicUKC="0" />
+    </defaultWaypoint>
+    <waypoint id="1" name="Marstein - report to Fedje VTS on channel 71">
+      <position lat="60.13368985" lon="4.94190865" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="2" name="Korsfjorden pilot boarding">
+      <position lat="60.14298606" lon="5.01516263" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="3" name="Ytstaskjeret">
+      <position lat="60.15898491" lon="5.11750864" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="4" name="Kleppevik">
+      <position lat="60.18462202" lon="5.18044637" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="5" name="Bornestangen">
+      <position lat="60.20167374" lon="5.18760405" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="6" name="Leroyna">
+      <position lat="60.22567043" lon="5.16787688" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="7" name="Tangaflu">
+      <position lat="60.24105802" lon="5.1581574" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="8" name="Raunane">
+      <position lat="60.26387405" lon="5.16194577" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="9" name="Fleslandsskjeret">
+      <position lat="60.28143773" lon="5.19087968" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="10" name="Fleslandsskjeret">
+      <position lat="60.29458717" lon="5.19511147" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="11" name="Bjoroy">
+      <position lat="60.32174987" lon="5.20131772" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="12" name="Hilleren">
+      <position lat="60.33228133" lon="5.19577597" />
+      <leg starboardXTD="0.08" portsideXTD="0.08" legInfo="" />
+    </waypoint>
+    <waypoint id="13" name="Hilleren">
+      <position lat="60.33447757" lon="5.19332927" />
+      <leg starboardXTD="0.05" portsideXTD="0.05" legInfo="" />
+    </waypoint>
+    <waypoint id="14" name="Trollholmen">
+      <position lat="60.3393337" lon="5.17886617" />
+      <leg starboardXTD="0.05" portsideXTD="0.05" legInfo="" />
+    </waypoint>
+    <waypoint id="15" name="Hakonshella">
+      <position lat="60.34389968" lon="5.17235867" />
+      <leg starboardXTD="0.05" portsideXTD="0.05" legInfo="" />
+    </waypoint>
+    <waypoint id="16" name="Stongi lt">
+      <position lat="60.36334047" lon="5.17028245" />
+      <leg starboardXTD="0.07" portsideXTD="0.07" legInfo="" />
+    </waypoint>
+    <waypoint id="17" name="Sotra bridge">
+      <position lat="60.37389122" lon="5.16562847" />
+      <leg starboardXTD="0.07" portsideXTD="0.07" legInfo="" />
+    </waypoint>
+    <waypoint id="18" name="Tollneset">
+      <position lat="60.38081667" lon="5.17373333" />
+      <leg starboardXTD="0.08" portsideXTD="0.08" legInfo="" />
+    </waypoint>
+    <waypoint id="19" name="Askoy bridge">
+      <position lat="60.39461667" lon="5.21598333" />
+      <leg starboardXTD="0.08" portsideXTD="0.08" legInfo="" />
+    </waypoint>
+    <waypoint id="20" name="Kvarven">
+      <position lat="60.40115" lon="5.23995" />
+      <leg starboardXTD="0.08" portsideXTD="0.08" legInfo="" />
+    </waypoint>
+    <waypoint id="21" name="Bergen">
+      <position lat="60.40105" lon="5.27515" />
+      <leg starboardXTD="0.08" portsideXTD="0.08" legInfo="" />
+    </waypoint>
+  </waypoints>
+  <extensions>
+    <extension manufacturer="Norwegian Coastal Administration" fullName="Bergen - Marstein via Vatlestraumen Inbound" productinfo="See information on http://www.routeinfo.no before use of this Reference Route for Navigation. The Reference Routes from NCA can be used as a basis in route planning. For routes with no comments on vessel size, 150 meter length and 9 meter draught has been used to quality assure the routes. Limitations in size of vessel may vary along the route caused by regulation or depths." routeNumber="NO-410015" xmlns="" />
+  </extensions>
+</route>

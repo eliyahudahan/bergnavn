@@ -1,0 +1,242 @@
+[
+  {
+    "name": "Skudefjorden",
+    "latitude": 59.07453632,
+    "longitude": 5.34574312
+  },
+  {
+    "name": "Kleppflua",
+    "latitude": 59.15635442,
+    "longitude": 5.35808775
+  },
+  {
+    "name": "report to Kvitsoy VTS on channel 19",
+    "latitude": 59.20001667,
+    "longitude": 5.3537
+  },
+  {
+    "name": "Smorstakk",
+    "latitude": 59.25189998,
+    "longitude": 5.34535537
+  },
+  {
+    "name": "Dua",
+    "latitude": 59.29874992,
+    "longitude": 5.33042897
+  },
+  {
+    "name": "Kulorten",
+    "latitude": 59.3193396,
+    "longitude": 5.33001383
+  },
+  {
+    "name": "Sniksholmen",
+    "latitude": 59.34420298,
+    "longitude": 5.31456857
+  },
+  {
+    "name": "Bukkoy",
+    "latitude": 59.35420363,
+    "longitude": 5.31253787
+  },
+  {
+    "name": "Bovagen",
+    "latitude": 59.36361017,
+    "longitude": 5.30045652
+  },
+  {
+    "name": "Norheim",
+    "latitude": 59.37936892,
+    "longitude": 5.29420738
+  },
+  {
+    "name": "Rossabonakken",
+    "latitude": 59.3879337,
+    "longitude": 5.28849498
+  },
+  {
+    "name": "Storesundsskjerene",
+    "latitude": 59.40154267,
+    "longitude": 5.26782083
+  },
+  {
+    "name": "Trollholmen",
+    "latitude": 59.41251052,
+    "longitude": 5.24318703
+  },
+  {
+    "name": "Akeroya",
+    "latitude": 59.41633353,
+    "longitude": 5.23736477
+  },
+  {
+    "name": "Tonjer",
+    "latitude": 59.42516917,
+    "longitude": 5.22954605
+  },
+  {
+    "name": "Skaretreboen",
+    "latitude": 59.43174993,
+    "longitude": 5.23013027
+  },
+  {
+    "name": "Bleivika",
+    "latitude": 59.47872675,
+    "longitude": 5.21468678
+  },
+  {
+    "name": "Bloksene",
+    "latitude": 59.54092678,
+    "longitude": 5.2077731
+  },
+  {
+    "name": "Nappholmane",
+    "latitude": 59.64514263,
+    "longitude": 5.3255642
+  },
+  {
+    "name": "Midvikoya",
+    "latitude": 59.68343785,
+    "longitude": 5.399857
+  },
+  {
+    "name": "Leirvik",
+    "latitude": 59.77255127,
+    "longitude": 5.55540433
+  },
+  {
+    "name": "Hystadflu",
+    "latitude": 59.78275243,
+    "longitude": 5.56215837
+  },
+  {
+    "name": "Grovaholmen",
+    "latitude": 59.84191638,
+    "longitude": 5.55179292
+  },
+  {
+    "name": "Skor",
+    "latitude": 59.89039378,
+    "longitude": 5.53420502
+  },
+  {
+    "name": "Langenuen",
+    "latitude": 59.92265968,
+    "longitude": 5.50136362
+  },
+  {
+    "name": "Storeklubben",
+    "latitude": 59.94096908,
+    "longitude": 5.46339855
+  },
+  {
+    "name": "Landroypynten",
+    "latitude": 59.97629917,
+    "longitude": 5.37916707
+  },
+  {
+    "name": "Reksteren",
+    "latitude": 59.99097882,
+    "longitude": 5.35566865
+  },
+  {
+    "name": "Rommelines",
+    "latitude": 60.02131422,
+    "longitude": 5.33348827
+  },
+  {
+    "name": "Bjornafjorden",
+    "latitude": 60.07399858,
+    "longitude": 5.33045513
+  },
+  {
+    "name": "Ospoya",
+    "latitude": 60.11466667,
+    "longitude": 5.31078333
+  },
+  {
+    "name": "Litle Laugaroy - report to Fedje VTS on channel 71",
+    "latitude": 60.15391667,
+    "longitude": 5.26883333
+  },
+  {
+    "name": "Leroyna",
+    "latitude": 60.22567043,
+    "longitude": 5.16787688
+  },
+  {
+    "name": "Tangaflu",
+    "latitude": 60.24105802,
+    "longitude": 5.1581574
+  },
+  {
+    "name": "Raunane",
+    "latitude": 60.26387405,
+    "longitude": 5.16194577
+  },
+  {
+    "name": "Fleslandsskjeret",
+    "latitude": 60.28143773,
+    "longitude": 5.19087968
+  },
+  {
+    "name": "Fleslandsskjeret",
+    "latitude": 60.29458717,
+    "longitude": 5.19511147
+  },
+  {
+    "name": "Bjoroy",
+    "latitude": 60.32174987,
+    "longitude": 5.20131772
+  },
+  {
+    "name": "Hilleren",
+    "latitude": 60.33228133,
+    "longitude": 5.19577597
+  },
+  {
+    "name": "Hilleren",
+    "latitude": 60.33447757,
+    "longitude": 5.19332927
+  },
+  {
+    "name": "Trollholmen",
+    "latitude": 60.3393337,
+    "longitude": 5.17886617
+  },
+  {
+    "name": "Hakonshella",
+    "latitude": 60.34389968,
+    "longitude": 5.17235867
+  },
+  {
+    "name": "Stongi lt",
+    "latitude": 60.36334047,
+    "longitude": 5.17028245
+  },
+  {
+    "name": "Sotra bridge",
+    "latitude": 60.37389122,
+    "longitude": 5.16562847
+  },
+  {
+    "name": "Tollneset",
+    "latitude": 60.38081667,
+    "longitude": 5.17373333
+  },
+  {
+    "name": "Askoy bridge",
+    "latitude": 60.39461667,
+    "longitude": 5.21598333
+  },
+  {
+    "name": "Kvarven",
+    "latitude": 60.40115,
+    "longitude": 5.23995
+  },
+  {
+    "name": "Bergen",
+    "latitude": 60.40105,
+    "longitude": 5.27515
+  }
+]

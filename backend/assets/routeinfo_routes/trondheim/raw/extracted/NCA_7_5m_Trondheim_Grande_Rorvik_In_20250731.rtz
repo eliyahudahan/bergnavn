@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="utf-8"?>
+<route xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="1.0" xmlns="https://cirm.org/rtz-xml-schemas">
+  <routeInfo routeName="NCA_7_5m_Trondheim_Grande_Rorvik_In_20250801" validityPeriodStart="2025-08-01T00:00:00" validityPeriodStop="2026-04-16T00:00:00" />
+  <waypoints>
+    <defaultWaypoint radius="0.3">
+      <leg starboardXTD="0.1" portsideXTD="0.1" safetyContour="20" safetyDepth="20" geometryType="Loxodrome" staticUKC="0" dynamicUKC="0" />
+    </defaultWaypoint>
+    <waypoint id="1" name="Ottersoya">
+      <position lat="64.85848333" lon="11.25641667" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="2" name="Maroyskjer lt">
+      <position lat="64.85703333" lon="11.23763333" />
+      <leg starboardXTD="0.07" portsideXTD="0.07" legInfo="" />
+    </waypoint>
+    <waypoint id="3" name="Rorvik">
+      <position lat="64.85283333" lon="11.22413333" />
+      <leg starboardXTD="0.06" portsideXTD="0.06" legInfo="" />
+    </waypoint>
+    <waypoint id="4" name="Naeroysundet lt">
+      <position lat="64.84155" lon="11.19825" />
+      <leg starboardXTD="0.06" portsideXTD="0.06" legInfo="" />
+    </waypoint>
+    <waypoint id="5" name="Naeroysundet">
+      <position lat="64.79233564" lon="11.08758932" />
+      <leg starboardXTD="0.08" portsideXTD="0.08" legInfo="" />
+    </waypoint>
+    <waypoint id="6" name="Grinna lt">
+      <position lat="64.75396518" lon="11.01470258" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="7" name="Grinna pilot boarding">
+      <position lat="64.73494268" lon="10.9640142" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="8" name="Gjaeslingan S">
+      <position lat="64.69176762" lon="10.78735538" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="9" name="Langroa lt">
+      <position lat="64.47170985" lon="10.42725392" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="10" name="Buholmrasa">
+      <position lat="64.42262919" lon="10.44930023" />
+      <leg starboardXTD="0.08" portsideXTD="0.08" legInfo="" />
+    </waypoint>
+    <waypoint id="11" name="Nordre Nesvagflua">
+      <position lat="64.41261667" lon="10.44068333" />
+      <leg starboardXTD="0.08" portsideXTD="0.08" legInfo="" />
+    </waypoint>
+    <waypoint id="12" name="Saksa lt">
+      <position lat="64.40185318" lon="10.43136417" />
+      <leg starboardXTD="0.08" portsideXTD="0.08" legInfo="" />
+    </waypoint>
+    <waypoint id="13" name="Saksa lt">
+      <position lat="64.39914709" lon="10.43235449" />
+      <leg starboardXTD="0.06" portsideXTD="0.06" legInfo="" />
+    </waypoint>
+    <waypoint id="14" name="Oksholmen lt">
+      <position lat="64.37561225" lon="10.4637894" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="15" name="Oksholmen lt">
+      <position lat="64.36730317" lon="10.46354527" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="16" name="Bjorsneset lt">
+      <position lat="64.35503703" lon="10.43864239" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="17" name="Ramsoyodden lt">
+      <position lat="64.33206988" lon="10.44795111" />
+      <leg starboardXTD="0.07" portsideXTD="0.07" legInfo="" />
+    </waypoint>
+    <waypoint id="18" name="Ramsoysundet">
+      <position lat="64.32627323" lon="10.4375797" />
+      <leg starboardXTD="0.04" portsideXTD="0.04" legInfo="" />
+    </waypoint>
+    <waypoint id="19" name="Finnmarkstoyten">
+      <position lat="64.31466566" lon="10.406931" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="20" name="Mosterskjeret lt">
+      <position lat="64.29287586" lon="10.3359438" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="21" name="Drogsholmen lt">
+      <position lat="64.27840619" lon="10.32305589" />
+      <leg starboardXTD="0.08" portsideXTD="0.08" legInfo="" />
+    </waypoint>
+    <waypoint id="22" name="Bessaker lt">
+      <position lat="64.25409586" lon="10.32480693" />
+      <leg starboardXTD="0.08" portsideXTD="0.08" legInfo="" />
+    </waypoint>
+    <waypoint id="23" name="Bessaker lt">
+      <position lat="64.25059982" lon="10.31571116" />
+      <leg starboardXTD="0.06" portsideXTD="0.06" legInfo="" />
+    </waypoint>
+    <waypoint id="24" name="Bessakersundet lt">
+      <position lat="64.24832585" lon="10.29656479" />
+      <leg starboardXTD="0.05" portsideXTD="0.05" legInfo="" />
+    </waypoint>
+    <waypoint id="25" name="Bessakersundet lt">
+      <position lat="64.24553939" lon="10.28562354" />
+      <leg starboardXTD="0.05" portsideXTD="0.05" legInfo="" />
+    </waypoint>
+    <waypoint id="26" name="Terningen lt">
+      <position lat="64.22751477" lon="10.22407808" />
+      <leg starboardXTD="0.08" portsideXTD="0.08" legInfo="" />
+    </waypoint>
+    <waypoint id="27" name="Kjeoya lt">
+      <position lat="64.19208301" lon="10.1671343" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="28" name="Marflesa lt">
+      <position lat="64.16464868" lon="10.12188332" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="29" name="Krosskjera lt">
+      <position lat="64.14577098" lon="10.10910921" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="30" name="Galten lt">
+      <position lat="64.13341722" lon="10.09110026" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="31" name="Storskjeret lt">
+      <position lat="64.05781529" lon="9.8353776" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="32" name="Langtaren">
+      <position lat="64.03402477" lon="9.78175505" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="33" name="Trebaan">
+      <position lat="64.00208309" lon="9.77486833" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="34" name="Nautflu lt">
+      <position lat="63.9299738" lon="9.78761047" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="35" name="Treholmen lt">
+      <position lat="63.89180962" lon="9.76071426" />
+      <leg starboardXTD="0.08" portsideXTD="0.08" legInfo="" />
+    </waypoint>
+    <waypoint id="36" name="Kvaloya lt">
+      <position lat="63.8759423" lon="9.71046929" />
+      <leg starboardXTD="0.08" portsideXTD="0.08" legInfo="" />
+    </waypoint>
+    <waypoint id="37" name="Torramuren bn">
+      <position lat="63.85839234" lon="9.66349164" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="38" name="Hestvadfluene lt">
+      <position lat="63.83286762" lon="9.62331332" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="39" name="Valsholmflua lt">
+      <position lat="63.81311788" lon="9.57844581" />
+      <leg starboardXTD="0.07" portsideXTD="0.07" legInfo="" />
+    </waypoint>
+    <waypoint id="40" name="Vettabaen lt">
+      <position lat="63.79813091" lon="9.56888423" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="41" name="Bjugnskjaeret lt">
+      <position lat="63.76196902" lon="9.53183869" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="42" name="Kjeungskjaeret lt">
+      <position lat="63.72799338" lon="9.53924168" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="43" name="Ribeflua lt">
+      <position lat="63.70395306" lon="9.50928355" />
+      <leg starboardXTD="0.07" portsideXTD="0.07" legInfo="" />
+    </waypoint>
+    <waypoint id="44" name="Haflua 5 m">
+      <position lat="63.69621667" lon="9.50610665" />
+      <leg starboardXTD="0.07" portsideXTD="0.07" legInfo="" />
+    </waypoint>
+    <waypoint id="45" name="Raudsidegrunnen">
+      <position lat="63.6615539" lon="9.47290521" />
+      <leg starboardXTD="0.07" portsideXTD="0.07" legInfo="" />
+    </waypoint>
+    <waypoint id="46" name="Tjuvholmen">
+      <position lat="63.64324902" lon="9.48498826" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="47" name="Nebbtaren">
+      <position lat="63.63377173" lon="9.48463763" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="48" name="Smellingflua">
+      <position lat="63.62582586" lon="9.49850887" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="49" name="Roysaneset lt">
+      <position lat="63.6276" lon="9.58473333" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="50" name="Hogholmen lt">
+      <position lat="63.65451667" lon="9.6863" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="51" name="Kjerringa">
+      <position lat="63.65545" lon="9.72803333" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="52" name="Ringflua lt">
+      <position lat="63.65016342" lon="9.7631476" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="53" name="Hysneset lt">
+      <position lat="63.62456759" lon="9.77597641" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="54" name="Storneset">
+      <position lat="63.49520805" lon="9.90840994" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="55" name="Rodbergneset">
+      <position lat="63.47576245" lon="9.9787621" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="56" name="Flakkfjorden">
+      <position lat="63.46752128" lon="10.19017705" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="57" name="Digermulen">
+      <position lat="63.45845001" lon="10.30423466" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="58" name="Nordneset">
+      <position lat="63.45073333" lon="10.34578333" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="59" name="Trondheim">
+      <position lat="63.44545" lon="10.36245" />
+      <leg legInfo="" />
+    </waypoint>
+  </waypoints>
+  <extensions>
+    <extension manufacturer="Norwegian Coastal Administration" fullName="Trondheim - Grandevika - Rorvik Inbound 7.5m" productinfo="See information on http://www.routeinfo.no before use of this Reference Route for Navigation. The Reference Routes from NCA can be used as a basis in route planning. For routes with no comments on vessel size, 150 meter length and 9 meter draught has been used to quality assure the routes. Limitations in size of vessel may vary along the route caused by regulation or depths." routeNumber="NO-510055" otherRouteLimitations="Limited draught is caused by shallow area in Grandevika and Asenleia." xmlns="" />
+  </extensions>
+</route>

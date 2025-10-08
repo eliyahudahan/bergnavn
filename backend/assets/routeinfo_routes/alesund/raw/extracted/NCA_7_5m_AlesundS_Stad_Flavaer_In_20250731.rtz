@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<route xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="1.0" xmlns="https://cirm.org/rtz-xml-schemas">
+  <routeInfo routeName="NCA_7_5m_AlesundS_Stad_Flavaer_In_20250801" validityPeriodStart="2025-08-01T00:00:00" validityPeriodStop="2026-04-16T00:00:00" />
+  <waypoints>
+    <defaultWaypoint radius="0.3">
+      <leg starboardXTD="0.1" portsideXTD="0.1" safetyContour="20" safetyDepth="20" geometryType="Loxodrome" staticUKC="0" dynamicUKC="0" />
+    </defaultWaypoint>
+    <waypoint id="1" name="Stalet">
+      <position lat="62.23332712" lon="5.17768582" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="2" name="Skjeggefluda">
+      <position lat="62.27317369" lon="5.31497614" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="3" name="Flavaer lt">
+      <position lat="62.31207991" lon="5.55963892" />
+      <leg starboardXTD="0.07" portsideXTD="0.07" legInfo="" />
+    </waypoint>
+    <waypoint id="4" name="Stabben lt">
+      <position lat="62.31136037" lon="5.57735484" />
+      <leg starboardXTD="0.05" portsideXTD="0.05" legInfo="" />
+    </waypoint>
+    <waypoint id="5" name="Klubben lt">
+      <position lat="62.30878821" lon="5.59910369" />
+      <leg starboardXTD="0.05" portsideXTD="0.05" legInfo="" />
+    </waypoint>
+    <waypoint id="6" name="Klubben lt">
+      <position lat="62.30835732" lon="5.60956199" />
+      <leg starboardXTD="0.04" portsideXTD="0.04" legInfo="" />
+    </waypoint>
+    <waypoint id="7" name="Tronden lt">
+      <position lat="62.31206559" lon="5.62744445" />
+      <leg starboardXTD="0.06" portsideXTD="0.06" legInfo="" />
+    </waypoint>
+    <waypoint id="8" name="Heroyhunden lt">
+      <position lat="62.31753428" lon="5.67146876" />
+      <leg starboardXTD="0.06" portsideXTD="0.06" legInfo="" />
+    </waypoint>
+    <waypoint id="9" name="Royrasundet">
+      <position lat="62.31933924" lon="5.72128209" />
+      <leg starboardXTD="0.04" portsideXTD="0.04" legInfo="" />
+    </waypoint>
+    <waypoint id="10" name="Teigesund lt">
+      <position lat="62.32066667" lon="5.73481667" />
+      <leg starboardXTD="0.03" portsideXTD="0.03" legInfo="" />
+    </waypoint>
+    <waypoint id="11" name="Teigesund lt">
+      <position lat="62.32205636" lon="5.74885378" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="12" name="Brennholmen lt 6.9 m">
+      <position lat="62.32851096" lon="5.7511608" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="13" name="Torvikhomen lt 6.9 m">
+      <position lat="62.33809314" lon="5.73856845" />
+      <leg starboardXTD="0.04" portsideXTD="0.04" legInfo="" />
+    </waypoint>
+    <waypoint id="14" name="Byholmane">
+      <position lat="62.35952667" lon="5.77314485" />
+      <leg starboardXTD="0.08" portsideXTD="0.08" legInfo="" />
+    </waypoint>
+    <waypoint id="15" name="Vattoya">
+      <position lat="62.36509477" lon="5.7911294" />
+      <leg starboardXTD="0.08" portsideXTD="0.08" legInfo="" />
+    </waypoint>
+    <waypoint id="16" name="Vattoy lt">
+      <position lat="62.37268618" lon="5.79730202" />
+      <leg starboardXTD="0.08" portsideXTD="0.08" legInfo="" />
+    </waypoint>
+    <waypoint id="17" name="Flo lt">
+      <position lat="62.39371089" lon="5.80692878" />
+      <leg starboardXTD="0.08" portsideXTD="0.08" legInfo="" />
+    </waypoint>
+    <waypoint id="18" name="Flo">
+      <position lat="62.40752333" lon="5.82996009" />
+      <leg starboardXTD="0.08" portsideXTD="0.08" legInfo="" />
+    </waypoint>
+    <waypoint id="19" name="Kleggen">
+      <position lat="62.4185445" lon="5.85683644" />
+      <leg starboardXTD="0.06" portsideXTD="0.06" legInfo="" />
+    </waypoint>
+    <waypoint id="20" name="Breisundet">
+      <position lat="62.42712612" lon="5.89034092" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="21" name="Eltraneset lt">
+      <position lat="62.44618084" lon="6.05318243" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="22" name="Hessafjorden">
+      <position lat="62.44636362" lon="6.11197795" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="23" name="Rognholmen lt">
+      <position lat="62.4551797" lon="6.17622405" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="24" name="Gasholmen">
+      <position lat="62.45634169" lon="6.20368526" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="25" name="Bogneset">
+      <position lat="62.45173133" lon="6.24948118" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="26" name="Spjelkavik">
+      <position lat="62.45783276" lon="6.3449976" />
+      <leg legInfo="" />
+    </waypoint>
+  </waypoints>
+  <extensions>
+    <extension manufacturer="Norwegian Coastal Administration" fullName="Alesund South - Stad via Flavaerleia Inbound 7.5m" productinfo="See information on http://www.routeinfo.no before use of this Reference Route for Navigation. The Reference Routes from NCA can be used as a basis in route planning. For routes with no comments on vessel size, 150 meter length and 9 meter draught has been used to quality assure the routes. Limitations in size of vessel may vary along the route caused by regulation or depths." routeNumber="NO-510008" otherRouteLimitations="Limited draught is caused by shallow area in Fløværleia." xmlns="" />
+  </extensions>
+</route>

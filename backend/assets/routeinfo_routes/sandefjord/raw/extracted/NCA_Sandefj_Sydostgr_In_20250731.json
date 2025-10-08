@@ -1,0 +1,32 @@
+[
+  {
+    "name": "Sydostgrunnen",
+    "latitude": 58.96718637,
+    "longitude": 10.31389715
+  },
+  {
+    "name": "Leikarhausen",
+    "latitude": 59.02540435,
+    "longitude": 10.27543097
+  },
+  {
+    "name": "Holtskjaeret",
+    "latitude": 59.03986166,
+    "longitude": 10.2547104
+  },
+  {
+    "name": "Bueroya",
+    "latitude": 59.08792901,
+    "longitude": 10.24113205
+  },
+  {
+    "name": "Thoroya",
+    "latitude": 59.10482164,
+    "longitude": 10.23231757
+  },
+  {
+    "name": "Ranvik",
+    "latitude": 59.11361029,
+    "longitude": 10.22580123
+  }
+]
