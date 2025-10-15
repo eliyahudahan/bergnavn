@@ -80,6 +80,13 @@ TRANSLATIONS = {
             "no_routes_found": "No routes found",
             "unknown": "Unknown",
         },
+        "dashboard": {
+            "ok": "OK",
+            "reroute_needed": "Reroute Needed",
+            "warning": "Warning",
+            "available_routes_legs": "Available Routes & Legs",
+            "route_evaluation_dashboard": "Route Evaluation Dashboard",
+        },
         "legal": {
             "open_license": "Open License",
             "english": "English",
@@ -171,6 +178,13 @@ TRANSLATIONS = {
             "no_legs_available": "Ingen etapper tilgjengelig",
             "no_routes_found": "Ingen ruter funnet",
             "unknown": "Ukjent",
+        },
+        "dashboard": {
+            "ok": "OK",
+            "reroute_needed": "Omdirigering nødvendig",
+            "warning": "Advarsel",
+            "available_routes_legs": "Tilgjengelige ruter og etapper",
+            "route_evaluation_dashboard": "Ruteevaluering Dashbord",
         },
         "legal": {
             "open_license": "Åpen lisens",

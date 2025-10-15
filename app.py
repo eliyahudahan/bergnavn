@@ -1,3 +1,4 @@
+# app.py
 import logging
 import os
 from flask import Flask, session, request
@@ -11,15 +12,12 @@ from backend.routes.route_routes import routes_bp
 from backend.routes.ml_routes import ml_bp
 from backend.controllers.route_leg_controller import route_leg_bp
 from backend.routes.system_routes import health_bp
-from backend.routes.booking_routes import booking_blueprint
-from backend.routes.user_routes import user_blueprint
 from backend.routes.cruise_routes import cruise_blueprint
 from backend.routes.weather_routes import weather_bp
-from backend.routes.dummy_user_routes import dummy_user_bp
+# from backend.routes.booking_routes import booking_blueprint  # removed (no longer used)
 
 # Extensions
-from backend.extensions import db, mail, login_manager, migrate
-from backend.models.user import User
+from backend.extensions import db, mail, migrate
 from backend.services.cleanup import deactivate_old_weather_status
 
 # Translation utility
@@ -58,7 +56,6 @@ def create_app(config_name=None, testing=False, start_scheduler=False):
     # Initialize extensions
     db.init_app(app)
     mail.init_app(app)
-    login_manager.init_app(app)
     migrate.init_app(app, db)
 
     # Scheduler setup
@@ -82,7 +79,6 @@ def create_app(config_name=None, testing=False, start_scheduler=False):
         logging.info("App context initialized. Models imported.")
 
     # Register Blueprints
-    app.register_blueprint(user_blueprint)
     app.register_blueprint(main_bp)
     app.register_blueprint(cruise_blueprint)
     app.register_blueprint(routes_bp, url_prefix="/routes")
@@ -90,16 +86,10 @@ def create_app(config_name=None, testing=False, start_scheduler=False):
     app.register_blueprint(ml_bp, url_prefix='/api/ml')
     app.register_blueprint(weather_bp)
     app.register_blueprint(health_bp)
-    app.register_blueprint(booking_blueprint, url_prefix='/booking')
     app.register_blueprint(dashboard_bp, url_prefix='/dashboard')
-    app.register_blueprint(dummy_user_bp)
+    # app.register_blueprint(booking_blueprint, url_prefix='/booking')  # removed
 
     logging.info("Blueprints registered successfully.")
-
-    # Flask-Login user loader
-    @login_manager.user_loader
-    def load_user(user_id):
-        return User.query.get(int(user_id))
 
     # Language selection per request
     @app.before_request

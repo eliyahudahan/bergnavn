@@ -1,89 +1,51 @@
 <!DOCTYPE html>
-<html lang="{{ session.get('lang', 'en') }}">
+<html lang="{{ lang }}">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>{% block title %}BergNavn Maritime Voyages{% endblock %}</title>
-
-  <!-- Bootstrap CSS & Icons -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}BergNavn{% endblock %}</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-
-  <!-- Custom CSS -->
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-
-  {% block head_extra %}{% endblock %}
+  <style>
+    body { padding-top: 70px; }
+  </style>
+  {% block head %}{% endblock %}
 </head>
 <body>
-  <!-- Navigation bar -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
-    <div class="container">
-      <!-- Brand with logo (FIXED: now links to homepage) -->
-      <a class="navbar-brand d-flex align-items-center" href="{{ url_for('main_bp.home') }}">
-        <img src="{{ url_for('static', filename='images/bergnavn_icon.png') }}" alt="BergNavn Logo" />
-        <span>{{ translate('home_welcome', session.get('lang', 'en'), 'global')|title }}</span>
-      </a>
-
-      <!-- Mobile toggle button -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="{{ url_for('main_bp.home') }}">BergNavn</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
       </button>
-
-      <!-- Navbar links -->
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
           <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('dummy_user_bp.dummy_user_ui') }}">
-              {{ translate('title', session.get('lang', 'en'), 'dummy_users') }}
-            </a>
+            <a class="nav-link" href="{{ url_for('dashboard_bp.dashboard') }}">{{ translate('dashboard', lang) }}</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('dashboard_bp.dashboard') }}">
-              {{ translate('dashboard', session.get('lang', 'en'), 'global') }}
-            </a>
+            <a class="nav-link" href="{{ url_for('cruise.view_cruises') }}">{{ translate('cruises', lang) }}</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('cruise.view_cruises') }}">
-              {{ translate('cruises', session.get('lang', 'en'), 'global') }}
-            </a>
+            <a class="nav-link" href="{{ url_for('routes_bp.view_routes') }}">{{ translate('routes', lang) }}</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('routes_bp.view_routes') }}">
-              {{ translate('routes', session.get('lang', 'en'), 'global') }}
-            </a>
+            <a class="nav-link" href="{{ url_for('main_bp.home') }}">{{ translate('back_to_home', lang) }}</a>
           </li>
         </ul>
-
-        <!-- Language toggle form -->
-        <form method="get" action="{{ request.path }}" class="d-flex ms-3">
-          <input type="hidden" name="lang" value="{{ 'no' if session.get('lang', 'en') == 'en' else 'en' }}">
-          <button type="submit" class="btn btn-light btn-sm">
-            {{ 'NO' if session.get('lang', 'en') == 'en' else 'EN' }}
-          </button>
-        </form>
       </div>
     </div>
   </nav>
 
-  <!-- Main content area -->
   <main class="container">
     {% block content %}{% endblock %}
   </main>
 
-  <!-- Footer -->
-  <footer class="bg-light text-center py-3 mt-5">
-    <small>
-      &copy; 2025 BergNavn Maritime Voyages.
-      {{ translate('footer_credit', session.get('lang', 'en'), 'global') }} |
-      <a href="{{ url_for('main_bp.legal') }}">
-        {{ translate('license_legal', session.get('lang', 'en'), 'global')|title }}
-      </a>
-    </small>
+  <footer class="bg-dark text-light py-3 mt-5 text-center">
+    <small>{{ translate('footer_credit', lang) }}</small>
   </footer>
 
-  <!-- Bootstrap JS Bundle -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   {% block scripts %}{% endblock %}
 </body>
 </html>

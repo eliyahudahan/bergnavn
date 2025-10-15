@@ -3,7 +3,6 @@
 {% block title %}{{ translate('home_welcome', lang, 'global') }}{% endblock %}
 
 {% block content %}
-<!-- Hero Section -->
 <section class="container text-center mt-5 pt-5">
   <h1 class="display-4 fw-bold mb-3">
     {{ translate('home_greeting', lang, 'global') }}
@@ -58,13 +57,6 @@
       </div>
     </div>
   </div>
-</section>
-
-<section class="container mt-5 text-center">
-  <p class="lead">{{ translate('home_cta', lang, 'global') }}</p>
-  <a href="{{ url_for('dummy_user_bp.show_create_user_form', lang=lang) }}" class="btn btn-outline-primary btn-lg">
-    <i class="bi bi-person-plus"></i> {{ translate('create_new_user', lang, 'dummy_users') }}
-  </a>
 </section>
 
 <style>

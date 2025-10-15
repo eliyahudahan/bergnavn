@@ -1,0 +1,17 @@
+                                          Table "public.bookings"
+    Column     |            Type             | Collation | Nullable |               Default                
+---------------+-----------------------------+-----------+----------+--------------------------------------
+ id            | integer                     |           | not null | nextval('bookings_id_seq'::regclass)
+ user_id       | integer                     |           | not null | 
+ cruise_id     | integer                     |           | not null | 
+ num_of_people | integer                     |           | not null | 
+ total_price   | double precision            |           | not null | 
+ booking_date  | timestamp without time zone |           |          | 
+Indexes:
+    "bookings_pkey" PRIMARY KEY, btree (id)
+Foreign-key constraints:
+    "bookings_cruise_id_fkey" FOREIGN KEY (cruise_id) REFERENCES cruises(id)
+    "bookings_user_id_fkey" FOREIGN KEY (user_id) REFERENCES users(id)
+Referenced by:
+    TABLE "payments" CONSTRAINT "payments_booking_id_fkey" FOREIGN KEY (booking_id) REFERENCES bookings(id)
+

@@ -3,10 +3,8 @@
 {% block title %}{{ translate('dashboard', lang, 'global')|title }}{% endblock %}
 
 {% block content %}
-<!-- Page Heading -->
 <h1 class="mb-4">{{ translate('title', lang, 'dashboard_page')|title }}</h1>
 
-<!-- Voyages Table -->
 <div class="table-responsive mx-auto" style="max-width: 95%;">
   <table class="table table-bordered table-hover align-middle">
     <thead class="table-primary text-center">
@@ -17,29 +15,28 @@
       </tr>
     </thead>
     <tbody>
-      {% for v in voyages %}
-      <tr class="text-center">
-        <td>{{ v.id }}</td>
-        <td>{{ v.name }}</td>
-        <td>
-          <span class="
-            {% if v.color == 'green' %}text-success
-            {% elif v.color == 'yellow' %}text-warning
-            {% elif v.color == 'red' %}text-danger
-            {% else %}text-secondary
-            {% endif %}
-          ">
-            {{ translate(v.status, lang, 'dashboard_page')|title }}
-          </span>
-        </td>
-      </tr>
+      {% if voyages %}
+        {% for v in voyages %}
+        <tr class="text-center">
+          <td>{{ v.id }}</td>
+          <td>{{ v.name }}</td>
+          <td>
+            <span class="
+              {% if v.color == 'green' %}text-success
+              {% elif v.color == 'yellow' %}text-warning
+              {% elif v.color == 'red' %}text-danger
+              {% else %}text-secondary
+              {% endif %}">
+              {{ translate(v.status, lang, 'dashboard_page')|title }}
+            </span>
+          </td>
+        </tr>
+        {% endfor %}
       {% else %}
-      <tr>
-        <td colspan="3" class="text-center text-muted">
-          {{ translate('no_voyages', lang, 'dashboard_page')|title }}
-        </td>
-      </tr>
-      {% endfor %}
+        <tr>
+          <td colspan="3" class="text-center text-muted">{{ translate('no_voyages', lang, 'dashboard_page')|title }}</td>
+        </tr>
+      {% endif %}
     </tbody>
   </table>
 </div>

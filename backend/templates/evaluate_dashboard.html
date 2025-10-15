@@ -1,89 +1,43 @@
 {% extends "base.html" %}
 
-{% block title %}{{ translate('route_evaluation_dashboard', lang, 'dashboard') }}{% endblock %}
+{% block title %}{{ translate('dashboard', lang, 'global')|title }}{% endblock %}
 
 {% block content %}
-<h2 class="mb-4">🛳️ {{ translate('route_evaluation_dashboard', lang, 'dashboard') }}</h2>
+<h1 class="mb-4">{{ translate('title', lang, 'dashboard_page')|title }}</h1>
 
 <div class="table-responsive mx-auto" style="max-width: 95%;">
-  <table class="table table-bordered table-hover align-middle" id="routes-table">
-    <thead class="table-dark text-center">
+  <table class="table table-bordered table-hover align-middle">
+    <thead class="table-primary text-center">
       <tr>
-        <th>{{ translate('route_id', lang, 'routes_page') }}</th>
-        <th>{{ translate('route_name', lang, 'routes_page') }}</th>
-        <th>{{ translate('description', lang, 'routes_page') }}</th>
-        <th>{{ translate('number_of_legs', lang, 'routes_page') }}</th>
-        <th>{{ translate('status', lang, 'dashboard') }}</th>
-        <th>{{ translate('issues', lang, 'dashboard') }}</th>
+        <th>{{ translate('id', lang, 'dashboard_page')|title }}</th>
+        <th>{{ translate('name', lang, 'dashboard_page')|title }}</th>
+        <th>{{ translate('status', lang, 'dashboard_page')|title }}</th>
       </tr>
     </thead>
     <tbody>
-      {% for route in routes %}
-      <tr class="{% if route.status == 'OK' %}table-success{% elif route.status == 'REROUTE_NEEDED' %}table-danger{% else %}table-warning{% endif %}">
-        <td data-label="{{ translate('route_id', lang, 'routes_page') }}">{{ route.id }}</td>
-        <td data-label="{{ translate('route_name', lang, 'routes_page') }}">{{ route.name }}</td>
-        <td data-label="{{ translate('description', lang, 'routes_page') }}">{{ route.description or translate('not_available', lang, 'global') }}</td>
-        <td data-label="{{ translate('number_of_legs', lang, 'routes_page') }}">{{ route.legs|length }}</td>
-        <td data-label="{{ translate('status', lang, 'dashboard') }}">
-          {% if route.status == 'OK' %}
-            ✅ {{ translate('ok', lang, 'dashboard') }}
-          {% elif route.status == 'REROUTE_NEEDED' %}
-            ⚠️ {{ translate('reroute_needed', lang, 'dashboard') }}
-          {% else %}
-            ⚠️ {{ translate('warning', lang, 'dashboard') }}
-          {% endif %}
-        </td>
-        <td data-label="{{ translate('issues', lang, 'dashboard') }}">
-          {% if route.issues %}
-            <ul class="mb-0">
-              {% for issue in route.issues %}
-                <li>{{ issue }}</li>
-              {% endfor %}
-            </ul>
-          {% else %}
-            -
-          {% endif %}
-        </td>
-      </tr>
+      {% if voyages %}
+        {% for v in voyages %}
+        <tr class="text-center">
+          <td>{{ v.id }}</td>
+          <td>{{ v.name }}</td>
+          <td>
+            <span class="
+              {% if v.color == 'green' %}text-success
+              {% elif v.color == 'yellow' %}text-warning
+              {% elif v.color == 'red' %}text-danger
+              {% else %}text-secondary
+              {% endif %}">
+              {{ translate(v.status, lang, 'dashboard_page')|title }}
+            </span>
+          </td>
+        </tr>
+        {% endfor %}
       {% else %}
-      <tr>
-        <td colspan="6" class="text-center">{{ translate('no_routes', lang, 'dashboard') }}</td>
-      </tr>
-      {% endfor %}
+        <tr>
+          <td colspan="3" class="text-center text-muted">{{ translate('no_voyages', lang, 'dashboard_page')|title }}</td>
+        </tr>
+      {% endif %}
     </tbody>
   </table>
 </div>
-
-<style>
-/* Mobile responsiveness */
-@media (max-width: 768px) {
-  #routes-table, #routes-table thead, #routes-table tbody, #routes-table th, #routes-table td, #routes-table tr {
-    display: block;
-    width: 100%;
-  }
-  #routes-table thead tr {
-    display: none;
-  }
-  #routes-table tbody tr {
-    margin-bottom: 1rem;
-    border: 1px solid #dee2e6;
-    padding: 0.5em;
-  }
-  #routes-table tbody td {
-    border: none;
-    position: relative;
-    padding-left: 50%;
-    text-align: left;
-  }
-  #routes-table tbody td::before {
-    position: absolute;
-    left: 0.75em;
-    top: 0.5em;
-    width: 45%;
-    white-space: nowrap;
-    font-weight: bold;
-    content: attr(data-label);
-  }
-}
-</style>
 {% endblock %}
