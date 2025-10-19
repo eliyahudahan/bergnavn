@@ -21,12 +21,7 @@
           <td>{{ v.id }}</td>
           <td>{{ v.name }}</td>
           <td>
-            <span class="
-              {% if v.color == 'green' %}text-success
-              {% elif v.color == 'yellow' %}text-warning
-              {% elif v.color == 'red' %}text-danger
-              {% else %}text-secondary
-              {% endif %}">
+            <span class="{% if v.color=='green' %}text-success{% elif v.color=='yellow' %}text-warning{% elif v.color=='red' %}text-danger{% else %}text-secondary{% endif %}">
               {{ translate(v.status, lang, 'dashboard_page')|title }}
             </span>
           </td>

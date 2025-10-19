@@ -20,12 +20,18 @@ class Cruise(db.Model):
     is_active = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(UTC))
     updated_at = db.Column(db.DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
-    clock = db.relationship("backend.models.clock.Clock", uselist=False, back_populates="cruise")
 
-    # Future relationship with bookings
-    bookings = db.relationship("Booking", back_populates="cruise")
-    
-     # New: relationship with voyage legs
+    # Relationship with clock (one-to-one)
+    clock = db.relationship(
+        "backend.models.clock.Clock",
+        uselist=False,
+        back_populates="cruise"
+    )
+
+    # (Temporarily disabled — Booking model currently removed)
+    # bookings = db.relationship("Booking", back_populates="cruise")
+
+    # Relationship with voyage legs
     legs = db.relationship(
         "backend.models.voyage_leg.VoyageLeg",
         back_populates="cruise",
@@ -41,4 +47,3 @@ class Cruise(db.Model):
 
     def __repr__(self):
         return f"<Cruise {self.title} ({self.origin} → {self.destination})>"
-

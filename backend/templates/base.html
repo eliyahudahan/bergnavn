@@ -12,35 +12,54 @@
   {% block head %}{% endblock %}
 </head>
 <body>
+  <!-- Navigation -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
     <div class="container-fluid">
-      <a class="navbar-brand" href="{{ url_for('main_bp.home') }}">BergNavn</a>
+      <a class="navbar-brand" href="{{ url_for('main_bp.home', lang=lang) }}">BergNavn</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
           <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('dashboard_bp.dashboard') }}">{{ translate('dashboard', lang) }}</a>
+            <a class="nav-link" href="{{ url_for('dashboard_bp.dashboard', lang=lang) }}">{{ translate('dashboard', lang) }}</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('cruise.view_cruises') }}">{{ translate('cruises', lang) }}</a>
+            <a class="nav-link" href="{{ url_for('cruise.view_cruises', lang=lang) }}">{{ translate('cruises', lang) }}</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('routes_bp.view_routes') }}">{{ translate('routes', lang) }}</a>
+            <a class="nav-link" href="{{ url_for('routes_bp.view_routes', lang=lang) }}">{{ translate('routes', lang) }}</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('main_bp.home') }}">{{ translate('back_to_home', lang) }}</a>
+
+          <!-- Language Dropdown -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+              {{ lang|upper }}
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              {% set args_en = request.view_args|default({}) %}
+              {% set _ = args_en.update({'lang': 'en'}) %}
+              <li>
+                <a class="dropdown-item" href="{{ url_for(request.endpoint, **args_en) }}">English</a>
+              </li>
+              {% set args_no = request.view_args|default({}) %}
+              {% set _ = args_no.update({'lang': 'no'}) %}
+              <li>
+                <a class="dropdown-item" href="{{ url_for(request.endpoint, **args_no) }}">Norsk</a>
+              </li>
+            </ul>
           </li>
         </ul>
       </div>
     </div>
   </nav>
 
+  <!-- Main Content -->
   <main class="container">
     {% block content %}{% endblock %}
   </main>
 
+  <!-- Footer -->
   <footer class="bg-dark text-light py-3 mt-5 text-center">
     <small>{{ translate('footer_credit', lang) }}</small>
   </footer>

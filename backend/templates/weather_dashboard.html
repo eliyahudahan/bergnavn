@@ -1,52 +1,33 @@
 {% extends "base.html" %}
 
-{% block title %}{{ translate('weather_dashboard', lang, 'dashboard') }}{% endblock %}
+{% block title %}{{ translate('weather_dashboard', lang, 'global') }}{% endblock %}
 
 {% block content %}
-<h2 class="mt-5 mb-4">🛳️ {{ translate('available_routes_legs', lang, 'dashboard') }}</h2>
+<h1 class="mb-4 text-center">{{ translate('weather_dashboard', lang, 'global') }}</h1>
 
-<div class="table-responsive">
-  <table class="table table-bordered table-hover">
-    <thead class="table-dark">
+<div class="table-responsive mx-auto" style="max-width: 95%;">
+  <table class="table table-bordered table-hover align-middle">
+    <thead class="table-primary text-center">
       <tr>
-        <th>{{ translate('route_id', lang, 'routes_page') }}</th>
-        <th>{{ translate('route_name', lang, 'routes_page') }}</th>
-        <th>{{ translate('description', lang, 'routes_page') }}</th>
-        <th>{{ translate('number_of_legs', lang, 'routes_page') }}</th>
-        <th>{{ translate('legs_details', lang, 'routes_page') }}</th>
+        <th>{{ translate('location', lang, 'weather_page') }}</th>
+        <th>{{ translate('temperature', lang, 'weather_page') }}</th>
+        <th>{{ translate('wind', lang, 'weather_page') }}</th>
+        <th>{{ translate('condition', lang, 'weather_page') }}</th>
       </tr>
     </thead>
     <tbody>
-      {% if routes %}
-        {% for route in routes %}
-        <tr class="{% if not route.active %}table-secondary{% endif %}">
-          <td>{{ route.id }}</td>
-          <td>{{ route.name }}</td>
-          <td>{{ route.description or translate('not_available', lang, 'global') }}</td>
-          <td>{{ route.legs|length }}</td>
-          <td>
-            {% if route.legs %}
-            <ul class="mb-0">
-              {% for leg in route.legs %}
-              <li>
-                {{ translate('leg', lang, 'routes_page') }} {{ leg.leg_order }}: 
-                {{ leg.departure_port.name if leg.departure_port else translate('unknown', lang, 'global') }} &rarr; 
-                {{ leg.arrival_port.name if leg.arrival_port else translate('unknown', lang, 'global') }} ,
-                {{ translate('distance_nm', lang, 'routes_page') }}: {{ "%.1f"|format(leg.distance_nm or 0) }} nm,
-                {{ translate('estimated_days', lang, 'routes_page') }}: 
-                {{ ((leg.arrival_time - leg.departure_time).days) if leg.arrival_time and leg.departure_time else translate('not_available', lang, 'global') }}
-              </li>
-              {% endfor %}
-            </ul>
-            {% else %}
-            <em class="text-muted">{{ translate('no_legs_available', lang, 'routes_page') }}</em>
-            {% endif %}
-          </td>
+      {% if weather_data %}
+        {% for w in weather_data %}
+        <tr class="text-center">
+          <td>{{ w.location }}</td>
+          <td>{{ w.temperature }} °C</td>
+          <td>{{ w.wind_speed }} km/h</td>
+          <td>{{ translate(w.condition, lang, 'weather_page') }}</td>
         </tr>
         {% endfor %}
       {% else %}
         <tr>
-          <td colspan="5" class="text-center">{{ translate('no_routes_found', lang, 'routes_page') }}</td>
+          <td colspan="4" class="text-center text-muted">{{ translate('no_weather_data', lang, 'weather_page') }}</td>
         </tr>
       {% endif %}
     </tbody>

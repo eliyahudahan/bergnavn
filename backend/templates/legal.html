@@ -1,28 +1,14 @@
 {% extends "base.html" %}
 
-{% block title %}{{ translate('license_legal', lang, 'global') }}{% endblock %}
+{% block title %}{{ translate('legal', lang, 'global') }}{% endblock %}
 
 {% block content %}
-<div class="my-5">
-  <h2 class="mb-4">BergNavn Maritime Voyages – {{ translate('open_license', lang, 'legal') }}</h2>
-
-  {% for section_lang in ['english', 'norwegian'] %}
-  <section class="mb-5">
-    <h3>{{ translate(section_lang, lang, 'legal') }}</h3>
-    <p>&copy; 2025 Eliyahu Dahan. {{ translate('all_rights_reserved', lang, 'legal') }}</p>
-    <p>{{ translate('license_conditions_intro', lang, 'legal') }}</p>
-    <ol class="ps-4">
-      <li>{{ translate('attribution_required', lang, 'legal') }}</li>
-      <li>{{ translate('freedom_to_modify', lang, 'legal') }}</li>
-      <li>{{ translate('no_false_claims', lang, 'legal') }}</li>
-      <li>{{ translate('disclaimer', lang, 'legal') }}</li>
-    </ol>
-  </section>
-  {% endfor %}
-
-  <div class="mt-5 text-center">
-    <a href="{{ url_for('main_bp.home') }}" class="btn btn-primary">{{ translate('back_to_home', lang, 'global') }}</a>
-    <p class="text-muted mt-3 small">{{ translate('legal_note_institutional', lang, 'legal') }}</p>
+<div class="container my-5">
+  <h1 class="text-center mb-4">{{ translate('legal_title', lang, 'legal_page') }}</h1>
+  <div class="text-start">
+    <p>{{ translate('legal_text_1', lang, 'legal_page') }}</p>
+    <p>{{ translate('legal_text_2', lang, 'legal_page') }}</p>
+    <p>{{ translate('legal_text_3', lang, 'legal_page') }}</p>
   </div>
 </div>
 {% endblock %}

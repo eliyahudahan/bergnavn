@@ -1,68 +1,13 @@
 {% extends "base.html" %}
 
-{% block title %}{{ translate('home_welcome', lang, 'global') }}{% endblock %}
+{% block title %}{{ translate('home', lang, 'global') }}{% endblock %}
 
 {% block content %}
-<section class="container text-center mt-5 pt-5">
-  <h1 class="display-4 fw-bold mb-3">
-    {{ translate('home_greeting', lang, 'global') }}
-  </h1>
-  <p class="lead mb-4">
-    {{ translate('home_description', lang, 'global') }}
-  </p>
-  <p class="text-muted mb-5">
-    {{ translate('home_navigation_info', lang, 'global') }}
-  </p>
-
-  <div class="d-flex flex-wrap justify-content-center gap-3">
-    <a href="{{ url_for('dashboard_bp.dashboard') }}" class="btn btn-primary btn-lg">
-      <i class="bi bi-speedometer2"></i> {{ translate('dashboard', lang, 'global') }}
-    </a>
-    <a href="{{ url_for('cruise.view_cruises') }}" class="btn btn-success btn-lg">
-      <i class="bi bi-ship"></i> {{ translate('cruises', lang, 'global') }}
-    </a>
-    <a href="{{ url_for('routes_bp.view_routes') }}" class="btn btn-info btn-lg text-white">
-      <i class="bi bi-map"></i> {{ translate('routes', lang, 'global') }}
-    </a>
-  </div>
-</section>
-
-<section class="container mt-5 pt-4">
-  <div class="row g-4 text-center">
-    <div class="col-md-4">
-      <div class="card h-100 shadow-sm">
-        <div class="card-body">
-          <i class="bi bi-globe2 display-4 mb-3 text-primary"></i>
-          <h5 class="card-title fw-bold">{{ translate('global_operations', lang, 'global') }}</h5>
-          <p class="card-text text-muted">{{ translate('global_operations_desc', lang, 'global') }}</p>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="card h-100 shadow-sm">
-        <div class="card-body">
-          <i class="bi bi-bar-chart-line display-4 mb-3 text-success"></i>
-          <h5 class="card-title fw-bold">{{ translate('data_driven', lang, 'global') }}</h5>
-          <p class="card-text text-muted">{{ translate('data_driven_desc', lang, 'global') }}</p>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="card h-100 shadow-sm">
-        <div class="card-body">
-          <i class="bi bi-shield-lock display-4 mb-3 text-danger"></i>
-          <h5 class="card-title fw-bold">{{ translate('secure_platform', lang, 'global') }}</h5>
-          <p class="card-text text-muted">{{ translate('secure_platform_desc', lang, 'global') }}</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<style>
-section.container h1 { line-height: 1.2; }
-section.container .card { border-radius: 12px; }
-section.container .card i { transition: transform 0.3s ease; }
-section.container .card:hover i { transform: scale(1.2); }
-</style>
+<div class="text-center my-5">
+  <h1 class="mb-4">{{ translate('welcome_message', lang, 'home_page') }}</h1>
+  <p class="lead">{{ translate('home_intro_text', lang, 'home_page') }}</p>
+  <a href="{{ url_for('cruise.view_cruises', lang=lang) }}" class="btn btn-primary btn-lg mt-3">
+    {{ translate('view_cruises', lang, 'home_page') }}
+  </a>
+</div>
 {% endblock %}

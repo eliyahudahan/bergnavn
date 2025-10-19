@@ -1,213 +1,89 @@
-# -*- coding: utf-8 -*-
+# translations.py
+# English and Norwegian support for BergNavn
 
-TRANSLATIONS = {
-    "en": {
-        "global": {
-            "dashboard": "Dashboard",
-            "cruises": "Cruises",
-            "routes": "Routes",
-            "users": "Users",
-            "status": "Status",
-            "active": "Active",
-            "inactive": "Inactive",
-            "edit": "Edit",
-            "actions": "Actions",
-            "back": "Back",
-            "apply": "Apply",
-            "not_available": "N/A",
-            "footer_credit": "Powered by BergNavn Maritime Voyages",
-            "license_legal": "License / Legal",
-            "activate": "Activate",
-            "deactivate": "Deactivate",
-            "all": "All",
-            "back_to_home": "Back to Home"
+translations = {
+    'en': {
+        'global': {
+            'dashboard': 'Dashboard',
+            'cruises': 'Cruises',
+            'routes': 'Routes',
+            'back_to_home': 'Back to Home',
+            'footer_credit': '© 2025 BergNavn Maritime',
+            'not_available': 'N/A',
+            'home_welcome': 'Welcome to BergNavn',
+            'home_greeting': 'Your real-time maritime platform',
+            'home_description': 'Track, analyze and optimize routes between Kristiansand and Oslo.',
+            'home_navigation_info': 'Use the navigation buttons below to explore the platform.',
+            'global_operations': 'Global Operations',
+            'global_operations_desc': 'Monitor and optimize maritime traffic in real time.',
+            'data_driven': 'Data Driven',
+            'data_driven_desc': 'Analytics and forecasts based on real-time data.',
+            'secure_platform': 'Secure Platform',
+            'secure_platform_desc': 'Robust and secure infrastructure.'
         },
-        "dummy_users": {
-            "title": "Dummy Users",
-            "create_new_user": "Create New User",
-            "username": "Username",
-            "username_required": "Username is required.",
-            "username_exists": "Username already exists.",
-            "email": "Email",
-            "invalid_email": "Invalid email address.",
-            "email_exists": "Email already exists.",
-            "scenario": "Scenario",
-            "gender": "Gender",
-            "nationality": "Nationality",
-            "language": "Language",
-            "preferred_sailing_areas": "Preferred Sailing Areas",
-            "preferred_areas_limit": "You can specify up to 3 preferred sailing areas only.",
-            "user_created": "User created successfully!",
-            "user_updated": "User updated successfully!",
-            "user_not_found": "User not found or inactive.",
-            "limit_dummy": "Exceeded maximum allowed dummy users (5).",
-            "manage_info": "Manage your dummy users here.",
-            "to_add_dummy_user": "to add a new dummy user.",
-            "back_to_user_list": "Back to User List",
+        'dashboard_page': {
+            'title': 'Voyages Dashboard',
+            'id': 'ID',
+            'name': 'Name',
+            'status': 'Status',
+            'no_voyages': 'No voyages found'
         },
-        "cruises_page": {
-            "title": "Available Cruises",
-            "description": "Description",
-            "departure_date": "Departure Date",
-            "return_date": "Return Date",
-            "price_eur": "Price (€)",
-            "no_cruises_found": "No cruises found.",
+        'cruises_page': {
+            'title': 'Available Cruises',
+            'description': 'Description',
+            'departure_date': 'Departure Date',
+            'return_date': 'Return Date',
+            'price_eur': 'Price (€)',
+            'no_cruises_found': 'No cruises available'
         },
-        "dashboard_page": {
-            "title": "🛳️ Voyage Dashboard",
-            "id": "ID",
-            "name": "Name",
-            "status": "Status",
-            "active": "Active",
-            "inactive": "Inactive",
-            "no_voyages": "No voyages found.",
-            "green": "On Schedule",
-            "yellow": "Delayed",
-            "red": "Cancelled",
-            "grey": "Unknown",
-        },
-        "routes_page": {
-            "routes_and_legs": "Routes and Legs",
-            "route_id": "Route ID",
-            "route_name": "Route Name",
-            "description": "Description",
-            "number_of_legs": "Number of Legs",
-            "legs_details": "Legs Details",
-            "leg": "Leg",
-            "distance_nm": "Distance (nm)",
-            "estimated_days": "Estimated Days",
-            "no_legs_available": "No legs available",
-            "no_routes_found": "No routes found",
-            "unknown": "Unknown",
-        },
-        "dashboard": {
-            "ok": "OK",
-            "reroute_needed": "Reroute Needed",
-            "warning": "Warning",
-            "available_routes_legs": "Available Routes & Legs",
-            "route_evaluation_dashboard": "Route Evaluation Dashboard",
-        },
-        "legal": {
-            "open_license": "Open License",
-            "english": "English",
-            "norwegian": "Norwegian",
-            "all_rights_reserved": "All rights reserved",
-            "license_conditions_intro": "The license conditions apply to the use, copying, and distribution of this material:",
-            "attribution_required": "Attribution is required when reusing.",
-            "freedom_to_modify": "Freedom to modify content for personal use.",
-            "no_false_claims": "No false claims of authorship.",
-            "disclaimer": "All content is provided as-is, without warranties.",
-            "legal_note_institutional": "This document may be used for official, academic, or institutional purposes."
+        'home_page': {
+            'welcome_message': 'Welcome to BergNavn',
+            'home_intro_text': 'Your real-time maritime platform',
+            'view_cruises': 'View Cruises'
         }
     },
-    "no": {
-        "global": {
-            "dashboard": "Dashbord",
-            "cruises": "Cruise",
-            "routes": "Ruter",
-            "users": "Brukere",
-            "status": "Status",
-            "active": "Aktiv",
-            "inactive": "Inaktiv",
-            "edit": "Rediger",
-            "actions": "Handlinger",
-            "back": "Tilbake",
-            "apply": "Bruk",
-            "not_available": "N/A",
-            "footer_credit": "Drevet av BergNavn Maritime Voyages",
-            "license_legal": "Lisens / Juridisk",
-            "activate": "Aktiver",
-            "deactivate": "Deaktiver",
-            "all": "Alle",
-            "back_to_home": "Tilbake til Hjem"
+    'no': {
+        'global': {
+            'dashboard': 'Dashbord',
+            'cruises': 'Cruiser',
+            'routes': 'Ruter',
+            'back_to_home': 'Tilbake til Hjem',
+            'footer_credit': '© 2025 BergNavn Maritime',
+            'not_available': 'Ikke tilgjengelig',
+            'home_welcome': 'Velkommen til BergNavn',
+            'home_greeting': 'Din sanntids maritime plattform',
+            'home_description': 'Spor, analyser og optimaliser ruter mellom Kristiansand og Oslo.',
+            'home_navigation_info': 'Bruk navigasjonsknappene nedenfor for å utforske plattformen.',
+            'global_operations': 'Global Operasjoner',
+            'global_operations_desc': 'Overvåk og optimaliser maritim trafikk i sanntid.',
+            'data_driven': 'Datadrevet',
+            'data_driven_desc': 'Analyse og prognoser basert på sanntidsdata.',
+            'secure_platform': 'Sikker Plattform',
+            'secure_platform_desc': 'Robust og sikker infrastruktur.'
         },
-        "dummy_users": {
-            "title": "Dummybrukere",
-            "create_new_user": "Opprett ny bruker",
-            "username": "Brukernavn",
-            "username_required": "Brukernavn er påkrevd.",
-            "username_exists": "Brukernavn eksisterer allerede.",
-            "email": "E-post",
-            "invalid_email": "Ugyldig e-postadresse.",
-            "email_exists": "E-post eksisterer allerede.",
-            "scenario": "Scenario",
-            "gender": "Kjønn",
-            "nationality": "Nasjonalitet",
-            "language": "Språk",
-            "preferred_sailing_areas": "Foretrukne seilingsområder",
-            "preferred_areas_limit": "Du kan kun velge opptil 3 foretrukne seilingsområder.",
-            "user_created": "Bruker opprettet!",
-            "user_updated": "Bruker oppdatert!",
-            "user_not_found": "Bruker ikke funnet eller inaktiv.",
-            "limit_dummy": "Maksimalt antall dummybrukere (5) nådd.",
-            "manage_info": "Administrer dine dummybrukere her.",
-            "to_add_dummy_user": "for å legge til en ny dummybruker.",
-            "back_to_user_list": "Tilbake til brukerlisten",
+        'dashboard_page': {
+            'title': 'Reiser Dashbord',
+            'id': 'ID',
+            'name': 'Navn',
+            'status': 'Status',
+            'no_voyages': 'Ingen reiser funnet'
         },
-        "cruises_page": {
-            "title": "Tilgjengelige cruise",
-            "description": "Beskrivelse",
-            "departure_date": "Avreisedato",
-            "return_date": "Returdato",
-            "price_eur": "Pris (€)",
-            "no_cruises_found": "Ingen cruise funnet.",
+        'cruises_page': {
+            'title': 'Tilgjengelige Cruiser',
+            'description': 'Beskrivelse',
+            'departure_date': 'Avreisedato',
+            'return_date': 'Returdato',
+            'price_eur': 'Pris (€)',
+            'no_cruises_found': 'Ingen cruisetilbud'
         },
-        "dashboard_page": {
-            "title": "🛳️ Reisedashbord",
-            "id": "ID",
-            "name": "Navn",
-            "status": "Status",
-            "active": "Aktiv",
-            "inactive": "Inaktiv",
-            "no_voyages": "Ingen reiser funnet.",
-            "green": "I rute",
-            "yellow": "Forsinket",
-            "red": "Kansellert",
-            "grey": "Ukjent",
-        },
-        "routes_page": {
-            "routes_and_legs": "Ruter og etapper",
-            "route_id": "Rute-ID",
-            "route_name": "Rutenavn",
-            "description": "Beskrivelse",
-            "number_of_legs": "Antall etapper",
-            "legs_details": "Etappedetaljer",
-            "leg": "Etappe",
-            "distance_nm": "Avstand (nm)",
-            "estimated_days": "Estimerte dager",
-            "no_legs_available": "Ingen etapper tilgjengelig",
-            "no_routes_found": "Ingen ruter funnet",
-            "unknown": "Ukjent",
-        },
-        "dashboard": {
-            "ok": "OK",
-            "reroute_needed": "Omdirigering nødvendig",
-            "warning": "Advarsel",
-            "available_routes_legs": "Tilgjengelige ruter og etapper",
-            "route_evaluation_dashboard": "Ruteevaluering Dashbord",
-        },
-        "legal": {
-            "open_license": "Åpen lisens",
-            "english": "Engelsk",
-            "norwegian": "Norsk",
-            "all_rights_reserved": "Alle rettigheter reservert",
-            "license_conditions_intro": "Lisensbetingelsene gjelder for bruk, kopiering og distribusjon av dette materialet:",
-            "attribution_required": "Kreditering kreves ved gjenbruk.",
-            "freedom_to_modify": "Frihet til å modifisere innholdet for eget bruk.",
-            "no_false_claims": "Ingen falske påstander om forfatterskap.",
-            "disclaimer": "Alt innhold leveres som det er, uten garantier.",
-            "legal_note_institutional": "Dette dokumentet kan brukes til offisielle, akademiske eller institusjonelle formål."
+        'home_page': {
+            'welcome_message': 'Velkommen til BergNavn',
+            'home_intro_text': 'Din sanntids maritime plattform',
+            'view_cruises': 'Se Cruisere'
         }
-    },
+    }
 }
 
-def translate(key: str, lang: str = "en", section: str = "global") -> str:
-    """
-    Fetch the translated string for a given key, section, and language.
-    Falls back to English if key or language is missing.
-    """
-    return (
-        TRANSLATIONS.get(lang, TRANSLATIONS["en"])
-        .get(section, TRANSLATIONS["en"].get(section, {}))
-        .get(key, TRANSLATIONS["en"].get(section, {}).get(key, key))
-    )
+def translate(key: str, lang: str = 'en', page: str = 'global') -> str:
+    """Return translation for a given key, language, and page context."""
+    return translations.get(lang, translations['en']).get(page, {}).get(key, key)
