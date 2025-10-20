@@ -4,11 +4,119 @@
 
 {% block content %}
 <div class="container my-5">
-  <h1 class="text-center mb-4">{{ translate('legal_title', lang, 'legal_page') }}</h1>
-  <div class="text-start">
-    <p>{{ translate('legal_text_1', lang, 'legal_page') }}</p>
-    <p>{{ translate('legal_text_2', lang, 'legal_page') }}</p>
-    <p>{{ translate('legal_text_3', lang, 'legal_page') }}</p>
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      <h1 class="text-center mb-4">{{ translate('legal_title', lang, 'legal_page') }}</h1>
+      
+      <!-- Main Legal Information Card -->
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+          <div class="text-start">
+            <p class="mb-4">{{ translate('legal_text_1', lang, 'legal_page') }}</p>
+            <p class="mb-4">{{ translate('legal_text_2', lang, 'legal_page') }}</p>
+            <p class="mb-0">{{ translate('legal_text_3', lang, 'legal_page') }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Official Data Sources Section -->
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0">📊 Official Data Sources & Acknowledgments</h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <h6>Norwegian Government Sources</h6>
+              <ul class="list-unstyled">
+                <li class="mb-2">
+                  <i class="bi bi-check-circle-fill text-success me-2"></i>
+                  <strong>Statistics Norway (SSB)</strong><br>
+                  <small class="text-muted">Official maritime cargo statistics and trade data</small>
+                </li>
+                <li class="mb-2">
+                  <i class="bi bi-check-circle-fill text-success me-2"></i>
+                  <strong>Norwegian Coastal Administration (Kystverket)</strong><br>
+                  <small class="text-muted">Real-time AIS vessel tracking and maritime infrastructure</small>
+                </li>
+                <li class="mb-2">
+                  <i class="bi bi-check-circle-fill text-success me-2"></i>
+                  <strong>MET Norway</strong><br>
+                  <small class="text-muted">Weather forecasting and meteorological data services</small>
+                </li>
+                <li class="mb-0">
+                  <i class="bi bi-check-circle-fill text-success me-2"></i>
+                  <strong>RouteInfo Service</strong><br>
+                  <small class="text-muted">Official maritime route planning and navigation data</small>
+                </li>
+              </ul>
+            </div>
+            <div class="col-md-6">
+              <h6>Technology & Development</h6>
+              <ul class="list-unstyled">
+                <li class="mb-2">
+                  <i class="bi bi-code-slash text-info me-2"></i>
+                  <strong>Flask Web Framework</strong><br>
+                  <small class="text-muted">Python-based web application development</small>
+                </li>
+                <li class="mb-2">
+                  <i class="bi bi-graph-up text-warning me-2"></i>
+                  <strong>Data Science Integration</strong><br>
+                  <small class="text-muted">Real-time analytics and optimization algorithms</small>
+                </li>
+                <li class="mb-0">
+                  <i class="bi bi-shield-check text-success me-2"></i>
+                  <strong>Modern Web Standards</strong><br>
+                  <small class="text-muted">Bootstrap, PostgreSQL, and responsive design</small>
+                </li>
+              </ul>
+            </div>
+          </div>
+          
+          <!-- Development Approach -->
+          <div class="mt-4 p-3 bg-light rounded">
+            <h6>Development Approach</h6>
+            <p class="mb-0 small">
+              This platform was developed using modern development tools and methodologies, 
+              including AI-assisted programming for rapid prototyping and optimization, 
+              while maintaining full technical oversight and professional software engineering standards.
+              The implementation focuses on real-world maritime operational requirements.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Compliance & Standards Section -->
+      <div class="card border-0 shadow-sm mt-4">
+        <div class="card-header bg-success text-white">
+          <h5 class="mb-0">✅ Compliance & Standards</h5>
+        </div>
+        <div class="card-body">
+          <div class="row text-center">
+            <div class="col-md-3 mb-3">
+              <i class="bi bi-file-earmark-text display-6 text-primary d-block mb-2"></i>
+              <h6>API Compliance</h6>
+              <small class="text-muted">Adheres to all official API terms of service</small>
+            </div>
+            <div class="col-md-3 mb-3">
+              <i class="bi bi-shield-lock display-6 text-success d-block mb-2"></i>
+              <h6>Data Security</h6>
+              <small class="text-muted">Secure handling of maritime operational data</small>
+            </div>
+            <div class="col-md-3 mb-3">
+              <i class="bi bi-globe display-6 text-info d-block mb-2"></i>
+              <h6>Industry Standards</h6>
+              <small class="text-muted">Follows maritime industry best practices</small>
+            </div>
+            <div class="col-md-3 mb-3">
+              <i class="bi bi-cpu display-6 text-warning d-block mb-2"></i>
+              <h6>Modern Stack</h6>
+              <small class="text-muted">Contemporary technology implementation</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 {% endblock %}

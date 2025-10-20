@@ -14,6 +14,7 @@ from backend.controllers.route_leg_controller import route_leg_bp
 from backend.routes.system_routes import health_bp
 from backend.routes.cruise_routes import cruise_blueprint
 from backend.routes.weather_routes import weather_bp
+from backend.routes.maritime_routes import maritime_bp  # Import maritime blueprint
 # from backend.routes.booking_routes import booking_blueprint  # removed (no longer used)
 
 # Extensions
@@ -87,6 +88,7 @@ def create_app(config_name=None, testing=False, start_scheduler=False):
     app.register_blueprint(weather_bp)
     app.register_blueprint(health_bp)
     app.register_blueprint(dashboard_bp, url_prefix='/dashboard')
+    app.register_blueprint(maritime_bp, url_prefix='/maritime')  # ✅ FIXED: Register maritime blueprint
     # app.register_blueprint(booking_blueprint, url_prefix='/booking')  # removed
 
     logging.info("Blueprints registered successfully.")

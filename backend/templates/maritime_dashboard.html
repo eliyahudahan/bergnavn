@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block title %}{{ translate('title', lang, 'maritime_page') }}{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+    <!-- Header Section with Official Data -->
+    <div class="text-center mb-5">
+        <h1 class="display-4">🚢 {{ translate('title', lang, 'maritime_page') }}</h1>
+        <p class="lead">{{ translate('maritime_description', lang, 'global') }}</p>
+        
+        <!-- Status Bar -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="d-flex justify-content-center align-items-center gap-3">
+                    <span id="api-status" class="badge bg-success">Connecting...</span>
+                    <button id="refresh-weather" class="btn btn-sm btn-outline-primary">
+                        🔄 Refresh Weather
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Statistics Bar with Official SSB Data -->
+        <div class="row mt-4">
+            <div class="col-md-4">
+                <div class="card text-white bg-primary mb-3">
+                    <div class="card-body text-center">
+                        <h5>📦 {{ translate('cargo_volume', lang, 'global') }}</h5>
+                        <h3>975,870 tons</h3>
+                        <small>Q2 2025 ({{ translate('official_data', lang, 'maritime_page') }})</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-white bg-success mb-3">
+                    <div class="card-body text-center">
+                        <h5>⏱️ {{ translate('route_eta', lang, 'global') }}</h5>
+                        <h3>18-22 hours</h3>
+                        <small id="route-eta-display">Kristiansand ↔ Oslo</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-white bg-warning mb-3">
+                    <div class="card-body text-center">
+                        <h5>💰 {{ translate('fuel_optimization', lang, 'global') }}</h5>
+                        <h3>15%+ {{ translate('fuel_savings', lang, 'maritime_page') }}</h3>
+                        <small>Fuel cost reduction potential</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Weather Alert Section with MET Norway Data -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-warning">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">🌤️ {{ translate('weather_forecasts', lang, 'maritime_page') }}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center" id="weather-data">
+                        <!-- Weather data will be loaded here by JavaScript -->
+                        <div class="col-12 text-center">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading maritime weather data...</span>
+                            </div>
+                            <p class="mt-2">Loading real-time weather data from MET Norway...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Map Container -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">🌍 {{ translate('live_map', lang, 'maritime_page') }}</h5>
+        </div>
+        <div class="card-body">
+            <div id="maritime-map" style="height: 500px; background: #f8f9fa; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                <div class="text-center text-muted">
+                    <h4>🗺️ {{ translate('route_visualization', lang, 'maritime_page') }}</h4>
+                    <p>{{ translate('coming_soon', lang, 'maritime_page') }}</p>
+                    <small>Kristiansand ↔ Oslo route visualization</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5>📊 {{ translate('route_analytics', lang, 'maritime_page') }}</h5>
+                    <p>Analyze historical and real-time route data</p>
+                    <button class="btn btn-outline-primary" disabled>{{ translate('coming_soon', lang, 'maritime_page') }}</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5>⚡ {{ translate('fuel_optimization', lang, 'global') }}</h5>
+                    <p>Calculate optimal speed and fuel consumption</p>
+                    <button class="btn btn-outline-success" disabled>{{ translate('coming_soon', lang, 'maritime_page') }}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Sources Information -->
+    <div class="card mt-4">
+        <div class="card-body">
+            <h6>📋 {{ translate('data_sources', lang, 'maritime_page') }}</h6>
+            <ul class="small">
+                <li>SSB Norway - {{ translate('official_statistics', lang, 'maritime_page') }}</li>
+                <li>Kystverket - AIS live data and vessel tracking</li>
+                <li>MET Norway - {{ translate('weather_forecasts', lang, 'maritime_page') }}</li>
+                <li>RouteInfo.no - {{ translate('maritime_routes', lang, 'maritime_page') }}</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Technical Implementation Note -->
+    <div class="card mt-4 border-0 bg-light">
+        <div class="card-body text-center py-3">
+            <small class="text-muted">
+                <strong>Technical Implementation:</strong> 
+                Integrated with official Norwegian data APIs • 
+                Real-time MET Norway weather integration • 
+                Modern web technology stack
+            </small>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<!-- Maritime Dashboard JavaScript -->
+<script src="{{ url_for('static', filename='js/maritime.js') }}"></script>
+{% endblock %}

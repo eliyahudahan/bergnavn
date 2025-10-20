@@ -1,38 +1,58 @@
 {% extends "base.html" %}
 
-{% block title %}{{ translate('routes', lang, 'routes_page') }}{% endblock %}
+{% block title %}{{ translate('routes_title', lang, 'routes_page') }}{% endblock %}
 
 {% block content %}
-<h1 class="text-center mb-4">{{ translate('routes_title', lang, 'routes_page') }}</h1>
+<div class="container my-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      <h1 class="text-center mb-3">🗺️ {{ translate('routes_title', lang, 'routes_page') }}</h1>
+      <p class="text-center lead mb-5 text-muted">Official maritime routes and navigation data</p>
 
-<div class="table-responsive mx-auto" style="max-width: 95%;">
-  <table class="table table-striped table-bordered align-middle">
-    <thead class="table-primary text-center">
-      <tr>
-        <th>{{ translate('route_id', lang, 'routes_page') }}</th>
-        <th>{{ translate('route_name', lang, 'routes_page') }}</th>
-        <th>{{ translate('origin', lang, 'routes_page') }}</th>
-        <th>{{ translate('destination', lang, 'routes_page') }}</th>
-        <th>{{ translate('duration', lang, 'routes_page') }}</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% if routes %}
-        {% for r in routes %}
-        <tr>
-          <td>{{ r.id }}</td>
-          <td>{{ r.name }}</td>
-          <td>{{ r.origin }}</td>
-          <td>{{ r.destination }}</td>
-          <td>{{ r.duration }} {{ translate('hours', lang, 'global') }}</td>
-        </tr>
-        {% endfor %}
-      {% else %}
-        <tr>
-          <td colspan="5" class="text-center text-muted">{{ translate('no_routes_found', lang, 'routes_page') }}</td>
-        </tr>
-      {% endif %}
-    </tbody>
-  </table>
+      <div class="table-responsive">
+        <table class="table table-striped table-bordered align-middle">
+          <thead class="table-primary text-center">
+            <tr>
+              <th>{{ translate('route_id', lang, 'routes_page') }}</th>
+              <th>{{ translate('route_name', lang, 'routes_page') }}</th>
+              <th>{{ translate('origin', lang, 'routes_page') }}</th>
+              <th>{{ translate('destination', lang, 'routes_page') }}</th>
+              <th>{{ translate('duration', lang, 'routes_page') }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% if routes %}
+              {% for r in routes %}
+              <tr>
+                <td class="fw-bold text-center">{{ r.id }}</td>
+                <td>{{ r.name }}</td>
+                <td>
+                  <i class="bi bi-geo-alt-fill text-primary me-2"></i> 
+                  {{ r.origin or translate('not_available', lang, 'global') }}
+                </td>
+                <td>
+                  <i class="bi bi-geo-alt text-success me-2"></i> 
+                  {{ r.destination or translate('not_available', lang, 'global') }}
+                </td>
+                <td class="text-center">
+                  <span class="badge bg-secondary">
+                    {{ r.duration or 'N/A' }} {{ translate('hours', lang, 'routes_page') }}
+                  </span>
+                </td>
+              </tr>
+              {% endfor %}
+            {% else %}
+              <tr>
+                <td colspan="5" class="text-center text-muted py-5">
+                  <i class="bi bi-info-circle display-6 d-block mb-3"></i>
+                  {{ translate('no_routes_found', lang, 'routes_page') }}
+                </td>
+              </tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}
