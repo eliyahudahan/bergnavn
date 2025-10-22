@@ -1,4 +1,7 @@
-# app.py
+# app.py - BergNavn Maritime Application
+# Main Flask application factory and configuration
+# Enhanced with AIS Live Service and maritime data processing
+
 import logging
 import os
 from flask import Flask, session, request
@@ -14,8 +17,7 @@ from backend.controllers.route_leg_controller import route_leg_bp
 from backend.routes.system_routes import health_bp
 from backend.routes.cruise_routes import cruise_blueprint
 from backend.routes.weather_routes import weather_bp
-from backend.routes.maritime_routes import maritime_bp  # Import maritime blueprint
-# from backend.routes.booking_routes import booking_blueprint  # removed (no longer used)
+from backend.routes.maritime_routes import maritime_bp
 
 # Extensions
 from backend.extensions import db, mail, migrate
@@ -27,15 +29,18 @@ from backend.utils.translations import translate
 # Load environment variables
 load_dotenv()
 
-# Logging
+# Logging configuration
 logging.basicConfig(level=logging.INFO)
 
-# Scheduler
+# Scheduler for background tasks
 scheduler = APScheduler()
 
 
 def create_app(config_name=None, testing=False, start_scheduler=False):
-    """Factory method to create and configure the Flask app."""
+    """
+    Factory method to create and configure the Flask app.
+    Enhanced with AIS service initialization for real-time maritime data.
+    """
     if config_name is None:
         config_name = os.getenv('FLASK_ENV', 'default')
 
@@ -45,27 +50,45 @@ def create_app(config_name=None, testing=False, start_scheduler=False):
         static_folder=os.path.join('backend', 'static')
     )
 
-    # Register translation function
+    # Register translation function for templates
     app.jinja_env.globals['translate'] = translate
 
-    # Load configuration
+    # Load configuration based on environment
     if testing or config_name == 'testing':
         app.config.from_object('backend.config.config.TestingConfig')
     else:
         app.config.from_object('backend.config.config.Config')
 
-    # Initialize extensions
+    # Initialize database and other extensions
     db.init_app(app)
     mail.init_app(app)
     migrate.init_app(app, db)
 
-    # Scheduler setup
+    # Initialize AIS Live Service for real-time maritime data
+    # This service connects to Kystverket AIS and provides live ship tracking
+    if not testing and os.getenv("DISABLE_AIS_SERVICE") != "1":
+        try:
+            from backend.services.ais_service import ais_service
+            ais_service.start_ais_stream()
+            logging.info("✅ AIS Live Service initialized successfully")
+            
+            # Store AIS service in app context for easy access
+            app.ais_service = ais_service
+            
+        except Exception as e:
+            logging.warning(f"⚠️ AIS Service initialization failed: {e}")
+            logging.info("🔧 Continuing without AIS service - using enhanced simulation data")
+    else:
+        logging.info("🔧 AIS Service disabled - using simulation mode")
+
+    # Scheduler setup for periodic tasks
     if start_scheduler and not testing and os.getenv("FLASK_SKIP_SCHEDULER") != "1":
         scheduler.init_app(app)
         if not scheduler.running:
             scheduler.start()
+        logging.info("✅ Background scheduler started")
 
-    # Add periodic cleanup job if missing
+    # Add periodic cleanup job for weather data if missing
     if scheduler.get_job('weekly_cleanup') is None:
         scheduler.add_job(
             id='weekly_cleanup',
@@ -73,13 +96,15 @@ def create_app(config_name=None, testing=False, start_scheduler=False):
             trigger='interval',
             weeks=1
         )
+        logging.info("✅ Weekly cleanup job scheduled")
 
-    # Import models to ensure registration
+    # Import models to ensure they are registered with SQLAlchemy
     with app.app_context():
         from backend import models
-        logging.info("App context initialized. Models imported.")
+        logging.info("✅ App context initialized - Models imported successfully")
 
-    # Register Blueprints
+    # Register all application blueprints
+    # Each blueprint represents a modular component of the application
     app.register_blueprint(main_bp)
     app.register_blueprint(cruise_blueprint)
     app.register_blueprint(routes_bp, url_prefix="/routes")
@@ -88,12 +113,12 @@ def create_app(config_name=None, testing=False, start_scheduler=False):
     app.register_blueprint(weather_bp)
     app.register_blueprint(health_bp)
     app.register_blueprint(dashboard_bp, url_prefix='/dashboard')
-    app.register_blueprint(maritime_bp, url_prefix='/maritime')  # ✅ FIXED: Register maritime blueprint
-    # app.register_blueprint(booking_blueprint, url_prefix='/booking')  # removed
+    app.register_blueprint(maritime_bp, url_prefix='/maritime')
 
-    logging.info("Blueprints registered successfully.")
+    logging.info("✅ All blueprints registered successfully")
 
-    # Language selection per request
+    # Language selection middleware
+    # Sets the language for each request based on URL parameter or session
     @app.before_request
     def set_language():
         lang_param = request.args.get('lang')
@@ -101,9 +126,11 @@ def create_app(config_name=None, testing=False, start_scheduler=False):
             session['lang'] = lang_param
         session.setdefault('lang', 'en')
 
-    # CLI: list routes
+    # CLI command: List all available routes in the application
+    # Useful for debugging and understanding the API structure
     @app.cli.command("list-routes")
     def list_routes():
+        """CLI command to display all registered routes and their methods"""
         import urllib
         output = []
         for rule in app.url_map.iter_rules():
@@ -116,14 +143,21 @@ def create_app(config_name=None, testing=False, start_scheduler=False):
     return app
 
 
-# Create app instance
+# Create the main application instance
+# This instance is used by the WSGI server and development server
 app = create_app()
 
-# CLI: manual cleanup
+
+# CLI command: Manual cleanup of old weather data
+# Can be run independently of the scheduled job
 @app.cli.command("run-cleanup")
 def run_cleanup():
+    """CLI command to manually run weather data cleanup"""
     deactivate_old_weather_status()
+    print("✅ Manual cleanup completed")
 
 
+# Development server entry point
+# Only runs when script is executed directly (not imported)
 if __name__ == "__main__":
     app.run(debug=True)
