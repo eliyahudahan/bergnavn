@@ -1,5 +1,4 @@
 from backend.extensions import db
-from backend.models.voyage_leg import VoyageLeg
 
 class Route(db.Model):
     __tablename__ = 'routes'
@@ -11,5 +10,8 @@ class Route(db.Model):
     total_distance_nm = db.Column(db.Float)
     is_active = db.Column(db.Boolean, default=True)
 
+    # ✅ FIXED: String-based relationship - NO ABSOLUTE IMPORT!
     legs = db.relationship("VoyageLeg", backref="route", cascade="all, delete-orphan")
 
+    def __repr__(self):
+        return f"<Route {self.name}>"

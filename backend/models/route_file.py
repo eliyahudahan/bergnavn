@@ -1,5 +1,5 @@
 from backend.extensions import db
-from datetime import datetime
+from datetime import datetime, UTC  # ✅ FIXED: Added UTC
 
 class RouteFile(db.Model):
     """
@@ -9,8 +9,11 @@ class RouteFile(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     filename = db.Column(db.String(255), nullable=False)
-    uploaded_at = db.Column(db.DateTime, default=datetime.utcnow)
+    uploaded_at = db.Column(db.DateTime, default=lambda: datetime.now(UTC))  # ✅ FIXED: UTC
     file_content = db.Column(db.LargeBinary, nullable=False)
 
-    # Relationship to base routes
+    # FIXED: String-based relationship (no import needed)
     base_routes = db.relationship("BaseRoute", back_populates="route_file")
+
+    def __repr__(self):
+        return f"<RouteFile {self.filename}>"

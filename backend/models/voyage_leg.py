@@ -1,7 +1,5 @@
 from datetime import datetime, UTC
 from backend.extensions import db
-from backend.models.port import Port
-from backend.models.cruise import Cruise
 
 class VoyageLeg(db.Model):
     __tablename__ = 'voyage_legs'
@@ -14,7 +12,7 @@ class VoyageLeg(db.Model):
     departure_port_id = db.Column(db.Integer, db.ForeignKey('ports.id', ondelete='SET NULL'), nullable=True)
     arrival_port_id = db.Column(db.Integer, db.ForeignKey('ports.id', ondelete='SET NULL'), nullable=True)
 
-    # Relationships
+    # ✅ FIXED: String-based relationships - NO ABSOLUTE IMPORTS!
     departure_port = db.relationship("Port", foreign_keys=[departure_port_id])
     arrival_port = db.relationship("Port", foreign_keys=[arrival_port_id])
     cruise = db.relationship("Cruise", back_populates="legs")

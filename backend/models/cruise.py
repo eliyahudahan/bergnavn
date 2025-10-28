@@ -21,9 +21,9 @@ class Cruise(db.Model):
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(UTC))
     updated_at = db.Column(db.DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
 
-    # Relationship with clock (one-to-one)
+    # FIXED: String-based relationships to avoid circular imports
     clock = db.relationship(
-        "backend.models.clock.Clock",
+        "Clock",
         uselist=False,
         back_populates="cruise"
     )
@@ -31,9 +31,9 @@ class Cruise(db.Model):
     # (Temporarily disabled — Booking model currently removed)
     # bookings = db.relationship("Booking", back_populates="cruise")
 
-    # Relationship with voyage legs
+    # FIXED: String-based relationship
     legs = db.relationship(
-        "backend.models.voyage_leg.VoyageLeg",
+        "VoyageLeg",
         back_populates="cruise",
         cascade="all, delete-orphan",
         order_by="VoyageLeg.leg_order"
