@@ -1,6 +1,6 @@
-# app.py - BergNavn Maritime Application
+# app.py - BergNavn Maritime Application (Final)
 # Main Flask application factory and configuration
-# Enhanced with AIS Live Service and maritime data processing
+# Full integration: AIS Live, Scheduler, Cleanup, ML Routes, Middleware
 
 import logging
 import os
@@ -36,11 +36,9 @@ logging.basicConfig(level=logging.INFO)
 scheduler = APScheduler()
 
 
-def create_app(config_name=None, testing=False, start_scheduler=False):
-    """
-    Factory method to create and configure the Flask app.
-    Enhanced with AIS service initialization for real-time maritime data.
-    """
+def create_app(config_name=None, testing=False, start_scheduler=True):
+    """Factory method to create and configure Flask app."""
+
     if config_name is None:
         config_name = os.getenv('FLASK_ENV', 'default')
 
@@ -53,42 +51,38 @@ def create_app(config_name=None, testing=False, start_scheduler=False):
     # Register translation function for templates
     app.jinja_env.globals['translate'] = translate
 
-    # Load configuration based on environment
+    # Load configuration
     if testing or config_name == 'testing':
         app.config.from_object('backend.config.config.TestingConfig')
     else:
         app.config.from_object('backend.config.config.Config')
 
-    # Initialize database and other extensions
+    # Initialize extensions
     db.init_app(app)
     mail.init_app(app)
     migrate.init_app(app, db)
 
-    # Initialize AIS Live Service for real-time maritime data
-    # This service connects to Kystverket AIS and provides live ship tracking
+    # Initialize AIS Live Service
     if not testing and os.getenv("DISABLE_AIS_SERVICE") != "1":
         try:
             from backend.services.ais_service import ais_service
             ais_service.start_ais_stream()
             logging.info("✅ AIS Live Service initialized successfully")
-            
-            # Store AIS service in app context for easy access
             app.ais_service = ais_service
-            
         except Exception as e:
             logging.warning(f"⚠️ AIS Service initialization failed: {e}")
-            logging.info("🔧 Continuing without AIS service - using enhanced simulation data")
+            logging.info("🔧 Continuing with simulation data")
     else:
-        logging.info("🔧 AIS Service disabled - using simulation mode")
+        logging.info("🔧 AIS Service disabled - simulation mode active")
 
-    # Scheduler setup for periodic tasks
+    # Scheduler setup
     if start_scheduler and not testing and os.getenv("FLASK_SKIP_SCHEDULER") != "1":
         scheduler.init_app(app)
         if not scheduler.running:
             scheduler.start()
         logging.info("✅ Background scheduler started")
 
-    # Add periodic cleanup job for weather data if missing
+    # Schedule weekly weather cleanup
     if scheduler.get_job('weekly_cleanup') is None:
         scheduler.add_job(
             id='weekly_cleanup',
@@ -96,15 +90,14 @@ def create_app(config_name=None, testing=False, start_scheduler=False):
             trigger='interval',
             weeks=1
         )
-        logging.info("✅ Weekly cleanup job scheduled")
+        logging.info("✅ Weekly weather cleanup job scheduled")
 
-    # Import models to ensure they are registered with SQLAlchemy
+    # Import models
     with app.app_context():
         from backend import models
-        logging.info("✅ App context initialized - Models imported successfully")
+        logging.info("✅ Models imported successfully")
 
-    # Register all application blueprints
-    # Each blueprint represents a modular component of the application
+    # Register all blueprints
     app.register_blueprint(main_bp)
     app.register_blueprint(cruise_blueprint)
     app.register_blueprint(routes_bp, url_prefix="/routes")
@@ -114,11 +107,9 @@ def create_app(config_name=None, testing=False, start_scheduler=False):
     app.register_blueprint(health_bp)
     app.register_blueprint(dashboard_bp, url_prefix='/dashboard')
     app.register_blueprint(maritime_bp, url_prefix='/maritime')
-
     logging.info("✅ All blueprints registered successfully")
 
     # Language selection middleware
-    # Sets the language for each request based on URL parameter or session
     @app.before_request
     def set_language():
         lang_param = request.args.get('lang')
@@ -126,11 +117,9 @@ def create_app(config_name=None, testing=False, start_scheduler=False):
             session['lang'] = lang_param
         session.setdefault('lang', 'en')
 
-    # CLI command: List all available routes in the application
-    # Useful for debugging and understanding the API structure
+    # CLI: List all routes
     @app.cli.command("list-routes")
     def list_routes():
-        """CLI command to display all registered routes and their methods"""
         import urllib
         output = []
         for rule in app.url_map.iter_rules():
@@ -143,21 +132,15 @@ def create_app(config_name=None, testing=False, start_scheduler=False):
     return app
 
 
-# Create the main application instance
-# This instance is used by the WSGI server and development server
+# Main application instance
 app = create_app()
 
-
-# CLI command: Manual cleanup of old weather data
-# Can be run independently of the scheduled job
+# CLI: Manual weather cleanup
 @app.cli.command("run-cleanup")
 def run_cleanup():
-    """CLI command to manually run weather data cleanup"""
     deactivate_old_weather_status()
     print("✅ Manual cleanup completed")
 
-
 # Development server entry point
-# Only runs when script is executed directly (not imported)
 if __name__ == "__main__":
     app.run(debug=True)

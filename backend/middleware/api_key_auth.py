@@ -1,23 +1,14 @@
 # backend/middleware/api_key_auth.py
-# Simple API key middleware for sensitive endpoints
-
 import os
 from functools import wraps
 from flask import request, jsonify
 
 def require_api_key(f):
-    """
-    Decorator that enforces API key validation.
-    Checks for header: X-API-KEY or query param: api_key
-    """
+    """Decorator enforcing API key validation via header or query param."""
     @wraps(f)
     def decorated(*args, **kwargs):
         expected_key = os.getenv("BERGNAVN_API_KEY")
-        provided_key = (
-            request.headers.get("X-API-KEY")
-            or request.args.get("api_key")
-            or None
-        )
+        provided_key = request.headers.get("X-API-KEY") or request.args.get("api_key")
 
         if not expected_key:
             return jsonify({
