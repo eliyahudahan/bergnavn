@@ -2,14 +2,14 @@
 import logging
 from typing import Any, Dict
 from backend.services.async_executor import run_in_threadpool
-from backend.ml.enhanced_fuel_optimizer import EnhancedFuelOptimizer
+from backend.ml.enhanced_fuel_optimizer import EmpiricalFuelOptimizer
 
 logger = logging.getLogger(__name__)
 
 async def optimize_vessel_async(vessel_data: Dict[str, Any], weather_data: Dict[str, Any]) -> Dict[str, Any]:
-    """Asynchronously run EnhancedFuelOptimizer and return results."""
+    """Asynchronously run EmpiricalFuelOptimizer and return results."""
     try:
-        optimizer = EnhancedFuelOptimizer()
+        optimizer = EmpiricalFuelOptimizer()
         result = await run_in_threadpool(
             optimizer.calculate_optimal_speed_profile,
             vessel_data,
