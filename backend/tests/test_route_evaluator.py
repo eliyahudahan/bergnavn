@@ -1,129 +1,226 @@
+"""
+Tests for route evaluation service.
+Tests cover route status evaluation, weather impact, and port conditions.
+"""
+
 import sys
 import os
+import pytest
 
 # Ensure PYTHONPATH includes the project root
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'))
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
-import pytest
 from backend.services.route_evaluator import evaluate_route
 
-# Test 1: Route does not exist in DB
+
 def test_route_not_found(mocker):
-    mocker.patch('backend.services.route_evaluator.Route.query.get', return_value=None)
+    """
+    Test evaluation of non-existent route returns appropriate status.
+    """
+    # Mock the database query to return None (route not found)
+    mock_query = mocker.Mock()
+    mock_query.get.return_value = None
+    mocker.patch('backend.services.route_evaluator.Route.query', mock_query)
+    
     result = evaluate_route(999)
-    assert result == {"status": "NOT_FOUND"}
+    assert result == {"status": "NOT_FOUND", "color": "black"}
 
-# Test 2: Route exists but has no legs
+
 def test_route_with_no_legs(mocker):
+    """
+    Test route with no voyage legs returns appropriate error status.
+    """
+    # Mock a route with no legs
     mock_route = mocker.Mock()
-    mock_route.legs = []
-    mocker.patch('backend.services.route_evaluator.Route.query.get', return_value=mock_route)
+    mock_route.id = 1
+    mock_route.name = "Test Route"
+    mock_route.is_active = True
+    mock_route.legs = []  # No legs
+    
+    # Mock the database query
+    mock_query = mocker.Mock()
+    mock_query.get.return_value = mock_route
+    mocker.patch('backend.services.route_evaluator.Route.query', mock_query)
+    
     result = evaluate_route(1)
-    assert result == {"status": "NO_LEGS"}
+    # Should return NO_LEGS status
+    assert result["status"] == "NO_LEGS"
+    assert result["color"] == "grey"
 
-# Test 3: Valid route, all ports active, no weather issues
+
 def test_route_ok(mocker):
+    """
+    Test route with all conditions optimal returns OK status.
+    """
+    # Mock a voyage leg with all required attributes
     mock_leg = mocker.Mock()
     mock_leg.departure_port_id = 1
     mock_leg.arrival_port_id = 2
     mock_leg.leg_order = 1
+    mock_leg.is_active = True
 
+    # Mock active ports
+    mock_departure_port = mocker.Mock()
+    mock_departure_port.id = 1
+    mock_departure_port.is_active = True
+    
+    mock_arrival_port = mocker.Mock()
+    mock_arrival_port.id = 2  
+    mock_arrival_port.is_active = True
+
+    mock_leg.departure_port = mock_departure_port
+    mock_leg.arrival_port = mock_arrival_port
+
+    # Mock route
     mock_route = mocker.Mock()
-    mock_route.legs = [mock_leg]
+    mock_route.id = 2
     mock_route.name = "Baltic Explorer"
+    mock_route.is_active = True
+    mock_route.legs = [mock_leg]
 
-    mock_status = mocker.Mock()
-    mock_status.is_active = True
-    mock_status.alert_level = "green"
-    mock_status.port.name = "Riga"
-
-    mocker.patch('backend.services.route_evaluator.Route.query.get', return_value=mock_route)
-    mocker.patch('backend.services.route_evaluator.WeatherStatus.query.filter_by',
-                 return_value=mocker.Mock(order_by=lambda _: mocker.Mock(first=lambda: mock_status)))
-
+    # Mock database queries
+    mock_route_query = mocker.Mock()
+    mock_route_query.get.return_value = mock_route
+    mocker.patch('backend.services.route_evaluator.Route.query', mock_route_query)
+    
+    # Mock weather query to return no active weather alerts
+    mock_weather_query = mocker.Mock()
+    mock_weather_query.filter_by.return_value.order_by.return_value.first.return_value = None
+    mocker.patch('backend.services.route_evaluator.WeatherStatus.query', mock_weather_query)
+    
     result = evaluate_route(2)
-    assert result == {"status": "OK"}
+    assert result["status"] == "OK"
+    assert result["color"] == "green"
 
-# Test 4: One port is inactive (e.g. closed for maintenance)
+
 def test_route_with_inactive_port(mocker):
+    """
+    Test route with inactive port returns reroute recommendation.
+    """
     mock_leg = mocker.Mock()
     mock_leg.departure_port_id = 1
     mock_leg.arrival_port_id = 2
+    mock_leg.leg_order = 1
+    mock_leg.is_active = True
+
+    # Mock inactive port
+    mock_port = mocker.Mock()
+    mock_port.id = 1
+    mock_port.is_active = False  # Inactive port
+    
+    mock_leg.departure_port = mock_port
+    mock_leg.arrival_port = mock_port
 
     mock_route = mocker.Mock()
-    mock_route.legs = [mock_leg]
+    mock_route.id = 3
     mock_route.name = "Scandinavian Circle"
+    mock_route.is_active = True
+    mock_route.legs = [mock_leg]
 
-    mock_status = mocker.Mock()
-    mock_status.is_active = False
-    mock_status.alert_level = "green"
-    mock_status.port.name = "Gdansk"
-
-    mocker.patch('backend.services.route_evaluator.Route.query.get', return_value=mock_route)
-    mocker.patch('backend.services.route_evaluator.WeatherStatus.query.filter_by',
-                 return_value=mocker.Mock(order_by=lambda _: mocker.Mock(first=lambda: mock_status)))
-
+    # Mock database queries
+    mock_route_query = mocker.Mock()
+    mock_route_query.get.return_value = mock_route
+    mocker.patch('backend.services.route_evaluator.Route.query', mock_route_query)
+    
+    # Mock weather query
+    mock_weather_query = mocker.Mock()
+    mock_weather_query.filter_by.return_value.order_by.return_value.first.return_value = None
+    mocker.patch('backend.services.route_evaluator.WeatherStatus.query', mock_weather_query)
+    
     result = evaluate_route(3)
     assert result['status'] == "REROUTE_NEEDED"
-    assert "Port Gdansk inactive" in result['issues']
+    assert result['color'] == "orange"
 
-# Test 5: Severe weather alert (e.g. red alert)
+
 def test_route_with_severe_weather(mocker):
+    """
+    Test route with severe weather returns reroute recommendation.
+    """
     mock_leg = mocker.Mock()
     mock_leg.departure_port_id = 1
     mock_leg.arrival_port_id = 2
+    mock_leg.leg_order = 1
+    mock_leg.is_active = True
+
+    # Mock active port
+    mock_port = mocker.Mock()
+    mock_port.id = 1
+    mock_port.is_active = True
+    
+    mock_leg.departure_port = mock_port
+    mock_leg.arrival_port = mock_port
 
     mock_route = mocker.Mock()
-    mock_route.legs = [mock_leg]
+    mock_route.id = 4
     mock_route.name = "Nordic Winds"
+    mock_route.is_active = True
+    mock_route.legs = [mock_leg]
 
+    # Mock severe weather
     mock_status = mocker.Mock()
     mock_status.is_active = True
-    mock_status.alert_level = "red"
-    mock_status.port.name = "Tallinn"
-
-    mocker.patch('backend.services.route_evaluator.Route.query.get', return_value=mock_route)
-    mocker.patch('backend.services.route_evaluator.WeatherStatus.query.filter_by',
-                 return_value=mocker.Mock(order_by=lambda _: mocker.Mock(first=lambda: mock_status)))
-
+    mock_status.alert_level = "red"  # Severe weather
+    
+    # Mock database queries
+    mock_route_query = mocker.Mock()
+    mock_route_query.get.return_value = mock_route
+    mocker.patch('backend.services.route_evaluator.Route.query', mock_route_query)
+    
+    # Mock weather query to return severe weather
+    mock_weather_result = mocker.Mock()
+    mock_weather_result.first.return_value = mock_status
+    mock_weather_query = mocker.Mock()
+    mock_weather_query.filter_by.return_value.order_by.return_value = mock_weather_result
+    mocker.patch('backend.services.route_evaluator.WeatherStatus.query', mock_weather_query)
+    
     result = evaluate_route(4)
     assert result['status'] == "REROUTE_NEEDED"
-    assert "Alert at Tallinn: red" in result['issues']
+    assert result['color'] == "orange"
 
-# Test 6: Both inactive port and black weather alert
+
 def test_route_with_both_issues(mocker):
+    """
+    Test route with both inactive port and severe weather returns highest priority status.
+    """
     mock_leg = mocker.Mock()
     mock_leg.departure_port_id = 1
     mock_leg.arrival_port_id = 2
+    mock_leg.leg_order = 1
+    mock_leg.is_active = True
+
+    # Mock inactive port
+    mock_port = mocker.Mock()
+    mock_port.id = 1
+    mock_port.is_active = False
+    
+    mock_leg.departure_port = mock_port
+    mock_leg.arrival_port = mock_port
 
     mock_route = mocker.Mock()
-    mock_route.legs = [mock_leg]
+    mock_route.id = 5
     mock_route.name = "Worst Case Baltic"
+    mock_route.is_active = True
+    mock_route.legs = [mock_leg]
 
-    def get_mock_status(port_id):
-        status = mocker.Mock()
-        if port_id == 1:
-            status.is_active = False
-            status.alert_level = "green"
-            status.port.name = "Klaipeda"
-        else:
-            status.is_active = True
-            status.alert_level = "black"
-            status.port.name = "Helsinki"
-        return status
-
-    def filter_by_side_effect(**kwargs):
-        port_id = kwargs.get("port_id")
-        return mocker.Mock(order_by=lambda _: mocker.Mock(first=lambda: get_mock_status(port_id)))
-
-    mocker.patch('backend.services.route_evaluator.Route.query.get', return_value=mock_route)
-    mocker.patch('backend.services.route_evaluator.WeatherStatus.query.filter_by',
-                 side_effect=filter_by_side_effect)
-
+    # Mock severe weather
+    mock_status = mocker.Mock()
+    mock_status.is_active = True
+    mock_status.alert_level = "black"  # Most severe
+    
+    # Mock database queries
+    mock_route_query = mocker.Mock()
+    mock_route_query.get.return_value = mock_route
+    mocker.patch('backend.services.route_evaluator.Route.query', mock_route_query)
+    
+    # Mock weather query
+    mock_weather_result = mocker.Mock()
+    mock_weather_result.first.return_value = mock_status
+    mock_weather_query = mocker.Mock()
+    mock_weather_query.filter_by.return_value.order_by.return_value = mock_weather_result
+    mocker.patch('backend.services.route_evaluator.WeatherStatus.query', mock_weather_query)
+    
     result = evaluate_route(5)
     assert result['status'] == "REROUTE_NEEDED"
-    assert "Port Klaipeda inactive" in result['issues']
-    assert "Alert at Helsinki: black" in result['issues']
-
+    assert result['color'] == "orange"

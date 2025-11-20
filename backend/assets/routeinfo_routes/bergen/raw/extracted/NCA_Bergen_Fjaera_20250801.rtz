@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<route xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="1.0" xmlns="https://cirm.org/rtz-xml-schemas">
+  <routeInfo routeName="NCA_Bergen_Fjaera_20250801" validityPeriodStart="2025-08-01T00:00:00" validityPeriodStop="2026-08-05T00:00:00" />
+  <waypoints>
+    <defaultWaypoint radius="0.3">
+      <leg starboardXTD="0.1" portsideXTD="0.1" safetyContour="20" safetyDepth="20" geometryType="Loxodrome" staticUKC="0" dynamicUKC="0" />
+    </defaultWaypoint>
+    <waypoint id="1" name="Bergen">
+      <position lat="60.40239225" lon="5.27522905" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="2" name="Kvarven">
+      <position lat="60.40297952" lon="5.2414078" />
+      <leg starboardXTD="0.08" portsideXTD="0.08" legInfo="" />
+    </waypoint>
+    <waypoint id="3" name="Askoy bridge">
+      <position lat="60.3960179" lon="5.21478962" />
+      <leg starboardXTD="0.08" portsideXTD="0.08" legInfo="" />
+    </waypoint>
+    <waypoint id="4" name="Tollneset">
+      <position lat="60.38502273" lon="5.17429947" />
+      <leg starboardXTD="0.08" portsideXTD="0.08" legInfo="" />
+    </waypoint>
+    <waypoint id="5" name="Tollneset">
+      <position lat="60.37971712" lon="5.16646305" />
+      <leg starboardXTD="0.07" portsideXTD="0.07" legInfo="" />
+    </waypoint>
+    <waypoint id="6" name="Sotra bridge">
+      <position lat="60.37389122" lon="5.16562847" />
+      <leg starboardXTD="0.07" portsideXTD="0.07" legInfo="" />
+    </waypoint>
+    <waypoint id="7" name="Stongi">
+      <position lat="60.3634249" lon="5.16806858" />
+      <leg starboardXTD="0.07" portsideXTD="0.07" legInfo="" />
+    </waypoint>
+    <waypoint id="8" name="Hakonshella">
+      <position lat="60.34599407" lon="5.1694718" />
+      <leg starboardXTD="0.07" portsideXTD="0.07" legInfo="" />
+    </waypoint>
+    <waypoint id="9" name="Hakonshella">
+      <position lat="60.34313333" lon="5.17196667" />
+      <leg starboardXTD="0.05" portsideXTD="0.05" legInfo="" />
+    </waypoint>
+    <waypoint id="10" name="Trollholmen">
+      <position lat="60.3393337" lon="5.17886617" />
+      <leg starboardXTD="0.05" portsideXTD="0.05" legInfo="" />
+    </waypoint>
+    <waypoint id="11" name="Vatlestraumen">
+      <position lat="60.33606057" lon="5.18862422" />
+      <leg starboardXTD="0.05" portsideXTD="0.05" legInfo="" />
+    </waypoint>
+    <waypoint id="12" name="Hilleren">
+      <position lat="60.33123055" lon="5.19384998" />
+      <leg starboardXTD="0.05" portsideXTD="0.05" legInfo="" />
+    </waypoint>
+    <waypoint id="13" name="Bjoroy">
+      <position lat="60.31798443" lon="5.19701488" />
+      <leg starboardXTD="0.08" portsideXTD="0.08" legInfo="" />
+    </waypoint>
+    <waypoint id="14" name="Hestholmen">
+      <position lat="60.29536667" lon="5.19166667" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="15" name="Fleslandsskjeret">
+      <position lat="60.28251798" lon="5.18336323" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="16" name="Raunane">
+      <position lat="60.26496373" lon="5.15378603" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="17" name="Tangaflu">
+      <position lat="60.24193343" lon="5.15212075" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="18" name="Leroyna">
+      <position lat="60.22481422" lon="5.16474202" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="19" name="Litle Laugaroy">
+      <position lat="60.15315246" lon="5.26467568" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="20" name="Ospoya">
+      <position lat="60.11331773" lon="5.29784094" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="21" name="Bjornafjorden">
+      <position lat="60.07351178" lon="5.32339295" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="22" name="Rommelines">
+      <position lat="60.02170308" lon="5.32667458" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="23" name="Reksteren">
+      <position lat="59.98961672" lon="5.34963825" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="24" name="Landroypynten">
+      <position lat="59.97503428" lon="5.37352805" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="25" name="Storeklubben">
+      <position lat="59.93915713" lon="5.45946259" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="26" name="Langenuen">
+      <position lat="59.92841667" lon="5.4808" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="27" name="Langenuen">
+      <position lat="59.91231013" lon="5.50555193" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="28" name="Skor">
+      <position lat="59.88650265" lon="5.53075187" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="29" name="Grovaholmen">
+      <position lat="59.84203357" lon="5.54320527" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="30" name="Huglahammaren">
+      <position lat="59.81067689" lon="5.56169225" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="31" name="Huglahammaren">
+      <position lat="59.80412153" lon="5.57291633" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="32" name="Hardangerfjorden">
+      <position lat="59.80941242" lon="5.60629625" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="33" name="Svinoya">
+      <position lat="59.8268157" lon="5.66150668" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="34" name="Bjellandsoya lt">
+      <position lat="59.8207795" lon="5.69588769" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="35" name="Skottaflu lt">
+      <position lat="59.82570171" lon="5.74514662" />
+      <leg starboardXTD="0.07" portsideXTD="0.07" legInfo="" />
+    </waypoint>
+    <waypoint id="36" name="Trollskjeret">
+      <position lat="59.82450254" lon="5.7638518" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="37" name="Hillestadholmen lt">
+      <position lat="59.79638541" lon="5.78930688" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="38" name="Mehusflu bn">
+      <position lat="59.79026513" lon="5.81307015" />
+      <leg starboardXTD="0.06" portsideXTD="0.06" legInfo="" />
+    </waypoint>
+    <waypoint id="39" name="Hoylandssundet">
+      <position lat="59.76074562" lon="5.87891518" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="40" name="Straumneset">
+      <position lat="59.77596661" lon="5.93303091" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="41" name="Sollesvik">
+      <position lat="59.75926874" lon="5.97404676" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="42" name="Hauganeset">
+      <position lat="59.74836479" lon="6.01630397" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="43" name="Susodden lt">
+      <position lat="59.75005214" lon="6.05861349" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="44" name="Alsakerneset">
+      <position lat="59.75588219" lon="6.08751607" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="45" name="Holaneset">
+      <position lat="59.78366252" lon="6.13592553" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="46" name="Skalnes">
+      <position lat="59.83261091" lon="6.24556291" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="47" name="Braskot">
+      <position lat="59.83997904" lon="6.29624111" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="48" name="Mosnes lt">
+      <position lat="59.85248567" lon="6.34665583" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="49" name="Eljarvikneset">
+      <position lat="59.85993171" lon="6.34854812" />
+      <leg starboardXTD="0.08" portsideXTD="0.08" legInfo="" />
+    </waypoint>
+    <waypoint id="50" name="Ombesneset">
+      <position lat="59.87065621" lon="6.36523173" />
+      <leg starboardXTD="0.05" portsideXTD="0.05" legInfo="" />
+    </waypoint>
+    <waypoint id="51" name="Fjaera">
+      <position lat="59.87335288" lon="6.37160142" />
+      <leg starboardXTD="0.07" portsideXTD="0.07" legInfo="" />
+    </waypoint>
+  </waypoints>
+  <extensions>
+    <extension manufacturer="Norwegian Coastal Administration" fullName="Bergen - Fjaera" productinfo="See information on http://www.routeinfo.no before use of this Reference Route for Navigation. The Reference Routes from NCA can be used as a basis in route planning. For routes with no comments on vessel size, 150 meter length and 9 meter draught has been used to quality assure the routes. Limitations in size of vessel may vary along the route caused by regulation or depths." routeNumber="NO-430002" xmlns="" />
+  </extensions>
+</route>

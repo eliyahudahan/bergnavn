@@ -1,6 +1,7 @@
-# translations.py
-# English and Norwegian support for BergNavn Maritime
-# Complete translation dictionary for maritime operations platform
+"""
+Translations module for BergNavn Maritime application.
+Provides English and Norwegian translations for the maritime operations platform.
+"""
 
 translations = {
     'en': {
@@ -40,7 +41,8 @@ translations = {
             'destination': 'Destination',
             'duration': 'Duration',
             'hours': 'hours',
-            'no_routes_found': 'No routes found'
+            'no_routes_found': 'No routes found',
+            'routes_and_legs': 'Routes and Legs'  # Added missing key
         },
         'legal_page': {
             'legal_title': 'Legal Information & Acknowledgments',
@@ -62,6 +64,19 @@ translations = {
             'official_statistics': 'Official Statistics',
             'weather_forecasts': 'Weather Forecasts',
             'maritime_routes': 'Maritime Routes'
+        },
+        # Added missing sections for tests
+        'cruises_page': {
+            'title': 'Available Cruises',
+            'description': 'Browse and book available maritime cruises'
+        },
+        'dashboard_page': {
+            'title': '🛳️ Voyage Dashboard',
+            'subtitle': 'Real-time maritime operations overview'
+        },
+        'dummy_users': {
+            'title': 'Dummy Users',
+            'description': 'Test user accounts for development'
         }
     },
     'no': {
@@ -101,7 +116,8 @@ translations = {
             'destination': 'Destinasjon',
             'duration': 'Varighet',
             'hours': 'timer',
-            'no_routes_found': 'Ingen ruter funnet'
+            'no_routes_found': 'Ingen ruter funnet',
+            'routes_and_legs': 'Ruter og etapper'  # Added missing key
         },
         'legal_page': {
             'legal_title': 'Juridisk Informasjon & Anerkjennelser',
@@ -123,9 +139,23 @@ translations = {
             'official_statistics': 'Offisiell Statistikk',
             'weather_forecasts': 'Værmeldinger',
             'maritime_routes': 'Maritime Ruter'
+        },
+        # Added missing sections for tests
+        'cruises_page': {
+            'title': 'Tilgjengelige cruise',
+            'description': 'Se gjennom og bestill tilgjengelige maritime cruise'
+        },
+        'dashboard_page': {
+            'title': '🛳️ Reisedashbord',
+            'subtitle': 'Sanntids oversikt over maritime operasjoner'
+        },
+        'dummy_users': {
+            'title': 'Dummybrukere',
+            'description': 'Testbrukerkontoer for utvikling'
         }
     }
 }
+
 
 def translate(key: str, lang: str = 'en', page: str = 'global') -> str:
     """
@@ -139,4 +169,11 @@ def translate(key: str, lang: str = 'en', page: str = 'global') -> str:
     Returns:
         Translated string or the original key if translation not found
     """
-    return translations.get(lang, translations['en']).get(page, {}).get(key, key)
+    # Get the language dictionary, fallback to English if language not found
+    lang_dict = translations.get(lang, translations['en'])
+    
+    # Get the page dictionary, fallback to empty dict if page not found
+    page_dict = lang_dict.get(page, {})
+    
+    # Return the translation or the original key if not found
+    return page_dict.get(key, key)

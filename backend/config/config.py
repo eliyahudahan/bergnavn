@@ -1,17 +1,18 @@
 # backend/config/config.py - Configuration settings for BergNavn Maritime Application
 import os
 from dotenv import load_dotenv
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base
 
 # Load environment variables from .env file
 load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL")
+TEST_DATABASE_URL = os.getenv("TEST_DATABASE_URL")
 
 if not DATABASE_URL:
     raise ValueError("❌ DATABASE_URL was not loaded properly! Check your .env file.")
 
-Base = declarative_base()  # SQLAlchemy base model definition
+Base = declarative_base()  # SQLAlchemy base model definition - FIXED deprecated import
 
 class Config:
     """Main application configuration class with environment variables"""
@@ -46,10 +47,17 @@ class Config:
 
 
 class TestingConfig(Config):
-    """Testing configuration with in-memory database"""
+    """Testing configuration with PostgreSQL test database"""
     TESTING = True
     DEBUG = False
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'  # In-memory test database
+    
+    # Use PostgreSQL for tests - supports spatial functions
+    SQLALCHEMY_DATABASE_URI = TEST_DATABASE_URL
+    
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     WTF_CSRF_ENABLED = False  # Disable CSRF protection for tests
-    DATABASE_URL = 'sqlite:///:memory:'  # Override for testing
+    DATABASE_URL = TEST_DATABASE_URL
+    
+    # Disable external services for tests
+    DISABLE_AIS_SERVICE = True
+    FLASK_SKIP_SCHEDULER = True

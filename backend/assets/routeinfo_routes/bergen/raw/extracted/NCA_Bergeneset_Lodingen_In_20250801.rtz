@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<route xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="1.0" xmlns="https://cirm.org/rtz-xml-schemas">
+  <routeInfo routeName="NCA_Bergeneset_Lodingen_In_20250801" validityPeriodStart="2025-08-01T00:00:00" validityPeriodStop="2025-11-22T00:00:00" />
+  <waypoints>
+    <defaultWaypoint radius="0.3">
+      <leg starboardXTD="0.1" portsideXTD="0.1" safetyContour="20" safetyDepth="20" geometryType="Loxodrome" staticUKC="0" dynamicUKC="0" />
+    </defaultWaypoint>
+    <waypoint id="1" name="Tranoy outer pilot boarding">
+      <position lat="68.21411943" lon="15.61982852" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="2" name="Rotvaer lt">
+      <position lat="68.35720077" lon="15.97645981" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="3" name="Lodingen pilot boarding">
+      <position lat="68.38164884" lon="16.02826473" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="4" name="Nordstrandskjaer lt">
+      <position lat="68.49563472" lon="16.13124869" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="5" name="Reppevarden bn">
+      <position lat="68.54649617" lon="16.22038806" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="6" name="Klubbeskjeret">
+      <position lat="68.55010283" lon="16.24380046" />
+      <leg starboardXTD="0.07" portsideXTD="0.07" legInfo="" />
+    </waypoint>
+    <waypoint id="7" name="Ballastadgrunnen lt">
+      <position lat="68.55386229" lon="16.29981193" />
+      <leg starboardXTD="0.06" portsideXTD="0.06" legInfo="" />
+    </waypoint>
+    <waypoint id="8" name="Ballstadstraumen lt">
+      <position lat="68.55847058" lon="16.32781627" />
+      <leg starboardXTD="0.06" portsideXTD="0.06" legInfo="" />
+    </waypoint>
+    <waypoint id="9" name="Tjeldsundet">
+      <position lat="68.56007347" lon="16.35502195" />
+      <leg starboardXTD="0.08" portsideXTD="0.08" legInfo="" />
+    </waypoint>
+    <waypoint id="10" name="Holsflua lt">
+      <position lat="68.55469558" lon="16.44351712" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="11" name="Steinsgrunnen lt">
+      <position lat="68.55233805" lon="16.46317656" />
+      <leg starboardXTD="0.05" portsideXTD="0.05" legInfo="" />
+    </waypoint>
+    <waypoint id="12" name="Nordoygrunnen lt">
+      <position lat="68.55227853" lon="16.47099395" />
+      <leg starboardXTD="0.05" portsideXTD="0.05" legInfo="" />
+    </waypoint>
+    <waypoint id="13" name="Stornesgrunnen lt">
+      <position lat="68.55588813" lon="16.49428525" />
+      <leg starboardXTD="0.05" portsideXTD="0.05" legInfo="" />
+    </waypoint>
+    <waypoint id="14" name="Remma lt">
+      <position lat="68.56316131" lon="16.5155981" />
+      <leg starboardXTD="0.05" portsideXTD="0.05" legInfo="" />
+    </waypoint>
+    <waypoint id="15" name="Storbaen lt">
+      <position lat="68.57192926" lon="16.53224582" />
+      <leg starboardXTD="0.04" portsideXTD="0.04" legInfo="" />
+    </waypoint>
+    <waypoint id="16" name="Staurneset">
+      <position lat="68.61183534" lon="16.55946978" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="17" name="Tjeldsund bridge">
+      <position lat="68.62795581" lon="16.58292181" />
+      <leg starboardXTD="0.07" portsideXTD="0.07" legInfo="" />
+    </waypoint>
+    <waypoint id="18" name="Langkvitneset">
+      <position lat="68.63431295" lon="16.58805007" />
+      <leg starboardXTD="0.06" portsideXTD="0.06" legInfo="" />
+    </waypoint>
+    <waypoint id="19" name="Grasholmen lt">
+      <position lat="68.67416668" lon="16.6588491" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="20" name="Rollnesboen lt">
+      <position lat="68.76183053" lon="16.78417465" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="21" name="Engenes lt">
+      <position lat="68.93467923" lon="17.09053025" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="22" name="Bispeflua lt">
+      <position lat="69.00046564" lon="17.26377236" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="23" name="Dyroya lt">
+      <position lat="69.07740994" lon="17.38391137" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="24" name="Dyroya lt">
+      <position lat="69.08958107" lon="17.42805835" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="25" name="Solbergnakken">
+      <position lat="69.15101611" lon="17.84649974" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="26" name="Klauva lt">
+      <position lat="69.17001375" lon="17.96698395" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="27" name="Lassegrunnen">
+      <position lat="69.18925077" lon="18.0314721" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="28" name="Klauvskjaerodden lt">
+      <position lat="69.20339924" lon="18.02206296" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="29" name="Finnsnesgrunnen lt">
+      <position lat="69.22096388" lon="17.95239374" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="30" name="Finnsnes">
+      <position lat="69.22416824" lon="17.9468799" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="31" name="Gisundet">
+      <position lat="69.23955215" lon="17.95965121" />
+      <leg starboardXTD="0.04" portsideXTD="0.04" legInfo="" />
+    </waypoint>
+    <waypoint id="32" name="Laukhella lt">
+      <position lat="69.2520841" lon="17.97905647" />
+      <leg starboardXTD="0.04" portsideXTD="0.04" legInfo="" />
+    </waypoint>
+    <waypoint id="33" name="Trollvikgrunnen lt">
+      <position lat="69.26983546" lon="17.96989612" />
+      <leg starboardXTD="0.06" portsideXTD="0.06" legInfo="" />
+    </waypoint>
+    <waypoint id="34" name="Leiknesora lt">
+      <position lat="69.29317243" lon="17.98056014" />
+      <leg starboardXTD="0.08" portsideXTD="0.08" legInfo="" />
+    </waypoint>
+    <waypoint id="35" name="Gisundet">
+      <position lat="69.3036248" lon="17.96531125" />
+      <leg starboardXTD="0.05" portsideXTD="0.05" legInfo="" />
+    </waypoint>
+    <waypoint id="36" name="Kobboyra lt">
+      <position lat="69.3134106" lon="17.97591665" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="37" name="Bukkskinn lt">
+      <position lat="69.34917333" lon="18.08835653" />
+      <leg starboardXTD="0.08" portsideXTD="0.08" legInfo="" />
+    </waypoint>
+    <waypoint id="38" name="Nordgrunnen by">
+      <position lat="69.3578016" lon="18.09394522" />
+      <leg starboardXTD="0.04" portsideXTD="0.04" legInfo="" />
+    </waypoint>
+    <waypoint id="39" name="Vardneset lt">
+      <position lat="69.36231427" lon="18.10128642" />
+      <leg starboardXTD="0.06" portsideXTD="0.06" legInfo="" />
+    </waypoint>
+    <waypoint id="40" name="Slettneset lt">
+      <position lat="69.37977243" lon="18.08489747" />
+      <leg starboardXTD="0.08" portsideXTD="0.08" legInfo="" />
+    </waypoint>
+    <waypoint id="41" name="Sandholmen lt">
+      <position lat="69.41183527" lon="18.12240634" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="42" name="Mollnesskallen bn">
+      <position lat="69.42714889" lon="18.12851727" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="43" name="Rodbergsodden lt">
+      <position lat="69.46260968" lon="18.11197538" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="44" name="Malangen">
+      <position lat="69.4864984" lon="18.18981607" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="45" name="Rystraumen">
+      <position lat="69.55213997" lon="18.66371857" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="46" name="Rystraumen">
+      <position lat="69.55666667" lon="18.755" />
+      <leg starboardXTD="0.07" portsideXTD="0.07" legInfo="" />
+    </waypoint>
+    <waypoint id="47" name="Balsnesodden lt">
+      <position lat="69.56952406" lon="18.81997447" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="48" name="Bergegrunnen">
+      <position lat="69.56519453" lon="18.85603922" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="49" name="Kraksletta by">
+      <position lat="69.52496136" lon="18.91346719" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="50" name="Storneset lt">
+      <position lat="69.45675587" lon="18.94593469" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="51" name="Middagsneset">
+      <position lat="69.42446725" lon="19.0097972" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="52" name="Nordvang">
+      <position lat="69.39406572" lon="19.03820363" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="53" name="Svartneset">
+      <position lat="69.36773001" lon="19.09661184" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="54" name="Sandneset">
+      <position lat="69.34705437" lon="19.31910092" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="55" name="Tenneskjeret by">
+      <position lat="69.31399293" lon="19.3687572" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="56" name="Bergeneset">
+      <position lat="69.25068229" lon="19.36150223" />
+      <leg legInfo="" />
+    </waypoint>
+  </waypoints>
+  <extensions>
+    <extension manufacturer="Norwegian Coastal Administration" fullName="Bergeneset - Lodingen Inbound" productinfo="See information on http://www.routeinfo.no before use of this Reference Route for Navigation. The Reference Routes from NCA can be used as a basis in route planning. For routes with no comments on vessel size, 150 meter length and 9 meter draught has been used to quality assure the routes. Limitations in size of vessel may vary along the route caused by regulation or depths." routeNumber="NO-710004" xmlns="" />
+  </extensions>
+</route>

@@ -89,76 +89,100 @@ def parse_waypoint(elem):
     return {'name': name, 'lat': lat, 'lon': lon}
 
 def parse_rtz(path):
+    """
+    Parse RTZ file and extract route information.
+    
+    Args:
+        path: Path to the RTZ file
+        
+    Returns:
+        List of route dictionaries with name and waypoints
+        Returns empty list if file not found or parsing fails
+    """
     logger.info("Parsing RTZ file: %s", path)
-    tree = ET.parse(path)
-    root = tree.getroot()
+    
+    # Check if file exists before attempting to parse
+    if not os.path.exists(path):
+        logger.warning(f"RTZ file not found: {path}")
+        return []
+    
+    try:
+        tree = ET.parse(path)
+        root = tree.getroot()
 
-    routes_data = []
-    # try to find route elements
-    route_elems = [e for e in root.iter() if 'route' in strip_ns(e.tag).lower() or 'rte' in strip_ns(e.tag).lower()]
-    # if none found, try to find top-level 'gpx'/'trk' or collect waypoint lists
-    if not route_elems:
-        # collect top-level tracks or create synthetic route from waypoints
-        # search for trk or gpx or rtept or wpt
-        candidates = [e for e in root.iter() if strip_ns(e.tag).lower() in ('trk', 'gpx', 'rte', 'track')]
-        if candidates:
-            route_elems = candidates
-        else:
-            # fallback: treat whole file as a single route
-            route_elems = [root]
+        routes_data = []
+        # try to find route elements
+        route_elems = [e for e in root.iter() if 'route' in strip_ns(e.tag).lower() or 'rte' in strip_ns(e.tag).lower()]
+        # if none found, try to find top-level 'gpx'/'trk' or collect waypoint lists
+        if not route_elems:
+            # collect top-level tracks or create synthetic route from waypoints
+            # search for trk or gpx or rtept or wpt
+            candidates = [e for e in root.iter() if strip_ns(e.tag).lower() in ('trk', 'gpx', 'rte', 'track')]
+            if candidates:
+                route_elems = candidates
+            else:
+                # fallback: treat whole file as a single route
+                route_elems = [root]
 
-    route_index = 0
-    for r in route_elems:
-        route_index += 1
-        rtag = strip_ns(r.tag).lower()
-        route_name = r.attrib.get('name') or r.findtext('name') or f'route_{route_index}'
-        # gather waypoints under this route
-        waypoints = []
-        # common waypoint tags
-        for wp_tag in ('waypoint', 'wpt', 'rtept', 'pt', 'trkpt', 'position'):
-            for wp in r.findall('.//{}'.format(wp_tag)):
-                p = parse_waypoint(wp)
-                if p:
-                    waypoints.append(p)
-        # If none found using common tags, search all descendants for coordinate patterns
-        if not waypoints:
-            coords = []
-            for elem in r.iter():
-                pts = extract_coords_from_text(ET.tostring(elem, encoding='unicode', method='text'))
-                for lat, lon in pts:
-                    coords.append({'name': None, 'lat': lat, 'lon': lon})
-            waypoints = coords
+        route_index = 0
+        for r in route_elems:
+            route_index += 1
+            rtag = strip_ns(r.tag).lower()
+            route_name = r.attrib.get('name') or r.findtext('name') or f'route_{route_index}'
+            # gather waypoints under this route
+            waypoints = []
+            # common waypoint tags
+            for wp_tag in ('waypoint', 'wpt', 'rtept', 'pt', 'trkpt', 'position'):
+                for wp in r.findall('.//{}'.format(wp_tag)):
+                    p = parse_waypoint(wp)
+                    if p:
+                        waypoints.append(p)
+            # If none found using common tags, search all descendants for coordinate patterns
+            if not waypoints:
+                coords = []
+                for elem in r.iter():
+                    pts = extract_coords_from_text(ET.tostring(elem, encoding='unicode', method='text'))
+                    for lat, lon in pts:
+                        coords.append({'name': None, 'lat': lat, 'lon': lon})
+                waypoints = coords
 
-        # If still no coords, attempt global search in file
-        if not waypoints:
-            pts = extract_coords_from_text(ET.tostring(root, encoding='unicode', method='text'))
-            waypoints = [{'name': None, 'lat': p[0], 'lon': p[1]} for p in pts]
+            # If still no coords, attempt global search in file
+            if not waypoints:
+                pts = extract_coords_from_text(ET.tostring(root, encoding='unicode', method='text'))
+                waypoints = [{'name': None, 'lat': p[0], 'lon': p[1]} for p in pts]
 
-        # build legs: consecutive waypoints -> 1 leg per pair
-        legs = []
-        total_route_nm = 0.0
-        for i in range(len(waypoints) - 1):
-            a = waypoints[i]; b = waypoints[i+1]
-            dist_nm = haversine_nm(a['lat'], a['lon'], b['lat'], b['lon'])
-            legs.append({
-                'leg_order': i+1,
-                'start': a,
-                'end': b,
-                'distance_nm': round(dist_nm, 3)
-            })
-            total_route_nm += dist_nm
+            # build legs: consecutive waypoints -> 1 leg per pair
+            legs = []
+            total_route_nm = 0.0
+            for i in range(len(waypoints) - 1):
+                a = waypoints[i]; b = waypoints[i+1]
+                dist_nm = haversine_nm(a['lat'], a['lon'], b['lat'], b['lon'])
+                legs.append({
+                    'leg_order': i+1,
+                    'start': a,
+                    'end': b,
+                    'distance_nm': round(dist_nm, 3)
+                })
+                total_route_nm += dist_nm
 
-        route_obj = {
-            'route_name': route_name,
-            'num_waypoints': len(waypoints),
-            'total_distance_nm': round(total_route_nm, 3),
-            'legs': legs,
-            'parsed_at_utc': datetime.utcnow().isoformat() + 'Z',
-            'source_file': os.path.abspath(path)
-        }
-        routes_data.append(route_obj)
+            route_obj = {
+                'route_name': route_name,
+                'num_waypoints': len(waypoints),
+                'total_distance_nm': round(total_route_nm, 3),
+                'legs': legs,
+                'parsed_at_utc': datetime.utcnow().isoformat() + 'Z',
+                'source_file': os.path.abspath(path)
+            }
+            routes_data.append(route_obj)
 
-    return routes_data
+        return routes_data
+        
+    except ET.ParseError as e:
+        logger.error(f"XML parsing error in {path}: {e}")
+        return []
+    except Exception as e:
+        logger.error(f"Unexpected error parsing {path}: {e}")
+        return []
 
 def write_decoded_json(routes_data, src_path):
     decoded_dir = os.path.join(os.path.dirname(src_path), '..', 'decoded')
