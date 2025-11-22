@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<route xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="1.0" xmlns="https://cirm.org/rtz-xml-schemas">
+  <routeInfo routeName="NCA_7_5m_Andalsnes_Halten_In_20250801" validityPeriodStart="2025-08-01T00:00:00" validityPeriodStop="2026-04-16T00:00:00" />
+  <waypoints>
+    <defaultWaypoint radius="0.3">
+      <leg starboardXTD="0.1" portsideXTD="0.1" safetyContour="20" safetyDepth="20" geometryType="Loxodrome" staticUKC="0" dynamicUKC="0" />
+    </defaultWaypoint>
+    <waypoint id="1" name="Frohavet">
+      <position lat="64.25626858" lon="9.75179652" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="2" name="Tarva lt">
+      <position lat="63.82722217" lon="9.26903527" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="3" name="Svissaflua 16 m">
+      <position lat="63.7006193" lon="9.24036868" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="4" name="Flesa pilot boarding">
+      <position lat="63.65054591" lon="9.24847105" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="5" name="Sliskjeara">
+      <position lat="63.59572094" lon="9.26176026" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="6" name="Storaflu lt">
+      <position lat="63.54756484" lon="9.25840884" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="7" name="Terningen lt">
+      <position lat="63.49043035" lon="9.04337753" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="8" name="Skipnesstranda">
+      <position lat="63.40095517" lon="8.5089409" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="9" name="Klakksbroren lt">
+      <position lat="63.36544053" lon="8.3874474" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="10" name="Kyrhaug lt">
+      <position lat="63.30550355" lon="8.23465826" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="11" name="Edoy lt">
+      <position lat="63.27708477" lon="8.1526243" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="12" name="Lyktlangholmen lt">
+      <position lat="63.20173362" lon="7.84277736" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="13" name="Helklakken 11 m">
+      <position lat="63.1405088" lon="7.64437075" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="14" name="Sveggesundet lt">
+      <position lat="63.11996821" lon="7.56851597" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="15" name="Hestskjeret lt">
+      <position lat="63.09412504" lon="7.48697922" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="16" name="Brakan lt">
+      <position lat="63.08280559" lon="7.46214795" />
+      <leg starboardXTD="0.07" portsideXTD="0.07" legInfo="" />
+    </waypoint>
+    <waypoint id="17" name="Baramskrakene">
+      <position lat="63.06403333" lon="7.36203333" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="18" name="Myrgrunnan light buoy">
+      <position lat="63.0549635" lon="7.32525278" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="19" name="Bjugna">
+      <position lat="63.05319167" lon="7.28032657" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="20" name="Midtflua light buoy">
+      <position lat="63.02598154" lon="7.15968141" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="21" name="Breigrunntaren">
+      <position lat="63.01039" lon="6.99576" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="22" name="Kolbeinsflu light buoy - precautionary area">
+      <position lat="62.97563378" lon="6.86740392" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="23" name="Soreggskallen">
+      <position lat="62.95354716" lon="6.83288201" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="24" name="Budadjupet">
+      <position lat="62.92241566" lon="6.82200932" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="25" name="Budadjupet">
+      <position lat="62.90433898" lon="6.85701918" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="26" name="Haroyodden leading lights">
+      <position lat="62.88913296" lon="6.90393703" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="27" name="Haroyodden lt">
+      <position lat="62.87485787" lon="6.93081667" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="28" name="Nyhamna caution area">
+      <position lat="62.85511245" lon="6.97518386" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="29" name="Hogsneset lt">
+      <position lat="62.8250555" lon="6.9733035" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="30" name="Lauvholmen">
+      <position lat="62.79851053" lon="6.95585247" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="31" name="Julholmen lt">
+      <position lat="62.73429608" lon="6.95522444" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="32" name="Julneset">
+      <position lat="62.7230814" lon="6.96136079" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="33" name="Ytter Horkallneset">
+      <position lat="62.64338848" lon="7.22828137" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="34" name="Helgestones lt">
+      <position lat="62.61330339" lon="7.36873393" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="35" name="Norvikhalsen">
+      <position lat="62.57739679" lon="7.42528334" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="36" name="Vindsneset">
+      <position lat="62.56080614" lon="7.4685783" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="37" name="Hovdenes lt">
+      <position lat="62.54695214" lon="7.54570219" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="38" name="Andalsnes">
+      <position lat="62.56200121" lon="7.63443169" />
+      <leg legInfo="" />
+    </waypoint>
+  </waypoints>
+  <extensions>
+    <extension manufacturer="Norwegian Coastal Administration" fullName="Andalsnes - Halten Inbound 7.5m" productinfo="See information on http://www.routeinfo.no before use of this Reference Route for Navigation. The Reference Routes from NCA can be used as a basis in route planning. For routes with no comments on vessel size, 150 meter length and 9 meter draught has been used to quality assure the routes. Limitations in size of vessel may vary along the route caused by regulation or depths." routeNumber="NO-510018" otherRouteLimitations="Limited draught is caused by shallow area at Hustadvika south of Fuglen." xmlns="" />
+  </extensions>
+</route>

@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="utf-8"?>
+<route xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="1.0" xmlns="https://cirm.org/rtz-xml-schemas">
+  <routeInfo routeName="NCA_7_5m_Bergen_Stad_Steinsd_In_20250801" validityPeriodStart="2025-08-01T00:00:00" validityPeriodStop="2026-08-05T00:00:00" />
+  <waypoints>
+    <defaultWaypoint radius="0.3">
+      <leg starboardXTD="0.1" portsideXTD="0.1" safetyContour="20" safetyDepth="20" geometryType="Loxodrome" staticUKC="0" dynamicUKC="0" />
+    </defaultWaypoint>
+    <waypoint id="1" name="Stalet">
+      <position lat="62.23493333" lon="5.17295" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="2" name="Bukketjuvane">
+      <position lat="62.19356612" lon="5.02141797" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="3" name="Ytstebaane">
+      <position lat="62.1405335" lon="5.02199248" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="4" name="Gamla">
+      <position lat="62.09677538" lon="5.09904143" />
+      <leg starboardXTD="0.07" portsideXTD="0.07" legInfo="" />
+    </waypoint>
+    <waypoint id="5" name="Sildegapet">
+      <position lat="62.04106345" lon="5.13976223" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="6" name="Timmevikgrunna">
+      <position lat="62.01699675" lon="5.15216642" />
+      <leg starboardXTD="0.06" portsideXTD="0.06" legInfo="" />
+    </waypoint>
+    <waypoint id="7" name="Ulvesund">
+      <position lat="61.99155418" lon="5.165412" />
+      <leg starboardXTD="0.06" portsideXTD="0.06" legInfo="" />
+    </waypoint>
+    <waypoint id="8" name="Hjartaneset">
+      <position lat="61.97996993" lon="5.15008918" />
+      <leg starboardXTD="0.08" portsideXTD="0.08" legInfo="" />
+    </waypoint>
+    <waypoint id="9" name="Kyrkjenesflua - report to Kinn VTS on channel 18">
+      <position lat="61.97264272" lon="5.14895517" />
+      <leg starboardXTD="0.07" portsideXTD="0.07" legInfo="" />
+    </waypoint>
+    <waypoint id="10" name="Ulven">
+      <position lat="61.9633821" lon="5.14491818" />
+      <leg starboardXTD="0.05" portsideXTD="0.05" legInfo="" />
+    </waypoint>
+    <waypoint id="11" name="Skoraneset">
+      <position lat="61.9565121" lon="5.1465629" />
+      <leg starboardXTD="0.05" portsideXTD="0.05" legInfo="" />
+    </waypoint>
+    <waypoint id="12" name="Leistholmen">
+      <position lat="61.94715928" lon="5.14057167" />
+      <leg starboardXTD="0.05" portsideXTD="0.05" legInfo="" />
+    </waypoint>
+    <waypoint id="13" name="Maloysundet">
+      <position lat="61.93500658" lon="5.123983" />
+      <leg starboardXTD="0.08" portsideXTD="0.08" legInfo="" />
+    </waypoint>
+    <waypoint id="14" name="Maloystraumen">
+      <position lat="61.92754327" lon="5.12121617" />
+      <leg starboardXTD="0.02" portsideXTD="0.02" legInfo="" />
+    </waypoint>
+    <waypoint id="15" name="Kariskjer">
+      <position lat="61.91751135" lon="5.11272995" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="16" name="Gjermundsfluda">
+      <position lat="61.91295817" lon="5.11412527" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="17" name="Gangsoy">
+      <position lat="61.88780748" lon="5.17024947" />
+      <leg starboardXTD="0.05" portsideXTD="0.05" legInfo="" />
+    </waypoint>
+    <waypoint id="18" name="Gangsoyskjeret">
+      <position lat="61.87663677" lon="5.17044956" />
+      <leg starboardXTD="0.05" portsideXTD="0.05" legInfo="" />
+    </waypoint>
+    <waypoint id="19" name="Skaten">
+      <position lat="61.87477278" lon="5.21297568" />
+      <leg starboardXTD="0.07" portsideXTD="0.07" legInfo="" />
+    </waypoint>
+    <waypoint id="20" name="Hornelflua">
+      <position lat="61.86460088" lon="5.25666073" />
+      <leg starboardXTD="0.04" portsideXTD="0.04" legInfo="" />
+    </waypoint>
+    <waypoint id="21" name="Hornelneset">
+      <position lat="61.86120167" lon="5.26611333" />
+      <leg starboardXTD="0.06" portsideXTD="0.06" legInfo="" />
+    </waypoint>
+    <waypoint id="22" name="Hornelen">
+      <position lat="61.83593823" lon="5.2612927" />
+      <leg starboardXTD="0.07" portsideXTD="0.07" legInfo="" />
+    </waypoint>
+    <waypoint id="23" name="Hornelen">
+      <position lat="61.8317157" lon="5.25367387" />
+      <leg starboardXTD="0.07" portsideXTD="0.07" legInfo="" />
+    </waypoint>
+    <waypoint id="24" name="Bardvikneset">
+      <position lat="61.81702325" lon="5.15390173" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="25" name="Froysjoen">
+      <position lat="61.75069108" lon="4.9925771" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="26" name="Olaskjeret 7.5 m">
+      <position lat="61.72699097" lon="4.96597637" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="27" name="Olaskjeret 7.5 m">
+      <position lat="61.71347212" lon="4.95477848" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="28" name="Seljestokken">
+      <position lat="61.67156587" lon="4.95936572" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="29" name="Dragjaskjerflu">
+      <position lat="61.65122407" lon="4.98106665" />
+      <leg starboardXTD="0.07" portsideXTD="0.07" legInfo="" />
+    </waypoint>
+    <waypoint id="30" name="Vestre Tekneskjerflua">
+      <position lat="61.63687152" lon="4.98122415" />
+      <leg starboardXTD="0.06" portsideXTD="0.06" legInfo="" />
+    </waypoint>
+    <waypoint id="31" name="Arebrot">
+      <position lat="61.62313907" lon="4.98224855" />
+      <leg starboardXTD="0.06" portsideXTD="0.06" legInfo="" />
+    </waypoint>
+    <waypoint id="32" name="Naeroyflua">
+      <position lat="61.61595577" lon="4.97947292" />
+      <leg starboardXTD="0.08" portsideXTD="0.08" legInfo="" />
+    </waypoint>
+    <waypoint id="33" name="Grasskjeret lt">
+      <position lat="61.60422277" lon="4.96086168" />
+      <leg starboardXTD="0.07" portsideXTD="0.07" legInfo="" />
+    </waypoint>
+    <waypoint id="34" name="Nordre Kalvata lt">
+      <position lat="61.58792003" lon="4.95188573" />
+      <leg starboardXTD="0" portsideXTD="0" safetyContour="30" safetyDepth="30" legInfo="" />
+    </waypoint>
+    <waypoint id="35" name="Nekkoyosen">
+      <position lat="61.57803458" lon="4.95119587" />
+      <leg starboardXTD="0.07" portsideXTD="0.07" legInfo="" />
+    </waypoint>
+    <waypoint id="36" name="Oddane">
+      <position lat="61.55470438" lon="4.99900562" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="37" name="Askrova">
+      <position lat="61.5158147" lon="5.00541845" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="38" name="Askrova">
+      <position lat="61.50771667" lon="4.99728333" />
+      <leg starboardXTD="0.06" portsideXTD="0.06" legInfo="" />
+    </waypoint>
+    <waypoint id="39" name="Tansoyosen">
+      <position lat="61.49785247" lon="4.98343813" />
+      <leg starboardXTD="0.06" portsideXTD="0.06" legInfo="" />
+    </waypoint>
+    <waypoint id="40" name="Trefotskjer">
+      <position lat="61.47770905" lon="4.97704567" />
+      <leg starboardXTD="0.07" portsideXTD="0.07" legInfo="" />
+    </waypoint>
+    <waypoint id="41" name="Blana">
+      <position lat="61.41847658" lon="4.84744333" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="42" name="Tussen">
+      <position lat="61.37986777" lon="4.81405853" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="43" name="Midtflu">
+      <position lat="61.34162938" lon="4.79842403" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="44" name="Alden">
+      <position lat="61.32019465" lon="4.80020208" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="45" name="Austnesholmen">
+      <position lat="61.29084662" lon="4.79181057" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="46" name="Ospoytana lt">
+      <position lat="61.22875" lon="4.69423333" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="47" name="Ospoytana lt">
+      <position lat="61.22478927" lon="4.69062467" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="48" name="Ospoytana lt">
+      <position lat="61.22061667" lon="4.69205" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="49" name="Lyngoyna">
+      <position lat="61.16947513" lon="4.73597133" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="50" name="Plittskallen lt">
+      <position lat="61.15603333" lon="4.74158333" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="51" name="Kraka">
+      <position lat="61.13119907" lon="4.7418415" />
+      <leg starboardXTD="0.07" portsideXTD="0.07" legInfo="" />
+    </waypoint>
+    <waypoint id="52" name="Olderkalven">
+      <position lat="61.12490105" lon="4.74504118" />
+      <leg starboardXTD="0.06" portsideXTD="0.06" legInfo="" />
+    </waypoint>
+    <waypoint id="53" name="Larsraholmen">
+      <position lat="61.11424257" lon="4.74121568" />
+      <leg starboardXTD="0.07" portsideXTD="0.07" legInfo="" />
+    </waypoint>
+    <waypoint id="54" name="Inderoyskjaer">
+      <position lat="61.10277715" lon="4.74083593" />
+      <leg starboardXTD="0.05" portsideXTD="0.05" legInfo="" />
+    </waypoint>
+    <waypoint id="55" name="Saueneset">
+      <position lat="61.08391282" lon="4.72073433" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="56" name="Djupedalsflua">
+      <position lat="61.05674975" lon="4.7288705" />
+      <leg starboardXTD="0.05" portsideXTD="0.05" legInfo="" />
+    </waypoint>
+    <waypoint id="57" name="Ytre Steinsundet">
+      <position lat="61.03902002" lon="4.7399392" />
+      <leg starboardXTD="0.03" portsideXTD="0.03" legInfo="" />
+    </waypoint>
+    <waypoint id="58" name="Ytre Steinsundet">
+      <position lat="61.03641243" lon="4.74550872" />
+      <leg starboardXTD="0.07" portsideXTD="0.07" legInfo="" />
+    </waypoint>
+    <waypoint id="59" name="Nara">
+      <position lat="61.01636028" lon="4.75498228" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="60" name="Sogneoksen - report to Fedje VTS on channel 80">
+      <position lat="60.94755" lon="4.75213333" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="61" name="Krakeskallane 13 m">
+      <position lat="60.93945928" lon="4.75819432" />
+      <leg starboardXTD="0.07" portsideXTD="0.07" legInfo="" />
+    </waypoint>
+    <waypoint id="62" name="Saloyflua buoy">
+      <position lat="60.92651638" lon="4.76205962" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="63" name="Fiskholmen">
+      <position lat="60.90350198" lon="4.75951345" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="64" name="Brosmeosen">
+      <position lat="60.87802342" lon="4.77460743" />
+      <leg starboardXTD="0.08" portsideXTD="0.08" legInfo="" />
+    </waypoint>
+    <waypoint id="65" name="Brosmeosen">
+      <position lat="60.87049007" lon="4.77593673" />
+      <leg starboardXTD="0.07" portsideXTD="0.07" legInfo="" />
+    </waypoint>
+    <waypoint id="66" name="Grimeskjeret">
+      <position lat="60.84951718" lon="4.74434602" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="67" name="Vetegjograskjeret">
+      <position lat="60.8200757" lon="4.72643527" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="68" name="Fedje">
+      <position lat="60.79710388" lon="4.73844117" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="69" name="Stureholmen">
+      <position lat="60.61405" lon="4.88266667" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="70" name="report to Fedje VTS on channel 71">
+      <position lat="60.52014703" lon="4.9477569" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="71" name="Kalvsoyflua">
+      <position lat="60.45531128" lon="5.00697693" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="72" name="Kalvanes">
+      <position lat="60.43352952" lon="5.02947752" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="73" name="Sora Rotoyna">
+      <position lat="60.41346213" lon="5.06605922" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="74" name="Midtholmen">
+      <position lat="60.40771068" lon="5.10082903" />
+      <leg starboardXTD="0.08" portsideXTD="0.08" legInfo="" />
+    </waypoint>
+    <waypoint id="75" name="Faeroy lt">
+      <position lat="60.4015744" lon="5.11947872" />
+      <leg starboardXTD="0.08" portsideXTD="0.08" legInfo="" />
+    </waypoint>
+    <waypoint id="76" name="Saltskoodden">
+      <position lat="60.39668422" lon="5.14297193" />
+      <leg starboardXTD="0.08" portsideXTD="0.08" legInfo="" />
+    </waypoint>
+    <waypoint id="77" name="Knappen">
+      <position lat="60.39039552" lon="5.15793883" />
+      <leg starboardXTD="0.08" portsideXTD="0.08" legInfo="" />
+    </waypoint>
+    <waypoint id="78" name="Hjeltaskjeret lt">
+      <position lat="60.38519423" lon="5.1659437" />
+      <leg starboardXTD="0.07" portsideXTD="0.07" legInfo="" />
+    </waypoint>
+    <waypoint id="79" name="Hjeltaskjeret lt">
+      <position lat="60.38408099" lon="5.17555945" />
+      <leg starboardXTD="0.07" portsideXTD="0.07" legInfo="" />
+    </waypoint>
+    <waypoint id="80" name="Tollneset">
+      <position lat="60.3861014" lon="5.19007799" />
+      <leg starboardXTD="0.07" portsideXTD="0.07" legInfo="" />
+    </waypoint>
+    <waypoint id="81" name="Askoy bridge">
+      <position lat="60.39461667" lon="5.21598333" />
+      <leg starboardXTD="0.08" portsideXTD="0.08" legInfo="" />
+    </waypoint>
+    <waypoint id="82" name="Kvarven">
+      <position lat="60.40115" lon="5.23995" />
+      <leg starboardXTD="0.08" portsideXTD="0.08" legInfo="" />
+    </waypoint>
+    <waypoint id="83" name="Bergen">
+      <position lat="60.40105" lon="5.27515" />
+      <leg starboardXTD="0.08" portsideXTD="0.08" legInfo="" />
+    </waypoint>
+  </waypoints>
+  <extensions>
+    <extension manufacturer="Norwegian Coastal Administration" fullName="Bergen - Stad via Ytre Steinsundet Inbound 7.5m" productinfo="See information on http://www.routeinfo.no before use of this Reference Route for Navigation. The Reference Routes from NCA can be used as a basis in route planning. For routes with no comments on vessel size, 150 meter length and 9 meter draught has been used to quality assure the routes. Limitations in size of vessel may vary along the route caused by regulation or depths." routeNumber="NO-410017" otherRouteLimitations="Limited draught is caused by shallow area east of Olaskjaeret." xmlns="" />
+  </extensions>
+</route>

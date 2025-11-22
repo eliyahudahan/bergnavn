@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<route xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="1.0" xmlns="https://cirm.org/rtz-xml-schemas">
+  <routeInfo routeName="NCA_7_5m_AlesundN_Stad_Aramsd_In_20250801" validityPeriodStart="2025-08-01T00:00:00" validityPeriodStop="2026-04-16T00:00:00" />
+  <waypoints>
+    <defaultWaypoint radius="0.3">
+      <leg starboardXTD="0.1" portsideXTD="0.1" safetyContour="20" safetyDepth="20" geometryType="Loxodrome" staticUKC="0" dynamicUKC="0" />
+    </defaultWaypoint>
+    <waypoint id="1" name="Stalet">
+      <position lat="62.23332712" lon="5.17768582" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="2" name="Stalet">
+      <position lat="62.23160884" lon="5.20743921" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="3" name="Kviteneset">
+      <position lat="62.22520843" lon="5.23919503" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="4" name="Rivjehornet">
+      <position lat="62.17560483" lon="5.33877331" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="5" name="Haugsholmen lt">
+      <position lat="62.17124662" lon="5.35861314" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="6" name="Storesundet">
+      <position lat="62.17479533" lon="5.38267179" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="7" name="Haugsfjorden">
+      <position lat="62.19053509" lon="5.42253173" />
+      <leg starboardXTD="0.05" portsideXTD="0.05" legInfo="" />
+    </waypoint>
+    <waypoint id="8" name="Aramsundet west">
+      <position lat="62.20397196" lon="5.47473529" />
+      <leg starboardXTD="0.05" portsideXTD="0.05" legInfo="" />
+    </waypoint>
+    <waypoint id="9" name="Aramsundet ">
+      <position lat="62.20479688" lon="5.48381396" />
+      <leg starboardXTD="0.07" portsideXTD="0.07" legInfo="" />
+    </waypoint>
+    <waypoint id="10" name="Aramsundet east 11 m">
+      <position lat="62.20389208" lon="5.49494321" />
+      <leg starboardXTD="0.07" portsideXTD="0.07" legInfo="" />
+    </waypoint>
+    <waypoint id="11" name="Saudeholmen">
+      <position lat="62.17750163" lon="5.60430637" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="12" name="Laupsneset">
+      <position lat="62.19778971" lon="5.76758988" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="13" name="Yksnoy lt">
+      <position lat="62.21844681" lon="5.897255" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="14" name="Flavikneset">
+      <position lat="62.27333538" lon="5.97472596" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="15" name="Hjorungenneset">
+      <position lat="62.34392246" lon="6.13514886" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="16" name="Hjorungenneset">
+      <position lat="62.3569972" lon="6.13693772" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="17" name="Eltraneset">
+      <position lat="62.42387181" lon="6.0367014" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="18" name="Eltraneset lt">
+      <position lat="62.43673783" lon="6.03681349" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="19" name="Erknaflu">
+      <position lat="62.47086266" lon="6.059799" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="20" name="Olsskjer lt">
+      <position lat="62.48476092" lon="6.13991275" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="21" name="Ellingsoyfjorden">
+      <position lat="62.48572" lon="6.18174294" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="22" name="Brattholmen lt">
+      <position lat="62.48837813" lon="6.21202408" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="23" name="Vardeflua">
+      <position lat="62.4843874" lon="6.25473911" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="24" name="Svinoysundet">
+      <position lat="62.47307589" lon="6.27187611" />
+      <leg starboardXTD="0.06" portsideXTD="0.06" legInfo="" />
+    </waypoint>
+    <waypoint id="25" name="Kalvoysundet">
+      <position lat="62.47641737" lon="6.28719523" />
+      <leg starboardXTD="0.06" portsideXTD="0.06" legInfo="" />
+    </waypoint>
+    <waypoint id="26" name="Hestholmen">
+      <position lat="62.47984662" lon="6.34553374" />
+      <leg starboardXTD="0.08" portsideXTD="0.08" legInfo="" />
+    </waypoint>
+    <waypoint id="27" name="Langoya">
+      <position lat="62.48675692" lon="6.36837106" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="28" name="Alvika">
+      <position lat="62.48812652" lon="6.38531788" />
+      <leg legInfo="" />
+    </waypoint>
+  </waypoints>
+  <extensions>
+    <extension manufacturer="Norwegian Coastal Administration" fullName="Alesund North - Stad via Aramsundet Inbound 7.5m" productinfo="See information on http://www.routeinfo.no before use of this Reference Route for Navigation. The Reference Routes from NCA can be used as a basis in route planning. For routes with no comments on vessel size, 150 meter length and 9 meter draught has been used to quality assure the routes. Limitations in size of vessel may vary along the route caused by regulation or depths." routeNumber="NO-510011" otherRouteLimitations="Limited draught is caused by shallow area north of Haugsholmen in Aramsundet." xmlns="" />
+  </extensions>
+</route>

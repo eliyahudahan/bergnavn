@@ -25,6 +25,17 @@ def maritime_dashboard():
     
     return render_template('maritime_dashboard.html', lang=lang)
 
+# ADD THIS MISSING ENDPOINT
+@maritime_bp.route('/<lang>')
+def maritime_dashboard_with_lang(lang):
+    """
+    Maritime Dashboard with language parameter
+    """
+    if lang not in ['en', 'no']:
+        lang = 'en'
+    
+    return render_template('maritime_dashboard.html', lang=lang)
+
 @maritime_bp.route('/api/weather-pro')
 def get_maritime_weather_pro():
     """

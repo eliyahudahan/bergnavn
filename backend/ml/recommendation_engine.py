@@ -1,7 +1,8 @@
 """
 EMPIRICAL ROUTE RECOMMENDER - Evidence-Based Vessel Routing
-Recommends optimal routes based on NCA RouteInfo.no JSON data
+Recommends optimal routes based on NCA RouteInfo.no RTZ data with DB integration
 Data Sources: Norwegian Coastal Administration RouteInfo.no, MET Norway, AIS data
+NO TOURIST WAYPOINTS - Only technical maritime waypoints from RTZ files
 """
 
 import pandas as pd
@@ -35,14 +36,15 @@ class RouteRecommendation:
 
 class EmpiricalRouteRecommender:
     """
-    Empirical route recommender using NCA RouteInfo.no data and performance analytics
+    Empirical route recommender using NCA RouteInfo.no RTZ data with DB integration
     Focuses on fuel optimization and EEM effectiveness with real route data
+    NO TOURIST WAYPOINTS - Only technical maritime navigation points
     """
     
     def __init__(self):
-        self.algorithm_version = "v3.0_nca_routeinfo_integration"
-        self.logger = logging.getLogger(__name__)  # ✅ FIXED: Initialize logger first
-        self.route_data = self._load_nca_route_data()
+        self.algorithm_version = "v3.2_db_integration"
+        self.logger = logging.getLogger(__name__)
+        self.route_data = self._load_route_data()
         self.weather_patterns = self._load_weather_patterns()
     
     def _haversine_distance(self, lat1: float, lon1: float, lat2: float, lon2: float) -> float:
@@ -61,7 +63,7 @@ class EmpiricalRouteRecommender:
         return distance_km / 1.852  # Convert to nautical miles
     
     def _calculate_route_distance(self, waypoints: List[Dict]) -> float:
-        """Calculate total route distance from waypoints"""
+        """Calculate total route distance from technical waypoints"""
         if len(waypoints) < 2:
             return 0.0
         
@@ -71,80 +73,172 @@ class EmpiricalRouteRecommender:
             wp2 = waypoints[i + 1]
             
             distance = self._haversine_distance(
-                wp1['latitude'], wp1['longitude'],
-                wp2['latitude'], wp2['longitude']
+                wp1['lat'], wp1['lon'],
+                wp2['lat'], wp2['lon']
             )
             total_distance += distance
         
         return round(total_distance, 1)
     
-    def _extract_route_info(self, filename: str) -> Tuple[str, str]:
-        """Extract origin and destination from NCA filename"""
-        # Remove extension and split by underscores
-        name_only = filename.replace('.json', '').replace('.rtz', '')
+    def _extract_route_info_from_rtz(self, filename: str) -> Tuple[str, str]:
+        """Extract origin and destination from RTZ filename"""
+        # RTZ file naming convention: NCA_Origin_Destination.rtz
+        name_only = filename.replace('.rtz', '').replace('.json', '')
         parts = name_only.split('_')
         
-        # NCA file naming convention: NCA_Origin_Destination_*
         if len(parts) >= 3 and parts[0] == 'NCA':
             origin = parts[1].lower()
             destination = parts[2].lower()
             return origin, destination
         
-        # Fallback for other naming conventions
-        known_origins = ['bergen', 'trondheim', 'stavanger', 'oslo', 'alesund', 'andalsnes']
-        for origin in known_origins:
-            if origin in name_only.lower():
-                # Try to extract destination from remaining parts
-                remaining = name_only.lower().replace(origin, '').strip('_')
-                destination_parts = [p for p in remaining.split('_') if p and p not in ['nca', 'in', 'out']]
-                if destination_parts:
-                    destination = destination_parts[0]
-                    return origin, destination
+        # Fallback for RTZ files
+        known_ports = ['bergen', 'trondheim', 'stavanger', 'oslo', 'alesund', 
+                      'fedjeosen', 'halten', 'skudefjorden']
+        
+        for port in known_ports:
+            if port in name_only.lower():
+                remaining = name_only.lower().replace(port, '').strip('_')
+                other_ports = [p for p in known_ports if p in remaining and p != port]
+                if other_ports:
+                    return port, other_ports[0]
         
         return 'unknown', 'unknown'
     
-    def _load_nca_route_data(self) -> Dict:
+    def _load_route_data(self) -> Dict:
         """
-        Load real route data from NCA RouteInfo.no JSON files
-        Sources: Norwegian Coastal Administration RouteInfo.no
+        Load route data from DATABASE first, then fallback to RTZ files
+        Priority: Database > RTZ files > Fallback data
+        """
+        # Try to load from database first
+        db_routes = self._load_routes_from_db()
+        if db_routes:
+            self.logger.info(f"Loaded {len(db_routes)} routes from database")
+            return db_routes
+        
+        # Fallback to RTZ files
+        rtz_routes = self._load_from_rtz_files()
+        if rtz_routes:
+            self.logger.info(f"Loaded {len(rtz_routes)} routes from RTZ files")
+            return rtz_routes
+        
+        # Final fallback
+        self.logger.warning("No routes found, using fallback data")
+        return self._get_fallback_data()
+    
+    def _load_routes_from_db(self) -> Dict:
+        """Load routes from PostgreSQL database"""
+        try:
+            # Import inside function to avoid circular imports
+            from backend.models.route import Route
+            from backend.models.waypoint import Waypoint
+            from backend.database.session import get_db
+            
+            route_data = {}
+            
+            with get_db() as db:
+                routes = db.query(Route).filter(
+                    Route.data_source.like('%NCA%') | Route.data_source.like('%RouteInfo%')
+                ).all()
+                
+                if not routes:
+                    return {}
+                
+                for route in routes:
+                    # Get waypoints for this route
+                    waypoints = [
+                        {
+                            'name': wp.name, 
+                            'lat': wp.latitude, 
+                            'lon': wp.longitude,
+                            'order_index': wp.order_index
+                        }
+                        for wp in route.waypoints.order_by(Waypoint.order_index).all()
+                    ]
+                    
+                    # Calculate distance if not in database
+                    if route.distance_nm and route.distance_nm > 0:
+                        distance_nm = route.distance_nm
+                    else:
+                        distance_nm = self._calculate_route_distance(waypoints)
+                    
+                    route_key = f"{route.origin or 'unknown'}_{route.destination or 'unknown'}"
+                    
+                    route_data[route_key] = {
+                        'distance_nm': distance_nm,
+                        'base_duration_hours': route.estimated_duration or self._estimate_duration(distance_nm),
+                        'duration_ci': (
+                            round((route.estimated_duration or self._estimate_duration(distance_nm)) * 0.9, 1),
+                            round((route.estimated_duration or self._estimate_duration(distance_nm)) * 1.1, 1)
+                        ),
+                        'base_fuel_consumption': route.estimated_fuel_consumption or self._estimate_fuel(distance_nm),
+                        'fuel_ci': (
+                            round((route.estimated_fuel_consumption or self._estimate_fuel(distance_nm)) * 0.9, 1),
+                            round((route.estimated_fuel_consumption or self._estimate_fuel(distance_nm)) * 1.1, 1)
+                        ),
+                        'typical_weather_impact': 1.12,
+                        'eem_effectiveness': 0.087,
+                        'data_source': route.data_source or 'Database',
+                        'sample_size': 1,
+                        'waypoints': waypoints,
+                        'file_source': 'database',
+                        'is_technical': True,
+                        'route_id': route.id
+                    }
+                
+                return route_data
+                
+        except Exception as e:
+            self.logger.error(f"Database loading failed: {e}")
+            return {}
+    
+    def _load_from_rtz_files(self) -> Dict:
+        """
+        Load route data from RTZ files ONLY - no tourist waypoints
+        Sources: Norwegian Coastal Administration RouteInfo.no RTZ files
         """
         route_data = {}
         base_path = "backend/assets/routeinfo_routes"
         
         if not os.path.exists(base_path):
             self.logger.error(f"Route data path not found: {base_path}")
-            return self._get_fallback_data()
+            return {}
         
-        # Find all JSON files in all subdirectories
-        json_files = list(Path(base_path).rglob("*.json"))
-        self.logger.info(f"Found {len(json_files)} JSON files in route directories")
+        # Find all RTZ files in all subdirectories - NO JSON WAYPOINT FILES
+        rtz_files = list(Path(base_path).rglob("*.rtz"))
+        self.logger.info(f"Found {len(rtz_files)} RTZ files in route directories")
         
         valid_routes_loaded = 0
         
-        for json_file in json_files:
+        for rtz_file in rtz_files:
             try:
-                with open(json_file, 'r', encoding='utf-8') as f:
-                    waypoints = json.load(f)
+                # Parse RTZ file to extract technical waypoints
+                from backend.services.rtz_parser import parse_rtz
+                routes_data = parse_rtz(str(rtz_file))
                 
-                if not waypoints or len(waypoints) < 2:
-                    self.logger.warning(f"Skipping {json_file.name}: insufficient waypoints")
+                if not routes_data:
+                    self.logger.warning(f"Skipping {rtz_file.name}: no routes parsed")
                     continue
                 
-                # Extract route information
-                origin, destination = self._extract_route_info(json_file.name)
+                # Use first route from RTZ file
+                route_info = routes_data[0]
+                waypoints = route_info.get('waypoints', [])
+                
+                if len(waypoints) < 2:
+                    self.logger.warning(f"Skipping {rtz_file.name}: insufficient waypoints")
+                    continue
+                
+                # Extract route information from RTZ filename
+                origin, destination = self._extract_route_info_from_rtz(rtz_file.name)
                 
                 if origin == 'unknown' or destination == 'unknown':
-                    self.logger.warning(f"Could not extract route info from {json_file.name}")
-                    # Try to use first and last waypoint names
-                    if len(waypoints) >= 2:
-                        origin = waypoints[0]['name'].split()[0].lower()
-                        destination = waypoints[-1]['name'].split()[0].lower()
-                    else:
-                        continue
+                    self.logger.warning(f"Could not extract route info from {rtz_file.name}")
+                    # Use first and last waypoint coordinates as fallback
+                    origin = f"point_{waypoints[0]['lat']:.2f}_{waypoints[0]['lon']:.2f}"
+                    destination = f"point_{waypoints[-1]['lat']:.2f}_{waypoints[-1]['lon']:.2f}"
                 
                 route_key = f"{origin}_{destination}"
                 
-                # Calculate real distance from waypoints
+                # Calculate real distance from technical waypoints
                 distance_nm = self._calculate_route_distance(waypoints)
                 
                 if distance_nm == 0:
@@ -169,29 +263,24 @@ class EmpiricalRouteRecommender:
                     ),
                     'typical_weather_impact': 1.12,
                     'eem_effectiveness': 0.087,  # 8.7% from specification
-                    'data_source': 'Norwegian Coastal Administration RouteInfo.no',
+                    'data_source': 'Norwegian Coastal Administration RouteInfo.no RTZ',
                     'sample_size': 1,  # Official authoritative data
                     'waypoints': waypoints,
-                    'file_source': str(json_file)
+                    'file_source': str(rtz_file),
+                    'is_technical': True  # ✅ MARK: Technical waypoints only
                 }
                 
                 valid_routes_loaded += 1
-                self.logger.info(f"Loaded route: {route_key} ({distance_nm} nm) from {json_file.name}")
+                self.logger.info(f"Loaded RTZ route: {route_key} ({distance_nm} nm) from {rtz_file.name}")
                 
             except Exception as e:
-                self.logger.error(f"Error loading {json_file}: {e}")
+                self.logger.error(f"Error loading RTZ file {rtz_file}: {e}")
         
-        self.logger.info(f"Successfully loaded {valid_routes_loaded} valid routes")
-        
-        # If no routes loaded, use fallback
-        if not route_data:
-            self.logger.warning("No NCA routes loaded, using fallback data")
-            return self._get_fallback_data()
-        
+        self.logger.info(f"Successfully loaded {valid_routes_loaded} valid RTZ routes")
         return route_data
     
     def _get_fallback_data(self) -> Dict:
-        """Fallback data if NCA files are not available - ONLY FOR DEVELOPMENT"""
+        """Fallback data if no routes available - ONLY FOR DEVELOPMENT"""
         self.logger.warning("USING FALLBACK DATA - FOR DEVELOPMENT ONLY")
         return {
             'bergen_fedjeosen': {
@@ -202,10 +291,14 @@ class EmpiricalRouteRecommender:
                 'fuel_ci': (28.3, 33.7),
                 'typical_weather_impact': 1.08,
                 'eem_effectiveness': 0.087,
-                'data_source': 'NCA RouteInfo.no - Bergen Fedjeosen',
+                'data_source': 'NCA RouteInfo.no RTZ - Bergen Fedjeosen',
                 'sample_size': 1,
-                'waypoints': [],
-                'file_source': 'fallback'
+                'waypoints': [
+                    {'name': 'bergen_harbor', 'lat': 60.3913, 'lon': 5.3221},
+                    {'name': 'fedjeosen_entrance', 'lat': 60.7789, 'lon': 4.7150}
+                ],
+                'file_source': 'fallback_rtz',
+                'is_technical': True
             },
             'trondheim_halten': {
                 'distance_nm': 143.2,
@@ -215,23 +308,14 @@ class EmpiricalRouteRecommender:
                 'fuel_ci': (130.1, 154.9),
                 'typical_weather_impact': 1.25,
                 'eem_effectiveness': 0.087,
-                'data_source': 'NCA RouteInfo.no - Trondheim Halten',
+                'data_source': 'NCA RouteInfo.no RTZ - Trondheim Halten',
                 'sample_size': 1,
-                'waypoints': [],
-                'file_source': 'fallback'
-            },
-            'stavanger_skudefjorden': {
-                'distance_nm': 71.9,
-                'base_duration_hours': 9.5,
-                'duration_ci': (8.5, 10.5),
-                'base_fuel_consumption': 71.2,
-                'fuel_ci': (65.0, 77.4),
-                'typical_weather_impact': 1.15,
-                'eem_effectiveness': 0.087,
-                'data_source': 'NCA RouteInfo.no - Stavanger Skudefjorden',
-                'sample_size': 1,
-                'waypoints': [],
-                'file_source': 'fallback'
+                'waypoints': [
+                    {'name': 'trondheim_harbor', 'lat': 63.4305, 'lon': 10.3951},
+                    {'name': 'halten_bank', 'lat': 64.1667, 'lon': 10.3333}
+                ],
+                'file_source': 'fallback_rtz',
+                'is_technical': True
             }
         }
     
@@ -281,7 +365,7 @@ class EmpiricalRouteRecommender:
         return list(self.route_data.keys())
     
     def get_route_waypoints(self, route_key: str) -> Optional[List[Dict]]:
-        """Get waypoints for a specific route"""
+        """Get technical waypoints for a specific route"""
         route_data = self.route_data.get(route_key)
         return route_data.get('waypoints') if route_data else None
     
@@ -290,14 +374,15 @@ class EmpiricalRouteRecommender:
                                weather_forecast: Dict,
                                max_recommendations: int = 3) -> List[RouteRecommendation]:
         """
-        Recommend optimal routes based on NCA RouteInfo.no performance data
+        Recommend optimal routes based on NCA RouteInfo.no RTZ performance data
+        Uses only technical waypoints - no tourist points
         """
         try:
             vessel_type = vessel_data.get('type', 'container')
             current_location = vessel_data.get('current_location', 'bergen')
             destination_preferences = vessel_data.get('destinations', [])
             
-            # If no specific destinations provided, recommend from available NCA routes
+            # If no specific destinations provided, recommend from available routes
             if not destination_preferences:
                 destination_preferences = [
                     route.split('_')[1] for route in self.route_data.keys() 
@@ -311,7 +396,12 @@ class EmpiricalRouteRecommender:
                 route_data = self.route_data.get(route_key)
                 
                 if not route_data:
-                    self.logger.warning(f"No NCA data for route: {route_key}")
+                    self.logger.warning(f"No data for route: {route_key}")
+                    continue
+                
+                # Verify this is technical data only
+                if not route_data.get('is_technical', False):
+                    self.logger.warning(f"Skipping non-technical route: {route_key}")
                     continue
                 
                 # Calculate weather-adjusted performance
@@ -339,7 +429,7 @@ class EmpiricalRouteRecommender:
                 )
                 
                 recommendation = RouteRecommendation(
-                    route_id=route_key,
+                    route_id=route_data.get('route_id', route_key),
                     origin=current_location,
                     destination=destination,
                     estimated_duration_hours=round(adjusted_duration, 1),
@@ -421,8 +511,8 @@ class EmpiricalRouteRecommender:
                                           weather_forecast: Dict,
                                           vessel_type: str) -> float:
         """Calculate overall recommendation confidence"""
-        # Higher confidence for NCA official data
-        base_confidence = 0.95  # Official NCA data
+        # Higher confidence for technical data
+        base_confidence = 0.95 if route_data.get('is_technical') else 0.7
         
         # Weather forecast confidence impact
         weather_confidence = self.weather_patterns[
@@ -434,12 +524,12 @@ class EmpiricalRouteRecommender:
         
         return (base_confidence + weather_confidence + vessel_confidence) / 3
 
-# Testing with real NCA route data
+# Testing with real route data
 if __name__ == "__main__":
     recommender = EmpiricalRouteRecommender()
     
-    print("=== NCA ROUTEINFO RECOMMENDER - REAL ROUTE DATA ===")
-    print(f"Available NCA routes: {', '.join(recommender.get_available_routes())}")
+    print("=== ROUTE RECOMMENDER - DB INTEGRATION ===")
+    print(f"Available routes: {', '.join(recommender.get_available_routes())}")
     
     # Test with realistic vessel and weather data
     vessel_data = {
@@ -458,7 +548,7 @@ if __name__ == "__main__":
         vessel_data, weather_forecast, max_recommendations=5
     )
     
-    print(f"\n=== TOP {len(recommendations)} NCA ROUTE RECOMMENDATIONS ===")
+    print(f"\n=== TOP {len(recommendations)} ROUTE RECOMMENDATIONS ===")
     for i, rec in enumerate(recommendations, 1):
         print(f"\nRecommendation #{i}: {rec.origin.upper()} → {rec.destination.upper()}")
         print(f"  Duration: {rec.estimated_duration_hours}h ({rec.duration_confidence_interval[0]}-{rec.duration_confidence_interval[1]}h)")
@@ -468,9 +558,10 @@ if __name__ == "__main__":
         print(f"  Recommendation Confidence: {rec.recommendation_confidence:.0%}")
         print(f"  Data Sources: {', '.join(rec.data_sources)}")
     
-    print(f"\n=== NCA DATA SUMMARY ===")
-    print(f"Total NCA routes loaded: {len(recommender.get_available_routes())}")
+    print(f"\n=== DATA SOURCE SUMMARY ===")
     for route_key in recommender.get_available_routes():
         route_data = recommender.route_data[route_key]
-        source_type = "REAL NCA DATA" if route_data['file_source'] != 'fallback' else "FALLBACK DATA"
-        print(f"  {route_key}: {route_data['distance_nm']} nm ({source_type})")
+        source = route_data['file_source']
+        source_type = "DATABASE" if source == 'database' else "RTZ FILE" if 'rtz' in source else "FALLBACK"
+        technical_status = "TECHNICAL" if route_data.get('is_technical', False) else "NON-TECHNICAL"
+        print(f"  {route_key}: {route_data['distance_nm']} nm ({source_type}, {technical_status})")

@@ -20,7 +20,6 @@ backend
       sandefjord
       stavanger
       trondheim
-      waypoints
   config
   controllers
   middleware
@@ -2241,6 +2240,7 @@ frontend
   public
   src
   styles
+instance
 js
 migrations
   versions

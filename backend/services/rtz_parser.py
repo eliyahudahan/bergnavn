@@ -1,221 +1,171 @@
-#!/usr/bin/env python3
-"""
-rtz_parser.py
-Lightweight, defensive RTZ -> JSON parser.
-- Attempts to parse common XML RTZ structures (route / leg / waypoint)
-- Falls back to extracting lat,lon pairs via regex
-- Computes distance in nautical miles per leg (haversine)
-- Writes decoded JSON to a `decoded/` sibling folder
-
-Usage:
-  python backend/services/rtz_parser.py path/to/oslo_routes.rtz
-"""
-import os
-import sys
-import json
-import math
-import logging
-import re
-from datetime import datetime
-from xml.etree import ElementTree as ET
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("rtz_parser")
-
-COORD_RE = re.compile(r'(-?\d+\.\d+)[,\s]+(-?\d+\.\d+)')
-
-def strip_ns(tag: str) -> str:
-    return tag.split('}')[-1] if '}' in tag else tag
-
-def haversine_nm(lat1, lon1, lat2, lon2):
-    # returns nautical miles between two points
-    R_km = 6371.0
-    lat1r = math.radians(lat1)
-    lat2r = math.radians(lat2)
-    dlat = lat2r - lat1r
-    dlon = math.radians(lon2 - lon1)
-    a = math.sin(dlat/2)**2 + math.cos(lat1r)*math.cos(lat2r)*math.sin(dlon/2)**2
-    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
-    dist_km = R_km * c
-    return dist_km * 0.539956803  # km -> nautical miles
-
-def find_coord_attrs(elem):
-    # look for attributes named lat/lon variants
-    lat = None; lon = None
-    for key, val in elem.attrib.items():
-        k = key.lower()
-        if 'lat' in k and lat is None:
-            lat = float(val)
-        if 'lon' in k or 'lng' in k:
-            lon = float(val)
-    return lat, lon
-
-def extract_coords_from_text(text):
-    if not text:
-        return []
-    return [(float(m[0]), float(m[1])) for m in COORD_RE.findall(text)]
-
-def parse_waypoint(elem):
-    # try attributes
-    lat, lon = find_coord_attrs(elem)
-    name = elem.attrib.get('name') or elem.attrib.get('id') or None
-    # try child tags
-    if lat is None or lon is None:
-        # look for children like lat/lon/latitude/longitude or position
-        for child in elem:
-            t = strip_ns(child.tag).lower()
-            if 'lat' in t and lat is None:
-                try:
-                    lat = float((child.text or '').strip())
-                except:
-                    pass
-            if 'lon' in t and lon is None:
-                try:
-                    lon = float((child.text or '').strip())
-                except:
-                    pass
-            if 'position' in t and (lat is None or lon is None):
-                # attempt to parse coordinates in position text
-                pts = extract_coords_from_text(child.text)
-                if pts:
-                    lat, lon = pts[0][0], pts[0][1]
-    # last resort: search full element text
-    if lat is None or lon is None:
-        pts = extract_coords_from_text(ET.tostring(elem, encoding='unicode', method='text'))
-        if pts:
-            lat, lon = pts[0][0], pts[0][1]
-    if lat is None or lon is None:
-        return None
-    return {'name': name, 'lat': lat, 'lon': lon}
-
-def parse_rtz(path):
+def extract_origin_destination(route_name: str, waypoints: List[Dict]) -> Tuple[str, str]:
     """
-    Parse RTZ file and extract route information.
+    Extract origin and destination from route name or waypoints
+    Handles NCA route naming convention: NCA_Origin_Destination_*
+    """
+    # Try to extract from route name first (NCA naming convention)
+    if 'NCA_' in route_name:
+        parts = route_name.split('_')
+        if len(parts) >= 4:
+            origin = parts[1].title()  # Capitalize first letter
+            destination = parts[2].title()
+            
+            # Handle common abbreviations
+            origin = _expand_abbreviation(origin)
+            destination = _expand_abbreviation(destination)
+            
+            return origin, destination
     
-    Args:
-        path: Path to the RTZ file
+    # Fallback: use first and last waypoint names
+    if waypoints and len(waypoints) >= 2:
+        origin = waypoints[0].get('name', 'Unknown')
+        destination = waypoints[-1].get('name', 'Unknown')
         
-    Returns:
-        List of route dictionaries with name and waypoints
-        Returns empty list if file not found or parsing fails
+        # Clean waypoint names
+        origin = _clean_waypoint_name(origin)
+        destination = _clean_waypoint_name(destination)
+        
+        return origin, destination
+    
+    return 'Unknown', 'Unknown'
+
+def _expand_abbreviation(name: str) -> str:
+    """Expand common Norwegian port abbreviations"""
+    abbreviations = {
+        'Bergen': 'Bergen',
+        'Trondheim': 'Trondheim', 
+        'Stavanger': 'Stavanger',
+        'Oslo': 'Oslo',
+        'Alesund': 'Ålesund',
+        'Andalsnes': 'Åndalsnes',
+        'Kristiansand': 'Kristiansand',
+        'Drammen': 'Drammen',
+        'Sandefj': 'Sandefjord',
+        'Fedjeosen': 'Fedje',
+        'Halten': 'Haltenbanken',
+        'Stad': 'Stadthavet',
+        'Breisundet': 'Breisundet',
+        'Oksoy': 'Oksøy',
+        'Sydostgr': 'Sydostgrunnen',
+        'Bonden': 'Bonden',
+        'Grip': 'Grip',
+        'Grande': 'Rørvik',
+        'Rorvik': 'Rørvik',
+        'Steinsd': 'Steinsundet',
+        'Krakhelle': 'Krakhellesundet',
+        'Flavaer': 'Flævar',
+        'Aramsd': 'Aramshavet'
+    }
+    return abbreviations.get(name, name)
+
+def _clean_waypoint_name(name: str) -> str:
+    """Clean waypoint names by removing technical details"""
+    if not name:
+        return 'Unknown'
+    
+    # Remove technical suffixes and VTS reports
+    clean_name = name.split(' - report')[0].split(' lt')[0].split(' bn')[0]
+    clean_name = clean_name.split(' buoy')[0].split(' 7.5 m')[0].split(' 9m')[0]
+    clean_name = clean_name.split(' 13 m')[0].split(' pilot')[0]
+    
+    # Capitalize first letter
+    return clean_name.strip().title()
+
+def save_rtz_routes_to_db(routes_data: List[Dict]) -> int:
     """
-    logger.info("Parsing RTZ file: %s", path)
-    
-    # Check if file exists before attempting to parse
-    if not os.path.exists(path):
-        logger.warning(f"RTZ file not found: {path}")
-        return []
-    
+    Save parsed RTZ routes to database using proper SQLAlchemy models
+    ENHANCED: Now extracts and stores origin/destination information
+    """
     try:
-        tree = ET.parse(path)
-        root = tree.getroot()
-
-        routes_data = []
-        # try to find route elements
-        route_elems = [e for e in root.iter() if 'route' in strip_ns(e.tag).lower() or 'rte' in strip_ns(e.tag).lower()]
-        # if none found, try to find top-level 'gpx'/'trk' or collect waypoint lists
-        if not route_elems:
-            # collect top-level tracks or create synthetic route from waypoints
-            # search for trk or gpx or rtept or wpt
-            candidates = [e for e in root.iter() if strip_ns(e.tag).lower() in ('trk', 'gpx', 'rte', 'track')]
-            if candidates:
-                route_elems = candidates
-            else:
-                # fallback: treat whole file as a single route
-                route_elems = [root]
-
-        route_index = 0
-        for r in route_elems:
-            route_index += 1
-            rtag = strip_ns(r.tag).lower()
-            route_name = r.attrib.get('name') or r.findtext('name') or f'route_{route_index}'
-            # gather waypoints under this route
-            waypoints = []
-            # common waypoint tags
-            for wp_tag in ('waypoint', 'wpt', 'rtept', 'pt', 'trkpt', 'position'):
-                for wp in r.findall('.//{}'.format(wp_tag)):
-                    p = parse_waypoint(wp)
-                    if p:
-                        waypoints.append(p)
-            # If none found using common tags, search all descendants for coordinate patterns
-            if not waypoints:
-                coords = []
-                for elem in r.iter():
-                    pts = extract_coords_from_text(ET.tostring(elem, encoding='unicode', method='text'))
-                    for lat, lon in pts:
-                        coords.append({'name': None, 'lat': lat, 'lon': lon})
-                waypoints = coords
-
-            # If still no coords, attempt global search in file
-            if not waypoints:
-                pts = extract_coords_from_text(ET.tostring(root, encoding='unicode', method='text'))
-                waypoints = [{'name': None, 'lat': p[0], 'lon': p[1]} for p in pts]
-
-            # build legs: consecutive waypoints -> 1 leg per pair
-            legs = []
-            total_route_nm = 0.0
-            for i in range(len(waypoints) - 1):
-                a = waypoints[i]; b = waypoints[i+1]
-                dist_nm = haversine_nm(a['lat'], a['lon'], b['lat'], b['lon'])
-                legs.append({
-                    'leg_order': i+1,
-                    'start': a,
-                    'end': b,
-                    'distance_nm': round(dist_nm, 3)
-                })
-                total_route_nm += dist_nm
-
-            route_obj = {
-                'route_name': route_name,
-                'num_waypoints': len(waypoints),
-                'total_distance_nm': round(total_route_nm, 3),
-                'legs': legs,
-                'parsed_at_utc': datetime.utcnow().isoformat() + 'Z',
-                'source_file': os.path.abspath(path)
-            }
-            routes_data.append(route_obj)
-
-        return routes_data
+        # ✅ CORRECT IMPORT - app.py is in root directory
+        from app import create_app
+        from backend.models import Route, VoyageLeg
+        from backend.extensions import db
         
-    except ET.ParseError as e:
-        logger.error(f"XML parsing error in {path}: {e}")
-        return []
+        # Create Flask app and application context
+        app = create_app()
+        
+        with app.app_context():
+            saved_count = 0
+            
+            for route_info in routes_data:
+                try:
+                    # Check if route already exists
+                    existing_route = Route.query.filter(
+                        Route.name == route_info['route_name']
+                    ).first()
+                    
+                    if existing_route:
+                        logger.info(f"Route '{route_info['route_name']}' already exists, skipping")
+                        continue
+                    
+                    # ✅ ENHANCED: Extract origin and destination
+                    waypoints = route_info['waypoints']
+                    origin, destination = extract_origin_destination(route_info['route_name'], waypoints)
+                    
+                    # ✅ ENHANCED: Calculate duration (assume 15 knots average speed)
+                    total_distance = route_info['total_distance_nm']
+                    duration_days = round(total_distance / (15 * 24), 2)  # 15 knots * 24 hours
+                    
+                    # Create main Route entry with enhanced data
+                    new_route = Route(
+                        name=route_info['route_name'],
+                        total_distance_nm=total_distance,
+                        origin=origin,
+                        destination=destination,
+                        duration_days=duration_days,
+                        description=f"Official NCA route: {origin} → {destination} ({total_distance} nm)",
+                        is_active=True
+                    )
+                    db.session.add(new_route)
+                    db.session.flush()  # Get the route ID
+                    
+                    # Create VoyageLegs for each segment between waypoints
+                    for i in range(len(waypoints) - 1):
+                        start_wp = waypoints[i]
+                        end_wp = waypoints[i + 1]
+                        
+                        # Find the corresponding leg distance
+                        leg_distance = 0.0
+                        if i < len(route_info['legs']):
+                            leg_distance = route_info['legs'][i]['distance_nm']
+                        else:
+                            # Calculate if not available
+                            leg_distance = haversine_nm(
+                                start_wp['lat'], start_wp['lon'],
+                                end_wp['lat'], end_wp['lon']
+                            )
+                        
+                        # Create voyage leg
+                        voyage_leg = VoyageLeg(
+                            route_id=new_route.id,
+                            leg_order=i + 1,
+                            departure_lat=start_wp['lat'],
+                            departure_lon=start_wp['lon'],
+                            arrival_lat=end_wp['lat'],
+                            arrival_lon=end_wp['lon'],
+                            distance_nm=leg_distance,
+                            departure_time=datetime.utcnow(),  # Placeholder
+                            arrival_time=datetime.utcnow(),    # Placeholder
+                            is_active=True
+                        )
+                        db.session.add(voyage_leg)
+                    
+                    saved_count += 1
+                    logger.info(f"✅ Saved route '{route_info['route_name']}' ({origin} → {destination}) with {len(waypoints)} waypoints")
+                    
+                except Exception as e:
+                    logger.error(f"❌ Failed to save route '{route_info['route_name']}': {str(e)}")
+                    continue
+            
+            # Commit all changes
+            db.session.commit()
+            logger.info(f"🎉 Successfully saved {saved_count} routes to database")
+            return saved_count
+        
+    except ImportError as e:
+        logger.warning(f"Database models not available: {e}")
+        return 0
     except Exception as e:
-        logger.error(f"Unexpected error parsing {path}: {e}")
-        return []
-
-def write_decoded_json(routes_data, src_path):
-    decoded_dir = os.path.join(os.path.dirname(src_path), '..', 'decoded')
-    decoded_dir = os.path.abspath(decoded_dir)
-    os.makedirs(decoded_dir, exist_ok=True)
-    base = os.path.splitext(os.path.basename(src_path))[0]
-    out_path = os.path.join(decoded_dir, f"{base}_decoded.json")
-    with open(out_path, 'w', encoding='utf-8') as f:
-        json.dump({'routes': routes_data}, f, indent=2, ensure_ascii=False)
-    logger.info("Wrote decoded JSON to %s", out_path)
-    return out_path
-
-# Placeholder: implement DB save using your SQLAlchemy models
-def save_to_db_placeholder(routes_data):
-    logger.info("save_to_db_placeholder called (%d routes) - implement your DB integration here", len(routes_data))
-    # Example:
-    # from backend.models.route import Route, VoyageLeg
-    # session = get_db_session()
-    # create Route + legs
-    pass
-
-def main(argv):
-    if len(argv) < 2:
-        print("Usage: rtz_parser.py path/to/file.rtz [--save-db]")
-        return 2
-    path = argv[1]
-    save_db = '--save-db' in argv[2:]
-    routes = parse_rtz(path)
-    out = write_decoded_json(routes, path)
-    print(f"Parsed {len(routes)} route(s). Decoded JSON: {out}")
-    if save_db:
-        save_to_db_placeholder(routes)
-        print("DB save attempted (placeholder).")
-
-if __name__ == "__main__":
-    sys.exit(main(sys.argv))
+        logger.error(f"Database save failed: {e}")
+        return 0

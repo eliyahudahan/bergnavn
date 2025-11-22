@@ -8,6 +8,8 @@ class Route(db.Model):
     description = db.Column(db.Text)
     duration_days = db.Column(db.Float)
     total_distance_nm = db.Column(db.Float)
+    origin = db.Column(db.String(100))  # ✅ ADDED: Route origin
+    destination = db.Column(db.String(100))  # ✅ ADDED: Route destination
     is_active = db.Column(db.Boolean, default=True)
 
     # ✅ FIXED: String-based relationship - NO ABSOLUTE IMPORT!

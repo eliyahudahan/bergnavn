@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<route xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="1.0" xmlns="https://cirm.org/rtz-xml-schemas">
+  <routeInfo routeName="NCA_Trondheim_Halten_In_20250801" validityPeriodStart="2025-08-01T00:00:00" validityPeriodStop="2026-04-16T00:00:00" />
+  <waypoints>
+    <defaultWaypoint radius="0.3">
+      <leg starboardXTD="0.1" portsideXTD="0.1" safetyContour="20" safetyDepth="20" geometryType="Loxodrome" staticUKC="0" dynamicUKC="0" />
+    </defaultWaypoint>
+    <waypoint id="1" name="Frohavet">
+      <position lat="64.25626858" lon="9.75179652" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="2" name="Tarva lt">
+      <position lat="63.82722217" lon="9.26903527" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="3" name="Svissaflua 16 m">
+      <position lat="63.7006193" lon="9.24036868" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="4" name="Flesa pilot boarding">
+      <position lat="63.65054591" lon="9.24847105" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="5" name="Kommersoy">
+      <position lat="63.62132461" lon="9.30684108" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="6" name="Smellingflua">
+      <position lat="63.6141898" lon="9.49231755" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="7" name="Roysaneset lt">
+      <position lat="63.6276" lon="9.58473333" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="8" name="Hogholmen lt">
+      <position lat="63.65451667" lon="9.6863" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="9" name="Kjerringa">
+      <position lat="63.65545" lon="9.72803333" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="10" name="Ringflua lt">
+      <position lat="63.65016342" lon="9.7631476" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="11" name="Hysneset lt">
+      <position lat="63.62456759" lon="9.77597641" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="12" name="Storneset">
+      <position lat="63.49520805" lon="9.90840994" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="13" name="Rodbergneset">
+      <position lat="63.47576245" lon="9.9787621" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="14" name="Flakkfjorden">
+      <position lat="63.46752128" lon="10.19017705" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="15" name="Digermulen">
+      <position lat="63.45845001" lon="10.30423466" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="16" name="Nordneset">
+      <position lat="63.45073333" lon="10.34578333" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="17" name="Trondheim">
+      <position lat="63.44545" lon="10.36245" />
+      <leg legInfo="" />
+    </waypoint>
+  </waypoints>
+  <extensions>
+    <extension manufacturer="Norwegian Coastal Administration" fullName="Trondheim - Halten Inbound" productinfo="See information on http://www.routeinfo.no before use of this Reference Route for Navigation. The Reference Routes from NCA can be used as a basis in route planning. For routes with no comments on vessel size, 150 meter length and 9 meter draught has been used to quality assure the routes. Limitations in size of vessel may vary along the route caused by regulation or depths." routeNumber="NO-510043" xmlns="" />
+  </extensions>
+</route>

@@ -1,119 +1,120 @@
-<!-- backend/templates/maritime_dashboard.html - Maritime Dashboard Template -->
-<!-- Enhanced with real-time data integration and improved UI components -->
-
 {% extends "base.html" %}
 
-{% block title %}{{ translate('title', lang, 'maritime_page') }}{% endblock %}
+{% block title %}Maritime Dashboard | BergNavn{% endblock %}
 
 {% block head %}
-<!-- Additional head content for maritime dashboard -->
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
 <style>
-    .weather-card {
-        transition: transform 0.2s ease-in-out;
-    }
-    .weather-card:hover {
-        transform: translateY(-2px);
-    }
     .maritime-map {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border-radius: 8px;
+        height: 500px;
+        border-radius: 12px;
         overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     }
-    .status-badge {
-        font-size: 0.8rem;
-        padding: 0.5rem 1rem;
+    .vessel-marker {
+        background: #ff6b6b;
+        border: 3px solid white;
+        border-radius: 50%;
+        width: 12px;
+        height: 12px;
+        animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+        0% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.2); opacity: 0.7; }
+        100% { transform: scale(1); opacity: 1; }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="container my-4">
-    <!-- Header Section with Official Data -->
-    <!-- Displays real-time maritime operations data and system status -->
-    <div class="text-center mb-5">
-        <h1 class="display-4 mb-3">🚢 {{ translate('title', lang, 'maritime_page') }}</h1>
-        <p class="lead text-muted">{{ translate('maritime_description', lang, 'global') }}</p>
-        
-        <!-- Status Bar - Shows real-time API connection status -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="d-flex justify-content-center align-items-center gap-3 flex-wrap">
-                    <span id="api-status" class="badge status-badge bg-success">
-                        <i class="bi bi-cloud-check"></i> Connecting...
-                    </span>
-                    <button id="refresh-weather" class="btn btn-sm btn-outline-primary">
-                        <i class="bi bi-arrow-clockwise"></i> Refresh Weather
-                    </button>
-                    <small class="text-muted" id="last-update">
-                        Last update: <span id="update-time">Just now</span>
-                    </small>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Statistics Bar with Official SSB Data -->
-        <!-- Real-time metrics showing cargo volume, ETA, and fuel optimization -->
-        <div class="row mt-4">
-            <div class="col-md-4 mb-3">
-                <div class="card text-white bg-primary h-100">
-                    <div class="card-body text-center">
-                        <div class="display-6 mb-2">📦</div>
-                        <h5>{{ translate('cargo_volume', lang, 'global') }}</h5>
-                        <h3>975,870 tons</h3>
-                        <small class="opacity-75">Q2 2025 ({{ translate('official_data', lang, 'maritime_page') }})</small>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-3">
-                <div class="card text-white bg-success h-100">
-                    <div class="card-body text-center">
-                        <div class="display-6 mb-2">⏱️</div>
-                        <h5>{{ translate('route_eta', lang, 'global') }}</h5>
-                        <h3>18-22 hours</h3>
-                        <small class="opacity-75" id="route-eta-display">
-                            Kristiansand ↔ Oslo<br>
-                            <span class="eta-details">Calculating enhanced ETA...</span>
-                        </small>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-3">
-                <div class="card text-white bg-warning h-100">
-                    <div class="card-body text-center">
-                        <div class="display-6 mb-2">💰</div>
-                        <h5>{{ translate('fuel_optimization', lang, 'global') }}</h5>
-                        <h3 id="fuel-saving-value">15%+</h3>
-                        <small class="opacity-75" id="fuel-saving-details">
-                            {{ translate('fuel_savings', lang, 'maritime_page') }}<br>
-                            <span>Based on current fleet data</span>
-                        </small>
-                    </div>
-                </div>
-            </div>
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <h1 class="text-gradient">🌊 Maritime Dashboard</h1>
+            <p class="lead">Real-time maritime intelligence with verified data</p>
         </div>
     </div>
 
-    <!-- Weather Alert Section with MET Norway Data -->
-    <!-- Real-time weather data from MET Norway API -->
+    <!-- Status -->
     <div class="row mb-4">
         <div class="col-12">
-            <div class="card border-warning shadow-sm">
-                <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">
-                        <i class="bi bi-cloud-sun"></i> {{ translate('weather_forecasts', lang, 'maritime_page') }}
-                    </h5>
-                    <small class="text-muted">Live MET Norway Data</small>
+            <div class="alert" id="statusAlert">
+                <strong>Status:</strong> <span id="statusText">Loading verified data from APIs...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="row">
+        <!-- Weather Data -->
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="card maritime-card h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">🌤️ Weather Data</h5>
+                    <small class="opacity-75">MET Norway + OpenWeather</small>
                 </div>
                 <div class="card-body">
-                    <div class="row g-3" id="weather-data">
-                        <!-- Weather data will be loaded here dynamically by JavaScript -->
-                        <!-- Loading state shown during initial data fetch -->
-                        <div class="col-12 text-center py-4">
-                            <div class="spinner-border text-primary mb-3" role="status">
-                                <span class="visually-hidden">Loading maritime weather data...</span>
-                            </div>
-                            <p class="mb-1">Loading real-time weather data from MET Norway...</p>
-                            <small class="text-muted">Connecting to official Norwegian meteorological service</small>
+                    <div id="weatherData">
+                        <div class="text-center">
+                            <div class="spinner-border text-primary"></div>
+                            <p class="mt-2">Loading verified weather data...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ships Data -->
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="card maritime-card h-100">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">🚢 Ships Tracking</h5>
+                    <small class="opacity-75">Live AIS Data</small>
+                </div>
+                <div class="card-body">
+                    <div id="shipsData">
+                        <div class="text-center">
+                            <div class="spinner-border text-success"></div>
+                            <p class="mt-2">Loading real AIS data...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fuel Analytics -->
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="card maritime-card h-100">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">⛽ Fuel Analytics</h5>
+                    <small class="opacity-75">AI Optimization</small>
+                </div>
+                <div class="card-body">
+                    <div id="fuelData">
+                        <div class="text-center">
+                            <div class="spinner-border text-warning"></div>
+                            <p class="mt-2">Loading fuel optimization...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Alerts -->
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="card maritime-card h-100">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">⚠️ System Alerts</h5>
+                    <small class="opacity-75">Real-time Monitoring</small>
+                </div>
+                <div class="card-body">
+                    <div id="alertsData">
+                        <div class="text-center">
+                            <div class="spinner-border text-danger"></div>
+                            <p class="mt-2">Loading system status...</p>
                         </div>
                     </div>
                 </div>
@@ -121,173 +122,440 @@
         </div>
     </div>
 
-    <!-- Map Container -->
-    <!-- Interactive maritime route visualization -->
-    <div class="card mb-4 shadow-sm">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">
-                <i class="bi bi-geo-alt"></i> {{ translate('live_map', lang, 'maritime_page') }}
-            </h5>
-            <span class="badge bg-info" id="vessel-count">
-                <i class="bi bi-ship"></i> <span id="ship-count">12</span> vessels
-            </span>
-        </div>
-        <div class="card-body p-0">
-            <div id="maritime-map" class="maritime-map" style="height: 500px;">
-                <!-- Map content will be loaded dynamically by JavaScript -->
-                <!-- Fallback content shown during initialization -->
-                <div class="h-100 d-flex align-items-center justify-content-center text-white">
-                    <div class="text-center p-4">
-                        <div class="display-1 mb-3">🗺️</div>
-                        <h4>{{ translate('route_visualization', lang, 'maritime_page') }}</h4>
-                        <p class="mb-3">{{ translate('coming_soon', lang, 'maritime_page') }}</p>
-                        <div class="bg-light text-dark rounded p-3 d-inline-block">
-                            <small>
-                                <strong>Kristiansand ↔ Oslo Route</strong><br>
-                                <span class="text-muted">Real-time vessel tracking active</span>
-                            </small>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Quick Actions Section -->
-    <!-- Data science and optimization features -->
+    <!-- Live Maritime Map -->
     <div class="row mb-4">
-        <div class="col-md-6 mb-3">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body text-center">
-                    <div class="display-6 text-primary mb-3">📊</div>
-                    <h5>{{ translate('route_analytics', lang, 'maritime_page') }}</h5>
-                    <p class="text-muted mb-3">Analyze historical and real-time route data with advanced analytics</p>
-                    <button class="btn btn-outline-primary" onclick="showComingSoon('Route Analytics')">
-                        <i class="bi bi-graph-up"></i> {{ translate('coming_soon', lang, 'maritime_page') }}
-                    </button>
+        <div class="col-12">
+            <div class="card maritime-card">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">🗺️ Live Maritime Map</h5>
+                    <small class="opacity-75">Real-time vessel positions</small>
                 </div>
-            </div>
-        </div>
-        <div class="col-md-6 mb-3">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body text-center">
-                    <div class="display-6 text-success mb-3">⚡</div>
-                    <h5>{{ translate('fuel_optimization', lang, 'global') }}</h5>
-                    <p class="text-muted mb-3">Calculate optimal speed and fuel consumption with AI recommendations</p>
-                    <button class="btn btn-outline-success" onclick="showComingSoon('Fuel Optimization')">
-                        <i class="bi bi-lightning-charge"></i> {{ translate('coming_soon', lang, 'maritime_page') }}
-                    </button>
+                <div class="card-body p-0">
+                    <div id="maritimeMap" class="maritime-map">
+                        <!-- Map will be loaded here -->
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Data Sources Information -->
-    <!-- Official data sources and API integrations -->
-    <div class="card mb-4 shadow-sm">
-        <div class="card-header">
-            <h6 class="mb-0">
-                <i class="bi bi-database"></i> {{ translate('data_sources', lang, 'maritime_page') }}
-            </h6>
-        </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-6">
-                    <ul class="list-unstyled">
-                        <li class="mb-2">
-                            <i class="bi bi-check-circle-fill text-success me-2"></i>
-                            <strong>SSB Norway</strong> - {{ translate('official_statistics', lang, 'maritime_page') }}
-                        </li>
-                        <li class="mb-2">
-                            <i class="bi bi-check-circle-fill text-success me-2"></i>
-                            <strong>Kystverket</strong> - AIS live data and vessel tracking
-                        </li>
-                    </ul>
+    <!-- Enhanced ETA Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card maritime-card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">⏱️ Enhanced ETA Calculation</h5>
+                    <small class="opacity-75">Weather-adjusted arrival times</small>
                 </div>
-                <div class="col-md-6">
-                    <ul class="list-unstyled">
-                        <li class="mb-2">
-                            <i class="bi bi-check-circle-fill text-success me-2"></i>
-                            <strong>MET Norway</strong> - {{ translate('weather_forecasts', lang, 'maritime_page') }}
-                        </li>
-                        <li class="mb-2">
-                            <i class="bi bi-check-circle-fill text-success me-2"></i>
-                            <strong>RouteInfo.no</strong> - {{ translate('maritime_routes', lang, 'maritime_page') }}
-                        </li>
-                    </ul>
+                <div class="card-body">
+                    <div id="etaData">
+                        <div class="text-center">
+                            <div class="spinner-border text-info"></div>
+                            <p class="mt-2">Calculating ETA with real weather factors...</p>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <!-- Technical Implementation Note -->
-    <!-- Shows the advanced technical capabilities of the platform -->
-    <div class="card border-0 bg-light">
-        <div class="card-body text-center py-3">
-            <small class="text-muted">
-                <strong>Technical Implementation:</strong> 
-                Integrated with official Norwegian data APIs • 
-                Real-time MET Norway weather integration • 
-                Advanced Data Science analytics • 
-                Modern web technology stack
-            </small>
         </div>
     </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
-<!-- Maritime Dashboard JavaScript -->
-<!-- Main JavaScript file handling all real-time data and interactions -->
-<script src="{{ url_for('static', filename='js/maritime.js') }}"></script>
+<!-- Leaflet JavaScript -->
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
 
-<!-- Additional JavaScript for enhanced functionality -->
 <script>
-    /**
-     * Show coming soon notification for features in development
-     * @param {string} featureName - Name of the feature
-     */
-    function showComingSoon(featureName) {
-        // Create notification element
-        const notification = document.createElement('div');
-        notification.className = 'alert alert-info alert-dismissible fade show';
-        notification.style.position = 'fixed';
-        notification.style.top = '20px';
-        notification.style.right = '20px';
-        notification.style.zIndex = '9999';
-        notification.style.minWidth = '300px';
-        notification.innerHTML = `
-            <strong>${featureName}</strong> is coming soon!<br>
-            <small>This feature is currently in development.</small>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        `;
-        
-        document.body.appendChild(notification);
-        
-        // Auto-remove after 5 seconds
-        setTimeout(() => {
-            if (notification.parentNode) {
-                notification.parentNode.removeChild(notification);
-            }
-        }, 5000);
-    }
+// Initialize maritime map
+let maritimeMap;
+let vesselMarkers = [];
 
-    /**
-     * Update the last update timestamp
-     */
-    function updateTimestamp() {
-        const now = new Date();
-        const timeString = now.toLocaleTimeString();
-        const updateElement = document.getElementById('update-time');
-        if (updateElement) {
-            updateElement.textContent = timeString;
+function initializeMaritimeMap() {
+    // Center map on Norwegian coast
+    maritimeMap = L.map('maritimeMap').setView([62.0, 8.0], 6);
+    
+    // Add OpenStreetMap tiles
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors',
+        maxZoom: 18
+    }).addTo(maritimeMap);
+    
+    console.log("Maritime map initialized successfully");
+}
+
+// Load all real data from existing APIs
+async function loadRealData() {
+    try {
+        updateStatus('Loading verified data from production APIs...', 'info');
+
+        // Initialize map first
+        if (!maritimeMap) {
+            initializeMaritimeMap();
+        }
+
+        // Load all data in parallel with timeout protection
+        const timeout = 10000;
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+        const [weatherResponse, shipsResponse, fuelResponse, alertsResponse, etaResponse] = await Promise.all([
+            fetch('/maritime/api/weather-pro', { signal: controller.signal }),
+            fetch('/maritime/api/ships-live', { signal: controller.signal }), 
+            fetch('/maritime/api/analytics/fuel-optimization', { signal: controller.signal }),
+            fetch('/maritime/api/alerts', { signal: controller.signal }),
+            fetch('/maritime/api/route/eta-enhanced', { signal: controller.signal })
+        ]);
+
+        clearTimeout(timeoutId);
+
+        // Process weather data
+        if (weatherResponse.ok) {
+            const weatherData = await weatherResponse.json();
+            displayWeatherData(weatherData);
+        } else {
+            displayWeatherError();
+        }
+
+        // Process ships data - THIS UPDATES THE MAP
+        if (shipsResponse.ok) {
+            const shipsData = await shipsResponse.json();
+            displayShipsData(shipsData);
+            updateMapWithShips(shipsData); // ADDED: Update map with ship positions
+        } else {
+            displayShipsError();
+        }
+
+        // Process fuel data
+        if (fuelResponse.ok) {
+            const fuelData = await fuelResponse.json();
+            displayFuelData(fuelData);
+        } else {
+            displayFuelError();
+        }
+
+        // Process alerts
+        if (alertsResponse.ok) {
+            const alertsData = await alertsResponse.json();
+            displayAlertsData(alertsData);
+        } else {
+            displayAlertsError();
+        }
+
+        // Process ETA
+        if (etaResponse.ok) {
+            const etaData = await etaResponse.json();
+            displayETAData(etaData);
+        } else {
+            displayETAError();
+        }
+
+        updateStatus('All verified data loaded successfully', 'success');
+
+    } catch (error) {
+        console.error('Error loading verified data:', error);
+        if (error.name === 'AbortError') {
+            updateStatus('API timeout - some services may be slow', 'warning');
+        } else {
+            updateStatus('Error loading data from APIs', 'danger');
         }
     }
+}
 
-    // Update timestamp every minute
-    setInterval(updateTimestamp, 60000);
+// NEW FUNCTION: Update map with ship positions
+function updateMapWithShips(shipsData) {
+    if (!maritimeMap) return;
     
-    // Initial timestamp update
-    document.addEventListener('DOMContentLoaded', updateTimestamp);
+    // Clear existing markers
+    vesselMarkers.forEach(marker => maritimeMap.removeLayer(marker));
+    vesselMarkers = [];
+    
+    // Add new markers for each ship
+    if (shipsData.ships && shipsData.ships.length > 0) {
+        shipsData.ships.forEach(ship => {
+            const vesselIcon = L.divIcon({
+                className: 'vessel-marker',
+                html: '<div style="background: #ff6b6b; border: 3px solid white; border-radius: 50%; width: 12px; height: 12px;"></div>',
+                iconSize: [12, 12],
+                iconAnchor: [6, 6]
+            });
+            
+            const marker = L.marker([ship.lat, ship.lon], { icon: vesselIcon })
+                .addTo(maritimeMap)
+                .bindPopup(`
+                    <div class="text-center">
+                        <h6><strong>${ship.name}</strong></h6>
+                        <small>Type: ${ship.type}</small><br>
+                        <small>Speed: ${ship.sog} knots</small><br>
+                        <small>Destination: ${ship.destination}</small>
+                    </div>
+                `);
+            
+            vesselMarkers.push(marker);
+        });
+        
+        // Fit map to show all vessels
+        const group = new L.featureGroup(vesselMarkers);
+        maritimeMap.fitBounds(group.getBounds().pad(0.1));
+        
+        console.log(`Updated map with ${vesselMarkers.length} vessels`);
+    }
+}
+
+// Display real weather data from MET Norway
+function displayWeatherData(data) {
+    const container = document.getElementById('weatherData');
+    
+    if (data.status === 'success' && data.data) {
+        const weather = data.data;
+        container.innerHTML = `
+            <div class="text-center">
+                <h3 class="text-primary">${Math.round(weather.temperature)}°C</h3>
+                <p><strong>${weather.condition || 'Maritime Conditions'}</strong></p>
+                <div class="row text-sm mt-3">
+                    <div class="col-6">
+                        <small>Wind: ${weather.wind_speed} m/s</small>
+                    </div>
+                    <div class="col-6">
+                        <small>Dir: ${weather.wind_direction}°</small>
+                    </div>
+                    <div class="col-6">
+                        <small>Humidity: ${weather.humidity}%</small>
+                    </div>
+                    <div class="col-6">
+                        <small>Pressure: ${weather.pressure} hPa</small>
+                    </div>
+                </div>
+                <small class="text-muted d-block mt-2">Source: ${data.source || 'Verified API'}</small>
+            </div>
+        `;
+    } else {
+        container.innerHTML = `
+            <div class="text-center text-warning">
+                <p>⚠️ Weather data limited</p>
+                <small>${data.message || 'Using fallback data'}</small>
+            </div>
+        `;
+    }
+}
+
+// Display real ships data from AIS
+function displayShipsData(data) {
+    const container = document.getElementById('shipsData');
+    
+    if ((data.status === 'live' || data.status === 'enhanced_simulation') && data.ships_count !== undefined) {
+        container.innerHTML = `
+            <div class="text-center">
+                <h3 class="text-success">${data.ships_count}</h3>
+                <p><strong>Active Vessels</strong></p>
+                <div class="row text-sm mt-3">
+                    <div class="col-12">
+                        <small>Status: ${data.status}</small>
+                    </div>
+                    <div class="col-12">
+                        <small>Source: ${data.data_source || 'AIS'}</small>
+                    </div>
+                </div>
+                ${data.fleet_analytics ? `
+                <div class="mt-3 p-2 bg-light rounded">
+                    <small class="d-block">Avg Efficiency: ${data.fleet_analytics.average_fuel_efficiency || 'N/A'}/100</small>
+                    <small class="d-block">Savings Potential: ${data.fleet_analytics.potential_fuel_savings_percent || 'N/A'}%</small>
+                </div>
+                ` : ''}
+            </div>
+        `;
+    } else {
+        container.innerHTML = `
+            <div class="text-center text-warning">
+                <p>⚠️ Ships data limited</p>
+                <small>Check AIS connection</small>
+            </div>
+        `;
+    }
+}
+
+// Display real fuel analytics
+function displayFuelData(data) {
+    const container = document.getElementById('fuelData');
+    
+    if (data.status === 'success' && data.optimization) {
+        const optimization = data.optimization;
+        container.innerHTML = `
+            <div class="text-center">
+                <h3 class="text-warning">${optimization.total_potential_savings_percent || '0'}%</h3>
+                <p><strong>Fuel Savings Potential</strong></p>
+                <div class="row text-sm mt-3">
+                    <div class="col-6">
+                        <small>Opportunities: ${optimization.opportunities_count || '0'}</small>
+                    </div>
+                    <div class="col-6">
+                        <small>Impact: ${optimization.estimated_impact || 'Medium'}</small>
+                    </div>
+                </div>
+                <small class="text-muted d-block mt-2">AI-powered analysis</small>
+            </div>
+        `;
+    } else {
+        container.innerHTML = `
+            <div class="text-center text-warning">
+                <p>⚠️ Analytics limited</p>
+                <small>Processing data...</small>
+            </div>
+        `;
+    }
+}
+
+// Display real system alerts
+function displayAlertsData(data) {
+    const container = document.getElementById('alertsData');
+    
+    if (data.status === 'success') {
+        const alerts = data.alerts || [];
+        const alertCount = data.alert_count || alerts.length;
+        
+        if (alertCount > 0) {
+            container.innerHTML = `
+                <div class="text-center">
+                    <h3 class="text-danger">${alertCount}</h3>
+                    <p><strong>Active Alerts</strong></p>
+                    ${alerts.slice(0, 3).map(alert => `
+                        <div class="alert alert-sm alert-${alert.priority === 'high' ? 'danger' : 'warning'} mb-2 p-2">
+                            <small class="d-block">${alert.message || 'System alert'}</small>
+                            <small class="text-muted">${alert.timestamp || ''}</small>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        } else {
+            container.innerHTML = `
+                <div class="text-center text-success">
+                    <h3>✓</h3>
+                    <p><strong>No Active Alerts</strong></p>
+                    <p class="text-sm">All systems operational</p>
+                </div>
+            `;
+        }
+    } else {
+        container.innerHTML = `
+            <div class="text-center text-warning">
+                <p>⚠️ Alerts system</p>
+                <small>Status: Monitoring</small>
+            </div>
+        `;
+    }
+}
+
+// Display enhanced ETA calculation
+function displayETAData(data) {
+    const container = document.getElementById('etaData');
+    
+    if (data.status === 'success' && data.data) {
+        const eta = data.data;
+        container.innerHTML = `
+            <div class="row text-center">
+                <div class="col-md-3 mb-3">
+                    <h4 class="text-info">${eta.base_eta_hours || 'N/A'}h</h4>
+                    <p><small>Base ETA</small></p>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <h4 class="text-primary">${eta.adjusted_eta_hours || 'N/A'}h</h4>
+                    <p><small>Adjusted ETA</small></p>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <h4 class="${eta.total_impact_percent > 0 ? 'text-warning' : 'text-success'}">${eta.total_impact_percent || '0'}%</h4>
+                    <p><small>Weather Impact</small></p>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <h4 class="text-dark">${Math.round((eta.confidence_score || 0.8) * 100)}%</h4>
+                    <p><small>Confidence</small></p>
+                </div>
+            </div>
+            <div class="mt-3 p-3 bg-light rounded">
+                <div class="row text-sm">
+                    <div class="col-6">
+                        <small>Distance: ${eta.distance_nautical_miles || 'N/A'} NM</small>
+                    </div>
+                    <div class="col-6">
+                        <small>Speed: ${eta.average_speed_knots || 'N/A'} knots</small>
+                    </div>
+                </div>
+                <small class="text-muted d-block mt-2">Includes wind/current factors and safety margins</small>
+            </div>
+        `;
+    } else {
+        container.innerHTML = `
+            <div class="text-center text-info">
+                <p>ETA calculation in progress</p>
+                <small>Processing route data...</small>
+            </div>
+        `;
+    }
+}
+
+// Error display functions
+function displayWeatherError() {
+    document.getElementById('weatherData').innerHTML = `
+        <div class="text-center text-warning">
+            <p>⚠️ Weather API</p>
+            <small>Temporary issue</small>
+        </div>
+    `;
+}
+
+function displayShipsError() {
+    document.getElementById('shipsData').innerHTML = `
+        <div class="text-center text-warning">
+            <p>⚠️ AIS Data</p>
+            <small>Connection issue</small>
+        </div>
+    `;
+}
+
+function displayFuelError() {
+    document.getElementById('fuelData').innerHTML = `
+        <div class="text-center text-warning">
+            <p>⚠️ Analytics</p>
+            <small>Processing data</small>
+        </div>
+    `;
+}
+
+function displayAlertsError() {
+    document.getElementById('alertsData').innerHTML = `
+        <div class="text-center text-warning">
+            <p>⚠️ Monitoring</p>
+            <small>System check</small>
+        </div>
+    `;
+}
+
+function displayETAError() {
+    document.getElementById('etaData').innerHTML = `
+        <div class="text-center text-info">
+            <p>ETA service</p>
+            <small>Calculating routes...</small>
+        </div>
+    `;
+}
+
+// Update status display
+function updateStatus(message, type) {
+    const alert = document.getElementById('statusAlert');
+    const text = document.getElementById('statusText');
+    
+    alert.className = `alert alert-${type}`;
+    text.textContent = message;
+}
+
+// Initialize dashboard
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize map immediately
+    initializeMaritimeMap();
+    
+    // Load data
+    loadRealData();
+    
+    // Refresh data every 30 seconds
+    setInterval(loadRealData, 30000);
+});
 </script>
 {% endblock %}
