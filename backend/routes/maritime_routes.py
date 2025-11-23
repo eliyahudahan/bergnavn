@@ -1,5 +1,6 @@
 # backend/routes/maritime_routes.py - Maritime routes for BergNavn application
 # Updated with MET Norway integration, AIS data science, and real-time analytics
+# Enhanced with free AIS service and commercial vessel tracking
 from flask import Blueprint, render_template, request, jsonify, current_app
 import requests
 import os
@@ -13,8 +14,8 @@ maritime_bp = Blueprint('maritime_bp', __name__)
 @maritime_bp.route('/')
 def maritime_dashboard():
     """
-    Maritime Dashboard - Real-time tracking for Kristiansand ↔ Oslo route
-    Enhanced with Data Science analytics and live AIS data
+    Maritime Dashboard - Real-time tracking for Norwegian coastal routes
+    Enhanced with Data Science analytics and commercial AIS data
     """
     # Get language from request parameters or use default
     lang = request.args.get('lang', 'en')
@@ -25,11 +26,11 @@ def maritime_dashboard():
     
     return render_template('maritime_dashboard.html', lang=lang)
 
-# ADD THIS MISSING ENDPOINT
 @maritime_bp.route('/<lang>')
 def maritime_dashboard_with_lang(lang):
     """
     Maritime Dashboard with language parameter
+    Supports both English and Norwegian
     """
     if lang not in ['en', 'no']:
         lang = 'en'
@@ -134,6 +135,7 @@ def get_live_ships():
     """
     ENHANCED: Live AIS data with Data Science enrichment
     Provides real-time ship positions with fuel efficiency analytics
+    Maintains existing functionality with improved commercial vessel data
     """
     try:
         # Get ships from AIS service (if available) or use enhanced mock data
@@ -171,6 +173,38 @@ def get_live_ships():
         return jsonify({
             'status': 'error',
             'message': f'Ships data error: {str(e)}'
+        }), 500
+
+# NEW ENDPOINT: Commercial vessels with free AIS service
+@maritime_bp.route('/api/ships-commercial')
+def get_commercial_ships():
+    """
+    COMMERCIAL AIS DATA: Get realistic commercial vessels in Norwegian waters
+    Uses free service with realistic Norwegian maritime traffic patterns
+    No API keys required - completely free
+    """
+    try:
+        from backend.services.free_ais_service import FreeAisService
+        
+        ais_service = FreeAisService()
+        vessels = ais_service.get_norwegian_commercial_vessels()
+        stats = ais_service.get_vessel_statistics()
+        
+        return jsonify({
+            'status': 'commercial_traffic',
+            'ships_count': len(vessels),
+            'ships': vessels,
+            'statistics': stats,
+            'data_source': 'Norwegian Commercial Traffic Simulation',
+            'timestamp': datetime.now().isoformat()
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'status': 'error',
+            'message': f'Commercial AIS service error: {str(e)}',
+            'ships_count': 0,
+            'ships': []
         }), 500
 
 @maritime_bp.route('/api/analytics/fuel-optimization')
@@ -276,7 +310,7 @@ def calculate_enhanced_eta():
         }), 500
 
 # =============================================================================
-# DATA SCIENCE HELPER FUNCTIONS
+# DATA SCIENCE HELPER FUNCTIONS - MAINTAINED FROM EXISTING CODE
 # =============================================================================
 
 def calculate_ship_metrics(ship):
