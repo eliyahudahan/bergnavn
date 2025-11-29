@@ -1,0 +1,24 @@
+==========================================
+  MIGRATION ENVIRONMENT CHECK - BergNavn
+  Timestamp: 2025-11-26T14:20:14.111861
+==========================================
+
+1) 🟦 Loading Flask app (testing mode)…
+   ✔ App loaded successfully
+
+2) 🟦 Checking Alembic migration environment…
+   ✔ Alembic imported successfully
+
+3) 🟦 Checking migrations folder integrity…
+   ✔ Migrations folder exists
+
+4) 🟦 Testing database connection… (again)
+   ✔ Database connection OK
+
+5) 🟦 Checking Alembic head / current revision (read-only)…
+   ✔ Read-only migration environment accessible
+
+
+==========================================
+  ✔ FINISHED! Output saved to migration_check_output.txt
+==========================================

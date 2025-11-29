@@ -1,0 +1,28 @@
+# backend/routes/maritime_api.py  
+"""
+Maritime Data API Routes
+Provides real-time ship and route data to frontend
+"""
+
+from flask import jsonify, Blueprint
+from services.data_integration_service import DataIntegrationService
+
+maritime_bp = Blueprint('maritime', __name__)
+data_service = DataIntegrationService()
+
+@maritime_bp.route('/api/maritime/live-data')
+def get_live_maritime_data():
+    """Get integrated live maritime data"""
+    try:
+        data = data_service.get_live_maritime_data()
+        return jsonify({
+            'success': True,
+            'data': data,
+            'timestamp': datetime.now().isoformat()
+        })
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e),
+            'data': data_service._get_fallback_data()
+        })

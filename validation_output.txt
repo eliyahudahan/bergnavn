@@ -1,0 +1,3 @@
+NOTE: Validation engine not available - running in basic mode
+✅ AIS Service started
+✅ AIS Service started

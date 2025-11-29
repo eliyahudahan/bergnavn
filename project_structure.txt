@@ -2240,6 +2240,7 @@ frontend
   public
   src
   styles
+htmlcov
 instance
 js
 migrations

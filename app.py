@@ -1,6 +1,5 @@
-# app.py - BergNavn Maritime Application (Final)
+# app.py - BergNavn Maritime Application (Safe + Migration-Proof Version)
 # Main Flask application factory and configuration
-# Full integration: AIS Live, Scheduler, Cleanup, ML Routes, Middleware
 
 import logging
 import os
@@ -23,21 +22,34 @@ from backend.routes.maritime_routes import maritime_bp
 from backend.extensions import db, mail, migrate
 from backend.services.cleanup import deactivate_old_weather_status
 
-# Translation utility
+# Translation
 from backend.utils.translations import translate
 
-# Load environment variables
 load_dotenv()
 
-# Logging configuration
 logging.basicConfig(level=logging.INFO)
 
-# Scheduler for background tasks
 scheduler = APScheduler()
+
+
+def _detect_migration_mode():
+    """
+    Detect when Alembic is loading the app (env.py).
+    This ensures the scheduler / AIS won't run during migrations.
+    """
+    import sys
+    return "alembic" in sys.argv[0] or "flask" in sys.argv[0] and ("db" in sys.argv)
 
 
 def create_app(config_name=None, testing=False, start_scheduler=True):
     """Factory method to create and configure Flask app."""
+
+    # Detect migration context (Alembic env.py)
+    migration_mode = _detect_migration_mode()
+
+    if migration_mode:
+        testing = True
+        start_scheduler = False
 
     if config_name is None:
         config_name = os.getenv('FLASK_ENV', 'default')
@@ -48,10 +60,8 @@ def create_app(config_name=None, testing=False, start_scheduler=True):
         static_folder=os.path.join('backend', 'static')
     )
 
-    # Register translation function for templates
     app.jinja_env.globals['translate'] = translate
 
-    # Load configuration
     if testing or config_name == 'testing':
         app.config.from_object('backend.config.config.TestingConfig')
     else:
@@ -62,42 +72,44 @@ def create_app(config_name=None, testing=False, start_scheduler=True):
     mail.init_app(app)
     migrate.init_app(app, db)
 
-    # Initialize AIS Live Service
-    if not testing and os.getenv("DISABLE_AIS_SERVICE") != "1":
+    # AIS Service disabled during migrations & testing
+    if not (testing or migration_mode) and os.getenv("DISABLE_AIS_SERVICE") != "1":
         try:
             from backend.services.ais_service import ais_service
             ais_service.start_ais_stream()
-            logging.info("✅ AIS Live Service initialized successfully")
             app.ais_service = ais_service
+            logging.info("✅ AIS Live Service initialized successfully")
         except Exception as e:
             logging.warning(f"⚠️ AIS Service initialization failed: {e}")
-            logging.info("🔧 Continuing with simulation data")
     else:
-        logging.info("🔧 AIS Service disabled - simulation mode active")
+        logging.info("🔧 AIS Service disabled (testing/migration mode)")
 
-    # Scheduler setup
-    if start_scheduler and not testing and os.getenv("FLASK_SKIP_SCHEDULER") != "1":
+    # Scheduler
+    if start_scheduler and not testing and not migration_mode and os.getenv("FLASK_SKIP_SCHEDULER") != "1":
         scheduler.init_app(app)
         if not scheduler.running:
             scheduler.start()
         logging.info("✅ Background scheduler started")
+    else:
+        logging.info("🔧 Scheduler disabled (testing/migration mode)")
 
-    # Schedule weekly weather cleanup
-    if scheduler.get_job('weekly_cleanup') is None:
-        scheduler.add_job(
-            id='weekly_cleanup',
-            func=lambda: deactivate_old_weather_status(days=30),
-            trigger='interval',
-            weeks=1
-        )
-        logging.info("✅ Weekly weather cleanup job scheduled")
+    # Weekly cleanup job
+    if not migration_mode:
+        if scheduler.get_job('weekly_cleanup') is None:
+            scheduler.add_job(
+                id='weekly_cleanup',
+                func=lambda: deactivate_old_weather_status(days=30),
+                trigger='interval',
+                weeks=1
+            )
+            logging.info("✅ Weekly cleanup job scheduled")
 
     # Import models
     with app.app_context():
         from backend import models
         logging.info("✅ Models imported successfully")
 
-    # Register all blueprints
+    # Register blueprints
     app.register_blueprint(main_bp)
     app.register_blueprint(cruise_blueprint)
     app.register_blueprint(routes_bp, url_prefix="/routes")
@@ -107,9 +119,10 @@ def create_app(config_name=None, testing=False, start_scheduler=True):
     app.register_blueprint(health_bp)
     app.register_blueprint(dashboard_bp, url_prefix='/dashboard')
     app.register_blueprint(maritime_bp, url_prefix='/maritime')
+
     logging.info("✅ All blueprints registered successfully")
 
-    # Language selection middleware
+    # Language middleware
     @app.before_request
     def set_language():
         lang_param = request.args.get('lang')
@@ -117,7 +130,7 @@ def create_app(config_name=None, testing=False, start_scheduler=True):
             session['lang'] = lang_param
         session.setdefault('lang', 'en')
 
-    # CLI: List all routes
+    # CLI command
     @app.cli.command("list-routes")
     def list_routes():
         import urllib
@@ -132,15 +145,16 @@ def create_app(config_name=None, testing=False, start_scheduler=True):
     return app
 
 
-# Main application instance
+# Main app instance
 app = create_app()
 
-# CLI: Manual weather cleanup
+
+# Manual cleanup CLI command
 @app.cli.command("run-cleanup")
 def run_cleanup():
     deactivate_old_weather_status()
     print("✅ Manual cleanup completed")
 
-# Development server entry point
+
 if __name__ == "__main__":
     app.run(debug=True)
