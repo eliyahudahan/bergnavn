@@ -1,0 +1,248 @@
+### Topic: scripts
+### Created: 20251206_2157
+========================================
+
+===== FILE: ./dump_project.sh =====
+#!/bin/bash
+
+# ==========================================================
+# Project Dump Script - Topic-based, max ~2000 lines per file
+# All comments must remain in English (requested).
+# This script:
+# 1. Defines topics
+# 2. Collects files for each topic
+# 3. Writes each topic into multiple chunk files
+#    without breaking any file in the middle.
+# 4. Ensures filenames contain no spaces.
+# ==========================================================
+
+set -e
+
+timestamp=$(date +"%Y%m%d_%H%M")
+output_dir="export_chunks"
+mkdir -p "$output_dir"
+
+MAX_LINES=2000
+
+# Function to start a new chunk file
+start_new_chunk() {
+    chunk_counter=$((chunk_counter + 1))
+    current_file="${output_dir}/${topic}_${timestamp}_chunk$(printf "%03d" $chunk_counter).txt"
+    echo ">>> Creating $current_file"
+    echo "### Topic: $topic" > "$current_file"
+    echo "### Created: $timestamp" >> "$current_file"
+    echo "========================================" >> "$current_file"
+    current_lines=3
+}
+
+# ----------------------------------------------------------
+# Define topics and associated file patterns
+# ----------------------------------------------------------
+
+declare -A TOPICS
+TOPICS=(
+    ["python"]="*.py"
+    ["backend"]="backend/*"
+    ["frontend"]="frontend/*"
+    ["configs"]="*.env *.ini *.cfg requirements.txt"
+    ["database"]="database/* migrations/*"
+    ["scripts"]="scripts/* *.sh"
+    ["docs"]="docs/* readme.md"
+)
+
+# ----------------------------------------------------------
+# Iterate topics
+# ----------------------------------------------------------
+for topic in "${!TOPICS[@]}"; do
+    echo "Processing topic: $topic"
+    chunk_counter=0
+    current_lines=999999  # force new chunk immediately
+
+    # Expand file patterns
+    for pattern in ${TOPICS[$topic]}; do
+        for file in $(find . -type f -name "$pattern" 2>/dev/null); do
+
+            # Skip virtual environments
+            [[ "$file" == *"venv/"* ]] && continue
+            [[ "$file" == *"myenv/"* ]] && continue
+
+            # Count file lines
+            file_lines=$(wc -l < "$file")
+
+            # Start new chunk if required
+            if (( current_lines + file_lines + 5 > MAX_LINES )); then
+                start_new_chunk
+            fi
+
+            {
+                echo ""
+                echo "===== FILE: $file ====="
+                cat "$file"
+                echo ""
+            } >> "$current_file"
+
+            current_lines=$((current_lines + file_lines + 5))
+
+        done
+    done
+
+done
+
+echo "Done. Files saved in $output_dir/"
+
+
+===== FILE: ./dump_project_split.sh =====
+#!/bin/bash
+
+# Exit on errors
+set -e
+
+OUTPUT_DIR="export_chunks"
+TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+
+mkdir -p "$OUTPUT_DIR"
+
+echo "📦 Creating split project dump in: $OUTPUT_DIR"
+
+###############################################
+# Helper function — split output into < 2000 lines
+###############################################
+split_output() {
+    local category="$1"
+    local command="$2"
+
+    echo "→ Processing: $category"
+
+    tmpfile=$(mktemp)
+    eval "$command" > "$tmpfile"
+
+    total_lines=$(wc -l < "$tmpfile")
+
+    if [ "$total_lines" -le 2000 ]; then
+        out="$OUTPUT_DIR/${category}_${TIMESTAMP}.txt"
+        mv "$tmpfile" "$out"
+        echo "✔ Saved $out ($total_lines lines)"
+    else
+        echo "⚠ $category exceeds 2000 lines — splitting"
+        split -l 2000 "$tmpfile" "$OUTPUT_DIR/${category}_${TIMESTAMP}_part_"
+        rm "$tmpfile"
+        echo "✔ Split into multiple parts"
+    fi
+}
+
+###############################################
+# 1. Project structure
+###############################################
+split_output "project_structure" \
+"find . -maxdepth 8 -type f | sort"
+
+###############################################
+# 2. Python code
+###############################################
+split_output "python_code" \
+"find backend -type f -iname '*.py' -exec sed 's/^/>>> /' {} +"
+
+###############################################
+# 3. JSON maritime route data
+###############################################
+split_output \"json_routes\" \
+\"find backend/assets/routeinfo_routes -type f -iname '*.json' -exec echo '=== {} ===' \; -exec cat {} \;\"
+
+###############################################
+# 4. Config files (.env, config.py, etc.)
+###############################################
+split_output "configs" \
+"cat backend/config/config.py example.env 2>/dev/null"
+
+###############################################
+# 5. Requirements / dependencies
+###############################################
+split_output "requirements" \
+"cat requirements.txt 2>/dev/null"
+
+###############################################
+# 6. Metadata, tools, scripts
+###############################################
+split_output "scripts" \
+"find scripts -type f -exec echo '=== {} ===' \; -exec cat {} \;"
+
+###############################################
+# Done!
+###############################################
+echo "🎉 Done! Files saved under: $OUTPUT_DIR/"
+
+
+===== FILE: ./git_backup.sh =====
+#!/bin/bash
+
+# Check the current git status
+echo "📦 Checking git status..."
+git status
+
+# Check if there are changes to commit
+if [[ -n $(git status --porcelain) ]]; then
+    # Add all changes
+    echo "➕ Adding all changes..."
+    git add .
+
+    # Ask the user for a commit message
+    echo "📝 Please enter your commit message:"
+    read commit_message
+
+    # Commit the changes with the given message
+    echo "💾 Committing your changes..."
+    git commit -m "$commit_message"
+
+    # Push the changes to the 'master' branch
+    echo "🚀 Pushing changes to 'master' branch..."
+    git push -u origin master
+
+    echo "✅ Backup completed successfully!"
+else
+    echo "✨ No changes detected. Nothing to commit."
+fi
+
+
+===== FILE: ./run_checks.sh =====
+echo "🔧 Checking configuration variables..."
+python3 check_config.py
+
+
+===== FILE: ./run_validation.sh =====
+#!/bin/bash
+# Run full model validation and save output to validation_output.txt
+
+echo "Running validation..."
+source ./myenv/bin/activate
+
+python validate_models.py | tee validation_output.txt
+
+echo "Done. Output saved to validation_output.txt"
+
+
+===== FILE: ./scripts/run_validation.sh =====
+#!/usr/bin/env bash
+# scripts/run_validation.sh
+# Minimal validation harness: run model & services checks and save output to validation_output.txt
+set -e
+echo "Running validation..."
+python - <<'PY'
+from backend.services.ais_connector import ais_manager
+from backend.services.weather_service import get_weather_for_coord
+from backend.services.rtz_integration import discover_and_process_rtz
+
+# start AIS (in background)
+ais_manager.start_ais_stream(poll_interval=5)
+# fetch immediate snapshot
+ships = ais_manager.get_latest_ships()
+print("AIS sample count:", len(ships))
+
+# weather quick check (Bergen coords)
+w = get_weather_for_coord(60.3913, 5.3221)
+print("Weather source:", w.get("source"))
+# try RTZ processing (dry-run)
+routes_saved = discover_and_process_rtz()
+print("RTZ routes saved (or processed):", routes_saved)
+PY
+echo "Done. Output saved to validation_output.txt"
+

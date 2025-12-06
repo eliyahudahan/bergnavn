@@ -1,0 +1,1181 @@
+===== GROUP START =====
+
+
+--- FILE: backend/services/route_leg_service.py ---
+from datetime import datetime, timedelta
+from backend.services.port_service import add_or_update_port
+from backend.utils.distance_utils import haversine_distance
+from backend.extensions import db
+from backend.models.voyage_leg import VoyageLeg
+from backend.models.route import Route
+
+def create_route_leg(route_id, departure_name, arrival_name, leg_order, cruise_id=None, country_from=None, country_to=None,
+    cruise_departure_time=None):
+    """
+    יוצר מקטע הפלגה (voyage leg) בין שני נמלים.
+    """
+    departure_port = add_or_update_port(departure_name, country_from)
+    arrival_port = add_or_update_port(arrival_name, country_to)
+
+    if not departure_port.latitude or not arrival_port.latitude:
+        raise Exception("Missing coordinates for ports")
+
+    distance = haversine_distance(
+        departure_port.latitude,
+        departure_port.longitude,
+        arrival_port.latitude,
+        arrival_port.longitude
+    )
+
+    travel_speed_kmph = 37
+    travel_time_hours = distance / travel_speed_kmph
+    travel_time = timedelta(hours=travel_time_hours)
+    
+    departure_time = cruise_departure_time or datetime.now()
+    arrival_time = departure_time + travel_time
+
+    leg = VoyageLeg(
+        cruise_id=cruise_id,
+        route_id=route_id,
+        departure_port_id=departure_port.id,
+        arrival_port_id=arrival_port.id,
+        departure_lat=departure_port.latitude,
+        departure_lon=departure_port.longitude,
+        arrival_lat=arrival_port.latitude,
+        arrival_lon=arrival_port.longitude,
+        departure_time=departure_time,
+        arrival_time=arrival_time,
+        leg_order=leg_order
+    )
+
+    
+    leg.distance_nm = distance  # <-- מחוץ לקריאה לאובייקט
+
+    db.session.add(leg)
+    db.session.commit()
+    return leg
+
+
+def create_route(cruise_id, legs_list, cruise_departure_time=None):
+    """
+    יוצר מסלול שלם של מקטעים לפי רשימה מסודרת.
+    """
+    # יצירת Route חדש לפני כל מקטעים
+    route = Route(
+        cruise_id=cruise_id,
+        name="Generated Route",  # אפשר לעדכן לפי צורך
+        description="Generated based on legs",
+        total_distance_nm=0
+    )
+    db.session.add(route)
+    db.session.commit()  # חובה כדי שיהיה route.id
+
+    current_departure_time = cruise_departure_time or datetime.now()
+    created_legs = []
+
+    for i, leg in enumerate(legs_list, start=1):
+        created_leg = create_route_leg(
+            route_id=route.id,
+            cruise_id=cruise_id,
+            departure_name=leg["from"],
+            arrival_name=leg["to"],
+            leg_order=i,
+            country_from=leg.get("country_from"),
+            country_to=leg.get("country_to"),
+            cruise_departure_time=current_departure_time
+        )
+        current_departure_time = created_leg.arrival_time
+        created_legs.append(created_leg)
+
+    # חישוב מרחק כולל
+    route.total_distance_nm = sum([
+        haversine_distance(
+            leg.departure_lat, leg.departure_lon,
+            leg.arrival_lat, leg.arrival_lon
+        ) for leg in created_legs
+    ])
+    db.session.commit()
+
+    return created_legs
+
+
+
+
+
+
+--- FILE: backend/services/fuel_optimizer_service.py ---
+# backend/services/fuel_optimizer_service.py
+import logging
+from typing import Any, Dict
+from backend.services.async_executor import run_in_threadpool
+from backend.ml.enhanced_fuel_optimizer import EmpiricalFuelOptimizer
+
+logger = logging.getLogger(__name__)
+
+async def optimize_vessel_async(vessel_data: Dict[str, Any], weather_data: Dict[str, Any]) -> Dict[str, Any]:
+    """Asynchronously run EmpiricalFuelOptimizer and return results."""
+    try:
+        optimizer = EmpiricalFuelOptimizer()
+        result = await run_in_threadpool(
+            optimizer.calculate_optimal_speed_profile,
+            vessel_data,
+            weather_data
+        )
+        logger.info("✅ Fuel optimization completed successfully")
+        return result
+    except Exception as e:
+        logger.error(f"❌ Error during fuel optimization: {e}", exc_info=True)
+        return {"status": "error", "message": str(e)}
+
+--- FILE: backend/services/rtz_parser.py ---
+"""
+RTZ Parser for Norwegian Coastal Administration Route Files
+FIXED: Handles ZIP-compressed RTZ files and correct XML namespaces
+"""
+import xml.etree.ElementTree as ET
+import os
+import logging
+from typing import List, Dict, Tuple, Optional
+from datetime import datetime
+import math
+import zipfile
+import tempfile
+
+# Configure logging
+logger = logging.getLogger(__name__)
+
+def get_project_root() -> str:
+    """
+    Get the absolute path to project root directory
+    Works regardless of current working directory
+    """
+    # If running from backend directory, go up one level
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    if current_dir.endswith('backend/services'):
+        return os.path.dirname(os.path.dirname(current_dir))
+    elif current_dir.endswith('backend'):
+        return os.path.dirname(current_dir)
+    else:
+        # Assume we're in project root
+        return current_dir
+
+def extract_rtz_from_zip(zip_path: str) -> Optional[str]:
+    """
+    Extract RTZ file from ZIP archive
+    Returns path to extracted XML file, or None if extraction fails
+    """
+    try:
+        if not os.path.exists(zip_path):
+            logger.error(f"ZIP file not found: {zip_path}")
+            return None
+        
+        # Check if file is actually a ZIP file
+        with open(zip_path, 'rb') as f:
+            file_header = f.read(4)
+            if file_header != b'PK\x03\x04':
+                logger.error(f"File is not a ZIP archive: {zip_path}")
+                return None
+        
+        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+            # List all files in the ZIP
+            file_list = zip_ref.namelist()
+            logger.info(f"Files in ZIP {zip_path}: {file_list}")
+            
+            # Find RTZ files in the archive
+            rtz_files = [f for f in file_list if f.endswith('.rtz')]
+            
+            if not rtz_files:
+                logger.error(f"No RTZ files found in ZIP: {zip_path}")
+                return None
+            
+            # Extract the first RTZ file
+            rtz_filename = rtz_files[0]
+            
+            # Create temporary directory for extraction
+            temp_dir = tempfile.mkdtemp()
+            extracted_path = os.path.join(temp_dir, rtz_filename)
+            
+            zip_ref.extract(rtz_filename, temp_dir)
+            logger.info(f"Extracted RTZ file: {rtz_filename} to {extracted_path}")
+            
+            return extracted_path
+            
+    except zipfile.BadZipFile:
+        logger.error(f"Invalid ZIP file: {zip_path}")
+        return None
+    except Exception as e:
+        logger.error(f"Error extracting ZIP {zip_path}: {e}")
+        return None
+
+def haversine_nm(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
+    """
+    Calculate great-circle distance between two points in nautical miles
+    Uses Haversine formula for accurate maritime distance calculation
+    """
+    # Convert decimal degrees to radians
+    lat1, lon1, lat2, lon2 = map(math.radians, [lat1, lon1, lat2, lon2])
+    
+    # Haversine formula
+    dlat = lat2 - lat1
+    dlon = lon2 - lon1
+    a = math.sin(dlat/2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon/2)**2
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
+    
+    # Earth radius in nautical miles (1 nm = 1.852 km)
+    radius_nm = 3440.065  # Earth radius in nautical miles
+    
+    return radius_nm * c
+
+def parse_rtz_file(file_path: str) -> List[Dict]:
+    """
+    Parse RTZ route file and extract waypoints with enhanced metadata
+    FIXED: Handles multiple XML namespaces used by Norwegian Coastal Administration
+    Returns structured route data with distances and waypoint information
+    """
+    try:
+        if not os.path.exists(file_path):
+            logger.warning(f"File not found: {file_path}")
+            return []
+        
+        # Check if file is a ZIP archive
+        actual_file_path = file_path
+        with open(file_path, 'rb') as f:
+            file_header = f.read(4)
+            is_zip = file_header == b'PK\x03\x04'
+        
+        # If it's a ZIP file, extract the RTZ content first
+        if is_zip:
+            logger.info(f"Detected ZIP archive, extracting RTZ content: {file_path}")
+            extracted_path = extract_rtz_from_zip(file_path)
+            if not extracted_path:
+                return []
+            actual_file_path = extracted_path
+        else:
+            logger.info(f"Processing direct RTZ XML file: {file_path}")
+        
+        # Now parse the XML file
+        tree = ET.parse(actual_file_path)
+        root = tree.getroot()
+        
+        # FIXED: Extract route information with namespace handling
+        route_name = "Unknown_Route"
+        
+        # Try to get routeName from different possible locations
+        if 'routeName' in root.attrib:
+            route_name = root.get('routeName')
+        else:
+            # Look for routeInfo element
+            for namespace in ['', '{https://cirm.org/rtz-xml-schemas}']:
+                route_info_elem = root.find(f'{namespace}routeInfo')
+                if route_info_elem is not None and 'routeName' in route_info_elem.attrib:
+                    route_name = route_info_elem.get('routeName')
+                    break
+        
+        logger.info(f"Parsing RTZ route: {route_name}")
+        
+        # Extract waypoints with FIXED namespace handling
+        waypoints = []
+        
+        # Try different namespace approaches for maximum compatibility
+        # Based on the actual XML structure you provided
+        waypoint_elements = []
+        
+        # Method 1: Direct search without namespace (most common)
+        waypoint_elements = root.findall('.//waypoint')
+        
+        # Method 2: With the actual namespace from your file
+        if not waypoint_elements:
+            ns = {'rtz': 'https://cirm.org/rtz-xml-schemas'}
+            waypoint_elements = root.findall('.//rtz:waypoint', ns)
+        
+        # Method 3: Try any namespace
+        if not waypoint_elements:
+            # Register the namespace if found
+            namespace = ''
+            if '}' in root.tag:
+                namespace = root.tag.split('}')[0] + '}'
+            if namespace:
+                waypoint_elements = root.findall(f'.//{namespace}waypoint')
+        
+        logger.info(f"Found {len(waypoint_elements)} waypoint elements")
+        
+        for wp_elem in waypoint_elements:
+            try:
+                # Extract position information
+                position_elem = None
+                
+                # Try different ways to find position element
+                if wp_elem.find('position') is not None:
+                    position_elem = wp_elem.find('position')
+                else:
+                    # Try with namespace
+                    for ns in ['', '{https://cirm.org/rtz-xml-schemas}']:
+                        position_elem = wp_elem.find(f'{ns}position')
+                        if position_elem is not None:
+                            break
+                
+                if position_elem is not None and 'lat' in position_elem.attrib and 'lon' in position_elem.attrib:
+                    waypoint = {
+                        'name': wp_elem.get('name', ''),
+                        'lat': float(position_elem.get('lat', 0)),
+                        'lon': float(position_elem.get('lon', 0)),
+                        'radius': float(wp_elem.get('radius', 0.1))  # Default radius 0.1 nm
+                    }
+                    waypoints.append(waypoint)
+                    logger.debug(f"Added waypoint: {waypoint['name']} at {waypoint['lat']}, {waypoint['lon']}")
+                else:
+                    logger.warning(f"Could not extract position for waypoint: {wp_elem.get('name', 'unknown')}")
+                    
+            except Exception as e:
+                logger.warning(f"Error processing waypoint element: {e}")
+                continue
+        
+        if not waypoints:
+            logger.warning(f"No waypoints found in {file_path}")
+            # Clean up temporary file if we created one
+            if is_zip and actual_file_path != file_path and os.path.exists(actual_file_path):
+                os.remove(actual_file_path)
+                os.rmdir(os.path.dirname(actual_file_path))
+            return []
+        
+        # Calculate leg distances and total distance
+        legs = []
+        total_distance = 0.0
+        
+        for i in range(len(waypoints) - 1):
+            wp1 = waypoints[i]
+            wp2 = waypoints[i + 1]
+            
+            leg_distance = haversine_nm(wp1['lat'], wp1['lon'], wp2['lat'], wp2['lon'])
+            legs.append({
+                'from_waypoint': wp1['name'],
+                'to_waypoint': wp2['name'],
+                'distance_nm': round(leg_distance, 2)
+            })
+            total_distance += leg_distance
+        
+        # Enhanced route information
+        route_info = {
+            'route_name': route_name,
+            'file_path': file_path,
+            'waypoints': waypoints,
+            'legs': legs,
+            'total_distance_nm': round(total_distance, 2),
+            'waypoint_count': len(waypoints),
+            'leg_count': len(legs),
+            'parse_timestamp': datetime.now().isoformat()
+        }
+        
+        logger.info(f"Successfully parsed route '{route_name}': {len(waypoints)} waypoints, {total_distance:.1f} nm")
+        
+        # Clean up temporary file if we created one
+        if is_zip and actual_file_path != file_path and os.path.exists(actual_file_path):
+            os.remove(actual_file_path)
+            os.rmdir(os.path.dirname(actual_file_path))
+            
+        return [route_info]
+        
+    except ET.ParseError as e:
+        logger.error(f"XML parsing error in {file_path}: {e}")
+        # Clean up temporary file if we created one
+        if is_zip and 'actual_file_path' in locals() and actual_file_path != file_path and os.path.exists(actual_file_path):
+            os.remove(actual_file_path)
+            os.rmdir(os.path.dirname(actual_file_path))
+        return []
+    except Exception as e:
+        logger.error(f"Error parsing RTZ file {file_path}: {e}")
+        # Clean up temporary file if we created one
+        if is_zip and 'actual_file_path' in locals() and actual_file_path != file_path and os.path.exists(actual_file_path):
+            os.remove(actual_file_path)
+            os.rmdir(os.path.dirname(actual_file_path))
+        return []
+
+def extract_origin_destination(route_name: str, waypoints: List[Dict]) -> Tuple[str, str]:
+    """
+    Extract origin and destination from route name or waypoints
+    Handles NCA route naming convention: NCA_Origin_Destination_*
+    Enhanced with Norwegian port name normalization
+    """
+    # Try to extract from route name first (NCA naming convention)
+    if 'NCA_' in route_name:
+        parts = route_name.split('_')
+        if len(parts) >= 4:
+            origin = parts[1].title()  # Capitalize first letter
+            destination = parts[2].title()
+            
+            # Handle common abbreviations
+            origin = _expand_abbreviation(origin)
+            destination = _expand_abbreviation(destination)
+            
+            logger.info(f"Extracted from route name: {origin} → {destination}")
+            return origin, destination
+    
+    # Fallback: use first and last waypoint names
+    if waypoints and len(waypoints) >= 2:
+        origin = waypoints[0].get('name', 'Unknown')
+        destination = waypoints[-1].get('name', 'Unknown')
+        
+        # Clean waypoint names
+        origin = _clean_waypoint_name(origin)
+        destination = _clean_waypoint_name(destination)
+        
+        logger.info(f"Extracted from waypoints: {origin} → {destination}")
+        return origin, destination
+    
+    logger.warning(f"Could not extract origin/destination for route: {route_name}")
+    return 'Unknown', 'Unknown'
+
+def _expand_abbreviation(name: str) -> str:
+    """
+    Expand common Norwegian port abbreviations to full names
+    Handles NCA route naming conventions and common abbreviations
+    """
+    abbreviations = {
+        # Major Norwegian ports - all 10 cities
+        'Bergen': 'Bergen',
+        'Trondheim': 'Trondheim', 
+        'Stavanger': 'Stavanger',
+        'Oslo': 'Oslo',
+        'Alesund': 'Ålesund',
+        'Andalsnes': 'Åndalsnes',
+        'Kristiansand': 'Kristiansand',
+        'Drammen': 'Drammen',
+        'Sandefj': 'Sandefjord',
+        'Sandefjord': 'Sandefjord',
+        'Flekkefjord': 'Flekkefjord',
+        
+        # Common NCA abbreviations
+        'Fedjeosen': 'Fedje',
+        'Halten': 'Haltenbanken',
+        'Stad': 'Stadthavet',
+        'Breisundet': 'Breisundet',
+        'Oksoy': 'Oksøy',
+        'Sydostgr': 'Sydostgrunnen',
+        'Bonden': 'Bonden',
+        'Grip': 'Grip',
+        'Grande': 'Rørvik',
+        'Rorvik': 'Rørvik',
+        'Steinsd': 'Steinsundet',
+        'Krakhelle': 'Krakhellesundet',
+        'Flavaer': 'Flævar',
+        'Aramsd': 'Aramshavet',
+        
+        # Additional common Norwegian ports
+        'Bodo': 'Bodø',
+        'Tromso': 'Tromsø',
+        'Narvik': 'Narvik',
+        'Molde': 'Molde',
+        'Haugesund': 'Haugesund',
+        'Arendal': 'Arendal',
+        'Larvik': 'Larvik',
+        'Moss': 'Moss',
+        'Horten': 'Horten'
+    }
+    
+    expanded_name = abbreviations.get(name, name)
+    if expanded_name != name:
+        logger.debug(f"Expanded abbreviation: {name} → {expanded_name}")
+    
+    return expanded_name
+
+def _clean_waypoint_name(name: str) -> str:
+    """
+    Clean waypoint names by removing technical details and VTS reports
+    Returns clean, human-readable port/waypoint names
+    """
+    if not name:
+        return 'Unknown'
+    
+    # Remove technical suffixes and VTS reports
+    clean_name = name.split(' - report')[0].split(' lt')[0].split(' bn')[0]
+    clean_name = clean_name.split(' buoy')[0].split(' 7.5 m')[0].split(' 9m')[0]
+    clean_name = clean_name.split(' 13 m')[0].split(' pilot')[0]
+    clean_name = clean_name.split(' VTS')[0].split(' traffic')[0]
+    
+    # Remove coordinates and technical markers
+    clean_name = clean_name.split(' (')[0].split(' [')[0]
+    
+    # Capitalize first letter and strip whitespace
+    clean_name = clean_name.strip()
+    if clean_name:
+        clean_name = clean_name[0].upper() + clean_name[1:]
+    
+    # Map common waypoint names to port names
+    waypoint_to_port = {
+        'Bergen Havn': 'Bergen',
+        'Oslo Havn': 'Oslo',
+        'Stavanger Havn': 'Stavanger',
+        'Trondheim Havn': 'Trondheim',
+        'Kristiansand Havn': 'Kristiansand',
+        'Ålesund Havn': 'Ålesund',
+        'Drammen Havn': 'Drammen',
+        'Sandefjord Havn': 'Sandefjord',
+        'Flekkefjord Havn': 'Flekkefjord'
+    }
+    
+    final_name = waypoint_to_port.get(clean_name, clean_name)
+    
+    if final_name != name:
+        logger.debug(f"Cleaned waypoint name: {name} → {final_name}")
+    
+    return final_name
+
+def save_rtz_routes_to_db(routes_data: List[Dict]) -> int:
+    """
+    Save parsed RTZ routes to database using proper SQLAlchemy models
+    ENHANCED: Extracts and stores origin/destination information with improved error handling
+    Maintains existing database integration
+    """
+    try:
+        # Import database models within application context
+        from app import create_app
+        from backend.models import Route, VoyageLeg
+        from backend.extensions import db
+        
+        # Create Flask app and application context
+        app = create_app()
+        
+        with app.app_context():
+            saved_count = 0
+            error_count = 0
+            
+            for route_info in routes_data:
+                try:
+                    # Check if route already exists
+                    existing_route = Route.query.filter(
+                        Route.name == route_info['route_name']
+                    ).first()
+                    
+                    if existing_route:
+                        logger.info(f"Route '{route_info['route_name']}' already exists, skipping")
+                        continue
+                    
+                    # ENHANCED: Extract origin and destination
+                    waypoints = route_info['waypoints']
+                    origin, destination = extract_origin_destination(route_info['route_name'], waypoints)
+                    
+                    # ENHANCED: Calculate duration (assume 15 knots average commercial speed)
+                    total_distance = route_info['total_distance_nm']
+                    duration_days = round(total_distance / (15 * 24), 2)  # 15 knots * 24 hours
+                    
+                    # Create main Route entry with enhanced data
+                    new_route = Route(
+                        name=route_info['route_name'],
+                        total_distance_nm=total_distance,
+                        origin=origin,
+                        destination=destination,
+                        duration_days=duration_days,
+                        description=f"Official NCA route: {origin} → {destination} ({total_distance} nm)",
+                        is_active=True
+                    )
+                    db.session.add(new_route)
+                    db.session.flush()  # Get the route ID
+                    
+                    # Create VoyageLegs for each segment between waypoints
+                    for i in range(len(waypoints) - 1):
+                        start_wp = waypoints[i]
+                        end_wp = waypoints[i + 1]
+                        
+                        # Find the corresponding leg distance
+                        leg_distance = 0.0
+                        if i < len(route_info['legs']):
+                            leg_distance = route_info['legs'][i]['distance_nm']
+                        else:
+                            # Calculate if not available
+                            leg_distance = haversine_nm(
+                                start_wp['lat'], start_wp['lon'],
+                                end_wp['lat'], end_wp['lon']
+                            )
+                        
+                        # Create voyage leg with enhanced data
+                        voyage_leg = VoyageLeg(
+                            route_id=new_route.id,
+                            leg_order=i + 1,
+                            departure_lat=start_wp['lat'],
+                            departure_lon=start_wp['lon'],
+                            arrival_lat=end_wp['lat'],
+                            arrival_lon=end_wp['lon'],
+                            distance_nm=round(leg_distance, 2),
+                            departure_time=datetime.utcnow(),  # Placeholder for actual schedule
+                            arrival_time=datetime.utcnow(),    # Placeholder for actual schedule
+                            is_active=True
+                        )
+                        db.session.add(voyage_leg)
+                    
+                    saved_count += 1
+                    logger.info(f"✅ Saved route '{route_info['route_name']}' ({origin} → {destination}) with {len(waypoints)} waypoints")
+                    
+                except Exception as e:
+                    error_count += 1
+                    logger.error(f"❌ Failed to save route '{route_info['route_name']}': {str(e)}")
+                    continue
+            
+            # Commit all changes
+            db.session.commit()
+            
+            if saved_count > 0:
+                logger.info(f"🎉 Successfully saved {saved_count} routes to database")
+            if error_count > 0:
+                logger.warning(f"⚠️ {error_count} routes failed to save")
+            
+            return saved_count
+        
+    except ImportError as e:
+        logger.warning(f"Database models not available: {e}")
+        return 0
+    except Exception as e:
+        logger.error(f"Database save operation failed: {e}")
+        return 0
+
+def find_rtz_files() -> Dict[str, List[str]]:
+    """
+    Find all RTZ files in the assets directory
+    Returns dictionary with city names and their RTZ file paths
+    Uses absolute paths based on project root
+    """
+    project_root = get_project_root()
+    base_path = os.path.join(project_root, "backend", "assets", "routeinfo_routes")
+    rtz_files = {}
+    
+    cities = [
+        'alesund', 'andalsnes', 'bergen', 'drammen', 'flekkefjord',
+        'kristiansand', 'oslo', 'sandefjord', 'stavanger', 'trondheim'
+    ]
+    
+    logger.info(f"Searching for RTZ files in: {base_path}")
+    
+    for city in cities:
+        city_path = os.path.join(base_path, city)
+        if not os.path.exists(city_path):
+            logger.warning(f"City directory not found: {city_path}")
+            continue
+            
+        # Check multiple possible locations for RTZ files
+        possible_paths = [
+            os.path.join(city_path, "raw", f"{city}_routes.rtz"),
+            os.path.join(city_path, "raw", "extracted_zip", f"{city}_routes.rtz"),
+            os.path.join(city_path, "raw", "*.rtz"),  # Any RTZ file in raw
+            os.path.join(city_path, "*.rtz"),  # Any RTZ file in city directory
+        ]
+        
+        found_files = []
+        for path_pattern in possible_paths:
+            if '*' in path_pattern:
+                # Handle wildcard patterns
+                import glob
+                matches = glob.glob(path_pattern)
+                found_files.extend(matches)
+            elif os.path.exists(path_pattern):
+                found_files.append(path_pattern)
+        
+        if found_files:
+            rtz_files[city] = found_files
+            logger.info(f"Found {len(found_files)} RTZ files for {city}: {found_files}")
+        else:
+            logger.warning(f"No RTZ files found for {city}")
+    
+    return rtz_files
+
+def process_all_cities_routes() -> int:
+    """
+    Process all RTZ files for all 10 Norwegian cities
+    FIXED: Handles both direct XML and ZIP-compressed RTZ files with correct namespaces
+    Returns count of successfully processed routes
+    """
+    rtz_files = find_rtz_files()
+    all_routes = []
+    processed_cities = 0
+    
+    logger.info(f"🚀 Starting RTZ processing for {len(rtz_files)} cities with RTZ files...")
+    
+    for city, file_paths in rtz_files.items():
+        logger.info(f"📂 Processing {city} routes...")
+        
+        for file_path in file_paths:
+            try:
+                logger.info(f"   📄 Parsing: {file_path}")
+                routes = parse_rtz_file(file_path)
+                if routes:
+                    all_routes.extend(routes)
+                    processed_cities += 1
+                    logger.info(f"   ✅ Successfully processed {len(routes)} routes from {city}")
+                    break  # Process only the first valid file per city
+                else:
+                    logger.warning(f"   ⚠️ No routes found in {file_path}")
+            except Exception as e:
+                logger.error(f"   ❌ Error processing {file_path}: {e}")
+    
+    # Save all routes to database
+    if all_routes:
+        saved_count = save_rtz_routes_to_db(all_routes)
+        logger.info(f"🎉 Processing complete: {saved_count} routes saved from {processed_cities} cities")
+        return saved_count
+    else:
+        logger.error("❌ No routes were processed successfully")
+        return 0
+
+def get_processing_statistics() -> Dict:
+    """
+    Get statistics about RTZ route processing
+    Returns information about processed cities and routes
+    """
+    rtz_files = find_rtz_files()
+    
+    stats = {
+        'total_cities': 10,
+        'cities_with_routes': len(rtz_files),
+        'cities_missing_files': [],
+        'total_files_found': sum(len(files) for files in rtz_files.values()),
+        'cities_with_files': list(rtz_files.keys()),
+        'project_root': get_project_root(),
+        'timestamp': datetime.now().isoformat()
+    }
+    
+    all_cities = [
+        'alesund', 'andalsnes', 'bergen', 'drammen', 'flekkefjord',
+        'kristiansand', 'oslo', 'sandefjord', 'stavanger', 'trondheim'
+    ]
+    
+    stats['cities_missing_files'] = [city for city in all_cities if city not in rtz_files]
+    
+    return stats
+
+# Command-line interface for manual processing
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
+    print("🚢 BergNavn RTZ Parser - Norwegian Coastal Routes")
+    print("=" * 50)
+    
+    # Show statistics first
+    stats = get_processing_statistics()
+    print(f"📊 Processing Statistics:")
+    print(f"   Project root: {stats['project_root']}")
+    print(f"   Total cities: {stats['total_cities']}")
+    print(f"   Cities with RTZ files: {stats['cities_with_routes']}")
+    print(f"   Total RTZ files found: {stats['total_files_found']}")
+    
+    if stats['cities_with_files']:
+        print(f"   Cities with files: {', '.join(stats['cities_with_files'])}")
+    
+    if stats['cities_missing_files']:
+        print(f"   Cities missing files: {', '.join(stats['cities_missing_files'])}")
+    
+    print("\n🔄 Starting route processing...")
+    result = process_all_cities_routes()
+    
+    if result > 0:
+        print(f"✅ Successfully processed {result} maritime routes")
+    else:
+        print("❌ No routes were processed")
+        print("💡 Check that RTZ files exist in backend/assets/routeinfo_routes/")
+        print("💡 Files should be in: city/raw/extracted_zip/city_routes.rtz")
+        
+        # Show directory structure for debugging
+        print("\n🔍 Directory structure:")
+        project_root = get_project_root()
+        assets_path = os.path.join(project_root, "backend", "assets")
+        if os.path.exists(assets_path):
+            print(f"Assets directory exists: {assets_path}")
+            for item in os.listdir(assets_path):
+                print(f"  📁 {item}")
+        else:
+            print(f"Assets directory not found: {assets_path}")
+
+--- FILE: backend/services/geocode_service.py ---
+import requests
+
+class GeoCodeService:
+    @staticmethod
+    def get_location_info(name):
+        url = "https://nominatim.openstreetmap.org/search"
+        params = {
+            "q": name,
+            "format": "json",
+            "addressdetails": 1,
+            "limit": 1
+        }
+        headers = {
+            "User-Agent": "BergNavnApp/1.5 framgangsrik747@gmail.com"  # חשוב להכניס מייל או שם מזהה
+        }
+        response = requests.get(url, params=params, headers=headers)
+        response.raise_for_status()
+        data = response.json()
+
+        if not data:
+            return None, None, None
+
+        result = data[0]
+        lat = float(result["lat"])
+        lon = float(result["lon"])
+        country = result["address"].get("country")
+
+        return lat, lon, country
+
+
+
+--- FILE: backend/services/route_evaluator.py ---
+import logging
+from backend.models.route import Route
+from backend.models.voyage_leg import VoyageLeg
+from backend.models.weather_status import WeatherStatus
+from backend.models.port import Port
+
+logger = logging.getLogger(__name__)
+
+def get_status_color(status):
+    color_map = {
+        "OK": "green",
+        "REROUTE_NEEDED": "yellow",
+        "CANCELLED": "red",
+        "NOT_FOUND": "black",
+        "NO_LEGS": "black",
+        "ERROR": "grey"
+    }
+    return color_map.get(status, "grey")
+
+def evaluate_route(route_id):
+    try:
+        route = Route.query.get(route_id)
+        if not route or not route.is_active:
+            logger.warning(f"Route ID {route_id} not found or inactive.")
+            return {
+                "status": "NOT_FOUND",
+                "color": get_status_color("NOT_FOUND")
+            }
+
+        legs = [leg for leg in route.legs if leg.is_active]
+        if not legs:
+            logger.info(f"Route ID {route_id} has no active legs.")
+            return {
+                "status": "NO_LEGS",
+                "color": get_status_color("NO_LEGS")
+            }
+
+        issues = []
+        cancelled_legs = 0
+
+        for leg in legs:
+            for port_id in [leg.departure_port_id, leg.arrival_port_id]:
+                status = WeatherStatus.query.filter_by(port_id=port_id).order_by(WeatherStatus.datetime.desc()).first()
+                if status:
+                    if not status.is_active:
+                        issues.append(f"Port {status.port.name} inactive")
+                    elif status.alert_level in ['red', 'black']:
+                        if leg.is_critical:
+                            cancelled_legs += 1
+                            issues.append(f"Critical leg cancelled due to alert at {status.port.name}: {status.alert_level}")
+                        else:
+                            issues.append(f"Non-critical leg skipped due to alert at {status.port.name}: {status.alert_level}")
+
+        if cancelled_legs > 0:
+            result = {
+                "status": "CANCELLED",
+                "issues": issues,
+                "recommended_action": "Cancel"
+            }
+            result["color"] = get_status_color(result["status"])
+            return result
+
+        elif issues:
+            result = {
+                "status": "REROUTE_NEEDED",
+                "issues": issues,
+                "recommended_action": "Reroute"
+            }
+            result["color"] = get_status_color(result["status"])
+            return result
+
+        result = {
+            "status": "OK",
+            "recommended_action": "Continue"
+        }
+        result["color"] = get_status_color(result["status"])
+        return result
+
+    except Exception as e:
+        logger.error(f"Error evaluating route {route_id}: {str(e)}", exc_info=True)
+        return {
+            "status": "ERROR",
+            "color": get_status_color("ERROR"),
+            "error": str(e)
+        }
+
+
+
+--- FILE: backend/services/weather_service.py ---
+# backend/services/weather_service.py
+"""
+Weather service that prefers MET Norway (primary) and falls back to OpenWeatherMap.
+Provides:
+ - get_weather_for_coord(lat, lon) -> dict
+ - sync_ports_weather() -> writes WeatherStatus records (if app context)
+Notes:
+ - MET Norway (api.met.no) requires a User-Agent header and polite usage. Provide user agent in env:
+    MET_USER_AGENT
+ - OpenWeather uses API key in env: OPENWEATHER_API_KEY
+"""
+
+import os
+import requests
+from typing import Dict, Any, Optional
+
+MET_USER_AGENT = os.getenv("MET_USER_AGENT", "BergNavnApp/1.0 (contact: framgangsrik747@gmail.com)")
+OPENWEATHER_KEY = os.getenv("OPENWEATHER_API_KEY", "")
+
+def _fetch_met_weather(lat: float, lon: float) -> Optional[Dict[str, Any]]:
+    """
+    Query MET Norway (locationforecast/2.0). This is the recommended primary source in Norway.
+    """
+    try:
+        url = "https://api.met.no/weatherapi/locationforecast/2.0/compact"
+        headers = {"User-Agent": MET_USER_AGENT}
+        params = {"lat": lat, "lon": lon}
+        r = requests.get(url, params=params, headers=headers, timeout=10)
+        if r.status_code == 200:
+            return r.json()
+        return None
+    except Exception:
+        return None
+
+def _fetch_openweather(lat: float, lon: float) -> Optional[Dict[str, Any]]:
+    """Fallback to OpenWeather (current weather)."""
+    if not OPENWEATHER_KEY:
+        return None
+    try:
+        url = "https://api.openweathermap.org/data/2.5/weather"
+        params = {"lat": lat, "lon": lon, "appid": OPENWEATHER_KEY, "units": "metric"}
+        r = requests.get(url, params=params, timeout=8)
+        if r.status_code == 200:
+            return r.json()
+        return None
+    except Exception:
+        return None
+
+def get_weather_for_coord(lat: float, lon: float) -> Dict[str, Any]:
+    """Return a normalized weather payload using MET Norway primary, OpenWeather fallback."""
+    payload = _fetch_met_weather(lat, lon)
+    if payload:
+        return {"source": "met", "data": payload}
+    payload = _fetch_openweather(lat, lon)
+    if payload:
+        return {"source": "openweather", "data": payload}
+    return {"source": "none", "data": {}}
+
+
+--- FILE: backend/utils/translations.py ---
+"""
+Translations module for BergNavn Maritime application.
+Provides English and Norwegian translations for the maritime operations platform.
+"""
+
+translations = {
+    'en': {
+        'global': {
+            'home': 'Home',
+            'legal': 'Legal',
+            'routes': 'Routes',
+            'back_to_home': 'Back to Home',
+            'footer_credit': '© 2025 BergNavn Maritime',
+            'not_available': 'N/A',
+            'home_welcome': 'Welcome to BergNavn',
+            'home_greeting': 'Your real-time maritime platform',
+            'home_description': 'Track, analyze and optimize routes between Kristiansand and Oslo.',
+            'global_operations': 'Global Operations',
+            'global_operations_desc': 'Monitor and optimize maritime traffic in real time.',
+            'data_driven': 'Data Driven',
+            'data_driven_desc': 'Analytics and forecasts based on real-time data.',
+            'secure_platform': 'Secure Platform',
+            'secure_platform_desc': 'Robust and secure infrastructure.',
+            # Maritime translations
+            'maritime_dashboard': 'Maritime Dashboard',
+            'maritime_description': 'Real-time maritime tracking platform',
+            'cargo_volume': 'Cargo Volume',
+            'route_eta': 'Route ETA',
+            'fuel_optimization': 'Fuel Optimization'
+        },
+        'home_page': {
+            'welcome_message': 'Welcome to BergNavn',
+            'home_intro_text': 'Your real-time maritime platform',
+            'view_cruises': 'View Cruises'
+        },
+        'routes_page': {
+            'routes_title': 'Maritime Routes',
+            'route_id': 'Route ID',
+            'route_name': 'Route Name', 
+            'origin': 'Origin',
+            'destination': 'Destination',
+            'duration': 'Duration',
+            'hours': 'hours',
+            'no_routes_found': 'No routes found',
+            'routes_and_legs': 'Routes and Legs'  # Added missing key
+        },
+        'legal_page': {
+            'legal_title': 'Legal Information & Acknowledgments',
+            'legal_text_1': 'BergNavn Maritime is a real-time maritime data platform that integrates official data sources from Norwegian authorities including Kystverket AIS data, SSB cargo statistics, MET Norway weather forecasts, and RouteInfo maritime routes.',
+            'legal_text_2': 'All data is sourced from official Norwegian government APIs and used in compliance with their terms of service. The platform demonstrates advanced integration of real-time maritime data for route optimization and operational efficiency.',
+            'legal_text_3': 'This professional maritime platform showcases modern web technologies and data science applications in the maritime industry.'
+        },
+        'maritime_page': {
+            'title': 'Maritime Dashboard',
+            'cargo_volume': 'Cargo Volume',
+            'official_data': 'Official Data',
+            'route_eta': 'Route ETA',
+            'fuel_savings': 'Fuel Savings',
+            'live_map': 'Live Maritime Map',
+            'coming_soon': 'Coming Soon',
+            'route_visualization': 'Route Visualization',
+            'route_analytics': 'Route Analytics',
+            'data_sources': 'Data Sources',
+            'official_statistics': 'Official Statistics',
+            'weather_forecasts': 'Weather Forecasts',
+            'maritime_routes': 'Maritime Routes'
+        },
+        # Added missing sections for tests
+        'cruises_page': {
+            'title': 'Available Cruises',
+            'description': 'Browse and book available maritime cruises'
+        },
+        'dashboard_page': {
+            'title': '🛳️ Voyage Dashboard',
+            'subtitle': 'Real-time maritime operations overview'
+        },
+        'dummy_users': {
+            'title': 'Dummy Users',
+            'description': 'Test user accounts for development'
+        }
+    },
+    'no': {
+        'global': {
+            'home': 'Hjem',
+            'legal': 'Juridisk',
+            'routes': 'Ruter',
+            'back_to_home': 'Tilbake til Hjem',
+            'footer_credit': '© 2025 BergNavn Maritime',
+            'not_available': 'Ikke tilgjengelig',
+            'home_welcome': 'Velkommen til BergNavn',
+            'home_greeting': 'Din sanntids maritime plattform',
+            'home_description': 'Spor, analyser og optimaliser ruter mellom Kristiansand og Oslo.',
+            'global_operations': 'Global Operasjoner',
+            'global_operations_desc': 'Overvåk og optimaliser maritim trafikk i sanntid.',
+            'data_driven': 'Datadrevet',
+            'data_driven_desc': 'Analyse og prognoser basert på sanntidsdata.',
+            'secure_platform': 'Sikker Plattform',
+            'secure_platform_desc': 'Robust og sikker infrastruktur.',
+            # Maritime translations in Norwegian
+            'maritime_dashboard': 'Maritim Dashbord',
+            'maritime_description': 'Sanntids maritim sporing',
+            'cargo_volume': 'Godsvolum',
+            'route_eta': 'Rute ETA',
+            'fuel_optimization': 'Drivstoffoptimalisering'
+        },
+        'home_page': {
+            'welcome_message': 'Velkommen til BergNavn',
+            'home_intro_text': 'Din sanntids maritime plattform',
+            'view_cruises': 'Se Cruisere'
+        },
+        'routes_page': {
+            'routes_title': 'Maritime Ruter',
+            'route_id': 'Rute ID',
+            'route_name': 'Rute Navn',
+            'origin': 'Opprinnelse',
+            'destination': 'Destinasjon',
+            'duration': 'Varighet',
+            'hours': 'timer',
+            'no_routes_found': 'Ingen ruter funnet',
+            'routes_and_legs': 'Ruter og etapper'  # Added missing key
+        },
+        'legal_page': {
+            'legal_title': 'Juridisk Informasjon & Anerkjennelser',
+            'legal_text_1': 'BergNavn Maritime er en sanntids maritim dataplattform som integrerer offisielle datakilder fra norske myndigheter inkludert Kystverket AIS-data, SSB godsstatistikk, MET Norge værmeldinger og RouteInfo maritime ruter.',
+            'legal_text_2': 'All data er hentet fra offisielle norske statlige APIer og brukes i samsvar med deres vilkår for bruk. Plattformen demonstrerer avansert integrasjon av sanntids maritime data for ruteoptimalisering og operasjonell effektivitet.',
+            'legal_text_3': 'Denne profesjonelle maritime plattformen viser moderne webteknologier og data science-applikasjoner i maritim industri.'
+        },
+        'maritime_page': {
+            'title': 'Maritim Dashbord',
+            'cargo_volume': 'Godsvolum',
+            'official_data': 'Offisielle Data',
+            'route_eta': 'Rute ETA',
+            'fuel_savings': 'Drivstoffbesparelser',
+            'live_map': 'Sanntids Maritim Kart',
+            'coming_soon': 'Kommer Snart',
+            'route_visualization': 'Rutevisualisering',
+            'route_analytics': 'Ruteanalyse',
+            'data_sources': 'Datakilder',
+            'official_statistics': 'Offisiell Statistikk',
+            'weather_forecasts': 'Værmeldinger',
+            'maritime_routes': 'Maritime Ruter'
+        },
+        # Added missing sections for tests
+        'cruises_page': {
+            'title': 'Tilgjengelige cruise',
+            'description': 'Se gjennom og bestill tilgjengelige maritime cruise'
+        },
+        'dashboard_page': {
+            'title': '🛳️ Reisedashbord',
+            'subtitle': 'Sanntids oversikt over maritime operasjoner'
+        },
+        'dummy_users': {
+            'title': 'Dummybrukere',
+            'description': 'Testbrukerkontoer for utvikling'
+        }
+    }
+}
+
+
+def translate(key: str, lang: str = 'en', page: str = 'global') -> str:
+    """
+    Return translation for a given key, language, and page context.
+    
+    Args:
+        key: The translation key to look up
+        lang: Language code ('en' or 'no')
+        page: Page context for the translation
+    
+    Returns:
+        Translated string or the original key if translation not found
+    """
+    # Get the language dictionary, fallback to English if language not found
+    lang_dict = translations.get(lang, translations['en'])
+    
+    # Get the page dictionary, fallback to empty dict if page not found
+    page_dict = lang_dict.get(page, {})
+    
+    # Return the translation or the original key if not found
+    return page_dict.get(key, key)
+
+--- FILE: backend/utils/distance_utils.py ---
+import math
+
+def haversine_distance(lat1, lon1, lat2, lon2):
+    R = 3440.065  # רדיוס כדור הארץ בים-מיילים
+    phi1 = math.radians(lat1)
+    phi2 = math.radians(lat2)
+    delta_phi = math.radians(lat2 - lat1)
+    delta_lambda = math.radians(lon2 - lon1)
+
+    a = math.sin(delta_phi / 2) ** 2 + math.cos(phi1) * math.cos(phi2) * math.sin(delta_lambda / 2) ** 2
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+
+    distance_nm = R * c
+    return distance_nm
+
+
+--- FILE: backend/utils/helpers.py ---
+# backend/utils/helpers.py
+from flask import request, session
+
+def get_current_language():
+    """
+    Determine the UI language using the following priority:
+    1) ?lang=<code> in query string (explicit user choice; also saved to session)
+    2) 'lang' stored in session
+    3) Default to 'en'
+    """
+    lang_param = request.args.get('lang')
+    if lang_param:
+        session['lang'] = lang_param
+        return lang_param
+    return session.get('lang', 'en')
+
+
+===== GROUP END =====

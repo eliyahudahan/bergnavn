@@ -1,0 +1,143 @@
+===== PROJECT DATA INVENTORY =====
+
+### Data Files Detected (real datasets)
+ - /home/framg/dev/bergnavn/backend/package.json
+ - /home/framg/dev/bergnavn/backend/assets/routeinfo_routes/trondheim/raw/extracted/NCA_7_5m_Trondheim_Grande_Rorvik_In_20250731.json
+ - /home/framg/dev/bergnavn/backend/assets/routeinfo_routes/trondheim/raw/extracted/NCA_Trondheim_Halten_In_20250731.json
+ - /home/framg/dev/bergnavn/backend/assets/routeinfo_routes/trondheim/raw/extracted/NCA_Trondheim_Grip_In_20250731.json
+ - /home/framg/dev/bergnavn/backend/assets/routeinfo_routes/stavanger/raw/extracted/NCA_Stavanger_Skudefjorden_In_20250731.json
+ - /home/framg/dev/bergnavn/backend/assets/routeinfo_routes/stavanger/raw/extracted/NCA_Stavanger_Feistein_In_20250731.json
+ - /home/framg/dev/bergnavn/backend/assets/routeinfo_routes/bergen/raw/extracted/NCA_Bergen_Skudefjorden_In_20250731.json
+ - /home/framg/dev/bergnavn/backend/assets/routeinfo_routes/bergen/raw/extracted/NCA_Bergen_Marstein_Vatlestr_In_20250731.json
+ - /home/framg/dev/bergnavn/backend/assets/routeinfo_routes/bergen/raw/extracted/NCA_7_5m_Bergen_Stad_Krakhelle_In_20250731.json
+ - /home/framg/dev/bergnavn/backend/assets/routeinfo_routes/bergen/raw/extracted/NCA_7_5m_Bergen_Stad_Steinsd_In_20250731.json
+ - /home/framg/dev/bergnavn/backend/assets/routeinfo_routes/bergen/raw/extracted/NCA_Bergen_Marstein_Kobbaleia_In_20250731.json
+ - /home/framg/dev/bergnavn/backend/assets/routeinfo_routes/bergen/raw/extracted/NCA_Bergen_Fedjeosen_In_20250731.json
+ - /home/framg/dev/bergnavn/backend/assets/routeinfo_routes/oslo/raw/extracted/NCA_OsloEast_In_20250731.json
+ - /home/framg/dev/bergnavn/backend/assets/routeinfo_routes/oslo/raw/extracted/NCA_OsloWest_In_20250731.json
+ - /home/framg/dev/bergnavn/backend/assets/routeinfo_routes/andalsnes/raw/extracted/NCA_Andalsnes_Breisundet_In_20250731.json
+ - /home/framg/dev/bergnavn/backend/assets/routeinfo_routes/andalsnes/raw/extracted/NCA_7_5m_Andalsnes_Halten_In_20250731.json
+ - /home/framg/dev/bergnavn/backend/assets/routeinfo_routes/andalsnes/raw/extracted/NCA_9m_Andalsnes_Halten_In_20250731.json
+ - /home/framg/dev/bergnavn/backend/assets/routeinfo_routes/flekkefjord/raw/extracted/NCA_Flekkefjord_In_20250731.json
+ - /home/framg/dev/bergnavn/backend/assets/routeinfo_routes/drammen/raw/extracted/NCA_Drammen_In_20250731.json
+ - /home/framg/dev/bergnavn/backend/assets/routeinfo_routes/kristiansand/raw/extracted/NCA_KristiansandW_Oksoy_In_20250731.json
+ - /home/framg/dev/bergnavn/backend/assets/routeinfo_routes/kristiansand/raw/extracted/NCA_KristiansandE_Oksoy_In_20250731.json
+ - /home/framg/dev/bergnavn/backend/assets/routeinfo_routes/sandefjord/raw/extracted/NCA_Sandefj_Bonden_In_20250731.json
+ - /home/framg/dev/bergnavn/backend/assets/routeinfo_routes/sandefjord/raw/extracted/NCA_Sandefj_Sydostgr_In_20250731.json
+ - /home/framg/dev/bergnavn/backend/assets/routeinfo_routes/alesund/raw/extracted/NCA_9m_AlesundS_Halten_In_20250731.json
+ - /home/framg/dev/bergnavn/backend/assets/routeinfo_routes/alesund/raw/extracted/NCA_7_5m_AlesundS_Halten_In_20250731.json
+ - /home/framg/dev/bergnavn/backend/assets/routeinfo_routes/alesund/raw/extracted/NCA_7_5m_AlesundS_Stad_Flavaer_In_20250731.json
+ - /home/framg/dev/bergnavn/backend/assets/routeinfo_routes/alesund/raw/extracted/NCA_AlesundS_Breisundet_In_20250731.json
+ - /home/framg/dev/bergnavn/backend/assets/routeinfo_routes/alesund/raw/extracted/NCA_9m_AlesundN_Stad_In_20250731.json
+ - /home/framg/dev/bergnavn/backend/assets/routeinfo_routes/alesund/raw/extracted/NCA_9m_AlesundN_Halten_In_20250731.json
+ - /home/framg/dev/bergnavn/backend/assets/routeinfo_routes/alesund/raw/extracted/NCA_7_5m_AlesundN_Stad_Aramsd_In_20250731.json
+ - /home/framg/dev/bergnavn/backend/assets/routeinfo_routes/alesund/raw/extracted/NCA_9m_AlesundS_Stad_In_20250731.json
+ - /home/framg/dev/bergnavn/backend/assets/routeinfo_routes/alesund/raw/extracted/NCA_7_5m_AlesundN_Halten_In_20250731.json
+ - /home/framg/dev/bergnavn/backend/assets/routeinfo_routes/alesund/raw/extracted/NCA_7_5m_AlesundS_Stad_Aramsd_In_20250731.json
+ - /home/framg/dev/bergnavn/backend/assets/routeinfo_routes/alesund/raw/extracted/NCA_AlesundN_Breisundet_In_20250731.json
+ - /home/framg/dev/bergnavn/backend/assets/routeinfo_routes/alesund/raw/extracted/NCA_7_5m_AlesundN_Stad_Flavaer_In_20250731.json
+
+### API Usage Detected
+ - /home/framg/dev/bergnavn/backend/middleware/api_key_auth.py  (keyword: api)
+ - /home/framg/dev/bergnavn/backend/routes/weather_routes.py  (keyword: openweather)
+ - /home/framg/dev/bergnavn/backend/routes/weather_routes.py  (keyword: met.no)
+ - /home/framg/dev/bergnavn/backend/routes/weather_routes.py  (keyword: api)
+ - /home/framg/dev/bergnavn/backend/routes/weather_routes.py  (keyword: requests.get)
+ - /home/framg/dev/bergnavn/backend/routes/weather_routes.py  (keyword: weather)
+ - /home/framg/dev/bergnavn/backend/routes/analytics_routes.py  (keyword: api)
+ - /home/framg/dev/bergnavn/backend/routes/analytics_routes.py  (keyword: ais)
+ - /home/framg/dev/bergnavn/backend/routes/analytics_routes.py  (keyword: vessel)
+ - /home/framg/dev/bergnavn/backend/routes/analytics_routes.py  (keyword: weather)
+ - /home/framg/dev/bergnavn/backend/routes/__init__.py  (keyword: api)
+ - /home/framg/dev/bergnavn/backend/routes/maritime_routes.py  (keyword: openweather)
+ - /home/framg/dev/bergnavn/backend/routes/maritime_routes.py  (keyword: api)
+ - /home/framg/dev/bergnavn/backend/routes/maritime_routes.py  (keyword: requests.get)
+ - /home/framg/dev/bergnavn/backend/routes/maritime_routes.py  (keyword: ais)
+ - /home/framg/dev/bergnavn/backend/routes/maritime_routes.py  (keyword: marine)
+ - /home/framg/dev/bergnavn/backend/routes/maritime_routes.py  (keyword: vessel)
+ - /home/framg/dev/bergnavn/backend/routes/maritime_routes.py  (keyword: weather)
+ - /home/framg/dev/bergnavn/backend/routes/route_routes.py  (keyword: api)
+ - /home/framg/dev/bergnavn/backend/routes/ml_routes.py  (keyword: api)
+ - /home/framg/dev/bergnavn/backend/routes/ml_routes.py  (keyword: ais)
+ - /home/framg/dev/bergnavn/backend/routes/ml_routes.py  (keyword: vessel)
+ - /home/framg/dev/bergnavn/backend/routes/ml_routes.py  (keyword: weather)
+ - /home/framg/dev/bergnavn/backend/ml/eem_roi_analyzer.py  (keyword: ais)
+ - /home/framg/dev/bergnavn/backend/ml/eem_roi_analyzer.py  (keyword: vessel)
+ - /home/framg/dev/bergnavn/backend/ml/enhanced_fuel_optimizer.py  (keyword: ais)
+ - /home/framg/dev/bergnavn/backend/ml/enhanced_fuel_optimizer.py  (keyword: vessel)
+ - /home/framg/dev/bergnavn/backend/ml/enhanced_fuel_optimizer.py  (keyword: weather)
+ - /home/framg/dev/bergnavn/backend/ml/recommendation_engine.py  (keyword: ais)
+ - /home/framg/dev/bergnavn/backend/ml/recommendation_engine.py  (keyword: vessel)
+ - /home/framg/dev/bergnavn/backend/ml/recommendation_engine.py  (keyword: weather)
+ - /home/framg/dev/bergnavn/backend/ml/validation_engine.py  (keyword: ais)
+ - /home/framg/dev/bergnavn/backend/models/__init__.py  (keyword: weather)
+ - /home/framg/dev/bergnavn/backend/models/maritime_route.py  (keyword: ais)
+ - /home/framg/dev/bergnavn/backend/models/maritime_route.py  (keyword: weather)
+ - /home/framg/dev/bergnavn/backend/models/weather_status.py  (keyword: weather)
+ - /home/framg/dev/bergnavn/backend/models/cruise.py  (keyword: api)
+ - /home/framg/dev/bergnavn/backend/models/cruise.py  (keyword: weather)
+ - /home/framg/dev/bergnavn/backend/models/fuel_efficiency.py  (keyword: weather)
+ - /home/framg/dev/bergnavn/backend/config/config.py  (keyword: openweather)
+ - /home/framg/dev/bergnavn/backend/config/config.py  (keyword: api)
+ - /home/framg/dev/bergnavn/backend/config/config.py  (keyword: ais)
+ - /home/framg/dev/bergnavn/backend/config/config.py  (keyword: weather)
+ - /home/framg/dev/bergnavn/backend/tests/ test_integration.py  (keyword: vessel)
+ - /home/framg/dev/bergnavn/backend/tests/ test_integration.py  (keyword: weather)
+ - /home/framg/dev/bergnavn/backend/tests/conftest.py  (keyword: weather)
+ - /home/framg/dev/bergnavn/backend/tests/test_route_evaluator.py  (keyword: weather)
+ - /home/framg/dev/bergnavn/backend/services/free_ais_service.py  (keyword: api)
+ - /home/framg/dev/bergnavn/backend/services/free_ais_service.py  (keyword: ais)
+ - /home/framg/dev/bergnavn/backend/services/free_ais_service.py  (keyword: vessel)
+ - /home/framg/dev/bergnavn/backend/services/cleanup.py  (keyword: weather)
+ - /home/framg/dev/bergnavn/backend/services/weather_sync.py  (keyword: openweather)
+ - /home/framg/dev/bergnavn/backend/services/weather_sync.py  (keyword: api)
+ - /home/framg/dev/bergnavn/backend/services/weather_sync.py  (keyword: requests.get)
+ - /home/framg/dev/bergnavn/backend/services/weather_sync.py  (keyword: weather)
+ - /home/framg/dev/bergnavn/backend/services/hazard_service.py  (keyword: api)
+ - /home/framg/dev/bergnavn/backend/services/async_executor.py  (keyword: ais)
+ - /home/framg/dev/bergnavn/backend/services/ais_connector.py  (keyword: ais)
+ - /home/framg/dev/bergnavn/backend/services/ais_connector.py  (keyword: vessel)
+ - /home/framg/dev/bergnavn/backend/services/validation_service.py  (keyword: ais)
+ - /home/framg/dev/bergnavn/backend/services/validation_service.py  (keyword: vessel)
+ - /home/framg/dev/bergnavn/backend/services/validation_service.py  (keyword: weather)
+ - /home/framg/dev/bergnavn/backend/services/rtz_generator.py  (keyword: vessel)
+ - /home/framg/dev/bergnavn/backend/services/ais_service.py  (keyword: ais)
+ - /home/framg/dev/bergnavn/backend/services/data_integration_service.py  (keyword: ais)
+ - /home/framg/dev/bergnavn/backend/services/data_integration_service.py  (keyword: vessel)
+ - /home/framg/dev/bergnavn/backend/services/schedule_service.py  (keyword: api)
+ - /home/framg/dev/bergnavn/backend/services/schedule_service.py  (keyword: requests.get)
+ - /home/framg/dev/bergnavn/backend/services/port_service.py  (keyword: ais)
+ - /home/framg/dev/bergnavn/backend/services/route_leg_service.py  (keyword: ais)
+ - /home/framg/dev/bergnavn/backend/services/fuel_optimizer_service.py  (keyword: vessel)
+ - /home/framg/dev/bergnavn/backend/services/fuel_optimizer_service.py  (keyword: weather)
+ - /home/framg/dev/bergnavn/backend/services/rtz_parser.py  (keyword: api)
+ - /home/framg/dev/bergnavn/backend/services/geocode_service.py  (keyword: requests.get)
+ - /home/framg/dev/bergnavn/backend/services/geocode_service.py  (keyword: ais)
+ - /home/framg/dev/bergnavn/backend/services/route_evaluator.py  (keyword: weather)
+ - /home/framg/dev/bergnavn/backend/services/weather_service.py  (keyword: openweather)
+ - /home/framg/dev/bergnavn/backend/services/weather_service.py  (keyword: met.no)
+ - /home/framg/dev/bergnavn/backend/services/weather_service.py  (keyword: api)
+ - /home/framg/dev/bergnavn/backend/services/weather_service.py  (keyword: requests.get)
+ - /home/framg/dev/bergnavn/backend/services/weather_service.py  (keyword: weather)
+ - /home/framg/dev/bergnavn/backend/utils/translations.py  (keyword: api)
+ - /home/framg/dev/bergnavn/backend/utils/translations.py  (keyword: ais)
+ - /home/framg/dev/bergnavn/backend/utils/translations.py  (keyword: weather)
+
+### Data-Related Services
+ - /home/framg/dev/bergnavn/backend/tests/test_cruise_service.py
+ - /home/framg/dev/bergnavn/backend/services/route_service.py
+ - /home/framg/dev/bergnavn/backend/services/free_ais_service.py
+ - /home/framg/dev/bergnavn/backend/services/cruise_service.py
+ - /home/framg/dev/bergnavn/backend/services/hazard_service.py
+ - /home/framg/dev/bergnavn/backend/services/validation_service.py
+ - /home/framg/dev/bergnavn/backend/services/timezone_service.py
+ - /home/framg/dev/bergnavn/backend/services/ais_service.py
+ - /home/framg/dev/bergnavn/backend/services/data_integration_service.py
+ - /home/framg/dev/bergnavn/backend/services/schedule_service.py
+ - /home/framg/dev/bergnavn/backend/services/port_service.py
+ - /home/framg/dev/bergnavn/backend/services/route_leg_service.py
+ - /home/framg/dev/bergnavn/backend/services/fuel_optimizer_service.py
+ - /home/framg/dev/bergnavn/backend/services/geocode_service.py
+ - /home/framg/dev/bergnavn/backend/services/weather_service.py
+
+===== END OF INVENTORY =====

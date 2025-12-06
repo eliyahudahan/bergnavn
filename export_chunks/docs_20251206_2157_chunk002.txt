@@ -1,0 +1,1947 @@
+### Topic: docs
+### Created: 20251206_2157
+========================================
+
+===== FILE: ./frontend/node_modules/jest-watch-typeahead/node_modules/emittery/readme.md =====
+# <img src="media/header.png" width="1000">
+
+> Simple and modern async event emitter
+
+[![Coverage Status](https://codecov.io/gh/sindresorhus/emittery/branch/main/graph/badge.svg)](https://codecov.io/gh/sindresorhus/emittery)
+[![](https://badgen.net/bundlephobia/minzip/emittery)](https://bundlephobia.com/result?p=emittery)
+
+It works in Node.js and the browser (using a bundler).
+
+Emitting events asynchronously is important for production code where you want the least amount of synchronous operations. Since JavaScript is single-threaded, no other code can run while doing synchronous operations. For Node.js, that means it will block other requests, defeating the strength of the platform, which is scalability through async. In the browser, a synchronous operation could potentially cause lags and block user interaction.
+
+## Install
+
+```
+$ npm install emittery
+```
+
+## Usage
+
+```js
+const Emittery = require('emittery');
+
+const emitter = new Emittery();
+
+emitter.on('🦄', data => {
+	console.log(data);
+});
+
+const myUnicorn = Symbol('🦄');
+
+emitter.on(myUnicorn, data => {
+	console.log(`Unicorns love ${data}`);
+});
+
+emitter.emit('🦄', '🌈'); // Will trigger printing '🌈'
+emitter.emit(myUnicorn, '🦋');  // Will trigger printing 'Unicorns love 🦋'
+```
+
+## API
+
+### eventName
+
+Emittery accepts strings and symbols as event names.
+
+Symbol event names can be used to avoid name collisions when your classes are extended, especially for internal events.
+
+### isDebugEnabled
+
+Toggle debug mode for all instances.
+
+Default: `true` if the `DEBUG` environment variable is set to `emittery` or `*`, otherwise `false`.
+
+Example:
+
+```js
+const Emittery = require('emittery');
+
+Emittery.isDebugEnabled = true;
+
+const emitter1 = new Emittery({debug: {name: 'myEmitter1'}});
+const emitter2 = new Emittery({debug: {name: 'myEmitter2'}});
+
+emitter1.on('test', data => {
+	// …
+});
+
+emitter2.on('otherTest', data => {
+	// …
+});
+
+emitter1.emit('test');
+//=> [16:43:20.417][emittery:subscribe][myEmitter1] Event Name: test
+//	data: undefined
+
+emitter2.emit('otherTest');
+//=> [16:43:20.417][emittery:subscribe][myEmitter2] Event Name: otherTest
+//	data: undefined
+```
+
+### emitter = new Emittery(options?)
+
+Create a new instance of Emittery.
+
+#### options?
+
+Type: `object`
+
+Configure the new instance of Emittery.
+
+##### debug?
+
+Type: `object`
+
+Configure the debugging options for this instance.
+
+###### name
+
+Type: `string`\
+Default: `undefined`
+
+Define a name for the instance of Emittery to use when outputting debug data.
+
+Example:
+
+```js
+const Emittery = require('emittery');
+
+Emittery.isDebugEnabled = true;
+
+const emitter = new Emittery({debug: {name: 'myEmitter'}});
+
+emitter.on('test', data => {
+	// …
+});
+
+emitter.emit('test');
+//=> [16:43:20.417][emittery:subscribe][myEmitter] Event Name: test
+//	data: undefined
+```
+
+###### enabled?
+
+Type: `boolean`\
+Default: `false`
+
+Toggle debug logging just for this instance.
+
+Example:
+
+```js
+const Emittery = require('emittery');
+
+const emitter1 = new Emittery({debug: {name: 'emitter1', enabled: true}});
+const emitter2 = new Emittery({debug: {name: 'emitter2'}});
+
+emitter1.on('test', data => {
+	// …
+});
+
+emitter2.on('test', data => {
+	// …
+});
+
+emitter1.emit('test');
+//=> [16:43:20.417][emittery:subscribe][emitter1] Event Name: test
+//	data: undefined
+
+emitter2.emit('test');
+```
+
+###### logger?
+
+Type: `Function(string, string, EventName?, Record<string, any>?) => void`
+
+Default:
+
+```js
+(type, debugName, eventName, eventData) => {
+	if (typeof eventData === 'object') {
+		eventData = JSON.stringify(eventData);
+	}
+
+	if (typeof eventName === 'symbol') {
+		eventName = eventName.toString();
+	}
+
+	const currentTime = new Date();
+	const logTime = `${currentTime.getHours()}:${currentTime.getMinutes()}:${currentTime.getSeconds()}.${currentTime.getMilliseconds()}`;
+	console.log(`[${logTime}][emittery:${type}][${debugName}] Event Name: ${eventName}\n\tdata: ${eventData}`);
+}
+```
+
+Function that handles debug data.
+
+Example:
+
+```js
+const Emittery = require('emittery');
+
+const myLogger = (type, debugName, eventName, eventData) => console.log(`[${type}]: ${eventName}`);
+
+const emitter = new Emittery({
+	debug: {
+		name: 'myEmitter',
+		enabled: true,
+		logger: myLogger
+	}
+});
+
+emitter.on('test', data => {
+	// …
+});
+
+emitter.emit('test');
+//=> [subscribe]: test
+```
+
+#### on(eventName | eventName[], listener)
+
+Subscribe to one or more events.
+
+Returns an unsubscribe method.
+
+Using the same listener multiple times for the same event will result in only one method call per emitted event.
+
+```js
+const Emittery = require('emittery');
+
+const emitter = new Emittery();
+
+emitter.on('🦄', data => {
+	console.log(data);
+});
+
+emitter.on(['🦄', '🐶'], data => {
+	console.log(data);
+});
+
+emitter.emit('🦄', '🌈'); // log => '🌈' x2
+emitter.emit('🐶', '🍖'); // log => '🍖'
+```
+
+##### Custom subscribable events
+
+Emittery exports some symbols which represent custom events that can be passed to `Emitter.on` and similar methods.
+
+- `Emittery.listenerAdded` - Fires when an event listener was added.
+- `Emittery.listenerRemoved` - Fires when an event listener was removed.
+
+```js
+const Emittery = require('emittery');
+
+const emitter = new Emittery();
+
+emitter.on(Emittery.listenerAdded, ({listener, eventName}) => {
+	console.log(listener);
+	//=> data => {}
+
+	console.log(eventName);
+	//=> '🦄'
+});
+
+emitter.on('🦄', data => {
+	// Handle data
+});
+```
+
+###### Listener data
+
+- `listener` - The listener that was added.
+- `eventName` - The name of the event that was added or removed if `.on()` or `.off()` was used, or `undefined` if `.onAny()` or `.offAny()` was used.
+
+Only events that are not of this type are able to trigger these events.
+
+##### listener(data)
+
+#### off(eventName | eventName[], listener)
+
+Remove one or more event subscriptions.
+
+```js
+const Emittery = require('emittery');
+
+const emitter = new Emittery();
+
+const listener = data => console.log(data);
+
+(async () => {
+	emitter.on(['🦄', '🐶', '🦊'], listener);
+	await emitter.emit('🦄', 'a');
+	await emitter.emit('🐶', 'b');
+	await emitter.emit('🦊', 'c');
+	emitter.off('🦄', listener);
+	emitter.off(['🐶', '🦊'], listener);
+	await emitter.emit('🦄', 'a'); // Nothing happens
+	await emitter.emit('🐶', 'b'); // Nothing happens
+	await emitter.emit('🦊', 'c'); // Nothing happens
+})();
+```
+
+##### listener(data)
+
+#### once(eventName | eventName[])
+
+Subscribe to one or more events only once. It will be unsubscribed after the first event.
+
+Returns a promise for the event data when `eventName` is emitted.
+
+```js
+const Emittery = require('emittery');
+
+const emitter = new Emittery();
+
+emitter.once('🦄').then(data => {
+	console.log(data);
+	//=> '🌈'
+});
+
+emitter.once(['🦄', '🐶']).then(data => {
+	console.log(data);
+});
+
+emitter.emit('🦄', '🌈'); // Log => '🌈' x2
+emitter.emit('🐶', '🍖'); // Nothing happens
+```
+
+#### events(eventName)
+
+Get an async iterator which buffers data each time an event is emitted.
+
+Call `return()` on the iterator to remove the subscription.
+
+```js
+const Emittery = require('emittery');
+
+const emitter = new Emittery();
+const iterator = emitter.events('🦄');
+
+emitter.emit('🦄', '🌈1'); // Buffered
+emitter.emit('🦄', '🌈2'); // Buffered
+
+iterator
+	.next()
+	.then(({value, done}) => {
+		// done === false
+		// value === '🌈1'
+		return iterator.next();
+	})
+	.then(({value, done}) => {
+		// done === false
+		// value === '🌈2'
+		// Revoke subscription
+		return iterator.return();
+	})
+	.then(({done}) => {
+		// done === true
+	});
+```
+
+In practice, you would usually consume the events using the [for await](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for-await...of) statement. In that case, to revoke the subscription simply break the loop.
+
+```js
+const Emittery = require('emittery');
+
+const emitter = new Emittery();
+const iterator = emitter.events('🦄');
+
+emitter.emit('🦄', '🌈1'); // Buffered
+emitter.emit('🦄', '🌈2'); // Buffered
+
+// In an async context.
+for await (const data of iterator) {
+	if (data === '🌈2') {
+		break; // Revoke the subscription when we see the value '🌈2'.
+	}
+}
+```
+
+It accepts multiple event names.
+
+```js
+const Emittery = require('emittery');
+
+const emitter = new Emittery();
+const iterator = emitter.events(['🦄', '🦊']);
+
+emitter.emit('🦄', '🌈1'); // Buffered
+emitter.emit('🦊', '🌈2'); // Buffered
+
+iterator
+	.next()
+	.then(({value, done}) => {
+		// done === false
+		// value === '🌈1'
+		return iterator.next();
+	})
+	.then(({value, done}) => {
+		// done === false
+		// value === '🌈2'
+		// Revoke subscription
+		return iterator.return();
+	})
+	.then(({done}) => {
+		// done === true
+	});
+```
+
+#### emit(eventName, data?)
+
+Trigger an event asynchronously, optionally with some data. Listeners are called in the order they were added, but executed concurrently.
+
+Returns a promise that resolves when all the event listeners are done. *Done* meaning executed if synchronous or resolved when an async/promise-returning function. You usually wouldn't want to wait for this, but you could for example catch possible errors. If any of the listeners throw/reject, the returned promise will be rejected with the error, but the other listeners will not be affected.
+
+#### emitSerial(eventName, data?)
+
+Same as above, but it waits for each listener to resolve before triggering the next one. This can be useful if your events depend on each other. Although ideally they should not. Prefer `emit()` whenever possible.
+
+If any of the listeners throw/reject, the returned promise will be rejected with the error and the remaining listeners will *not* be called.
+
+#### onAny(listener)
+
+Subscribe to be notified about any event.
+
+Returns a method to unsubscribe.
+
+##### listener(eventName, data)
+
+#### offAny(listener)
+
+Remove an `onAny` subscription.
+
+#### anyEvent()
+
+Get an async iterator which buffers a tuple of an event name and data each time an event is emitted.
+
+Call `return()` on the iterator to remove the subscription.
+
+```js
+const Emittery = require('emittery');
+
+const emitter = new Emittery();
+const iterator = emitter.anyEvent();
+
+emitter.emit('🦄', '🌈1'); // Buffered
+emitter.emit('🌟', '🌈2'); // Buffered
+
+iterator.next()
+	.then(({value, done}) => {
+		// done === false
+		// value is ['🦄', '🌈1']
+		return iterator.next();
+	})
+	.then(({value, done}) => {
+		// done === false
+		// value is ['🌟', '🌈2']
+		// Revoke subscription
+		return iterator.return();
+	})
+	.then(({done}) => {
+		// done === true
+	});
+```
+
+In the same way as for `events`, you can subscribe by using the `for await` statement
+
+#### clearListeners(eventNames?)
+
+Clear all event listeners on the instance.
+
+If `eventNames` is given, only the listeners for that events are cleared.
+
+#### listenerCount(eventNames?)
+
+The number of listeners for the `eventNames` or all events if not specified.
+
+#### bindMethods(target, methodNames?)
+
+Bind the given `methodNames`, or all `Emittery` methods if `methodNames` is not defined, into the `target` object.
+
+```js
+import Emittery = require('emittery');
+
+const object = {};
+
+new Emittery().bindMethods(object);
+
+object.emit('event');
+```
+
+## TypeScript
+
+The default `Emittery` class has generic types that can be provided by TypeScript users to strongly type the list of events and the data passed to their event listeners.
+
+```ts
+import Emittery = require('emittery');
+
+const emitter = new Emittery<
+	// Pass `{[eventName]: undefined | <eventArg>}` as the first type argument for events that pass data to their listeners.
+	// A value of `undefined` in this map means the event listeners should expect no data, and a type other than `undefined` means the listeners will receive one argument of that type.
+	{
+		open: string,
+		close: undefined
+	}
+>();
+
+// Typechecks just fine because the data type for the `open` event is `string`.
+emitter.emit('open', 'foo\n');
+
+// Typechecks just fine because `close` is present but points to undefined in the event data type map.
+emitter.emit('close');
+
+// TS compilation error because `1` isn't assignable to `string`.
+emitter.emit('open', 1);
+
+// TS compilation error because `other` isn't defined in the event data type map.
+emitter.emit('other');
+```
+
+### Emittery.mixin(emitteryPropertyName, methodNames?)
+
+A decorator which mixins `Emittery` as property `emitteryPropertyName` and `methodNames`, or all `Emittery` methods if `methodNames` is not defined, into the target class.
+
+```ts
+import Emittery = require('emittery');
+
+@Emittery.mixin('emittery')
+class MyClass {}
+
+const instance = new MyClass();
+
+instance.emit('event');
+```
+
+## Scheduling details
+
+Listeners are not invoked for events emitted *before* the listener was added. Removing a listener will prevent that listener from being invoked, even if events are in the process of being (asynchronously!) emitted. This also applies to `.clearListeners()`, which removes all listeners. Listeners will be called in the order they were added. So-called *any* listeners are called *after* event-specific listeners.
+
+Note that when using `.emitSerial()`, a slow listener will delay invocation of subsequent listeners. It's possible for newer events to overtake older ones.
+
+## Debugging
+
+Emittery can collect and log debug information.
+
+To enable this feature set the DEBUG environment variable to 'emittery' or '*'. Additionally you can set the static `isDebugEnabled` variable to true on the Emittery class, or `myEmitter.debug.enabled` on an instance of it for debugging a single instance.
+
+See [API](#api) for more details on how debugging works.
+
+## FAQ
+
+### How is this different than the built-in `EventEmitter` in Node.js?
+
+There are many things to not like about `EventEmitter`: its huge API surface, synchronous event emitting, magic error event, flawed memory leak detection. Emittery has none of that.
+
+### Isn't `EventEmitter` synchronous for a reason?
+
+Mostly backwards compatibility reasons. The Node.js team can't break the whole ecosystem.
+
+It also allows silly code like this:
+
+```js
+let unicorn = false;
+
+emitter.on('🦄', () => {
+	unicorn = true;
+});
+
+emitter.emit('🦄');
+
+console.log(unicorn);
+//=> true
+```
+
+But I would argue doing that shows a deeper lack of Node.js and async comprehension and is not something we should optimize for. The benefit of async emitting is much greater.
+
+### Can you support multiple arguments for `emit()`?
+
+No, just use [destructuring](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment):
+
+```js
+emitter.on('🦄', ([foo, bar]) => {
+	console.log(foo, bar);
+});
+
+emitter.emit('🦄', [foo, bar]);
+```
+
+## Related
+
+- [p-event](https://github.com/sindresorhus/p-event) - Promisify an event by waiting for it to be emitted
+
+
+===== FILE: ./frontend/node_modules/jest-worker/node_modules/supports-color/readme.md =====
+# supports-color
+
+> Detect whether a terminal supports color
+
+## Install
+
+```
+$ npm install supports-color
+```
+
+## Usage
+
+```js
+const supportsColor = require('supports-color');
+
+if (supportsColor.stdout) {
+	console.log('Terminal stdout supports color');
+}
+
+if (supportsColor.stdout.has256) {
+	console.log('Terminal stdout supports 256 colors');
+}
+
+if (supportsColor.stderr.has16m) {
+	console.log('Terminal stderr supports 16 million colors (truecolor)');
+}
+```
+
+## API
+
+Returns an `Object` with a `stdout` and `stderr` property for testing either streams. Each property is an `Object`, or `false` if color is not supported.
+
+The `stdout`/`stderr` objects specifies a level of support for color through a `.level` property and a corresponding flag:
+
+- `.level = 1` and `.hasBasic = true`: Basic color support (16 colors)
+- `.level = 2` and `.has256 = true`: 256 color support
+- `.level = 3` and `.has16m = true`: Truecolor support (16 million colors)
+
+### `require('supports-color').supportsColor(stream, options?)`
+
+Additionally, `supports-color` exposes the `.supportsColor()` function that takes an arbitrary write stream (e.g. `process.stdout`) and an optional options object to (re-)evaluate color support for an arbitrary stream.
+
+For example, `require('supports-color').stdout` is the equivalent of `require('supports-color').supportsColor(process.stdout)`.
+
+The options object supports a single boolean property `sniffFlags`. By default it is `true`, which instructs `supportsColor()` to sniff `process.argv` for the multitude of `--color` flags (see _Info_ below). If `false`, then `process.argv` is not considered when determining color support.
+
+## Info
+
+It obeys the `--color` and `--no-color` CLI flags.
+
+For situations where using `--color` is not possible, use the environment variable `FORCE_COLOR=1` (level 1), `FORCE_COLOR=2` (level 2), or `FORCE_COLOR=3` (level 3) to forcefully enable color, or `FORCE_COLOR=0` to forcefully disable. The use of `FORCE_COLOR` overrides all other color support checks.
+
+Explicit 256/Truecolor mode can be enabled using the `--color=256` and `--color=16m` flags, respectively.
+
+## Related
+
+- [supports-color-cli](https://github.com/chalk/supports-color-cli) - CLI for this module
+- [chalk](https://github.com/chalk/chalk) - Terminal string styling done right
+
+## Maintainers
+
+- [Sindre Sorhus](https://github.com/sindresorhus)
+- [Josh Junon](https://github.com/qix-)
+
+---
+
+<div align="center">
+	<b>
+		<a href="https://tidelift.com/subscription/pkg/npm-supports-color?utm_source=npm-supports-color&utm_medium=referral&utm_campaign=readme">Get professional support for this package with a Tidelift subscription</a>
+	</b>
+	<br>
+	<sub>
+		Tidelift helps make open source sustainable for maintainers while giving companies<br>assurances about security, maintenance, and licensing for their dependencies.
+	</sub>
+</div>
+
+---
+
+
+===== FILE: ./frontend/node_modules/domhandler/readme.md =====
+# domhandler [![Build Status](https://travis-ci.com/fb55/domhandler.svg?branch=master)](https://travis-ci.com/fb55/domhandler)
+
+The DOM handler creates a tree containing all nodes of a page.
+The tree can be manipulated using the [domutils](https://github.com/fb55/domutils)
+or [cheerio](https://github.com/cheeriojs/cheerio) libraries and
+rendered using [dom-serializer](https://github.com/cheeriojs/dom-serializer) .
+
+## Usage
+
+```javascript
+const handler = new DomHandler([ <func> callback(err, dom), ] [ <obj> options ]);
+// const parser = new Parser(handler[, options]);
+```
+
+Available options are described below.
+
+## Example
+
+```javascript
+const { Parser } = require("htmlparser2");
+const { DomHandler } = require("domhandler");
+const rawHtml =
+    "Xyz <script language= javascript>var foo = '<<bar>>';</script><!--<!-- Waah! -- -->";
+const handler = new DomHandler((error, dom) => {
+    if (error) {
+        // Handle error
+    } else {
+        // Parsing completed, do something
+        console.log(dom);
+    }
+});
+const parser = new Parser(handler);
+parser.write(rawHtml);
+parser.end();
+```
+
+Output:
+
+```javascript
+[
+    {
+        data: "Xyz ",
+        type: "text",
+    },
+    {
+        type: "script",
+        name: "script",
+        attribs: {
+            language: "javascript",
+        },
+        children: [
+            {
+                data: "var foo = '<bar>';<",
+                type: "text",
+            },
+        ],
+    },
+    {
+        data: "<!-- Waah! -- ",
+        type: "comment",
+    },
+];
+```
+
+## Option: `withStartIndices`
+
+Add a `startIndex` property to nodes.
+When the parser is used in a non-streaming fashion, `startIndex` is an integer
+indicating the position of the start of the node in the document.
+The default value is `false`.
+
+## Option: `withEndIndices`
+
+Add an `endIndex` property to nodes.
+When the parser is used in a non-streaming fashion, `endIndex` is an integer
+indicating the position of the end of the node in the document.
+The default value is `false`.
+
+## Option: `normalizeWhitespace` _(deprecated)_
+
+Replace all whitespace with single spaces.
+The default value is `false`.
+
+**Note:** Enabling this might break your markup.
+
+For the following examples, this HTML will be used:
+
+```html
+<font> <br />this is the text <font></font></font>
+```
+
+### Example: `normalizeWhitespace: true`
+
+```javascript
+[
+    {
+        type: "tag",
+        name: "font",
+        children: [
+            {
+                data: " ",
+                type: "text",
+            },
+            {
+                type: "tag",
+                name: "br",
+            },
+            {
+                data: "this is the text ",
+                type: "text",
+            },
+            {
+                type: "tag",
+                name: "font",
+            },
+        ],
+    },
+];
+```
+
+### Example: `normalizeWhitespace: false`
+
+```javascript
+[
+    {
+        type: "tag",
+        name: "font",
+        children: [
+            {
+                data: "\n\t",
+                type: "text",
+            },
+            {
+                type: "tag",
+                name: "br",
+            },
+            {
+                data: "this is the text\n",
+                type: "text",
+            },
+            {
+                type: "tag",
+                name: "font",
+            },
+        ],
+    },
+];
+```
+
+---
+
+License: BSD-2-Clause
+
+## Security contact information
+
+To report a security vulnerability, please use the [Tidelift security contact](https://tidelift.com/security).
+Tidelift will coordinate the fix and disclosure.
+
+## `domhandler` for enterprise
+
+Available as part of the Tidelift Subscription
+
+The maintainers of `domhandler` and thousands of other packages are working with Tidelift to deliver commercial support and maintenance for the open source dependencies you use to build your applications. Save time, reduce risk, and improve code health, while paying the maintainers of the exact dependencies you use. [Learn more.](https://tidelift.com/subscription/pkg/npm-domhandler?utm_source=npm-domhandler&utm_medium=referral&utm_campaign=enterprise&utm_term=repo)
+
+
+===== FILE: ./frontend/node_modules/path-is-absolute/readme.md =====
+# path-is-absolute [![Build Status](https://travis-ci.org/sindresorhus/path-is-absolute.svg?branch=master)](https://travis-ci.org/sindresorhus/path-is-absolute)
+
+> Node.js 0.12 [`path.isAbsolute()`](http://nodejs.org/api/path.html#path_path_isabsolute_path) [ponyfill](https://ponyfill.com)
+
+
+## Install
+
+```
+$ npm install --save path-is-absolute
+```
+
+
+## Usage
+
+```js
+const pathIsAbsolute = require('path-is-absolute');
+
+// Running on Linux
+pathIsAbsolute('/home/foo');
+//=> true
+pathIsAbsolute('C:/Users/foo');
+//=> false
+
+// Running on Windows
+pathIsAbsolute('C:/Users/foo');
+//=> true
+pathIsAbsolute('/home/foo');
+//=> false
+
+// Running on any OS
+pathIsAbsolute.posix('/home/foo');
+//=> true
+pathIsAbsolute.posix('C:/Users/foo');
+//=> false
+pathIsAbsolute.win32('C:/Users/foo');
+//=> true
+pathIsAbsolute.win32('/home/foo');
+//=> false
+```
+
+
+## API
+
+See the [`path.isAbsolute()` docs](http://nodejs.org/api/path.html#path_path_isabsolute_path).
+
+### pathIsAbsolute(path)
+
+### pathIsAbsolute.posix(path)
+
+POSIX specific version.
+
+### pathIsAbsolute.win32(path)
+
+Windows specific version.
+
+
+## License
+
+MIT © [Sindre Sorhus](https://sindresorhus.com)
+
+
+===== FILE: ./frontend/node_modules/array-union/readme.md =====
+# array-union [![Build Status](https://travis-ci.org/sindresorhus/array-union.svg?branch=master)](https://travis-ci.org/sindresorhus/array-union)
+
+> Create an array of unique values, in order, from the input arrays
+
+
+## Install
+
+```
+$ npm install array-union
+```
+
+
+## Usage
+
+```js
+const arrayUnion = require('array-union');
+
+arrayUnion([1, 1, 2, 3], [2, 3]);
+//=> [1, 2, 3]
+
+arrayUnion(['foo', 'foo', 'bar']);
+//=> ['foo', 'bar']
+
+arrayUnion(['🐱', '🦄', '🐻'], ['🦄', '🌈']);
+//=> ['🐱', '🦄', '🐻', '🌈']
+
+arrayUnion(['🐱', '🦄'], ['🐻', '🦄'], ['🐶', '🌈', '🌈']);
+//=> ['🐱', '🦄', '🐻', '🐶', '🌈']
+```
+
+
+## License
+
+MIT © [Sindre Sorhus](https://sindresorhus.com)
+
+
+===== FILE: ./frontend/node_modules/@istanbuljs/load-nyc-config/node_modules/camelcase/readme.md =====
+# camelcase [![Build Status](https://travis-ci.org/sindresorhus/camelcase.svg?branch=master)](https://travis-ci.org/sindresorhus/camelcase)
+
+> Convert a dash/dot/underscore/space separated string to camelCase or PascalCase: `foo-bar` → `fooBar`
+
+---
+
+<div align="center">
+	<b>
+		<a href="https://tidelift.com/subscription/pkg/npm-camelcase?utm_source=npm-camelcase&utm_medium=referral&utm_campaign=readme">Get professional support for 'camelcase' with a Tidelift subscription</a>
+	</b>
+	<br>
+	<sub>
+		Tidelift helps make open source sustainable for maintainers while giving companies<br>assurances about security, maintenance, and licensing for their dependencies.
+	</sub>
+</div>
+
+---
+
+## Install
+
+```
+$ npm install camelcase
+```
+
+
+## Usage
+
+```js
+const camelCase = require('camelcase');
+
+camelCase('foo-bar');
+//=> 'fooBar'
+
+camelCase('foo_bar');
+//=> 'fooBar'
+
+camelCase('Foo-Bar');
+//=> 'fooBar'
+
+camelCase('Foo-Bar', {pascalCase: true});
+//=> 'FooBar'
+
+camelCase('--foo.bar', {pascalCase: false});
+//=> 'fooBar'
+
+camelCase('foo bar');
+//=> 'fooBar'
+
+console.log(process.argv[3]);
+//=> '--foo-bar'
+camelCase(process.argv[3]);
+//=> 'fooBar'
+
+camelCase(['foo', 'bar']);
+//=> 'fooBar'
+
+camelCase(['__foo__', '--bar'], {pascalCase: true});
+//=> 'FooBar'
+```
+
+
+## API
+
+### camelCase(input, [options])
+
+#### input
+
+Type: `string` `string[]`
+
+String to convert to camel case.
+
+#### options
+
+Type: `Object`
+
+##### pascalCase
+
+Type: `boolean`<br>
+Default: `false`
+
+Uppercase the first character: `foo-bar` → `FooBar`
+
+
+## Security
+
+To report a security vulnerability, please use the [Tidelift security contact](https://tidelift.com/security). Tidelift will coordinate the fix and disclosure.
+
+
+## Related
+
+- [decamelize](https://github.com/sindresorhus/decamelize) - The inverse of this module
+- [uppercamelcase](https://github.com/SamVerschueren/uppercamelcase) - Like this module, but to PascalCase instead of camelCase
+- [titleize](https://github.com/sindresorhus/titleize) - Capitalize every word in string
+- [humanize-string](https://github.com/sindresorhus/humanize-string) - Convert a camelized/dasherized/underscored string into a humanized one
+
+
+## License
+
+MIT © [Sindre Sorhus](https://sindresorhus.com)
+
+
+===== FILE: ./frontend/node_modules/is-stream/readme.md =====
+# is-stream
+
+> Check if something is a [Node.js stream](https://nodejs.org/api/stream.html)
+
+## Install
+
+```
+$ npm install is-stream
+```
+
+## Usage
+
+```js
+const fs = require('fs');
+const isStream = require('is-stream');
+
+isStream(fs.createReadStream('unicorn.png'));
+//=> true
+
+isStream({});
+//=> false
+```
+
+## API
+
+### isStream(stream)
+
+Returns a `boolean` for whether it's a [`Stream`](https://nodejs.org/api/stream.html#stream_stream).
+
+#### isStream.writable(stream)
+
+Returns a `boolean` for whether it's a [`stream.Writable`](https://nodejs.org/api/stream.html#stream_class_stream_writable).
+
+#### isStream.readable(stream)
+
+Returns a `boolean` for whether it's a [`stream.Readable`](https://nodejs.org/api/stream.html#stream_class_stream_readable).
+
+#### isStream.duplex(stream)
+
+Returns a `boolean` for whether it's a [`stream.Duplex`](https://nodejs.org/api/stream.html#stream_class_stream_duplex).
+
+#### isStream.transform(stream)
+
+Returns a `boolean` for whether it's a [`stream.Transform`](https://nodejs.org/api/stream.html#stream_class_stream_transform).
+
+## Related
+
+- [is-file-stream](https://github.com/jamestalmage/is-file-stream) - Detect if a stream is a file stream
+
+---
+
+<div align="center">
+	<b>
+		<a href="https://tidelift.com/subscription/pkg/npm-is-stream?utm_source=npm-is-stream&utm_medium=referral&utm_campaign=readme">Get professional support for this package with a Tidelift subscription</a>
+	</b>
+	<br>
+	<sub>
+		Tidelift helps make open source sustainable for maintainers while giving companies<br>assurances about security, maintenance, and licensing for their dependencies.
+	</sub>
+</div>
+
+
+===== FILE: ./frontend/node_modules/@alloc/quick-lru/readme.md =====
+# quick-lru [![Build Status](https://travis-ci.org/sindresorhus/quick-lru.svg?branch=master)](https://travis-ci.org/sindresorhus/quick-lru) [![Coverage Status](https://coveralls.io/repos/github/sindresorhus/quick-lru/badge.svg?branch=master)](https://coveralls.io/github/sindresorhus/quick-lru?branch=master)
+
+> Simple [“Least Recently Used” (LRU) cache](https://en.m.wikipedia.org/wiki/Cache_replacement_policies#Least_Recently_Used_.28LRU.29)
+
+Useful when you need to cache something and limit memory usage.
+
+Inspired by the [`hashlru` algorithm](https://github.com/dominictarr/hashlru#algorithm), but instead uses [`Map`](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Map) to support keys of any type, not just strings, and values can be `undefined`.
+
+## Install
+
+```
+$ npm install quick-lru
+```
+
+## Usage
+
+```js
+const QuickLRU = require('quick-lru');
+
+const lru = new QuickLRU({maxSize: 1000});
+
+lru.set('🦄', '🌈');
+
+lru.has('🦄');
+//=> true
+
+lru.get('🦄');
+//=> '🌈'
+```
+
+## API
+
+### new QuickLRU(options?)
+
+Returns a new instance.
+
+### options
+
+Type: `object`
+
+#### maxSize
+
+*Required*\
+Type: `number`
+
+The maximum number of items before evicting the least recently used items.
+
+#### maxAge
+
+Type: `number`\
+Default: `Infinity`
+
+The maximum number of milliseconds an item should remain in cache.
+By default maxAge will be Infinity, which means that items will never expire.
+
+Lazy expiration happens upon the next `write` or `read` call.
+
+Individual expiration of an item can be specified by the `set(key, value, options)` method.
+
+#### onEviction
+
+*Optional*\
+Type: `(key, value) => void`
+
+Called right before an item is evicted from the cache.
+
+Useful for side effects or for items like object URLs that need explicit cleanup (`revokeObjectURL`).
+
+### Instance
+
+The instance is [`iterable`](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Iteration_protocols) so you can use it directly in a [`for…of`](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Statements/for...of) loop.
+
+Both `key` and `value` can be of any type.
+
+#### .set(key, value, options?)
+
+Set an item. Returns the instance.
+
+Individual expiration of an item can be specified with the `maxAge` option. If not specified, the global `maxAge` value will be used in case it is specified on the constructor, otherwise the item will never expire.
+
+#### .get(key)
+
+Get an item.
+
+#### .has(key)
+
+Check if an item exists.
+
+#### .peek(key)
+
+Get an item without marking it as recently used.
+
+#### .delete(key)
+
+Delete an item.
+
+Returns `true` if the item is removed or `false` if the item doesn't exist.
+
+#### .clear()
+
+Delete all items.
+
+#### .resize(maxSize)
+
+Update the `maxSize`, discarding items as necessary. Insertion order is mostly preserved, though this is not a strong guarantee.
+
+Useful for on-the-fly tuning of cache sizes in live systems.
+
+#### .keys()
+
+Iterable for all the keys.
+
+#### .values()
+
+Iterable for all the values.
+
+#### .entriesAscending()
+
+Iterable for all entries, starting with the oldest (ascending in recency).
+
+#### .entriesDescending()
+
+Iterable for all entries, starting with the newest (descending in recency).
+
+#### .size
+
+The stored item count.
+
+---
+
+<div align="center">
+	<b>
+		<a href="https://tidelift.com/subscription/pkg/npm-quick-lru?utm_source=npm-quick-lru&utm_medium=referral&utm_campaign=readme">Get professional support for this package with a Tidelift subscription</a>
+	</b>
+	<br>
+	<sub>
+		Tidelift helps make open source sustainable for maintainers while giving companies<br>assurances about security, maintenance, and licensing for their dependencies.
+	</sub>
+</div>
+
+
+===== FILE: ./frontend/node_modules/entities/readme.md =====
+# entities [![NPM version](http://img.shields.io/npm/v/entities.svg)](https://npmjs.org/package/entities) [![Downloads](https://img.shields.io/npm/dm/entities.svg)](https://npmjs.org/package/entities) [![Build Status](http://img.shields.io/travis/fb55/entities.svg)](http://travis-ci.org/fb55/entities) [![Coverage](http://img.shields.io/coveralls/fb55/entities.svg)](https://coveralls.io/r/fb55/entities)
+
+Encode & decode HTML & XML entities with ease & speed.
+
+## How to…
+
+### …install `entities`
+
+    npm install entities
+
+### …use `entities`
+
+```javascript
+const entities = require("entities");
+
+//encoding
+entities.escape("&#38;"); // "&#x26;#38;"
+entities.encodeXML("&#38;"); // "&amp;#38;"
+entities.encodeHTML("&#38;"); // "&amp;&num;38&semi;"
+
+//decoding
+entities.decodeXML("asdf &amp; &#xFF; &#xFC; &apos;"); // "asdf & ÿ ü '"
+entities.decodeHTML("asdf &amp; &yuml; &uuml; &apos;"); // "asdf & ÿ ü '"
+```
+
+## Performance
+
+This is how `entities` compares to other libraries on a very basic benchmark
+(see `scripts/benchmark.ts`, for 10,000,000 iterations):
+
+| Library        | `decode` performance | `encode` performance | Bundle size                                                                |
+| -------------- | -------------------- | -------------------- | -------------------------------------------------------------------------- |
+| entities       | 10.809s              | 17.683s              | ![npm bundle size](https://img.shields.io/bundlephobia/min/entities)       |
+| html-entities  | 14.029s              | 22.670s              | ![npm bundle size](https://img.shields.io/bundlephobia/min/html-entities)  |
+| he             | 16.163s              | 44.010s              | ![npm bundle size](https://img.shields.io/bundlephobia/min/he)             |
+| parse-entities | 28.507s              | N/A                  | ![npm bundle size](https://img.shields.io/bundlephobia/min/parse-entities) |
+
+---
+
+License: BSD-2-Clause
+
+## Security contact information
+
+To report a security vulnerability, please use the
+[Tidelift security contact](https://tidelift.com/security). Tidelift will
+coordinate the fix and disclosure.
+
+## `entities` for enterprise
+
+Available as part of the Tidelift Subscription
+
+The maintainers of `entities` and thousands of other packages are working with
+Tidelift to deliver commercial support and maintenance for the open source
+dependencies you use to build your applications. Save time, reduce risk, and
+improve code health, while paying the maintainers of the exact dependencies you
+use.
+[Learn more.](https://tidelift.com/subscription/pkg/npm-entities?utm_source=npm-entities&utm_medium=referral&utm_campaign=enterprise&utm_term=repo)
+
+
+===== FILE: ./frontend/node_modules/is-docker/readme.md =====
+# is-docker
+
+> Check if the process is running inside a Docker container
+
+## Install
+
+```
+$ npm install is-docker
+```
+
+## Usage
+
+```js
+const isDocker = require('is-docker');
+
+if (isDocker()) {
+	console.log('Running inside a Docker container');
+}
+```
+
+## CLI
+
+```
+$ is-docker
+```
+
+Exits with code 0 if inside a Docker container and 2 if not.
+
+
+===== FILE: ./frontend/node_modules/escape-string-regexp/readme.md =====
+# escape-string-regexp [![Build Status](https://travis-ci.org/sindresorhus/escape-string-regexp.svg?branch=master)](https://travis-ci.org/sindresorhus/escape-string-regexp)
+
+> Escape RegExp special characters
+
+## Install
+
+```
+$ npm install escape-string-regexp
+```
+
+## Usage
+
+```js
+const escapeStringRegexp = require('escape-string-regexp');
+
+const escapedString = escapeStringRegexp('How much $ for a 🦄?');
+//=> 'How much \\$ for a 🦄\\?'
+
+new RegExp(escapedString);
+```
+
+You can also use this to escape a string that is inserted into the middle of a regex, for example, into a character class.
+
+---
+
+<div align="center">
+	<b>
+		<a href="https://tidelift.com/subscription/pkg/npm-escape-string-regexp?utm_source=npm-escape-string-regexp&utm_medium=referral&utm_campaign=readme">Get professional support for this package with a Tidelift subscription</a>
+	</b>
+	<br>
+	<sub>
+		Tidelift helps make open source sustainable for maintainers while giving companies<br>assurances about security, maintenance, and licensing for their dependencies.
+	</sub>
+</div>
+
+
+===== FILE: ./frontend/node_modules/compression/node_modules/ms/readme.md =====
+# ms
+
+[![Build Status](https://travis-ci.org/zeit/ms.svg?branch=master)](https://travis-ci.org/zeit/ms)
+[![Slack Channel](http://zeit-slackin.now.sh/badge.svg)](https://zeit.chat/)
+
+Use this package to easily convert various time formats to milliseconds.
+
+## Examples
+
+```js
+ms('2 days')  // 172800000
+ms('1d')      // 86400000
+ms('10h')     // 36000000
+ms('2.5 hrs') // 9000000
+ms('2h')      // 7200000
+ms('1m')      // 60000
+ms('5s')      // 5000
+ms('1y')      // 31557600000
+ms('100')     // 100
+```
+
+### Convert from milliseconds
+
+```js
+ms(60000)             // "1m"
+ms(2 * 60000)         // "2m"
+ms(ms('10 hours'))    // "10h"
+```
+
+### Time format written-out
+
+```js
+ms(60000, { long: true })             // "1 minute"
+ms(2 * 60000, { long: true })         // "2 minutes"
+ms(ms('10 hours'), { long: true })    // "10 hours"
+```
+
+## Features
+
+- Works both in [node](https://nodejs.org) and in the browser.
+- If a number is supplied to `ms`, a string with a unit is returned.
+- If a string that contains the number is supplied, it returns it as a number (e.g.: it returns `100` for `'100'`).
+- If you pass a string with a number and a valid unit, the number of equivalent ms is returned.
+
+## Caught a bug?
+
+1. [Fork](https://help.github.com/articles/fork-a-repo/) this repository to your own GitHub account and then [clone](https://help.github.com/articles/cloning-a-repository/) it to your local device
+2. Link the package to the global module directory: `npm link`
+3. Within the module you want to test your local development instance of ms, just link it to the dependencies: `npm link ms`. Instead of the default one from npm, node will now use your clone of ms!
+
+As always, you can run the tests using: `npm test`
+
+
+===== FILE: ./frontend/node_modules/gzip-size/readme.md =====
+# gzip-size [![Build Status](https://travis-ci.com/sindresorhus/gzip-size.svg?branch=master)](https://travis-ci.com/github/sindresorhus/gzip-size)
+
+> Get the gzipped size of a string or buffer
+
+## Install
+
+```
+$ npm install gzip-size
+```
+
+## Usage
+
+```js
+const gzipSize = require('gzip-size');
+
+const text = 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.';
+
+console.log(text.length);
+//=> 191
+
+console.log(gzipSize.sync(text));
+//=> 78
+```
+
+## API
+
+### gzipSize(input, options?)
+
+Returns a `Promise<number>` with the size.
+
+### gzipSize.sync(input, options?)
+
+Returns the size.
+
+#### input
+
+Type: `string | Buffer`
+
+#### options
+
+Type: `object`
+
+Any [`zlib` option](https://nodejs.org/api/zlib.html#zlib_class_options).
+
+### gzipSize.stream(options?)
+
+Returns a [`stream.PassThrough`](https://nodejs.org/api/stream.html#stream_class_stream_passthrough). The stream emits a `gzip-size` event and has a `gzipSize` property.
+
+### gzipSize.file(path, options?)
+
+Returns a `Promise<number>` with the size of the file.
+
+#### path
+
+Type: `string`
+
+### gzipSize.fileSync(path, options?)
+
+Returns the size of the file.
+
+## Related
+
+- [gzip-size-cli](https://github.com/sindresorhus/gzip-size-cli) - CLI for this module
+
+---
+
+<div align="center">
+	<b>
+		<a href="https://tidelift.com/subscription/pkg/npm-gzip-size?utm_source=npm-gzip-size&utm_medium=referral&utm_campaign=readme">Get professional support for this package with a Tidelift subscription</a>
+	</b>
+	<br>
+	<sub>
+		Tidelift helps make open source sustainable for maintainers while giving companies<br>assurances about security, maintenance, and licensing for their dependencies.
+	</sub>
+</div>
+
+
+===== FILE: ./frontend/node_modules/unique-string/readme.md =====
+# unique-string [![Build Status](https://travis-ci.org/sindresorhus/unique-string.svg?branch=master)](https://travis-ci.org/sindresorhus/unique-string)
+
+> Generate a unique random string
+
+
+## Install
+
+```
+$ npm install unique-string
+```
+
+
+## Usage
+
+```js
+const uniqueString = require('unique-string');
+
+uniqueString();
+//=> 'b4de2a49c8ffa3fbee04446f045483b2'
+```
+
+
+## API
+
+### uniqueString()
+
+Returns a 32 character unique string. Matches the length of MD5, which is [unique enough](https://stackoverflow.com/a/2444336/64949) for non-crypto purposes.
+
+
+## License
+
+MIT © [Sindre Sorhus](https://sindresorhus.com)
+
+
+===== FILE: ./frontend/node_modules/deepmerge/readme.md =====
+# deepmerge
+
+Merges the enumerable properties of two or more objects deeply.
+
+> UMD bundle is 723B minified+gzipped
+
+## Getting Started
+
+### Example Usage
+<!--js
+const merge = require('./')
+-->
+
+```js
+const x = {
+	foo: { bar: 3 },
+	array: [{
+		does: 'work',
+		too: [ 1, 2, 3 ]
+	}]
+}
+
+const y = {
+	foo: { baz: 4 },
+	quux: 5,
+	array: [{
+		does: 'work',
+		too: [ 4, 5, 6 ]
+	}, {
+		really: 'yes'
+	}]
+}
+
+const output = {
+	foo: {
+		bar: 3,
+		baz: 4
+	},
+	array: [{
+		does: 'work',
+		too: [ 1, 2, 3 ]
+	}, {
+		does: 'work',
+		too: [ 4, 5, 6 ]
+	}, {
+		really: 'yes'
+	}],
+	quux: 5
+}
+
+merge(x, y) // => output
+```
+
+
+### Installation
+
+With [npm](http://npmjs.org) do:
+
+```sh
+npm install deepmerge
+```
+
+deepmerge can be used directly in the browser without the use of package managers/bundlers as well:  [UMD version from unpkg.com](https://unpkg.com/deepmerge/dist/umd.js).
+
+
+### Include
+
+deepmerge exposes a CommonJS entry point:
+
+```
+const merge = require('deepmerge')
+```
+
+The ESM entry point was dropped due to a [Webpack bug](https://github.com/webpack/webpack/issues/6584).
+
+# API
+
+
+## `merge(x, y, [options])`
+
+Merge two objects `x` and `y` deeply, returning a new merged object with the
+elements from both `x` and `y`.
+
+If an element at the same key is present for both `x` and `y`, the value from
+`y` will appear in the result.
+
+Merging creates a new object, so that neither `x` or `y` is modified.
+
+**Note:** By default, arrays are merged by concatenating them.
+
+## `merge.all(arrayOfObjects, [options])`
+
+Merges any number of objects into a single result object.
+
+```js
+const foobar = { foo: { bar: 3 } }
+const foobaz = { foo: { baz: 4 } }
+const bar = { bar: 'yay!' }
+
+merge.all([ foobar, foobaz, bar ]) // => { foo: { bar: 3, baz: 4 }, bar: 'yay!' }
+```
+
+
+## Options
+
+### `arrayMerge`
+
+There are multiple ways to merge two arrays, below are a few examples but you can also create your own custom function.
+
+Your `arrayMerge` function will be called with three arguments: a `target` array, the `source` array, and an `options` object with these properties:
+
+- `isMergeableObject(value)`
+- `cloneUnlessOtherwiseSpecified(value, options)`
+
+#### `arrayMerge` example: overwrite target array
+
+Overwrites the existing array values completely rather than concatenating them:
+
+```js
+const overwriteMerge = (destinationArray, sourceArray, options) => sourceArray
+
+merge(
+	[1, 2, 3],
+	[3, 2, 1],
+	{ arrayMerge: overwriteMerge }
+) // => [3, 2, 1]
+```
+
+#### `arrayMerge` example: combine arrays
+
+Combines objects at the same index in the two arrays.
+
+This was the default array merging algorithm pre-version-2.0.0.
+
+```js
+const combineMerge = (target, source, options) => {
+	const destination = target.slice()
+
+	source.forEach((item, index) => {
+		if (typeof destination[index] === 'undefined') {
+			destination[index] = options.cloneUnlessOtherwiseSpecified(item, options)
+		} else if (options.isMergeableObject(item)) {
+			destination[index] = merge(target[index], item, options)
+		} else if (target.indexOf(item) === -1) {
+			destination.push(item)
+		}
+	})
+	return destination
+}
+
+merge(
+	[{ a: true }],
+	[{ b: true }, 'ah yup'],
+	{ arrayMerge: combineMerge }
+) // => [{ a: true, b: true }, 'ah yup']
+```
+
+### `isMergeableObject`
+
+By default, deepmerge clones every property from almost every kind of object.
+
+You may not want this, if your objects are of special types, and you want to copy the whole object instead of just copying its properties.
+
+You can accomplish this by passing in a function for the `isMergeableObject` option.
+
+If you only want to clone properties of plain objects, and ignore all "special" kinds of instantiated objects, you probably want to drop in [`is-plain-object`](https://github.com/jonschlinkert/is-plain-object).
+
+```js
+const { isPlainObject } = require('is-plain-object')
+
+function SuperSpecial() {
+	this.special = 'oh yeah man totally'
+}
+
+const instantiatedSpecialObject = new SuperSpecial()
+
+const target = {
+	someProperty: {
+		cool: 'oh for sure'
+	}
+}
+
+const source = {
+	someProperty: instantiatedSpecialObject
+}
+
+const defaultOutput = merge(target, source)
+
+defaultOutput.someProperty.cool // => 'oh for sure'
+defaultOutput.someProperty.special // => 'oh yeah man totally'
+defaultOutput.someProperty instanceof SuperSpecial // => false
+
+const customMergeOutput = merge(target, source, {
+	isMergeableObject: isPlainObject
+})
+
+customMergeOutput.someProperty.cool // => undefined
+customMergeOutput.someProperty.special // => 'oh yeah man totally'
+customMergeOutput.someProperty instanceof SuperSpecial // => true
+```
+
+### `customMerge`
+
+Specifies a function which can be used to override the default merge behavior for a property, based on the property name.
+
+The `customMerge` function will be passed the key for each property, and should return the function which should be used to merge the values for that property.
+
+It may also return undefined, in which case the default merge behaviour will be used.
+
+```js
+const alex = {
+	name: {
+		first: 'Alex',
+		last: 'Alexson'
+	},
+	pets: ['Cat', 'Parrot']
+}
+
+const tony = {
+	name: {
+		first: 'Tony',
+		last: 'Tonison'
+	},
+	pets: ['Dog']
+}
+
+const mergeNames = (nameA, nameB) => `${nameA.first} and ${nameB.first}`
+
+const options = {
+	customMerge: (key) => {
+		if (key === 'name') {
+			return mergeNames
+		}
+	}
+}
+
+const result = merge(alex, tony, options)
+
+result.name // => 'Alex and Tony'
+result.pets // => ['Cat', 'Parrot', 'Dog']
+```
+
+
+### `clone`
+
+*Deprecated.*
+
+Defaults to `true`.
+
+If `clone` is `false` then child objects will be copied directly instead of being cloned.  This was the default behavior before version 2.x.
+
+
+# Testing
+
+With [npm](http://npmjs.org) do:
+
+```sh
+npm test
+```
+
+
+# License
+
+MIT
+
+
+===== FILE: ./frontend/node_modules/find-up/readme.md =====
+# find-up [![Build Status](https://travis-ci.org/sindresorhus/find-up.svg?branch=master)](https://travis-ci.org/sindresorhus/find-up)
+
+> Find a file or directory by walking up parent directories
+
+
+## Install
+
+```
+$ npm install find-up
+```
+
+
+## Usage
+
+```
+/
+└── Users
+    └── sindresorhus
+        ├── unicorn.png
+        └── foo
+            └── bar
+                ├── baz
+                └── example.js
+```
+
+`example.js`
+
+```js
+const path = require('path');
+const findUp = require('find-up');
+
+(async () => {
+	console.log(await findUp('unicorn.png'));
+	//=> '/Users/sindresorhus/unicorn.png'
+
+	console.log(await findUp(['rainbow.png', 'unicorn.png']));
+	//=> '/Users/sindresorhus/unicorn.png'
+
+	console.log(await findUp(async directory => {
+		const hasUnicorns = await findUp.exists(path.join(directory, 'unicorn.png'));
+		return hasUnicorns && directory;
+	}, {type: 'directory'}));
+	//=> '/Users/sindresorhus'
+})();
+```
+
+
+## API
+
+### findUp(name, options?)
+### findUp(matcher, options?)
+
+Returns a `Promise` for either the path or `undefined` if it couldn't be found.
+
+### findUp([...name], options?)
+
+Returns a `Promise` for either the first path found (by respecting the order of the array) or `undefined` if none could be found.
+
+### findUp.sync(name, options?)
+### findUp.sync(matcher, options?)
+
+Returns a path or `undefined` if it couldn't be found.
+
+### findUp.sync([...name], options?)
+
+Returns the first path found (by respecting the order of the array) or `undefined` if none could be found.
+
+#### name
+
+Type: `string`
+
+Name of the file or directory to find.
+
+#### matcher
+
+Type: `Function`
+
+A function that will be called with each directory until it returns a `string` with the path, which stops the search, or the root directory has been reached and nothing was found. Useful if you want to match files with certain patterns, set of permissions, or other advanced use-cases.
+
+When using async mode, the `matcher` may optionally be an async or promise-returning function that returns the path.
+
+#### options
+
+Type: `object`
+
+##### cwd
+
+Type: `string`<br>
+Default: `process.cwd()`
+
+Directory to start from.
+
+##### type
+
+Type: `string`<br>
+Default: `'file'`<br>
+Values: `'file'` `'directory'`
+
+The type of paths that can match.
+
+##### allowSymlinks
+
+Type: `boolean`<br>
+Default: `true`
+
+Allow symbolic links to match if they point to the chosen path type.
+
+### findUp.exists(path)
+
+Returns a `Promise<boolean>` of whether the path exists.
+
+### findUp.sync.exists(path)
+
+Returns a `boolean` of whether the path exists.
+
+#### path
+
+Type: `string`
+
+Path to a file or directory.
+
+### findUp.stop
+
+A [`Symbol`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol) that can be returned by a `matcher` function to stop the search and cause `findUp` to immediately return `undefined`. Useful as a performance optimization in case the current working directory is deeply nested in the filesystem.
+
+```js
+const path = require('path');
+const findUp = require('find-up');
+
+(async () => {
+	await findUp(directory => {
+		return path.basename(directory) === 'work' ? findUp.stop : 'logo.png';
+	});
+})();
+```
+
+
+## Related
+
+- [find-up-cli](https://github.com/sindresorhus/find-up-cli) - CLI for this module
+- [pkg-up](https://github.com/sindresorhus/pkg-up) - Find the closest package.json file
+- [pkg-dir](https://github.com/sindresorhus/pkg-dir) - Find the root directory of an npm package
+- [resolve-from](https://github.com/sindresorhus/resolve-from) - Resolve the path of a module like `require.resolve()` but from a given path
+
+
+---
+
+<div align="center">
+	<b>
+		<a href="https://tidelift.com/subscription/pkg/npm-find-up?utm_source=npm-find-up&utm_medium=referral&utm_campaign=readme">Get professional support for 'find-up' with a Tidelift subscription</a>
+	</b>
+	<br>
+	<sub>
+		Tidelift helps make open source sustainable for maintainers while giving companies<br>assurances about security, maintenance, and licensing for their dependencies.
+	</sub>
+</div>
+

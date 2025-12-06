@@ -1,0 +1,1904 @@
+### Topic: docs
+### Created: 20251206_2157
+========================================
+
+===== FILE: ./frontend/node_modules/is-wsl/readme.md =====
+# is-wsl [![Build Status](https://travis-ci.org/sindresorhus/is-wsl.svg?branch=master)](https://travis-ci.org/sindresorhus/is-wsl)
+
+> Check if the process is running inside [Windows Subsystem for Linux](https://msdn.microsoft.com/commandline/wsl/about) (Bash on Windows)
+
+Can be useful if you need to work around unimplemented or buggy features in WSL. Supports both WSL 1 and WSL 2.
+
+
+## Install
+
+```
+$ npm install is-wsl
+```
+
+
+## Usage
+
+```js
+const isWsl = require('is-wsl');
+
+// When running inside Windows Subsystem for Linux
+console.log(isWsl);
+//=> true
+```
+
+
+---
+
+<div align="center">
+	<b>
+		<a href="https://tidelift.com/subscription/pkg/npm-is-wsl?utm_source=npm-is-wsl&utm_medium=referral&utm_campaign=readme">Get professional support for this package with a Tidelift subscription</a>
+	</b>
+	<br>
+	<sub>
+		Tidelift helps make open source sustainable for maintainers while giving companies<br>assurances about security, maintenance, and licensing for their dependencies.
+	</sub>
+</div>
+
+
+===== FILE: ./frontend/node_modules/yocto-queue/readme.md =====
+# yocto-queue [![](https://badgen.net/bundlephobia/minzip/yocto-queue)](https://bundlephobia.com/result?p=yocto-queue)
+
+> Tiny queue data structure
+
+You should use this package instead of an array if you do a lot of `Array#push()` and `Array#shift()` on large arrays, since `Array#shift()` has [linear time complexity](https://medium.com/@ariel.salem1989/an-easy-to-use-guide-to-big-o-time-complexity-5dcf4be8a444#:~:text=O(N)%E2%80%94Linear%20Time) *O(n)* while `Queue#dequeue()` has [constant time complexity](https://medium.com/@ariel.salem1989/an-easy-to-use-guide-to-big-o-time-complexity-5dcf4be8a444#:~:text=O(1)%20%E2%80%94%20Constant%20Time) *O(1)*. That makes a huge difference for large arrays.
+
+> A [queue](https://en.wikipedia.org/wiki/Queue_(abstract_data_type)) is an ordered list of elements where an element is inserted at the end of the queue and is removed from the front of the queue. A queue works based on the first-in, first-out ([FIFO](https://en.wikipedia.org/wiki/FIFO_(computing_and_electronics))) principle.
+
+## Install
+
+```
+$ npm install yocto-queue
+```
+
+## Usage
+
+```js
+const Queue = require('yocto-queue');
+
+const queue = new Queue();
+
+queue.enqueue('🦄');
+queue.enqueue('🌈');
+
+console.log(queue.size);
+//=> 2
+
+console.log(...queue);
+//=> '🦄 🌈'
+
+console.log(queue.dequeue());
+//=> '🦄'
+
+console.log(queue.dequeue());
+//=> '🌈'
+```
+
+## API
+
+### `queue = new Queue()`
+
+The instance is an [`Iterable`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols), which means you can iterate over the queue front to back with a “for…of” loop, or use spreading to convert the queue to an array. Don't do this unless you really need to though, since it's slow.
+
+#### `.enqueue(value)`
+
+Add a value to the queue.
+
+#### `.dequeue()`
+
+Remove the next value in the queue.
+
+Returns the removed value or `undefined` if the queue is empty.
+
+#### `.clear()`
+
+Clear the queue.
+
+#### `.size`
+
+The size of the queue.
+
+## Related
+
+- [quick-lru](https://github.com/sindresorhus/quick-lru) - Simple “Least Recently Used” (LRU) cache
+
+
+===== FILE: ./frontend/node_modules/react-dev-utils/node_modules/p-locate/readme.md =====
+# p-locate [![Build Status](https://travis-ci.com/sindresorhus/p-locate.svg?branch=master)](https://travis-ci.com/github/sindresorhus/p-locate)
+
+> Get the first fulfilled promise that satisfies the provided testing function
+
+Think of it like an async version of [`Array#find`](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Array/find).
+
+## Install
+
+```
+$ npm install p-locate
+```
+
+## Usage
+
+Here we find the first file that exists on disk, in array order.
+
+```js
+const pathExists = require('path-exists');
+const pLocate = require('p-locate');
+
+const files = [
+	'unicorn.png',
+	'rainbow.png', // Only this one actually exists on disk
+	'pony.png'
+];
+
+(async () => {
+	const foundPath = await pLocate(files, file => pathExists(file));
+
+	console.log(foundPath);
+	//=> 'rainbow'
+})();
+```
+
+*The above is just an example. Use [`locate-path`](https://github.com/sindresorhus/locate-path) if you need this.*
+
+## API
+
+### pLocate(input, tester, options?)
+
+Returns a `Promise` that is fulfilled when `tester` resolves to `true` or the iterable is done, or rejects if any of the promises reject. The fulfilled value is the current iterable value or `undefined` if `tester` never resolved to `true`.
+
+#### input
+
+Type: `Iterable<Promise | unknown>`
+
+An iterable of promises/values to test.
+
+#### tester(element)
+
+Type: `Function`
+
+This function will receive resolved values from `input` and is expected to return a `Promise<boolean>` or `boolean`.
+
+#### options
+
+Type: `object`
+
+##### concurrency
+
+Type: `number`\
+Default: `Infinity`\
+Minimum: `1`
+
+Number of concurrently pending promises returned by `tester`.
+
+##### preserveOrder
+
+Type: `boolean`\
+Default: `true`
+
+Preserve `input` order when searching.
+
+Disable this to improve performance if you don't care about the order.
+
+## Related
+
+- [p-map](https://github.com/sindresorhus/p-map) - Map over promises concurrently
+- [p-filter](https://github.com/sindresorhus/p-filter) - Filter promises concurrently
+- [p-any](https://github.com/sindresorhus/p-any) - Wait for any promise to be fulfilled
+- [More…](https://github.com/sindresorhus/promise-fun)
+
+---
+
+<div align="center">
+	<b>
+		<a href="https://tidelift.com/subscription/pkg/npm-p-locate?utm_source=npm-p-locate&utm_medium=referral&utm_campaign=readme">Get professional support for this package with a Tidelift subscription</a>
+	</b>
+	<br>
+	<sub>
+		Tidelift helps make open source sustainable for maintainers while giving companies<br>assurances about security, maintenance, and licensing for their dependencies.
+	</sub>
+</div>
+
+
+===== FILE: ./frontend/node_modules/react-dev-utils/node_modules/find-up/readme.md =====
+# find-up [![Build Status](https://travis-ci.com/sindresorhus/find-up.svg?branch=master)](https://travis-ci.com/github/sindresorhus/find-up)
+
+> Find a file or directory by walking up parent directories
+
+## Install
+
+```
+$ npm install find-up
+```
+
+## Usage
+
+```
+/
+└── Users
+    └── sindresorhus
+        ├── unicorn.png
+        └── foo
+            └── bar
+                ├── baz
+                └── example.js
+```
+
+`example.js`
+
+```js
+const path = require('path');
+const findUp = require('find-up');
+
+(async () => {
+	console.log(await findUp('unicorn.png'));
+	//=> '/Users/sindresorhus/unicorn.png'
+
+	console.log(await findUp(['rainbow.png', 'unicorn.png']));
+	//=> '/Users/sindresorhus/unicorn.png'
+
+	console.log(await findUp(async directory => {
+		const hasUnicorns = await findUp.exists(path.join(directory, 'unicorn.png'));
+		return hasUnicorns && directory;
+	}, {type: 'directory'}));
+	//=> '/Users/sindresorhus'
+})();
+```
+
+## API
+
+### findUp(name, options?)
+### findUp(matcher, options?)
+
+Returns a `Promise` for either the path or `undefined` if it couldn't be found.
+
+### findUp([...name], options?)
+
+Returns a `Promise` for either the first path found (by respecting the order of the array) or `undefined` if none could be found.
+
+### findUp.sync(name, options?)
+### findUp.sync(matcher, options?)
+
+Returns a path or `undefined` if it couldn't be found.
+
+### findUp.sync([...name], options?)
+
+Returns the first path found (by respecting the order of the array) or `undefined` if none could be found.
+
+#### name
+
+Type: `string`
+
+Name of the file or directory to find.
+
+#### matcher
+
+Type: `Function`
+
+A function that will be called with each directory until it returns a `string` with the path, which stops the search, or the root directory has been reached and nothing was found. Useful if you want to match files with certain patterns, set of permissions, or other advanced use-cases.
+
+When using async mode, the `matcher` may optionally be an async or promise-returning function that returns the path.
+
+#### options
+
+Type: `object`
+
+##### cwd
+
+Type: `string`\
+Default: `process.cwd()`
+
+Directory to start from.
+
+##### type
+
+Type: `string`\
+Default: `'file'`\
+Values: `'file'` `'directory'`
+
+The type of paths that can match.
+
+##### allowSymlinks
+
+Type: `boolean`\
+Default: `true`
+
+Allow symbolic links to match if they point to the chosen path type.
+
+### findUp.exists(path)
+
+Returns a `Promise<boolean>` of whether the path exists.
+
+### findUp.sync.exists(path)
+
+Returns a `boolean` of whether the path exists.
+
+#### path
+
+Type: `string`
+
+Path to a file or directory.
+
+### findUp.stop
+
+A [`Symbol`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol) that can be returned by a `matcher` function to stop the search and cause `findUp` to immediately return `undefined`. Useful as a performance optimization in case the current working directory is deeply nested in the filesystem.
+
+```js
+const path = require('path');
+const findUp = require('find-up');
+
+(async () => {
+	await findUp(directory => {
+		return path.basename(directory) === 'work' ? findUp.stop : 'logo.png';
+	});
+})();
+```
+
+## Related
+
+- [find-up-cli](https://github.com/sindresorhus/find-up-cli) - CLI for this module
+- [pkg-up](https://github.com/sindresorhus/pkg-up) - Find the closest package.json file
+- [pkg-dir](https://github.com/sindresorhus/pkg-dir) - Find the root directory of an npm package
+- [resolve-from](https://github.com/sindresorhus/resolve-from) - Resolve the path of a module like `require.resolve()` but from a given path
+
+---
+
+<div align="center">
+	<b>
+		<a href="https://tidelift.com/subscription/pkg/npm-find-up?utm_source=npm-find-up&utm_medium=referral&utm_campaign=readme">Get professional support for 'find-up' with a Tidelift subscription</a>
+	</b>
+	<br>
+	<sub>
+		Tidelift helps make open source sustainable for maintainers while giving companies<br>assurances about security, maintenance, and licensing for their dependencies.
+	</sub>
+</div>
+
+
+===== FILE: ./frontend/node_modules/react-dev-utils/node_modules/locate-path/readme.md =====
+# locate-path [![Build Status](https://travis-ci.com/sindresorhus/locate-path.svg?branch=master)](https://travis-ci.com/github/sindresorhus/locate-path)
+
+> Get the first path that exists on disk of multiple paths
+
+## Install
+
+```
+$ npm install locate-path
+```
+
+## Usage
+
+Here we find the first file that exists on disk, in array order.
+
+```js
+const locatePath = require('locate-path');
+
+const files = [
+	'unicorn.png',
+	'rainbow.png', // Only this one actually exists on disk
+	'pony.png'
+];
+
+(async () => {
+	console(await locatePath(files));
+	//=> 'rainbow'
+})();
+```
+
+## API
+
+### locatePath(paths, options?)
+
+Returns a `Promise<string>` for the first path that exists or `undefined` if none exists.
+
+#### paths
+
+Type: `Iterable<string>`
+
+Paths to check.
+
+#### options
+
+Type: `object`
+
+##### concurrency
+
+Type: `number`\
+Default: `Infinity`\
+Minimum: `1`
+
+Number of concurrently pending promises.
+
+##### preserveOrder
+
+Type: `boolean`\
+Default: `true`
+
+Preserve `paths` order when searching.
+
+Disable this to improve performance if you don't care about the order.
+
+##### cwd
+
+Type: `string`\
+Default: `process.cwd()`
+
+Current working directory.
+
+##### type
+
+Type: `string`\
+Default: `'file'`\
+Values: `'file' | 'directory'`
+
+The type of paths that can match.
+
+##### allowSymlinks
+
+Type: `boolean`\
+Default: `true`
+
+Allow symbolic links to match if they point to the chosen path type.
+
+### locatePath.sync(paths, options?)
+
+Returns the first path that exists or `undefined` if none exists.
+
+#### paths
+
+Type: `Iterable<string>`
+
+Paths to check.
+
+#### options
+
+Type: `object`
+
+##### cwd
+
+Same as above.
+
+##### type
+
+Same as above.
+
+##### allowSymlinks
+
+Same as above.
+
+## Related
+
+- [path-exists](https://github.com/sindresorhus/path-exists) - Check if a path exists
+
+---
+
+<div align="center">
+	<b>
+		<a href="https://tidelift.com/subscription/pkg/npm-locate-path?utm_source=npm-locate-path&utm_medium=referral&utm_campaign=readme">Get professional support for this package with a Tidelift subscription</a>
+	</b>
+	<br>
+	<sub>
+		Tidelift helps make open source sustainable for maintainers while giving companies<br>assurances about security, maintenance, and licensing for their dependencies.
+	</sub>
+</div>
+
+
+===== FILE: ./frontend/node_modules/react-dev-utils/node_modules/p-limit/readme.md =====
+# p-limit
+
+> Run multiple promise-returning & async functions with limited concurrency
+
+## Install
+
+```
+$ npm install p-limit
+```
+
+## Usage
+
+```js
+const pLimit = require('p-limit');
+
+const limit = pLimit(1);
+
+const input = [
+	limit(() => fetchSomething('foo')),
+	limit(() => fetchSomething('bar')),
+	limit(() => doSomething())
+];
+
+(async () => {
+	// Only one promise is run at once
+	const result = await Promise.all(input);
+	console.log(result);
+})();
+```
+
+## API
+
+### pLimit(concurrency)
+
+Returns a `limit` function.
+
+#### concurrency
+
+Type: `number`\
+Minimum: `1`\
+Default: `Infinity`
+
+Concurrency limit.
+
+### limit(fn, ...args)
+
+Returns the promise returned by calling `fn(...args)`.
+
+#### fn
+
+Type: `Function`
+
+Promise-returning/async function.
+
+#### args
+
+Any arguments to pass through to `fn`.
+
+Support for passing arguments on to the `fn` is provided in order to be able to avoid creating unnecessary closures. You probably don't need this optimization unless you're pushing a *lot* of functions.
+
+### limit.activeCount
+
+The number of promises that are currently running.
+
+### limit.pendingCount
+
+The number of promises that are waiting to run (i.e. their internal `fn` was not called yet).
+
+### limit.clearQueue()
+
+Discard pending promises that are waiting to run.
+
+This might be useful if you want to teardown the queue at the end of your program's lifecycle or discard any function calls referencing an intermediary state of your app.
+
+Note: This does not cancel promises that are already running.
+
+## FAQ
+
+### How is this different from the [`p-queue`](https://github.com/sindresorhus/p-queue) package?
+
+This package is only about limiting the number of concurrent executions, while `p-queue` is a fully featured queue implementation with lots of different options, introspection, and ability to pause the queue.
+
+## Related
+
+- [p-queue](https://github.com/sindresorhus/p-queue) - Promise queue with concurrency control
+- [p-throttle](https://github.com/sindresorhus/p-throttle) - Throttle promise-returning & async functions
+- [p-debounce](https://github.com/sindresorhus/p-debounce) - Debounce promise-returning & async functions
+- [p-all](https://github.com/sindresorhus/p-all) - Run promise-returning & async functions concurrently with optional limited concurrency
+- [More…](https://github.com/sindresorhus/promise-fun)
+
+---
+
+<div align="center">
+	<b>
+		<a href="https://tidelift.com/subscription/pkg/npm-p-limit?utm_source=npm-p-limit&utm_medium=referral&utm_campaign=readme">Get professional support for this package with a Tidelift subscription</a>
+	</b>
+	<br>
+	<sub>
+		Tidelift helps make open source sustainable for maintainers while giving companies<br>assurances about security, maintenance, and licensing for their dependencies.
+	</sub>
+</div>
+
+
+===== FILE: ./frontend/node_modules/tsconfig-paths/node_modules/strip-bom/readme.md =====
+# strip-bom [![Build Status](https://travis-ci.org/sindresorhus/strip-bom.svg?branch=master)](https://travis-ci.org/sindresorhus/strip-bom)
+
+> Strip UTF-8 [byte order mark](http://en.wikipedia.org/wiki/Byte_order_mark#UTF-8) (BOM) from a string
+
+From Wikipedia:
+
+> The Unicode Standard permits the BOM in UTF-8, but does not require nor recommend its use. Byte order has no meaning in UTF-8.
+
+
+## Install
+
+```
+$ npm install --save strip-bom
+```
+
+
+## Usage
+
+```js
+const stripBom = require('strip-bom');
+
+stripBom('\uFEFFunicorn');
+//=> 'unicorn'
+```
+
+
+## Related
+
+- [strip-bom-cli](https://github.com/sindresorhus/strip-bom-cli) - CLI for this module
+- [strip-bom-buf](https://github.com/sindresorhus/strip-bom-buf) - Buffer version of this module
+- [strip-bom-stream](https://github.com/sindresorhus/strip-bom-stream) - Stream version of this module
+
+
+## License
+
+MIT © [Sindre Sorhus](https://sindresorhus.com)
+
+
+===== FILE: ./frontend/node_modules/@eslint/eslintrc/node_modules/type-fest/readme.md =====
+<div align="center">
+	<br>
+	<br>
+	<img src="media/logo.svg" alt="type-fest" height="300">
+	<br>
+	<br>
+	<b>A collection of essential TypeScript types</b>
+	<br>
+	<hr>
+</div>
+<br>
+<br>
+
+[![](https://img.shields.io/badge/unicorn-approved-ff69b4.svg)](https://giphy.com/gifs/illustration-rainbow-unicorn-26AHG5KGFxSkUWw1i)
+<!-- Commented out until they actually show anything
+[![npm dependents](https://badgen.net/npm/dependents/type-fest)](https://www.npmjs.com/package/type-fest?activeTab=dependents) [![npm downloads](https://badgen.net/npm/dt/type-fest)](https://www.npmjs.com/package/type-fest)
+-->
+
+Many of the types here should have been built-in. You can help by suggesting some of them to the [TypeScript project](https://github.com/Microsoft/TypeScript/blob/master/CONTRIBUTING.md).
+
+Either add this package as a dependency or copy-paste the needed types. No credit required. 👌
+
+PR welcome for additional commonly needed types and docs improvements. Read the [contributing guidelines](.github/contributing.md) first.
+
+## Install
+
+```
+$ npm install type-fest
+```
+
+*Requires TypeScript >=3.4*
+
+## Usage
+
+```ts
+import {Except} from 'type-fest';
+
+type Foo = {
+	unicorn: string;
+	rainbow: boolean;
+};
+
+type FooWithoutRainbow = Except<Foo, 'rainbow'>;
+//=> {unicorn: string}
+```
+
+## API
+
+Click the type names for complete docs.
+
+### Basic
+
+- [`Primitive`](source/basic.d.ts) - Matches any [primitive value](https://developer.mozilla.org/en-US/docs/Glossary/Primitive).
+- [`Class`](source/basic.d.ts) - Matches a [`class` constructor](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes).
+- [`TypedArray`](source/basic.d.ts) - Matches any [typed array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray), like `Uint8Array` or `Float64Array`.
+- [`JsonObject`](source/basic.d.ts) - Matches a JSON object.
+- [`JsonArray`](source/basic.d.ts) - Matches a JSON array.
+- [`JsonValue`](source/basic.d.ts) - Matches any valid JSON value.
+- [`ObservableLike`](source/basic.d.ts) - Matches a value that is like an [Observable](https://github.com/tc39/proposal-observable).
+
+### Utilities
+
+- [`Except`](source/except.d.ts) - Create a type from an object type without certain keys. This is a stricter version of [`Omit`](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-5.html#the-omit-helper-type).
+- [`Mutable`](source/mutable.d.ts) - Convert an object with `readonly` keys into a mutable object. The inverse of `Readonly<T>`.
+- [`Merge`](source/merge.d.ts) - Merge two types into a new type. Keys of the second type overrides keys of the first type.
+- [`MergeExclusive`](source/merge-exclusive.d.ts) - Create a type that has mutually exclusive keys.
+- [`RequireAtLeastOne`](source/require-at-least-one.d.ts) - Create a type that requires at least one of the given keys.
+- [`RequireExactlyOne`](source/require-exactly-one.d.ts) - Create a type that requires exactly a single key of the given keys and disallows more.
+- [`PartialDeep`](source/partial-deep.d.ts) - Create a deeply optional version of another type. Use [`Partial<T>`](https://github.com/Microsoft/TypeScript/blob/2961bc3fc0ea1117d4e53bc8e97fa76119bc33e3/src/lib/es5.d.ts#L1401-L1406) if you only need one level deep.
+- [`ReadonlyDeep`](source/readonly-deep.d.ts) - Create a deeply immutable version of an `object`/`Map`/`Set`/`Array` type. Use [`Readonly<T>`](https://github.com/Microsoft/TypeScript/blob/2961bc3fc0ea1117d4e53bc8e97fa76119bc33e3/src/lib/es5.d.ts#L1415-L1420) if you only need one level deep.
+- [`LiteralUnion`](source/literal-union.d.ts) - Create a union type by combining primitive types and literal types without sacrificing auto-completion in IDEs for the literal type part of the union. Workaround for [Microsoft/TypeScript#29729](https://github.com/Microsoft/TypeScript/issues/29729).
+- [`Promisable`](source/promisable.d.ts) - Create a type that represents either the value or the value wrapped in `PromiseLike`.
+- [`Opaque`](source/opaque.d.ts) - Create an [opaque type](https://codemix.com/opaque-types-in-javascript/).
+- [`SetOptional`](source/set-optional.d.ts) - Create a type that makes the given keys optional.
+- [`SetRequired`](source/set-required.d.ts) - Create a type that makes the given keys required.
+- [`ValueOf`](source/value-of.d.ts) - Create a union of the given object's values, and optionally specify which keys to get the values from.
+- [`PromiseValue`](source/promise-value.d.ts) - Returns the type that is wrapped inside a `Promise`.
+- [`AsyncReturnType`](source/async-return-type.d.ts) - Unwrap the return type of a function that returns a `Promise`.
+- [`ConditionalKeys`](source/conditional-keys.d.ts) - Extract keys from a shape where values extend the given `Condition` type.
+- [`ConditionalPick`](source/conditional-pick.d.ts) - Like `Pick` except it selects properties from a shape where the values extend the given `Condition` type.
+- [`ConditionalExcept`](source/conditional-except.d.ts) - Like `Omit` except it removes properties from a shape where the values extend the given `Condition` type.
+- [`UnionToIntersection`](source/union-to-intersection.d.ts) - Convert a union type to an intersection type.
+- [`Stringified`](source/stringified.d.ts) - Create a type with the keys of the given type changed to `string` type.
+- [`FixedLengthArray`](source/fixed-length-array.d.ts) - Create a type that represents an array of the given type and length.
+- [`IterableElement`](source/iterable-element.d.ts) - Get the element type of an `Iterable`/`AsyncIterable`. For example, an array or a generator.
+- [`Entry`](source/entry.d.ts) - Create a type that represents the type of an entry of a collection.
+- [`Entries`](source/entries.d.ts) - Create a type that represents the type of the entries of a collection.
+- [`SetReturnType`](source/set-return-type.d.ts) - Create a function type with a return type of your choice and the same parameters as the given function type.
+- [`Asyncify`](source/asyncify.d.ts) - Create an async version of the given function type.
+
+### Template literal types
+
+*Note:* These require [TypeScript 4.1 or newer](https://devblogs.microsoft.com/typescript/announcing-typescript-4-1/#template-literal-types).
+
+- [`CamelCase`](ts41/camel-case.d.ts) – Convert a string literal to camel-case (`fooBar`).
+- [`KebabCase`](ts41/kebab-case.d.ts) – Convert a string literal to kebab-case (`foo-bar`).
+- [`PascalCase`](ts41/pascal-case.d.ts) – Converts a string literal to pascal-case (`FooBar`)
+- [`SnakeCase`](ts41/snake-case.d.ts) – Convert a string literal to snake-case (`foo_bar`).
+- [`DelimiterCase`](ts41/delimiter-case.d.ts) – Convert a string literal to a custom string delimiter casing.
+
+### Miscellaneous
+
+- [`PackageJson`](source/package-json.d.ts) - Type for [npm's `package.json` file](https://docs.npmjs.com/creating-a-package-json-file).
+- [`TsConfigJson`](source/tsconfig-json.d.ts) - Type for [TypeScript's `tsconfig.json` file](https://www.typescriptlang.org/docs/handbook/tsconfig-json.html) (TypeScript 3.7).
+
+## Declined types
+
+*If we decline a type addition, we will make sure to document the better solution here.*
+
+- [`Diff` and `Spread`](https://github.com/sindresorhus/type-fest/pull/7) - The PR author didn't provide any real-world use-cases and the PR went stale. If you think this type is useful, provide some real-world use-cases and we might reconsider.
+- [`Dictionary`](https://github.com/sindresorhus/type-fest/issues/33) - You only save a few characters (`Dictionary<number>` vs `Record<string, number>`) from [`Record`](https://github.com/Microsoft/TypeScript/blob/2961bc3fc0ea1117d4e53bc8e97fa76119bc33e3/src/lib/es5.d.ts#L1429-L1434), which is more flexible and well-known. Also, you shouldn't use an object as a dictionary. We have `Map` in JavaScript now.
+- [`SubType`](https://github.com/sindresorhus/type-fest/issues/22) - The type is powerful, but lacks good use-cases and is prone to misuse.
+- [`ExtractProperties` and `ExtractMethods`](https://github.com/sindresorhus/type-fest/pull/4) - The types violate the single responsibility principle. Instead, refine your types into more granular type hierarchies.
+
+## Tips
+
+### Built-in types
+
+There are many advanced types most users don't know about.
+
+- [`Partial<T>`](https://github.com/Microsoft/TypeScript/blob/2961bc3fc0ea1117d4e53bc8e97fa76119bc33e3/src/lib/es5.d.ts#L1401-L1406) - Make all properties in `T` optional.
+	<details>
+	<summary>
+			Example
+	</summary>
+
+	[Playground](https://www.typescriptlang.org/play/#code/JYOwLgpgTgZghgYwgAgHIHsAmEDC6QzADmyA3gLABQyycADnanALYQBcyAzmFKEQNxUaddFDAcQAV2YAjaIMoBfKlQQAbOJ05osEAIIMAQpOBrsUMkOR1eANziRkCfISKSoD4Pg4ZseAsTIALyW1DS0DEysHADkvvoMMQA0VsKi4sgAzAAMuVaKClY2wPaOknSYDrguADwA0sgQAB6QIJjaANYQAJ7oMDp+LsQAfAAUXd0cdUnI9mo+uv6uANp1ALoAlKHhyGAAFsCcAHTOAW4eYF4gyxNrwbNwago0ypRWp66jH8QcAApwYmAjxq8SWIy2FDCNDA3ToKFBQyIdR69wmfQG1TOhShyBgomQX3w3GQE2Q6IA8jIAFYQBBgI4TTiEs5bTQYsFInrLTbbHZOIlgZDlSqQABqj0kKBC3yINx6a2xfOQwH6o2FVXFaklwSCIUkbQghBAEEwENSfNOlykEGefNe5uhB2O6sgS3GPRmLogmslG1tLxUOKgEDA7hAuydtteryAA)
+
+	```ts
+	interface NodeConfig {
+			appName: string;
+			port: number;
+	}
+
+	class NodeAppBuilder {
+			private configuration: NodeConfig = {
+					appName: 'NodeApp',
+					port: 3000
+			};
+
+			private updateConfig<Key extends keyof NodeConfig>(key: Key, value: NodeConfig[Key]) {
+					this.configuration[key] = value;
+			}
+
+			config(config: Partial<NodeConfig>) {
+					type NodeConfigKey = keyof NodeConfig;
+
+					for (const key of Object.keys(config) as NodeConfigKey[]) {
+							const updateValue = config[key];
+
+							if (updateValue === undefined) {
+									continue;
+							}
+
+							this.updateConfig(key, updateValue);
+					}
+
+					return this;
+			}
+	}
+
+	// `Partial<NodeConfig>`` allows us to provide only a part of the
+	// NodeConfig interface.
+	new NodeAppBuilder().config({appName: 'ToDoApp'});
+	```
+	</details>
+
+- [`Required<T>`](https://github.com/Microsoft/TypeScript/blob/2961bc3fc0ea1117d4e53bc8e97fa76119bc33e3/src/lib/es5.d.ts#L1408-L1413) - Make all properties in `T` required.
+	<details>
+	<summary>
+			Example
+	</summary>
+
+	[Playground](https://typescript-play.js.org/?target=6#code/AQ4SwOwFwUwJwGYEMDGNgGED21VQGJZwC2wA3gFCjXAzFJgA2A-AFzADOUckA5gNxUaIYjA4ckvGG07c+g6gF8KQkAgCuEFFDA5O6gEbEwUbLm2ESwABQIixACJIoSdgCUYAR3Vg4MACYAPGYuFvYAfACU5Ko0APRxwADKMBD+wFAAFuh2Vv7OSBlYGdmc8ABu8LHKsRyGxqY4oQT21pTCIHQMjOwA5DAAHgACxAAOjDAAdChYxL0ANLHUouKSMH0AEmAAhJhY6ozpAJ77GTCMjMCiV0ToSAb7UJPPC9WRgrEJwAAqR6MwSRQPFGUFocDgRHYxnEfGAowh-zgUCOwF6KwkUl6tXqJhCeEsxDaS1AXSYfUGI3GUxmc0WSneQA)
+
+	```ts
+	interface ContactForm {
+			email?: string;
+			message?: string;
+	}
+
+	function submitContactForm(formData: Required<ContactForm>) {
+			// Send the form data to the server.
+	}
+
+	submitContactForm({
+			email: 'ex@mple.com',
+			message: 'Hi! Could you tell me more about…',
+	});
+
+	// TypeScript error: missing property 'message'
+	submitContactForm({
+			email: 'ex@mple.com',
+	});
+	```
+	</details>
+
+- [`Readonly<T>`](https://github.com/Microsoft/TypeScript/blob/2961bc3fc0ea1117d4e53bc8e97fa76119bc33e3/src/lib/es5.d.ts#L1415-L1420) - Make all properties in `T` readonly.
+	<details>
+	<summary>
+			Example
+	</summary>
+
+	[Playground](https://typescript-play.js.org/?target=6#code/AQ4UwOwVwW2AZA9gc3mAbmANsA3gKFCOAHkAzMgGkOJABEwAjKZa2kAUQCcvEu32AMQCGAF2FYBIAL4BufDRABLCKLBcywgMZgEKZOoDCiCGSXI8i4hGEwwALmABnUVxXJ57YFgzZHSVF8sT1BpBSItLGEnJz1kAy5LLy0TM2RHACUwYQATEywATwAeAITjU3MAPnkrCJMXLigtUT4AClxgGztKbyDgaX99I1TzAEokr1BRAAslJwA6FIqLAF48TtswHp9MHDla9hJGACswZvmyLjAwAC8wVpm5xZHkUZDaMKIwqyWXYCW0oN4sNlsA1h0ug5gAByACyBQAggAHJHQ7ZBIFoXbzBjMCz7OoQP5YIaJNYQMAAdziCVaALGNSIAHomcAACoFJFgADKWjcSNEwG4vC4ji0wggEEQguiTnMEGALWAV1yAFp8gVgEjeFyuKICvMrCTgVxnst5jtsGC4ljsPNhXxGaAWcAAOq6YRXYDCRg+RWIcA5JSC+kWdCepQ+v3RYCU3RInzRMCGwlpC19NYBW1Ye08R1AA)
+
+	```ts
+	enum LogLevel {
+			Off,
+			Debug,
+			Error,
+			Fatal
+	};
+
+	interface LoggerConfig {
+			name: string;
+			level: LogLevel;
+	}
+
+	class Logger {
+			config: Readonly<LoggerConfig>;
+
+			constructor({name, level}: LoggerConfig) {
+					this.config = {name, level};
+					Object.freeze(this.config);
+			}
+	}
+
+	const config: LoggerConfig = {
+		name: 'MyApp',
+		level: LogLevel.Debug
+	};
+
+	const logger = new Logger(config);
+
+	// TypeScript Error: cannot assign to read-only property.
+	logger.config.level = LogLevel.Error;
+
+	// We are able to edit config variable as we please.
+	config.level = LogLevel.Error;
+	```
+	</details>
+
+- [`Pick<T, K>`](https://github.com/Microsoft/TypeScript/blob/2961bc3fc0ea1117d4e53bc8e97fa76119bc33e3/src/lib/es5.d.ts#L1422-L1427) - From `T`, pick a set of properties whose keys are in the union `K`.
+	<details>
+	<summary>
+			Example
+	</summary>
+
+	[Playground](https://typescript-play.js.org/?target=6#code/AQ4SwOwFwUwJwGYEMDGNgEE5TCgNugN4BQoZwOUBAXMAM5RyQDmA3KeSFABYCuAtgCMISMHloMmENh04oA9tBjQJjFuzIBfYrOAB6PcADCcGElh1gEGAHcKATwAO6ebyjB5CTNlwFwSxFR0BX5HeToYABNgBDh5fm8cfBg6AHIKG3ldA2BHOOcfFNpUygJ0pAhokr4hETFUgDpswywkggAFUwA3MFtgAF5gQgowKhhVKTYKGuFRcXo1aVZgbTIoJ3RW3xhOmB6+wfbcAGsAHi3kgBpgEtGy4AAfG54BWfqAPnZm4AAlZUj4MAkMA8GAGB4vEgfMlLLw6CwPBA8PYRmMgZVgAC6CgmI4cIommQELwICh8RBgKZKvALh1ur0bHQABR5PYMui0Wk7em2ADaAF0AJS0AASABUALIAGQAogR+Mp3CROCAFBBwVC2ikBpj5CgBIqGjizLA5TAFdAmalImAuqlBRoVQh5HBgEy1eDWfs7J5cjzGYKhroVfpDEhHM4MV6GRR5NN0JrtnRg6BVirTFBeHAKYmYY6QNpdB73LmCJZBlSAXAubtvczeSmQMNSuMbmKNgBlHFgPEUNwusBIPAAQlS1xetTmxT0SDoESgdD0C4aACtHMwxytLrohawgA)
+
+	```ts
+	interface Article {
+			title: string;
+			thumbnail: string;
+			content: string;
+	}
+
+	// Creates new type out of the `Article` interface composed
+	// from the Articles' two properties: `title` and `thumbnail`.
+	// `ArticlePreview = {title: string; thumbnail: string}`
+	type ArticlePreview = Pick<Article, 'title' | 'thumbnail'>;
+
+	// Render a list of articles using only title and description.
+	function renderArticlePreviews(previews: ArticlePreview[]): HTMLElement {
+			const articles = document.createElement('div');
+
+			for (const preview of previews) {
+					// Append preview to the articles.
+			}
+
+			return articles;
+	}
+
+	const articles = renderArticlePreviews([
+			{
+				title: 'TypeScript tutorial!',
+				thumbnail: '/assets/ts.jpg'
+			}
+	]);
+	```
+	</details>
+
+- [`Record<K, T>`](https://github.com/Microsoft/TypeScript/blob/2961bc3fc0ea1117d4e53bc8e97fa76119bc33e3/src/lib/es5.d.ts#L1429-L1434) - Construct a type with a set of properties `K` of type `T`.
+	<details>
+	<summary>
+			Example
+	</summary>
+
+	[Playground](https://typescript-play.js.org/?target=6#code/AQ4ejYAUHsGcCWAXBMB2dgwGbAKYC2ADgDYwCeeemCaWArgE7ADGMxAhmuQHQBQoYEnJE8wALKEARnkaxEKdMAC8wAOS0kstGuAAfdQBM8ANzxlRjXQbVaWACwC0JPB0NqA3HwGgIwAJJoWozYHCxixnAsjAhStADmwESMMJYo1Fi4HMCIaPEu+MRklHj8gpqyoeHAAKJFFFTAAN4+giDYCIxwSAByHAR4AFw5SDF5Xm2gJBzdfQPD3WPxE5PAlBxdAPLYNQAelgh4aOHDaPQEMowrIAC+3oJ+AMKMrlrAXFhSAFZ4LEhC9g4-0BmA4JBISXgiCkBQABpILrJ5MhUGhYcATGD6Bk4Hh-jNgABrPDkOBlXyQAAq9ngYmJpOAAHcEOCRjAXqwYODfoo6DhakUSph+Uh7GI4P0xER4Cj0OSQGwMP8tP1hgAlX7swwAHgRl2RvIANALSA08ABtAC6AD4VM1Wm0Kow0MMrYaHYJjGYLLJXZb3at1HYnC43Go-QHQDcvA6-JsmEJXARgCDgMYWAhjIYhDAU+YiMAAFIwex0ZmilMITCGF79TLAGRsAgJYAAZRwSEZGzEABFTOZUrJ5Yn+jwnWgeER6HB7AAKJrADpdXqS4ZqYultTG6azVfqHswPBbtauLY7fayQ7HIbAAAMwBuAEoYw9IBq2Ixs9h2eFMOQYPQObALQKJgggABeYhghCIpikkKRpOQRIknAsZUiIeCttECBEP8NSMCkjDDAARMGziuIYxHwYOjDCMBmDNnAuTxA6irdCOBB1Lh5Dqpqn66tISIykawBnOCtqqC0gbjqc9DgpGkxegOliyfJDrRkAA)
+
+	```ts
+	// Positions of employees in our company.
+	type MemberPosition = 'intern' | 'developer' | 'tech-lead';
+
+	// Interface describing properties of a single employee.
+	interface Employee {
+			firstName: string;
+			lastName: string;
+			yearsOfExperience: number;
+	}
+
+	// Create an object that has all possible `MemberPosition` values set as keys.
+	// Those keys will store a collection of Employees of the same position.
+	const team: Record<MemberPosition, Employee[]> = {
+			intern: [],
+			developer: [],
+			'tech-lead': [],
+	};
+
+	// Our team has decided to help John with his dream of becoming Software Developer.
+	team.intern.push({
+		firstName: 'John',
+		lastName: 'Doe',
+		yearsOfExperience: 0
+	});
+
+	// `Record` forces you to initialize all of the property keys.
+	// TypeScript Error: "tech-lead" property is missing
+	const teamEmpty: Record<MemberPosition, null> = {
+			intern: null,
+			developer: null,
+	};
+	```
+	</details>
+
+- [`Exclude<T, U>`](https://github.com/Microsoft/TypeScript/blob/2961bc3fc0ea1117d4e53bc8e97fa76119bc33e3/src/lib/es5.d.ts#L1436-L1439) - Exclude from `T` those types that are assignable to `U`.
+	<details>
+	<summary>
+			Example
+	</summary>
+
+	[Playground](https://typescript-play.js.org/?target=6#code/JYOwLgpgTgZghgYwgAgMrQG7QMIHsQzADmyA3gFDLIAOuUYAXMiAK4A2byAPsgM5hRQJHqwC2AI2gBucgF9y5MAE9qKAEoQAjiwj8AEnBAATNtGQBeZAAooWphu26wAGmS3e93bRC8IASgsAPmRDJRlyAHoI5ABRAA8ENhYjFFYOZGVVZBgoXFFkAAM0zh5+QRBhZhYJaAKAOkjogEkQZAQ4X2QAdwALCFbaemRgXmQtFjhOMFwq9K6ULuB0lk6U+HYwZAxJnQaYFhAEMGB8ZCIIMAAFOjAANR2IK0HGWISklIAedCgsKDwCYgAbQA5M9gQBdVzFQJ+JhiSRQMiUYYwayZCC4VHPCzmSzAspCYEBWxgFhQAZwKC+FpgJ43VwARgADH4ZFQSWSBjcZPJyPtDsdTvxKWBvr8rD1DCZoJ5HPopaYoK4EPhCEQmGKcKriLCtrhgEYkVQVT5Nr4fmZLLZtMBbFZgT0wGBqES6ghbHBIJqoBKFdBWQpjfh+DQbhY2tqiHVsbjLMVkAB+ZAAZiZaeQTHOVxu9ySjxNaujNwDVHNvzqbBGkBAdPoAfkQA)
+
+	```ts
+	interface ServerConfig {
+		port: null | string | number;
+	}
+
+	type RequestHandler = (request: Request, response: Response) => void;
+
+	// Exclude `null` type from `null | string | number`.
+	// In case the port is equal to `null`, we will use default value.
+	function getPortValue(port: Exclude<ServerConfig['port'], null>): number {
+		if (typeof port === 'string') {
+			return parseInt(port, 10);
+		}
+
+		return port;
+	}
+
+	function startServer(handler: RequestHandler, config: ServerConfig): void {
+		const server = require('http').createServer(handler);
+
+		const port = config.port === null ? 3000 : getPortValue(config.port);
+		server.listen(port);
+	}
+	```
+	</details>
+
+- [`Extract<T, U>`](https://github.com/Microsoft/TypeScript/blob/2961bc3fc0ea1117d4e53bc8e97fa76119bc33e3/src/lib/es5.d.ts#L1441-L1444) - Extract from `T` those types that are assignable to `U`.
+	<details>
+	<summary>
+			Example
+	</summary>
+
+	[Playground](https://typescript-play.js.org/?target=6#code/CYUwxgNghgTiAEAzArgOzAFwJYHtXzSwEdkQBJYACgEoAueVZAWwCMQYBuAKDDwGcM8MgBF4AXngBlAJ6scESgHIRi6ty5ZUGdoihgEABXZ888AN5d48ANoiAuvUat23K6ihMQ9ATE0BzV3goPy8GZjZOLgBfLi4Aejj4AEEICBwAdz54MAALKFQQ+BxEeAAHY1NgKAwoIKy0grr4DByEUpgccpgMaXgAaxBerCzi+B9-ZulygDouFHRsU1z8kKMYE1RhaqgAHkt4AHkWACt4EAAPbVRgLLWNgBp9gGlBs8uQa6yAUUuYPQwdgNpKM7nh7mMML4CgA+R5WABqUAgpDeVxuhxO1he0jsXGh8EoOBO9COx3BQPo2PBADckaR6IjkSA6PBqTgsMBzPsicdrEC7OJWXSQNwYvFEgAVTS9JLXODpeDpKBZFg4GCoWa8VACIJykAKiQWKy2YQOAioYikCg0OEMDyhRSy4DyxS24KhAAMjyi6gS8AAwjh5OD0iBFHAkJoEOksC1mnkMJq8gUQKDNttKPlnfrwYp3J5XfBHXqoKpfYkAOI4ansTxaeDADmoRSCCBYAbxhC6TDx6rwYHIRX5bScjA4bLJwoDmDwDkfbA9JMrVMVdM1TN69LgkTgwgkchUahqIA)
+
+	```ts
+	declare function uniqueId(): number;
+
+	const ID = Symbol('ID');
+
+	interface Person {
+		[ID]: number;
+		name: string;
+		age: number;
+	}
+
+	// Allows changing the person data as long as the property key is of string type.
+	function changePersonData<
+		Obj extends Person,
+		Key extends Extract<keyof Person, string>,
+		Value extends Obj[Key]
+	> (obj: Obj, key: Key, value: Value): void {
+		obj[key] = value;
+	}
+
+	// Tiny Andrew was born.
+	const andrew = {
+		[ID]: uniqueId(),
+		name: 'Andrew',
+		age: 0,
+	};
+
+	// Cool, we're fine with that.
+	changePersonData(andrew, 'name', 'Pony');
+
+	// Goverment didn't like the fact that you wanted to change your identity.
+	changePersonData(andrew, ID, uniqueId());
+	```
+	</details>
+
+- [`NonNullable<T>`](https://github.com/Microsoft/TypeScript/blob/2961bc3fc0ea1117d4e53bc8e97fa76119bc33e3/src/lib/es5.d.ts#L1446-L1449) - Exclude `null` and `undefined` from `T`.
+	<details>
+	<summary>
+			Example
+	</summary>
+	Works with <code>strictNullChecks</code> set to <code>true</code>. (Read more <a href="https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-0.html">here</a>)
+
+	[Playground](https://typescript-play.js.org/?target=6#code/C4TwDgpgBACg9gJ2AOQK4FsBGEFQLxQDOwCAlgHYDmUAPlORtrnQwDasDcAUFwPQBU-WAEMkUOADMowqAGNWwwoSgATCBIqlgpOOSjAAFsOBRSy1IQgr9cKJlSlW1mZYQA3HFH68u8xcoBlHA8EACEHJ08Aby4oKDBUTFZSWXjEFEYcAEIALihkXTR2YSSIAB54JDQsHAA+blj4xOTUsHSACkMzPKD3HHDHNQQAGjSkPMqMmoQASh7g-oihqBi4uNIpdraxPAI2VhmVxrX9AzMAOm2ppnwoAA4ABifuE4BfKAhWSyOTuK7CS7pao3AhXF5rV48E4ICDAVAIPT-cGQyG+XTEIgLMJLTx7CAAdygvRCA0iCHaMwarhJOIQjUBSHaACJHk8mYdeLwxtdcVAAOSsh58+lXdr7Dlcq7A3n3J4PEUdADMcspUE53OluAIUGVTx46oAKuAIAFZGQwCYAKIIBCILjUxaDHAMnla+iodjcIA)
+
+	```ts
+	type PortNumber = string | number | null;
+
+	/** Part of a class definition that is used to build a server */
+	class ServerBuilder {
+			portNumber!: NonNullable<PortNumber>;
+
+			port(this: ServerBuilder, port: PortNumber): ServerBuilder {
+					if (port == null) {
+							this.portNumber = 8000;
+					} else {
+							this.portNumber = port;
+					}
+
+					return this;
+			}
+	}
+
+	const serverBuilder = new ServerBuilder();
+
+	serverBuilder
+			.port('8000')   // portNumber = '8000'
+			.port(null)     // portNumber =  8000
+			.port(3000);    // portNumber =  3000
+
+	// TypeScript error
+	serverBuilder.portNumber = null;
+	```
+	</details>
+
+- [`Parameters<T>`](https://github.com/Microsoft/TypeScript/blob/2961bc3fc0ea1117d4e53bc8e97fa76119bc33e3/src/lib/es5.d.ts#L1451-L1454) - Obtain the parameters of a function type in a tuple.
+	<details>
+	<summary>
+			Example
+	</summary>
+
+	[Playground](https://typescript-play.js.org/?target=6#code/GYVwdgxgLglg9mABAZwBYmMANgUwBQxgAOIUAXIgIZgCeA2gLoCUFAbnDACaIDeAUIkQB6IYgCypSlBxUATrMo1ECsJzgBbLEoipqAc0J7EMKMgDkiHLnU4wp46pwAPHMgB0fAL58+oSLARECEosLAA5ABUYG2QAHgAxJGdpVWREPDdMylk9ZApqemZEAF4APipacrw-CApEgBogkKwAYThwckQwEHUAIxxZJl4BYVEImiIZKF0oZRwiWVdbeygJmThgOYgcGFYcbhqApCJsyhtpWXcR1cnEePBoeDAABVPzgbTixFeFd8uEsClADcIxGiygIFkSEOT3SmTc2VydQeRx+ZxwF2QQ34gkEwDgsnSuFmMBKiAADEDjIhYk1Qm0OlSYABqZnYka4xA1DJZHJYkGc7yCbyeRA+CAIZCzNAYbA4CIAdxg2zJwVCkWirjwMswuEaACYmCCgA)
+
+	```ts
+	function shuffle(input: any[]): void {
+		// Mutate array randomly changing its' elements indexes.
+	}
+
+	function callNTimes<Fn extends (...args: any[]) => any> (func: Fn, callCount: number) {
+		// Type that represents the type of the received function parameters.
+		type FunctionParameters = Parameters<Fn>;
+
+		return function (...args: FunctionParameters) {
+			for (let i = 0; i < callCount; i++) {
+				func(...args);
+			}
+		}
+	}
+
+	const shuffleTwice = callNTimes(shuffle, 2);
+	```
+	</details>
+
+- [`ConstructorParameters<T>`](https://github.com/Microsoft/TypeScript/blob/2961bc3fc0ea1117d4e53bc8e97fa76119bc33e3/src/lib/es5.d.ts#L1456-L1459) - Obtain the parameters of a constructor function type in a tuple.
+	<details>
+	<summary>
+			Example
+	</summary>
+
+	[Playground](https://typescript-play.js.org/?target=6#code/MYGwhgzhAECCBOAXAlqApgWQPYBM0mgG8AoaaFRENALmgkXmQDsBzAblOmCycTV4D8teo1YdO3JiICuwRFngAKClWENmLAJRFOZRAAtkEAHQq00ALzlklNBzIBfYk+KhIMAJJTEYJsDQAwmDA+mgAPAAq0GgAHnxMODCKTGgA7tCKxllg8CwQtL4AngDaALraFgB80EWa1SRkAA6MAG5gfNAB4FABPDJyCrQR9tDNyG0dwMGhtBhgjWEiGgA00F70vv4RhY3hEZXVVinpc42KmuJkkv3y8Bly8EPaDWTkhiZd7r3e8LK3llwGCMXGQWGhEOsfH5zJlsrl8p0+gw-goAAo5MAAW3BaHgEEilU0tEhmzQ212BJ0ry4SOg+kg+gBBiMximIGA0nAfAQLGk2N4EAAEgzYcYcnkLsRdDTvNEYkYUKwSdCme9WdM0MYwYhFPSIPpJdTkAAzDKxBUaZX+aAAQgsVmkCTQxuYaBw2ng4Ok8CYcotSu8pMur09iG9vuObxZnx6SN+AyUWTF8MN0CcZE4Ywm5jZHK5aB5fP4iCFIqT4oRRTKRLo6lYVNeAHpG50wOzOe1zHr9NLQ+HoABybsD4HOKXXRA1JCoKhBELmI5pNaB6Fz0KKBAodDYPAgSUTmqYsAALx4m5nC6nW9nGq14KtaEUA9gR9PvuNCjQ9BgACNvcwNBtAcLiAA)
+
+	```ts
+	class ArticleModel {
+		title: string;
+		content?: string;
+
+		constructor(title: string) {
+			this.title = title;
+		}
+	}
+
+	class InstanceCache<T extends (new (...args: any[]) => any)> {
+		private ClassConstructor: T;
+		private cache: Map<string, InstanceType<T>> = new Map();
+
+		constructor (ctr: T) {
+			this.ClassConstructor = ctr;
+		}
+
+		getInstance (...args: ConstructorParameters<T>): InstanceType<T> {
+			const hash = this.calculateArgumentsHash(...args);
+
+			const existingInstance = this.cache.get(hash);
+			if (existingInstance !== undefined) {
+				return existingInstance;
+			}
+
+			return new this.ClassConstructor(...args);
+		}
+
+		private calculateArgumentsHash(...args: any[]): string {
+			// Calculate hash.
+			return 'hash';
+		}
+	}
+
+	const articleCache = new InstanceCache(ArticleModel);
+	const amazonArticle = articleCache.getInstance('Amazon forests burining!');
+	```
+	</details>
+
+- [`ReturnType<T>`](https://github.com/Microsoft/TypeScript/blob/2961bc3fc0ea1117d4e53bc8e97fa76119bc33e3/src/lib/es5.d.ts#L1461-L1464) – Obtain the return type of a function type.
+	<details>
+	<summary>
+			Example
+	</summary>
+
+	[Playground](https://typescript-play.js.org/?target=6#code/MYGwhgzhAECSAmICmBlJAnAbgS2E6A3gFDTTwD2AcuQC4AW2AdgOYAUAlAFzSbnbyEAvkWFFQkGJSQB3GMVI1sNZNwg10TZgG4S0YOUY0kh1es07d+xmvQBXYDXLpWi5UlMaWAGj0GjJ6BtNdkJdBQYIADpXZGgAXmgYpB1ScOwoq38aeN9DYxoU6GFRKzVoJjUwRjwAYXJbPPRuAFkwAAcAHgAxBodsAx9GWwBbACMMAD4cxhloVraOCyYjdAAzMDxoOut1e0d0UNIZ6WhWSPOwdGYIbiqATwBtAF0uaHudUQB6ACpv6ABpJBINqJdAbADW0Do5BOw3u5R2VTwMHIq2gAANtjZ0bkbHsnFCwJh8ONjHp0EgwEZ4JFoN9PkRVr1FAZoMwkDRYIjqkgOrosepoEgAB7+eAwAV2BxOLy6ACCVxgIrFEoMeOl6AACpcwMMORgIB1JRMiBNWKVdhruJKfOdIpdrtwFddXlzKjyACp3Nq842HaDIbL6BrZBIVGhIpB1EMYSLsmjmtWW-YhAA+qegAAYLKQLQj3ZsEsdccmnGcLor2Dn8xGedHGpEIBzEzspfsfMHDNAANTQACMVaIljV5GQkRA5DYmIpVKQAgAJARO9le33BDXIyi0YuLW2nJFGLqkOvxFB0YPdBSaLZ0IwNzyPkO8-xkGgsLh8Al427a3hWAhXwwHA8EHT5PmgAB1bAQBAANJ24adKWpft72RaBUTgRBUCAj89HAM8xCTaBjggABRQx0DuHJv25P9dCkWRZVIAAiBjoFImpmjlFBgA0NpsjadByDacgIDAEAIAAQmYpjoGYgAZSBsmGPw6DtZiiFA8CoJguDmAQmoZ2QvtUKQLdoAYmBTwgdEiCAA)
+
+	```ts
+	/** Provides every element of the iterable `iter` into the `callback` function and stores the results in an array. */
+	function mapIter<
+			Elem,
+			Func extends (elem: Elem) => any,
+			Ret extends ReturnType<Func>
+	>(iter: Iterable<Elem>, callback: Func): Ret[] {
+			const mapped: Ret[] = [];
+
+			for (const elem of iter) {
+					mapped.push(callback(elem));
+			}
+
+			return mapped;
+	}
+
+	const setObject: Set<string> = new Set();
+	const mapObject: Map<number, string> = new Map();
+
+	mapIter(setObject, (value: string) => value.indexOf('Foo')); // number[]
+
+	mapIter(mapObject, ([key, value]: [number, string]) => {
+			return key % 2 === 0 ? value : 'Odd';
+	}); // string[]
+	```
+	</details>
+
+- [`InstanceType<T>`](https://github.com/Microsoft/TypeScript/blob/2961bc3fc0ea1117d4e53bc8e97fa76119bc33e3/src/lib/es5.d.ts#L1466-L1469) – Obtain the instance type of a constructor function type.
+	<details>
+	<summary>
+			Example
+	</summary>
+
+	[Playground](https://typescript-play.js.org/?target=6#code/MYGwhgzhAECSAmICmBlJAnAbgS2E6A3gFDTTwD2AcuQC4AW2AdgOYAUAlAFzSbnbyEAvkWFFQkGJSQB3GMVI1sNZNwg10TZgG4S0YOUY0kh1es07d+xmvQBXYDXLpWi5UlMaWAGj0GjJ6BtNdkJdBQYIADpXZGgAXmgYpB1ScOwoq38aeN9DYxoU6GFRKzVoJjUwRjwAYXJbPPRuAFkwAAcAHgAxBodsAx9GWwBbACMMAD4cxhloVraOCyYjdAAzMDxoOut1e0d0UNIZ6WhWSPOwdGYIbiqATwBtAF0uaHudUQB6ACpv6ABpJBINqJdAbADW0Do5BOw3u5R2VTwMHIq2gAANtjZ0bkbHsnFCwJh8ONjHp0EgwEZ4JFoN9PkRVr1FAZoMwkDRYIjqkgOrosepoEgAB7+eAwAV2BxOLy6ACCVxgIrFEoMeOl6AACpcwMMORgIB1JRMiBNWKVdhruJKfOdIpdrtwFddXlzKjyACp3Nq842HaDIbL6BrZBIVGhIpB1EMYSLsmjmtWW-YhAA+qegAAYLKQLQj3ZsEsdccmnGcLor2Dn8xGedHGpEIBzEzspfsfMHDNAANTQACMVaIljV5GQkRA5DYmIpVKQAgAJARO9le33BDXIyi0YuLW2nJFGLqkOvxFB0YPdBSaLZ0IwNzyPkO8-xkGgsLh8Al427a3hWAhXwwHA8EHT5PmgAB1bAQBAANJ24adKWpft72RaBUTgRBUCAj89HAM8xCTaBjggABRQx0DuHJv25P9dCkWRZVIAAiBjoFImpmjlFBgA0NpsjadByDacgIDAEAIAAQmYpjoGYgAZSBsmGPw6DtZiiFA8CoJguDmAQmoZ2QvtUKQLdoAYmBTwgdEiCAA)
+
+	```ts
+	class IdleService {
+			doNothing (): void {}
+	}
+
+	class News {
+			title: string;
+			content: string;
+
+			constructor(title: string, content: string) {
+					this.title = title;
+					this.content = content;
+			}
+	}
+
+	const instanceCounter: Map<Function, number> = new Map();
+
+	interface Constructor {
+			new(...args: any[]): any;
+	}
+
+	// Keep track how many instances of `Constr` constructor have been created.
+	function getInstance<
+			Constr extends Constructor,
+			Args extends ConstructorParameters<Constr>
+	>(constructor: Constr, ...args: Args): InstanceType<Constr> {
+			let count = instanceCounter.get(constructor) || 0;
+
+			const instance = new constructor(...args);
+
+			instanceCounter.set(constructor, count + 1);
+
+			console.log(`Created ${count + 1} instances of ${Constr.name} class`);
+
+			return instance;
+	}
+
+
+	const idleService = getInstance(IdleService);
+	// Will log: `Created 1 instances of IdleService class`
+	const newsEntry = getInstance(News, 'New ECMAScript proposals!', 'Last month...');
+	// Will log: `Created 1 instances of News class`
+	```
+	</details>
+
+- [`Omit<T, K>`](https://github.com/microsoft/TypeScript/blob/71af02f7459dc812e85ac31365bfe23daf14b4e4/src/lib/es5.d.ts#L1446) – Constructs a type by picking all properties from T and then removing K.
+	<details>
+	<summary>
+			Example
+	</summary>
+
+	[Playground](https://typescript-play.js.org/?target=6#code/JYOwLgpgTgZghgYwgAgIImAWzgG2QbwChlks4BzCAVShwC5kBnMKUcgbmKYAcIFgIjBs1YgOXMpSFMWbANoBdTiW5woFddwAW0kfKWEAvoUIB6U8gDCUCHEiNkICAHdkYAJ69kz4GC3JcPG4oAHteKDABBxCYNAxsPFBIWEQUCAAPJG4wZABySUFcgJAAEzMLXNV1ck0dIuCw6EjBADpy5AB1FAQ4EGQAV0YUP2AHDy8wEOQbUugmBLwtEIA3OcmQnEjuZBgQqE7gAGtgZAhwKHdkHFGwNvGUdDIcAGUliIBJEF3kAF5kAHlML4ADyPBIAGjyBUYRQAPnkqho4NoYQA+TiEGD9EAISIhPozErQMG4AASK2gn2+AApek9pCSXm8wFSQooAJQMUkAFQAsgAZACiOAgmDOOSIJAQ+OYyGl4DgoDmf2QJRCCH6YvALQQNjsEGFovF1NyJWAy1y7OUyHMyE+yRAuFImG4Iq1YDswHxbRINjA-SgfXlHqVUE4xiAA)
+
+	```ts
+	interface Animal {
+			imageUrl: string;
+			species: string;
+			images: string[];
+			paragraphs: string[];
+	}
+
+	// Creates new type with all properties of the `Animal` interface
+	// except 'images' and 'paragraphs' properties. We can use this
+	// type to render small hover tooltip for a wiki entry list.
+	type AnimalShortInfo = Omit<Animal, 'images' | 'paragraphs'>;
+
+	function renderAnimalHoverInfo (animals: AnimalShortInfo[]): HTMLElement {
+			const container =  document.createElement('div');
+			// Internal implementation.
+			return container;
+	}
+	```
+	</details>
+
+You can find some examples in the [TypeScript docs](https://www.typescriptlang.org/docs/handbook/advanced-types.html#predefined-conditional-types).
+
+## Maintainers
+
+- [Sindre Sorhus](https://github.com/sindresorhus)
+- [Jarek Radosz](https://github.com/CvX)
+- [Dimitri Benin](https://github.com/BendingBender)
+- [Pelle Wessman](https://github.com/voxpelli)
+
+## License
+
+(MIT OR CC0-1.0)
+
+---
+
+<div align="center">
+	<b>
+		<a href="https://tidelift.com/subscription/pkg/npm-type-fest?utm_source=npm-type-fest&utm_medium=referral&utm_campaign=readme">Get professional support for this package with a Tidelift subscription</a>
+	</b>
+	<br>
+	<sub>
+		Tidelift helps make open source sustainable for maintainers while giving companies<br>assurances about security, maintenance, and licensing for their dependencies.
+	</sub>
+</div>
+
+
+===== FILE: ./frontend/node_modules/@eslint/eslintrc/node_modules/globals/readme.md =====
+# globals
+
+> Global identifiers from different JavaScript environments
+
+It's just a [JSON file](globals.json), so use it in any environment.
+
+This package is used by ESLint.
+
+**This package [no longer accepts](https://github.com/sindresorhus/globals/issues/82) new environments. If you need it for ESLint, just [create a plugin](http://eslint.org/docs/developer-guide/working-with-plugins#environments-in-plugins).**
+
+## Install
+
+```sh
+npm install globals
+```
+
+## Usage
+
+```js
+const globals = require('globals');
+
+console.log(globals.browser);
+/*
+{
+	addEventListener: false,
+	applicationCache: false,
+	ArrayBuffer: false,
+	atob: false,
+	…
+}
+*/
+```
+
+Each global is given a value of `true` or `false`. A value of `true` indicates that the variable may be overwritten. A value of `false` indicates that the variable should be considered read-only. This information is used by static analysis tools to flag incorrect behavior. We assume all variables should be `false` unless we hear otherwise.
+
+For Node.js this package provides two sets of globals:
+
+- `globals.nodeBuiltin`: Globals available to all code running in Node.js.
+	These will usually be available as properties on the `global` object and include `process`, `Buffer`, but not CommonJS arguments like `require`.
+	See: https://nodejs.org/api/globals.html
+- `globals.node`: A combination of the globals from `nodeBuiltin` plus all CommonJS arguments ("CommonJS module scope").
+	See: https://nodejs.org/api/modules.html#modules_the_module_scope
+
+When analyzing code that is known to run outside of a CommonJS wrapper, for example, JavaScript modules, `nodeBuiltin` can find accidental CommonJS references.
+
+
+===== FILE: ./frontend/node_modules/lilconfig/readme.md =====
+# Lilconfig ⚙️
+[![npm version](https://badge.fury.io/js/lilconfig.svg)](https://badge.fury.io/js/lilconfig)
+[![install size](https://packagephobia.now.sh/badge?p=lilconfig)](https://packagephobia.now.sh/result?p=lilconfig)
+[![Coverage Status](https://coveralls.io/repos/github/antonk52/lilconfig/badge.svg)](https://coveralls.io/github/antonk52/lilconfig)
+
+A zero-dependency alternative to [cosmiconfig](https://www.npmjs.com/package/cosmiconfig) with the same API.
+
+## Installation
+
+```sh
+npm install lilconfig
+```
+
+## Usage
+
+```js
+import {lilconfig, lilconfigSync} from 'lilconfig';
+
+// all keys are optional
+const options = {
+    stopDir: '/Users/you/some/dir',
+    searchPlaces: ['package.json', 'myapp.conf.js'],
+    ignoreEmptySearchPlaces: false
+}
+
+lilconfig(
+    'myapp',
+    options // optional
+).search() // Promise<LilconfigResult>
+
+lilconfigSync(
+    'myapp',
+    options // optional
+).load(pathToConfig) // LilconfigResult
+
+/**
+ * LilconfigResult
+ * {
+ *   config: any; // your config
+ *   filepath: string;
+ * }
+ */
+```
+
+## Difference to `cosmiconfig`
+Lilconfig does not intend to be 100% compatible with `cosmiconfig` but tries to mimic it where possible. The key differences are:
+- **no** support for yaml files out of the box(`lilconfig` attempts to parse files with no extension as JSON instead of YAML). You can still add the support for YAML files by providing a loader, see an [example](#yaml-loader) below.
+- **no** cache
+
+### Options difference between the two.
+
+|cosmiconfig option      | lilconfig |
+|------------------------|-----------|
+|cache                   | ❌        |
+|loaders                 | ✅        |
+|ignoreEmptySearchPlaces | ✅        |
+|packageProp             | ✅        |
+|searchPlaces            | ✅        |
+|stopDir                 | ✅        |
+|transform               | ✅        |
+
+## Loaders examples
+
+### Yaml loader
+
+If you need the YAML support you can provide your own loader
+
+```js
+import {lilconfig} from 'lilconfig';
+import yaml from 'yaml';
+
+function loadYaml(filepath, content) {
+    return yaml.parse(content);
+}
+
+const options = {
+    loaders: {
+        '.yaml': loadYaml,
+        '.yml': loadYaml,
+        // loader for files with no extension
+        noExt: loadYaml
+    }
+};
+
+lilconfig('myapp', options)
+    .search()
+    .then(result => {
+        result // {config, filepath}
+    });
+```
+
+### ESM loader
+
+Lilconfig v2 does not support ESM modules out of the box. However, you can support it with a custom a loader. Note that this will only work with the async `lilconfig` function and won't work with the sync `lilconfigSync`.
+
+```js
+import {lilconfig} from 'lilconfig';
+
+const loadEsm = filepath => import(filepath);
+
+lilconfig('myapp', {
+    loaders: {
+        '.js': loadEsm,
+        '.mjs': loadEsm,
+    }
+})
+    .search()
+    .then(result => {
+        result // {config, filepath}
+
+        result.config.default // if config uses `export default`
+    });
+```
+
+## Version correlation
+
+- lilconig v1 → cosmiconfig v6
+- lilconig v2 → cosmiconfig v7
+
+
+===== FILE: ./frontend/node_modules/object-assign/readme.md =====
+# object-assign [![Build Status](https://travis-ci.org/sindresorhus/object-assign.svg?branch=master)](https://travis-ci.org/sindresorhus/object-assign)
+
+> ES2015 [`Object.assign()`](http://www.2ality.com/2014/01/object-assign.html) [ponyfill](https://ponyfill.com)
+
+
+## Use the built-in
+
+Node.js 4 and up, as well as every evergreen browser (Chrome, Edge, Firefox, Opera, Safari),
+support `Object.assign()` :tada:. If you target only those environments, then by all
+means, use `Object.assign()` instead of this package.
+
+
+## Install
+
+```
+$ npm install --save object-assign
+```
+
+
+## Usage
+
+```js
+const objectAssign = require('object-assign');
+
+objectAssign({foo: 0}, {bar: 1});
+//=> {foo: 0, bar: 1}
+
+// multiple sources
+objectAssign({foo: 0}, {bar: 1}, {baz: 2});
+//=> {foo: 0, bar: 1, baz: 2}
+
+// overwrites equal keys
+objectAssign({foo: 0}, {foo: 1}, {foo: 2});
+//=> {foo: 2}
+
+// ignores null and undefined sources
+objectAssign({foo: 0}, null, {bar: 1}, undefined);
+//=> {foo: 0, bar: 1}
+```
+
+
+## API
+
+### objectAssign(target, [source, ...])
+
+Assigns enumerable own properties of `source` objects to the `target` object and returns the `target` object. Additional `source` objects will overwrite previous ones.
+
+
+## Resources
+
+- [ES2015 spec - Object.assign](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.assign)
+
+
+## Related
+
+- [deep-assign](https://github.com/sindresorhus/deep-assign) - Recursive `Object.assign()`
+
+
+## License
+
+MIT © [Sindre Sorhus](https://sindresorhus.com)
+
+
+===== FILE: ./frontend/node_modules/istanbul-lib-report/node_modules/make-dir/readme.md =====
+# make-dir [![codecov](https://codecov.io/gh/sindresorhus/make-dir/branch/main/graph/badge.svg)](https://codecov.io/gh/sindresorhus/make-dir)
+
+> Make a directory and its parents if needed - Think `mkdir -p`
+
+## Advantages over [`mkdirp`](https://github.com/substack/node-mkdirp)
+
+- Promise API *(Async/await ready!)*
+- Fixes many `mkdirp` issues: [#96](https://github.com/substack/node-mkdirp/pull/96) [#70](https://github.com/substack/node-mkdirp/issues/70) [#66](https://github.com/substack/node-mkdirp/issues/66)
+- 100% test coverage
+- CI-tested on macOS, Linux, and Windows
+- Actively maintained
+- Doesn't bundle a CLI
+- Uses the native `fs.mkdir/mkdirSync` [`recursive` option](https://nodejs.org/dist/latest/docs/api/fs.html#fs_fs_mkdir_path_options_callback) in Node.js >=10.12.0 unless [overridden](#fs)
+
+## Install
+
+```
+$ npm install make-dir
+```
+
+## Usage
+
+```
+$ pwd
+/Users/sindresorhus/fun
+$ tree
+.
+```
+
+```js
+const makeDir = require('make-dir');
+
+(async () => {
+	const path = await makeDir('unicorn/rainbow/cake');
+
+	console.log(path);
+	//=> '/Users/sindresorhus/fun/unicorn/rainbow/cake'
+})();
+```
+
+```
+$ tree
+.
+└── unicorn
+    └── rainbow
+        └── cake
+```
+
+Multiple directories:
+
+```js
+const makeDir = require('make-dir');
+
+(async () => {
+	const paths = await Promise.all([
+		makeDir('unicorn/rainbow'),
+		makeDir('foo/bar')
+	]);
+
+	console.log(paths);
+	/*
+	[
+		'/Users/sindresorhus/fun/unicorn/rainbow',
+		'/Users/sindresorhus/fun/foo/bar'
+	]
+	*/
+})();
+```
+
+## API
+
+### makeDir(path, options?)
+
+Returns a `Promise` for the path to the created directory.
+
+### makeDir.sync(path, options?)
+
+Returns the path to the created directory.
+
+#### path
+
+Type: `string`
+
+Directory to create.
+
+#### options
+
+Type: `object`
+
+##### mode
+
+Type: `integer`\
+Default: `0o777`
+
+Directory [permissions](https://x-team.com/blog/file-system-permissions-umask-node-js/).
+
+##### fs
+
+Type: `object`\
+Default: `require('fs')`
+
+Use a custom `fs` implementation. For example [`graceful-fs`](https://github.com/isaacs/node-graceful-fs).
+
+Using a custom `fs` implementation will block the use of the native `recursive` option if `fs.mkdir` or `fs.mkdirSync` is not the native function.
+
+## Related
+
+- [make-dir-cli](https://github.com/sindresorhus/make-dir-cli) - CLI for this module
+- [del](https://github.com/sindresorhus/del) - Delete files and directories
+- [globby](https://github.com/sindresorhus/globby) - User-friendly glob matching
+- [cpy](https://github.com/sindresorhus/cpy) - Copy files
+- [cpy-cli](https://github.com/sindresorhus/cpy-cli) - Copy files on the command-line
+- [move-file](https://github.com/sindresorhus/move-file) - Move a file
+
+---
+
+<div align="center">
+	<b>
+		<a href="https://tidelift.com/subscription/pkg/npm-make-dir?utm_source=npm-make-dir&utm_medium=referral&utm_campaign=readme">Get professional support for this package with a Tidelift subscription</a>
+	</b>
+	<br>
+	<sub>
+		Tidelift helps make open source sustainable for maintainers while giving companies<br>assurances about security, maintenance, and licensing for their dependencies.
+	</sub>
+</div>
+
+
+===== FILE: ./frontend/node_modules/coa/node_modules/escape-string-regexp/readme.md =====
+# escape-string-regexp [![Build Status](https://travis-ci.org/sindresorhus/escape-string-regexp.svg?branch=master)](https://travis-ci.org/sindresorhus/escape-string-regexp)
+
+> Escape RegExp special characters
+
+
+## Install
+
+```
+$ npm install --save escape-string-regexp
+```
+
+
+## Usage
+
+```js
+const escapeStringRegexp = require('escape-string-regexp');
+
+const escapedString = escapeStringRegexp('how much $ for a unicorn?');
+//=> 'how much \$ for a unicorn\?'
+
+new RegExp(escapedString);
+```
+
+
+## License
+
+MIT © [Sindre Sorhus](http://sindresorhus.com)
+
+
+===== FILE: ./frontend/node_modules/coa/node_modules/has-flag/readme.md =====
+# has-flag [![Build Status](https://travis-ci.org/sindresorhus/has-flag.svg?branch=master)](https://travis-ci.org/sindresorhus/has-flag)
+
+> Check if [`argv`](https://nodejs.org/docs/latest/api/process.html#process_process_argv) has a specific flag
+
+Correctly stops looking after an `--` argument terminator.
+
+
+## Install
+
+```
+$ npm install has-flag
+```
+
+
+## Usage
+
+```js
+// foo.js
+const hasFlag = require('has-flag');
+
+hasFlag('unicorn');
+//=> true
+
+hasFlag('--unicorn');
+//=> true
+
+hasFlag('f');
+//=> true
+
+hasFlag('-f');
+//=> true
+
+hasFlag('foo=bar');
+//=> true
+
+hasFlag('foo');
+//=> false
+
+hasFlag('rainbow');
+//=> false
+```
+
+```
+$ node foo.js -f --unicorn --foo=bar -- --rainbow
+```
+
+
+## API
+
+### hasFlag(flag, [argv])
+
+Returns a boolean for whether the flag exists.
+
+#### flag
+
+Type: `string`
+
+CLI flag to look for. The `--` prefix is optional.
+
+#### argv
+
+Type: `string[]`<br>
+Default: `process.argv`
+
+CLI arguments.
+
+
+## License
+
+MIT © [Sindre Sorhus](https://sindresorhus.com)
+
+
+===== FILE: ./frontend/node_modules/coa/node_modules/ansi-styles/readme.md =====
+# ansi-styles [![Build Status](https://travis-ci.org/chalk/ansi-styles.svg?branch=master)](https://travis-ci.org/chalk/ansi-styles)
+
+> [ANSI escape codes](http://en.wikipedia.org/wiki/ANSI_escape_code#Colors_and_Styles) for styling strings in the terminal
+
+You probably want the higher-level [chalk](https://github.com/chalk/chalk) module for styling your strings.
+
+<img src="https://cdn.rawgit.com/chalk/ansi-styles/8261697c95bf34b6c7767e2cbe9941a851d59385/screenshot.svg" width="900">
+
+
+## Install
+
+```
+$ npm install ansi-styles
+```
+
+
+## Usage
+
+```js
+const style = require('ansi-styles');
+
+console.log(`${style.green.open}Hello world!${style.green.close}`);
+
+
+// Color conversion between 16/256/truecolor
+// NOTE: If conversion goes to 16 colors or 256 colors, the original color
+//       may be degraded to fit that color palette. This means terminals
+//       that do not support 16 million colors will best-match the
+//       original color.
+console.log(style.bgColor.ansi.hsl(120, 80, 72) + 'Hello world!' + style.bgColor.close);
+console.log(style.color.ansi256.rgb(199, 20, 250) + 'Hello world!' + style.color.close);
+console.log(style.color.ansi16m.hex('#ABCDEF') + 'Hello world!' + style.color.close);
+```
+
+## API
+
+Each style has an `open` and `close` property.
+
+
+## Styles
+
+### Modifiers
+
+- `reset`
+- `bold`
+- `dim`
+- `italic` *(Not widely supported)*
+- `underline`
+- `inverse`
+- `hidden`
+- `strikethrough` *(Not widely supported)*
+
+### Colors
+
+- `black`
+- `red`
+- `green`
+- `yellow`
+- `blue`
+- `magenta`
+- `cyan`
+- `white`
+- `gray` ("bright black")
+- `redBright`
+- `greenBright`
+- `yellowBright`
+- `blueBright`
+- `magentaBright`
+- `cyanBright`
+- `whiteBright`
+
+### Background colors
+
+- `bgBlack`
+- `bgRed`
+- `bgGreen`
+- `bgYellow`
+- `bgBlue`
+- `bgMagenta`
+- `bgCyan`
+- `bgWhite`
+- `bgBlackBright`
+- `bgRedBright`
+- `bgGreenBright`
+- `bgYellowBright`
+- `bgBlueBright`
+- `bgMagentaBright`
+- `bgCyanBright`
+- `bgWhiteBright`
+
+
+## Advanced usage
+
+By default, you get a map of styles, but the styles are also available as groups. They are non-enumerable so they don't show up unless you access them explicitly. This makes it easier to expose only a subset in a higher-level module.
+
+- `style.modifier`
+- `style.color`
+- `style.bgColor`
+
+###### Example
+
+```js
+console.log(style.color.green.open);
+```
+
+Raw escape codes (i.e. without the CSI escape prefix `\u001B[` and render mode postfix `m`) are available under `style.codes`, which returns a `Map` with the open codes as keys and close codes as values.
+
+###### Example
+
+```js
+console.log(style.codes.get(36));
+//=> 39
+```
+
+
+## [256 / 16 million (TrueColor) support](https://gist.github.com/XVilka/8346728)
+
+`ansi-styles` uses the [`color-convert`](https://github.com/Qix-/color-convert) package to allow for converting between various colors and ANSI escapes, with support for 256 and 16 million colors.
+
+To use these, call the associated conversion function with the intended output, for example:
+
+```js
+style.color.ansi.rgb(100, 200, 15); // RGB to 16 color ansi foreground code
+style.bgColor.ansi.rgb(100, 200, 15); // RGB to 16 color ansi background code
+
+style.color.ansi256.hsl(120, 100, 60); // HSL to 256 color ansi foreground code
+style.bgColor.ansi256.hsl(120, 100, 60); // HSL to 256 color ansi foreground code
+
+style.color.ansi16m.hex('#C0FFEE'); // Hex (RGB) to 16 million color foreground code
+style.bgColor.ansi16m.hex('#C0FFEE'); // Hex (RGB) to 16 million color background code
+```
+
+
+## Related
+
+- [ansi-escapes](https://github.com/sindresorhus/ansi-escapes) - ANSI escape codes for manipulating the terminal
+
+
+## Maintainers
+
+- [Sindre Sorhus](https://github.com/sindresorhus)
+- [Josh Junon](https://github.com/qix-)
+
+
+## License
+
+MIT
+

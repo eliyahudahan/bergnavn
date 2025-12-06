@@ -1,0 +1,1658 @@
+===== GROUP START =====
+
+
+--- FILE: backend/assets/routeinfo_routes/alesund/raw/extracted/NCA_9m_AlesundN_Halten_In_20250731.json ---
+[
+  {
+    "name": "Frohavet",
+    "latitude": 64.25626858,
+    "longitude": 9.75179652
+  },
+  {
+    "name": "Tarva lt",
+    "latitude": 63.82722217,
+    "longitude": 9.26903527
+  },
+  {
+    "name": "Svissaflua 16 m",
+    "latitude": 63.7006193,
+    "longitude": 9.24036868
+  },
+  {
+    "name": "Flesa pilot boarding",
+    "latitude": 63.65054591,
+    "longitude": 9.24847105
+  },
+  {
+    "name": "Sliskjeara",
+    "latitude": 63.59572094,
+    "longitude": 9.26176026
+  },
+  {
+    "name": "Storaflu lt",
+    "latitude": 63.54756484,
+    "longitude": 9.25840884
+  },
+  {
+    "name": "Terningen lt",
+    "latitude": 63.49043035,
+    "longitude": 9.04337753
+  },
+  {
+    "name": "Skipnesstranda",
+    "latitude": 63.40095517,
+    "longitude": 8.5089409
+  },
+  {
+    "name": "Klakksbroren lt",
+    "latitude": 63.36544053,
+    "longitude": 8.3874474
+  },
+  {
+    "name": "Kyrhaug lt",
+    "latitude": 63.30550355,
+    "longitude": 8.23465826
+  },
+  {
+    "name": "Edoy lt",
+    "latitude": 63.27708477,
+    "longitude": 8.1526243
+  },
+  {
+    "name": "Lyktlangholmen lt",
+    "latitude": 63.20173362,
+    "longitude": 7.84277736
+  },
+  {
+    "name": "Helklakken 11 m",
+    "latitude": 63.1405088,
+    "longitude": 7.64437075
+  },
+  {
+    "name": "Sveggesundet lt",
+    "latitude": 63.11996821,
+    "longitude": 7.56851597
+  },
+  {
+    "name": "Hestskjeret lt",
+    "latitude": 63.09412504,
+    "longitude": 7.48697922
+  },
+  {
+    "name": "Brakan lt",
+    "latitude": 63.08280559,
+    "longitude": 7.46214795
+  },
+  {
+    "name": "Baramskrakene",
+    "latitude": 63.06403333,
+    "longitude": 7.36203333
+  },
+  {
+    "name": "Myrgrunnan light buoy",
+    "latitude": 63.0549635,
+    "longitude": 7.32525278
+  },
+  {
+    "name": "Bjugna",
+    "latitude": 63.05253797,
+    "longitude": 7.25497976
+  },
+  {
+    "name": "Fuglen lt",
+    "latitude": 63.05936814,
+    "longitude": 7.12623239
+  },
+  {
+    "name": "Hustadvika",
+    "latitude": 63.02750201,
+    "longitude": 7.05919656
+  },
+  {
+    "name": "Kolbeinsflu light buoy - precautionary area",
+    "latitude": 62.97563378,
+    "longitude": 6.86740392
+  },
+  {
+    "name": "Saltsteinsleia",
+    "latitude": 62.86866754,
+    "longitude": 6.70042724
+  },
+  {
+    "name": "Raudholmane",
+    "latitude": 62.63736934,
+    "longitude": 6.37728794
+  },
+  {
+    "name": "Kyrkjeflua",
+    "latitude": 62.62272464,
+    "longitude": 6.28224184
+  },
+  {
+    "name": "Hestoyskallen",
+    "latitude": 62.62497742,
+    "longitude": 6.248428
+  },
+  {
+    "name": "Hellevik lt",
+    "latitude": 62.6455782,
+    "longitude": 6.18182474
+  },
+  {
+    "name": "Isaksfallet",
+    "latitude": 62.64926921,
+    "longitude": 6.14016062
+  },
+  {
+    "name": "Faksen bn",
+    "latitude": 62.64596682,
+    "longitude": 6.11935181
+  },
+  {
+    "name": "Innholmen lt",
+    "latitude": 62.62865097,
+    "longitude": 6.09454886
+  },
+  {
+    "name": "Ramnen",
+    "latitude": 62.6111062,
+    "longitude": 6.12821373
+  },
+  {
+    "name": "Flight Zone",
+    "latitude": 62.56685321,
+    "longitude": 6.17588126
+  },
+  {
+    "name": "Oksneset",
+    "latitude": 62.51882324,
+    "longitude": 6.1454432
+  },
+  {
+    "name": "Oksebasen",
+    "latitude": 62.50956621,
+    "longitude": 6.14242229
+  },
+  {
+    "name": "Olsskjer lt",
+    "latitude": 62.48504269,
+    "longitude": 6.15129891
+  },
+  {
+    "name": "Ellingsoyfjorden",
+    "latitude": 62.48572,
+    "longitude": 6.18174294
+  },
+  {
+    "name": "Brattholmen lt",
+    "latitude": 62.48837813,
+    "longitude": 6.21202408
+  },
+  {
+    "name": "Vardeflua",
+    "latitude": 62.4843874,
+    "longitude": 6.25473911
+  },
+  {
+    "name": "Svinoysundet",
+    "latitude": 62.47307589,
+    "longitude": 6.27187611
+  },
+  {
+    "name": "Kalvoysundet",
+    "latitude": 62.47641737,
+    "longitude": 6.28719523
+  },
+  {
+    "name": "Hestholmen",
+    "latitude": 62.47984662,
+    "longitude": 6.34553374
+  },
+  {
+    "name": "Langoya",
+    "latitude": 62.48675692,
+    "longitude": 6.36837106
+  },
+  {
+    "name": "Alvika",
+    "latitude": 62.48812652,
+    "longitude": 6.38531788
+  }
+]
+
+--- FILE: backend/assets/routeinfo_routes/alesund/raw/extracted/NCA_7_5m_AlesundN_Stad_Aramsd_In_20250731.json ---
+[
+  {
+    "name": "Stalet",
+    "latitude": 62.23332712,
+    "longitude": 5.17768582
+  },
+  {
+    "name": "Stalet",
+    "latitude": 62.23160884,
+    "longitude": 5.20743921
+  },
+  {
+    "name": "Kviteneset",
+    "latitude": 62.22520843,
+    "longitude": 5.23919503
+  },
+  {
+    "name": "Rivjehornet",
+    "latitude": 62.17560483,
+    "longitude": 5.33877331
+  },
+  {
+    "name": "Haugsholmen lt",
+    "latitude": 62.17124662,
+    "longitude": 5.35861314
+  },
+  {
+    "name": "Storesundet",
+    "latitude": 62.17479533,
+    "longitude": 5.38267179
+  },
+  {
+    "name": "Haugsfjorden",
+    "latitude": 62.19053509,
+    "longitude": 5.42253173
+  },
+  {
+    "name": "Aramsundet west",
+    "latitude": 62.20397196,
+    "longitude": 5.47473529
+  },
+  {
+    "name": "Aramsundet ",
+    "latitude": 62.20479688,
+    "longitude": 5.48381396
+  },
+  {
+    "name": "Aramsundet east 11 m",
+    "latitude": 62.20389208,
+    "longitude": 5.49494321
+  },
+  {
+    "name": "Saudeholmen",
+    "latitude": 62.17750163,
+    "longitude": 5.60430637
+  },
+  {
+    "name": "Laupsneset",
+    "latitude": 62.19778971,
+    "longitude": 5.76758988
+  },
+  {
+    "name": "Yksnoy lt",
+    "latitude": 62.21844681,
+    "longitude": 5.897255
+  },
+  {
+    "name": "Flavikneset",
+    "latitude": 62.27333538,
+    "longitude": 5.97472596
+  },
+  {
+    "name": "Hjorungenneset",
+    "latitude": 62.34392246,
+    "longitude": 6.13514886
+  },
+  {
+    "name": "Hjorungenneset",
+    "latitude": 62.3569972,
+    "longitude": 6.13693772
+  },
+  {
+    "name": "Eltraneset",
+    "latitude": 62.42387181,
+    "longitude": 6.0367014
+  },
+  {
+    "name": "Eltraneset lt",
+    "latitude": 62.43673783,
+    "longitude": 6.03681349
+  },
+  {
+    "name": "Erknaflu",
+    "latitude": 62.47086266,
+    "longitude": 6.059799
+  },
+  {
+    "name": "Olsskjer lt",
+    "latitude": 62.48476092,
+    "longitude": 6.13991275
+  },
+  {
+    "name": "Ellingsoyfjorden",
+    "latitude": 62.48572,
+    "longitude": 6.18174294
+  },
+  {
+    "name": "Brattholmen lt",
+    "latitude": 62.48837813,
+    "longitude": 6.21202408
+  },
+  {
+    "name": "Vardeflua",
+    "latitude": 62.4843874,
+    "longitude": 6.25473911
+  },
+  {
+    "name": "Svinoysundet",
+    "latitude": 62.47307589,
+    "longitude": 6.27187611
+  },
+  {
+    "name": "Kalvoysundet",
+    "latitude": 62.47641737,
+    "longitude": 6.28719523
+  },
+  {
+    "name": "Hestholmen",
+    "latitude": 62.47984662,
+    "longitude": 6.34553374
+  },
+  {
+    "name": "Langoya",
+    "latitude": 62.48675692,
+    "longitude": 6.36837106
+  },
+  {
+    "name": "Alvika",
+    "latitude": 62.48812652,
+    "longitude": 6.38531788
+  }
+]
+
+--- FILE: backend/assets/routeinfo_routes/alesund/raw/extracted/NCA_9m_AlesundS_Stad_In_20250731.json ---
+[
+  {
+    "name": "Stalet",
+    "latitude": 62.23332712,
+    "longitude": 5.17768582
+  },
+  {
+    "name": "Stalet",
+    "latitude": 62.23160884,
+    "longitude": 5.20743921
+  },
+  {
+    "name": "Kviteneset",
+    "latitude": 62.22520843,
+    "longitude": 5.23919503
+  },
+  {
+    "name": "Vanylvsgapet pilot boarding",
+    "latitude": 62.20648333,
+    "longitude": 5.2768
+  },
+  {
+    "name": "Rivjehornet",
+    "latitude": 62.17560483,
+    "longitude": 5.33877331
+  },
+  {
+    "name": "Sore Torrane",
+    "latitude": 62.16093205,
+    "longitude": 5.38305804
+  },
+  {
+    "name": "Bjornholmen",
+    "latitude": 62.1638574,
+    "longitude": 5.41178402
+  },
+  {
+    "name": "Ytstefluda",
+    "latitude": 62.1964447,
+    "longitude": 5.44805666
+  },
+  {
+    "name": "Aramsundet west",
+    "latitude": 62.20397196,
+    "longitude": 5.47473529
+  },
+  {
+    "name": "Aramsundet ",
+    "latitude": 62.20479688,
+    "longitude": 5.48381396
+  },
+  {
+    "name": "Aramsundet east 11 m",
+    "latitude": 62.20389208,
+    "longitude": 5.49494321
+  },
+  {
+    "name": "Saudeholmen",
+    "latitude": 62.17750163,
+    "longitude": 5.60430637
+  },
+  {
+    "name": "Laupsneset",
+    "latitude": 62.19778971,
+    "longitude": 5.76758988
+  },
+  {
+    "name": "Yksnoy lt",
+    "latitude": 62.21844681,
+    "longitude": 5.897255
+  },
+  {
+    "name": "Flavikneset",
+    "latitude": 62.27333538,
+    "longitude": 5.97472596
+  },
+  {
+    "name": "Hjorungenneset",
+    "latitude": 62.34392246,
+    "longitude": 6.13514886
+  },
+  {
+    "name": "Hjorungenneset",
+    "latitude": 62.3569972,
+    "longitude": 6.13693772
+  },
+  {
+    "name": "Eltraneset",
+    "latitude": 62.42387181,
+    "longitude": 6.0367014
+  },
+  {
+    "name": "Eltraneset lt",
+    "latitude": 62.43673783,
+    "longitude": 6.03681349
+  },
+  {
+    "name": "Eltraneset lt",
+    "latitude": 62.44618084,
+    "longitude": 6.05318243
+  },
+  {
+    "name": "Hessafjorden",
+    "latitude": 62.44636362,
+    "longitude": 6.11197795
+  },
+  {
+    "name": "Rognholmen lt",
+    "latitude": 62.4551797,
+    "longitude": 6.17622405
+  },
+  {
+    "name": "Gasholmen",
+    "latitude": 62.45634169,
+    "longitude": 6.20368526
+  },
+  {
+    "name": "Bogneset",
+    "latitude": 62.45173133,
+    "longitude": 6.24948118
+  },
+  {
+    "name": "Spjelkavik",
+    "latitude": 62.45783276,
+    "longitude": 6.3449976
+  }
+]
+
+--- FILE: backend/assets/routeinfo_routes/alesund/raw/extracted/NCA_7_5m_AlesundN_Halten_In_20250731.json ---
+[
+  {
+    "name": "Frohavet",
+    "latitude": 64.25626858,
+    "longitude": 9.75179652
+  },
+  {
+    "name": "Tarva lt",
+    "latitude": 63.82722217,
+    "longitude": 9.26903527
+  },
+  {
+    "name": "Svissaflua 16 m",
+    "latitude": 63.7006193,
+    "longitude": 9.24036868
+  },
+  {
+    "name": "Flesa pilot boarding",
+    "latitude": 63.65054591,
+    "longitude": 9.24847105
+  },
+  {
+    "name": "Sliskjeara",
+    "latitude": 63.59572094,
+    "longitude": 9.26176026
+  },
+  {
+    "name": "Storaflu lt",
+    "latitude": 63.54756484,
+    "longitude": 9.25840884
+  },
+  {
+    "name": "Terningen lt",
+    "latitude": 63.49043035,
+    "longitude": 9.04337753
+  },
+  {
+    "name": "Skipnesstranda",
+    "latitude": 63.40095517,
+    "longitude": 8.5089409
+  },
+  {
+    "name": "Klakksbroren lt",
+    "latitude": 63.36544053,
+    "longitude": 8.3874474
+  },
+  {
+    "name": "Kyrhaug lt",
+    "latitude": 63.30550355,
+    "longitude": 8.23465826
+  },
+  {
+    "name": "Edoy lt",
+    "latitude": 63.27708477,
+    "longitude": 8.1526243
+  },
+  {
+    "name": "Lyktlangholmen lt",
+    "latitude": 63.20173362,
+    "longitude": 7.84277736
+  },
+  {
+    "name": "Helklakken 11 m",
+    "latitude": 63.1405088,
+    "longitude": 7.64437075
+  },
+  {
+    "name": "Sveggesundet lt",
+    "latitude": 63.11996821,
+    "longitude": 7.56851597
+  },
+  {
+    "name": "Hestskjeret lt",
+    "latitude": 63.09412504,
+    "longitude": 7.48697922
+  },
+  {
+    "name": "Brakan lt",
+    "latitude": 63.08280559,
+    "longitude": 7.46214795
+  },
+  {
+    "name": "Baramskrakene",
+    "latitude": 63.06403333,
+    "longitude": 7.36203333
+  },
+  {
+    "name": "Myrgrunnan light buoy",
+    "latitude": 63.0549635,
+    "longitude": 7.32525278
+  },
+  {
+    "name": "Bjugna",
+    "latitude": 63.05319167,
+    "longitude": 7.28032657
+  },
+  {
+    "name": "Midtflua light buoy",
+    "latitude": 63.02598154,
+    "longitude": 7.15968141
+  },
+  {
+    "name": "Breigrunntaren",
+    "latitude": 63.01039,
+    "longitude": 6.99576
+  },
+  {
+    "name": "Kolbeinsflu light buoy - precautionary area",
+    "latitude": 62.97563378,
+    "longitude": 6.86740392
+  },
+  {
+    "name": "Saltsteinsleia",
+    "latitude": 62.86866754,
+    "longitude": 6.70042724
+  },
+  {
+    "name": "Raudholmane",
+    "latitude": 62.63736934,
+    "longitude": 6.37728794
+  },
+  {
+    "name": "Haugflua",
+    "latitude": 62.61972194,
+    "longitude": 6.31253266
+  },
+  {
+    "name": "Lepsoyrevet",
+    "latitude": 62.60378059,
+    "longitude": 6.28338791
+  },
+  {
+    "name": "Lepsoyrevet",
+    "latitude": 62.58125845,
+    "longitude": 6.23023899
+  },
+  {
+    "name": "Vigrafjorden",
+    "latitude": 62.56967123,
+    "longitude": 6.19211611
+  },
+  {
+    "name": "Hanen lt",
+    "latitude": 62.55728991,
+    "longitude": 6.17046397
+  },
+  {
+    "name": "Oksneset",
+    "latitude": 62.51882324,
+    "longitude": 6.1454432
+  },
+  {
+    "name": "Oksebasen",
+    "latitude": 62.50956621,
+    "longitude": 6.14242229
+  },
+  {
+    "name": "Olsskjer lt",
+    "latitude": 62.48504269,
+    "longitude": 6.15129891
+  },
+  {
+    "name": "Ellingsoyfjorden",
+    "latitude": 62.48572,
+    "longitude": 6.18174294
+  },
+  {
+    "name": "Brattholmen lt",
+    "latitude": 62.48837813,
+    "longitude": 6.21202408
+  },
+  {
+    "name": "Vardeflua",
+    "latitude": 62.4843874,
+    "longitude": 6.25473911
+  },
+  {
+    "name": "Svinoysundet",
+    "latitude": 62.47307589,
+    "longitude": 6.27187611
+  },
+  {
+    "name": "Kalvoysundet",
+    "latitude": 62.47641737,
+    "longitude": 6.28719523
+  },
+  {
+    "name": "Hestholmen",
+    "latitude": 62.47984662,
+    "longitude": 6.34553374
+  },
+  {
+    "name": "Langoya",
+    "latitude": 62.48675692,
+    "longitude": 6.36837106
+  },
+  {
+    "name": "Alvika",
+    "latitude": 62.48812652,
+    "longitude": 6.38531788
+  }
+]
+
+--- FILE: backend/assets/routeinfo_routes/alesund/raw/extracted/NCA_7_5m_AlesundS_Stad_Aramsd_In_20250731.json ---
+[
+  {
+    "name": "Stalet",
+    "latitude": 62.23332712,
+    "longitude": 5.17768582
+  },
+  {
+    "name": "Stalet",
+    "latitude": 62.23160884,
+    "longitude": 5.20743921
+  },
+  {
+    "name": "Kviteneset",
+    "latitude": 62.22520843,
+    "longitude": 5.23919503
+  },
+  {
+    "name": "Rivjehornet",
+    "latitude": 62.17560483,
+    "longitude": 5.33877331
+  },
+  {
+    "name": "Haugsholmen lt",
+    "latitude": 62.17124662,
+    "longitude": 5.35861314
+  },
+  {
+    "name": "Storesundet",
+    "latitude": 62.17479533,
+    "longitude": 5.38267179
+  },
+  {
+    "name": "Haugsfjorden",
+    "latitude": 62.19053509,
+    "longitude": 5.42253173
+  },
+  {
+    "name": "Aramsundet west",
+    "latitude": 62.20397196,
+    "longitude": 5.47473529
+  },
+  {
+    "name": "Aramsundet ",
+    "latitude": 62.20479688,
+    "longitude": 5.48381396
+  },
+  {
+    "name": "Aramsundet east 11 m",
+    "latitude": 62.20389208,
+    "longitude": 5.49494321
+  },
+  {
+    "name": "Saudeholmen",
+    "latitude": 62.17750163,
+    "longitude": 5.60430637
+  },
+  {
+    "name": "Laupsneset",
+    "latitude": 62.19778971,
+    "longitude": 5.76758988
+  },
+  {
+    "name": "Yksnoy lt",
+    "latitude": 62.21844681,
+    "longitude": 5.897255
+  },
+  {
+    "name": "Flavikneset",
+    "latitude": 62.27333538,
+    "longitude": 5.97472596
+  },
+  {
+    "name": "Hjorungenneset",
+    "latitude": 62.34392246,
+    "longitude": 6.13514886
+  },
+  {
+    "name": "Hjorungenneset",
+    "latitude": 62.3569972,
+    "longitude": 6.13693772
+  },
+  {
+    "name": "Eltraneset",
+    "latitude": 62.42387181,
+    "longitude": 6.0367014
+  },
+  {
+    "name": "Eltraneset lt",
+    "latitude": 62.43673783,
+    "longitude": 6.03681349
+  },
+  {
+    "name": "Eltraneset lt",
+    "latitude": 62.44618084,
+    "longitude": 6.05318243
+  },
+  {
+    "name": "Hessafjorden",
+    "latitude": 62.44636362,
+    "longitude": 6.11197795
+  },
+  {
+    "name": "Rognholmen lt",
+    "latitude": 62.4551797,
+    "longitude": 6.17622405
+  },
+  {
+    "name": "Gasholmen",
+    "latitude": 62.45634169,
+    "longitude": 6.20368526
+  },
+  {
+    "name": "Bogneset",
+    "latitude": 62.45173133,
+    "longitude": 6.24948118
+  },
+  {
+    "name": "Spjelkavik",
+    "latitude": 62.45783276,
+    "longitude": 6.3449976
+  }
+]
+
+--- FILE: backend/assets/routeinfo_routes/alesund/raw/extracted/NCA_AlesundN_Breisundet_In_20250731.json ---
+[
+  {
+    "name": "Breisunddjupet",
+    "latitude": 62.51022878,
+    "longitude": 5.68239097
+  },
+  {
+    "name": "Breisundet",
+    "latitude": 62.44828561,
+    "longitude": 5.91428191
+  },
+  {
+    "name": "Hogsteinen lt",
+    "latitude": 62.44651783,
+    "longitude": 6.03079354
+  },
+  {
+    "name": "Hogsteinen lt",
+    "latitude": 62.45349269,
+    "longitude": 6.04813121
+  },
+  {
+    "name": "Erknaflu",
+    "latitude": 62.47086266,
+    "longitude": 6.059799
+  },
+  {
+    "name": "Olsskjer lt",
+    "latitude": 62.48476092,
+    "longitude": 6.13991275
+  },
+  {
+    "name": "Ellingsoyfjorden",
+    "latitude": 62.48572,
+    "longitude": 6.18174294
+  },
+  {
+    "name": "Brattholmen lt",
+    "latitude": 62.48837813,
+    "longitude": 6.21202408
+  },
+  {
+    "name": "Vardeflua",
+    "latitude": 62.4843874,
+    "longitude": 6.25473911
+  },
+  {
+    "name": "Svinoysundet",
+    "latitude": 62.47307589,
+    "longitude": 6.27187611
+  },
+  {
+    "name": "Kalvoysundet",
+    "latitude": 62.47641737,
+    "longitude": 6.28719523
+  },
+  {
+    "name": "Hestholmen",
+    "latitude": 62.47984662,
+    "longitude": 6.34553374
+  },
+  {
+    "name": "Langoya",
+    "latitude": 62.48675692,
+    "longitude": 6.36837106
+  },
+  {
+    "name": "Alvika",
+    "latitude": 62.48812652,
+    "longitude": 6.38531788
+  }
+]
+
+--- FILE: backend/assets/routeinfo_routes/alesund/raw/extracted/NCA_7_5m_AlesundN_Stad_Flavaer_In_20250731.json ---
+[
+  {
+    "name": "Stalet",
+    "latitude": 62.23332712,
+    "longitude": 5.17768582
+  },
+  {
+    "name": "Skjeggefluda",
+    "latitude": 62.27317369,
+    "longitude": 5.31497614
+  },
+  {
+    "name": "Flavaer lt",
+    "latitude": 62.31207991,
+    "longitude": 5.55963892
+  },
+  {
+    "name": "Stabben lt",
+    "latitude": 62.31136037,
+    "longitude": 5.57735484
+  },
+  {
+    "name": "Klubben lt",
+    "latitude": 62.30878821,
+    "longitude": 5.59910369
+  },
+  {
+    "name": "Klubben lt",
+    "latitude": 62.30835732,
+    "longitude": 5.60956199
+  },
+  {
+    "name": "Tronden lt",
+    "latitude": 62.31206559,
+    "longitude": 5.62744445
+  },
+  {
+    "name": "Heroyhunden lt",
+    "latitude": 62.31753428,
+    "longitude": 5.67146876
+  },
+  {
+    "name": "Royrasundet",
+    "latitude": 62.31933924,
+    "longitude": 5.72128209
+  },
+  {
+    "name": "Teigesund lt",
+    "latitude": 62.32066667,
+    "longitude": 5.73481667
+  },
+  {
+    "name": "Teigesund lt",
+    "latitude": 62.32205636,
+    "longitude": 5.74885378
+  },
+  {
+    "name": "Brennholmen lt 6.9 m",
+    "latitude": 62.32851096,
+    "longitude": 5.7511608
+  },
+  {
+    "name": "Torvikhomen lt 6.9 m",
+    "latitude": 62.33809314,
+    "longitude": 5.73856845
+  },
+  {
+    "name": "Byholmane",
+    "latitude": 62.35952667,
+    "longitude": 5.77314485
+  },
+  {
+    "name": "Vattoya",
+    "latitude": 62.36509477,
+    "longitude": 5.7911294
+  },
+  {
+    "name": "Vattoy lt",
+    "latitude": 62.37268618,
+    "longitude": 5.79730202
+  },
+  {
+    "name": "Flo lt",
+    "latitude": 62.39371089,
+    "longitude": 5.80692878
+  },
+  {
+    "name": "Flo",
+    "latitude": 62.40752333,
+    "longitude": 5.82996009
+  },
+  {
+    "name": "Kleggen",
+    "latitude": 62.4185445,
+    "longitude": 5.85683644
+  },
+  {
+    "name": "Breisundet",
+    "latitude": 62.42712612,
+    "longitude": 5.89034092
+  },
+  {
+    "name": "Hogsteinen lt",
+    "latitude": 62.44651783,
+    "longitude": 6.03079354
+  },
+  {
+    "name": "Hogsteinen lt",
+    "latitude": 62.45349269,
+    "longitude": 6.04813121
+  },
+  {
+    "name": "Erknaflu",
+    "latitude": 62.47086266,
+    "longitude": 6.059799
+  },
+  {
+    "name": "Olsskjer lt",
+    "latitude": 62.48476092,
+    "longitude": 6.13991275
+  },
+  {
+    "name": "Ellingsoyfjorden",
+    "latitude": 62.48572,
+    "longitude": 6.18174294
+  },
+  {
+    "name": "Brattholmen lt",
+    "latitude": 62.48837813,
+    "longitude": 6.21202408
+  },
+  {
+    "name": "Vardeflua",
+    "latitude": 62.4843874,
+    "longitude": 6.25473911
+  },
+  {
+    "name": "Svinoysundet",
+    "latitude": 62.47307589,
+    "longitude": 6.27187611
+  },
+  {
+    "name": "Kalvoysundet",
+    "latitude": 62.47641737,
+    "longitude": 6.28719523
+  },
+  {
+    "name": "Hestholmen",
+    "latitude": 62.47984662,
+    "longitude": 6.34553374
+  },
+  {
+    "name": "Langoya",
+    "latitude": 62.48675692,
+    "longitude": 6.36837106
+  },
+  {
+    "name": "Alvika",
+    "latitude": 62.48812652,
+    "longitude": 6.38531788
+  }
+]
+
+--- FILE: backend/controllers/cruise_controller.py ---
+"""
+Controller for managing cruises.
+Delegates all business logic to CruiseService.
+Provides RESTful endpoints for CRUD operations and rendering pages.
+"""
+
+from flask import Blueprint, request, jsonify, render_template
+from backend.services.cruise_service import CruiseService
+from backend.models.cruise import Cruise
+from backend.utils.helpers import get_current_language
+
+# Blueprint for cruise routes
+cruise_bp = Blueprint('cruise', __name__, url_prefix='/cruises')
+
+# Initialize the Cruise service
+cruise_service = CruiseService()
+
+
+@cruise_bp.route('/', methods=['POST'])
+def create_cruise():
+    data = request.get_json()
+    if not data:
+        return jsonify({'error': 'No input data provided'}), 400
+
+    try:
+        cruise_service.create_cruise(data)
+        return jsonify({'message': 'Cruise created successfully'}), 201
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
+
+
+@cruise_bp.route('/', methods=['GET'])
+def get_all_cruises():
+    try:
+        cruises_data = cruise_service.get_all_cruises()
+        return jsonify(cruises_data), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
+
+
+@cruise_bp.route('/view', methods=['GET'])
+def view_cruises():
+    """
+    Renders cruises.html template with all cruises.
+    Ensures each cruise object has attributes accessed by Jinja.
+    """
+    try:
+        lang = get_current_language()
+        cruises = Cruise.query.all()  # returns SQLAlchemy objects
+
+        # Optionally, convert to list of dicts if needed:
+        cruises_list = [
+            {
+                "title": c.title,
+                "description": c.description,
+                "departure_date": c.departure_date,
+                "return_date": c.return_date,
+                "price": c.price
+            } for c in cruises
+        ]
+
+        return render_template('cruises.html', cruises=cruises_list, lang=lang)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@cruise_bp.route('/<int:cruise_id>', methods=['DELETE'])
+def delete_cruise(cruise_id):
+    try:
+        deleted = cruise_service.delete_cruise_by_id(cruise_id)
+        if not deleted:
+            return jsonify({'error': 'Cruise not found'}), 404
+        return jsonify({'message': f'Cruise with ID {cruise_id} deleted successfully'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
+
+
+--- FILE: backend/controllers/__init__.py ---
+
+
+--- FILE: backend/controllers/route_leg_controller.py ---
+from flask import Blueprint, request, jsonify
+from backend.services.route_leg_service import create_route
+from datetime import datetime
+
+route_leg_bp = Blueprint("route_leg", __name__)
+
+@route_leg_bp.route("/", methods=["POST"])
+def create_full_route():
+    data = request.get_json()
+
+    cruise_id = data.get("cruise_id")
+    legs = data.get("legs")
+    departure_time = data.get("departure_time")
+
+    if not cruise_id or not legs:
+        return jsonify({"error": "Missing cruise_id or legs"}), 400
+
+    try:
+        parsed_departure_time = datetime.fromisoformat(departure_time) if departure_time else None
+        created_legs = create_route(cruise_id, legs, cruise_departure_time=parsed_departure_time)
+
+        return jsonify({
+            "message": f"{len(created_legs)} route legs created",
+            "legs": [
+                {
+                    "from": leg.departure_port.name,
+                    "to": leg.arrival_port.name,
+                    "departure": leg.departure_time.isoformat(),
+                    "arrival": leg.arrival_time.isoformat()
+                }
+                for leg in created_legs
+            ]
+        }), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+--- FILE: backend/controllers/route_controller.py ---
+"""
+Controller for managing routes, route legs, waypoints, and hazard zones.
+All business logic is delegated to route_service.
+"""
+
+from flask import Blueprint, request, jsonify
+from backend.services.route_service import RouteService
+
+route_bp = Blueprint('route_bp', __name__, url_prefix='/routes')
+
+# Initialize the service
+route_service = RouteService()
+
+@route_bp.route('/upload', methods=['POST'])
+def upload_route_file():
+    """
+    Upload a new RTZ file and create base routes.
+    """
+    file = request.files.get('file')
+    if not file:
+        return jsonify({'error': 'No file provided'}), 400
+
+    try:
+        route_service.process_rtz_file(file)
+        return jsonify({'message': 'RTZ file processed successfully'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@route_bp.route('/base_routes', methods=['GET'])
+def list_base_routes():
+    """
+    List all base routes.
+    """
+    routes = route_service.get_all_base_routes()
+    return jsonify(routes), 200
+
+@route_bp.route('/base_routes/<int:route_id>', methods=['GET'])
+def get_base_route(route_id):
+    """
+    Get a single base route with its legs and waypoints.
+    """
+    route = route_service.get_base_route_with_details(route_id)
+    if not route:
+        return jsonify({'error': 'Route not found'}), 404
+    return jsonify(route), 200
+
+
+--- FILE: backend/middleware/api_key_auth.py ---
+# backend/middleware/api_key_auth.py
+import os
+from functools import wraps
+from flask import request, jsonify
+
+def require_api_key(f):
+    """Decorator enforcing API key validation via header or query param."""
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        expected_key = os.getenv("BERGNAVN_API_KEY")
+        provided_key = request.headers.get("X-API-KEY") or request.args.get("api_key")
+
+        if not expected_key:
+            return jsonify({
+                "status": "error",
+                "message": "Server misconfigured: API key missing in environment"
+            }), 500
+
+        if provided_key != expected_key:
+            return jsonify({
+                "status": "unauthorized",
+                "message": "Invalid or missing API key"
+            }), 401
+
+        return f(*args, **kwargs)
+    return decorated
+
+
+--- FILE: backend/middleware/request_id.py ---
+# backend/middleware/request_id.py
+import uuid
+from flask import g, request
+
+def assign_request_id(app):
+    @app.before_request
+    def add_request_id():
+        g.request_id = str(uuid.uuid4())
+
+
+--- FILE: backend/.pytest_cache/README.md ---
+# pytest cache directory #
+
+This directory contains data from the pytest's cache plugin,
+which provides the `--lf` and `--ff` options, as well as the `cache` fixture.
+
+**Do not** commit this to version control.
+
+See [the docs](https://docs.pytest.org/en/stable/how-to/cache.html) for more information.
+
+
+--- FILE: backend/routes/weather_routes.py ---
+# backend/routes/weather_routes.py - Updated
+from flask import Blueprint, render_template, request, jsonify
+from backend.models import WeatherStatus, Route
+from sqlalchemy import desc, and_, func
+from backend.extensions import db
+from backend.utils.helpers import get_current_language
+import requests
+import os
+from datetime import datetime
+
+# Blueprint for weather-related pages
+weather_bp = Blueprint('weather', __name__, url_prefix='/weather')
+
+@weather_bp.route('/')
+def weather_dashboard():
+    """
+    UI Endpoint: Weather Dashboard
+    Purpose:
+        - Display the latest active weather statuses per port.
+        - Show all active routes with their ordered legs.
+        - Include current language for i18n.
+    """
+    # Subquery: get the latest datetime for each port_id (only active records)
+    subquery = (
+        db.session.query(
+            WeatherStatus.port_id,
+            func.max(WeatherStatus.datetime).label('max_datetime')
+        )
+        .filter(WeatherStatus.is_active == True)
+        .group_by(WeatherStatus.port_id)
+        .subquery()
+    )
+
+    # Query: fetch only the most recent WeatherStatus entries
+    latest_statuses = (
+        db.session.query(WeatherStatus)
+        .join(
+            subquery,
+            and_(
+                WeatherStatus.port_id == subquery.c.port_id,
+                WeatherStatus.datetime == subquery.c.max_datetime
+            )
+        )
+        .all()
+    )
+
+    # Query: fetch all active routes with legs ordered by leg_order
+    routes = (
+        Route.query
+        .filter(Route.is_active == True)
+        .order_by(Route.id)
+        .all()
+    )
+
+    # Ensure each route's legs are sorted by leg_order
+    for route in routes:
+        route.legs.sort(key=lambda leg: leg.leg_order)
+
+    # Get current language for rendering templates
+    lang = get_current_language()
+
+    return render_template(
+        'weather_dashboard.html',
+        statuses=latest_statuses,
+        routes=routes,
+        lang=lang
+    )
+
+@weather_bp.route('/api/maritime-weather')
+def get_maritime_weather():
+    """
+    ENHANCED: Maritime weather API with MET Norway + Data Science
+    Provides reliable weather data for route optimization
+    """
+    try:
+        lat = request.args.get('lat', 58.1467, type=float)  # Kristiansand default
+        lon = request.args.get('lon', 8.0980, type=float)
+        
+        # PRIMARY: MET Norway API - Most reliable for maritime
+        met_headers = {
+            'User-Agent': 'BergNavnMaritime/3.0 (framgangsrik747@gmail.com)',
+            'Accept': 'application/json'
+        }
+        met_url = f"https://api.met.no/weatherapi/locationforecast/2.0/compact?lat={lat}&lon={lon}"
+        
+        try:
+            met_response = requests.get(met_url, headers=met_headers, timeout=10)
+            
+            if met_response.status_code == 200:
+                met_data = met_response.json()
+                current_weather = met_data['properties']['timeseries'][0]['data']['instant']['details']
+                
+                weather_info = {
+                    'status': 'success',
+                    'source': 'MET Norway',
+                    'data': {
+                        'temperature': current_weather.get('air_temperature', 0),
+                        'wind_speed': current_weather.get('wind_speed', 0),
+                        'wind_direction': current_weather.get('wind_direction', 0),
+                        'wind_gust': current_weather.get('wind_speed_of_gust', 0),
+                        'humidity': current_weather.get('relative_humidity', 0),
+                        'pressure': current_weather.get('air_pressure_at_sea_level', 0),
+                        'condition': 'Maritime data',
+                        'icon': '🌊',
+                        'location': f"Position: {lat}, {lon}",
+                        'timestamp': datetime.now().isoformat(),
+                        'data_quality': 'high'
+                    }
+                }
+                return jsonify(weather_info)
+                
+        except requests.exceptions.Timeout:
+            print("MET Norway timeout, falling back to OpenWeather")
+        except Exception as e:
+            print(f"MET Norway error: {e}")
+
+        # FALLBACK: Environment-based weather (existing system)
+        # This maintains compatibility with your current system
+        return jsonify({
+            'status': 'fallback',
+            'source': 'System Database',
+            'message': 'Using system weather data',
+            'timestamp': datetime.now().isoformat()
+        })
+            
+    except Exception as e:
+        return jsonify({
+            'status': 'error',
+            'message': f'Weather service unavailable: {str(e)}'
+        }), 500
+
+--- FILE: backend/routes/dashboard_routes.py ---
+from flask import Blueprint, render_template
+from backend.models.route import Route
+from backend.services.route_evaluator import evaluate_route
+from backend.utils.helpers import get_current_language  # ✅ Import language helper
+
+dashboard_bp = Blueprint('dashboard_bp', __name__)
+
+@dashboard_bp.route("/")
+def dashboard():
+    # Get current language from query/session
+    lang = get_current_language()
+
+    # Fetch all routes from the database
+    routes = Route.query.all()
+    voyages = []
+
+    # Run evaluation for each route and prepare data for the dashboard
+    for r in routes:
+        eval_result = evaluate_route(r.id)
+        voyages.append({
+            "id": r.id,
+            "name": r.name,
+            "status": eval_result.get("status", "Unknown"),
+            "color": eval_result.get("color", "secondary")
+        })
+
+    # Render the dashboard template with routes and language
+    return render_template("dashboard.html", voyages=voyages, lang=lang)
+
+
+--- FILE: backend/routes/analytics_routes.py ---
+# backend/routes/analytics_routes.py
+"""
+ANALYTICS ROUTES - endpoints for business intelligence dashboards
+Provides fleet performance analytics and methanol transition analysis
+"""
+
+from flask import Blueprint, jsonify, request
+from datetime import datetime, timedelta
+from backend.ml.enhanced_fuel_optimizer import EnhancedFuelOptimizer
+
+analytics_bp = Blueprint('analytics_bp', __name__)
+optimizer = EnhancedFuelOptimizer()
+
+def get_live_ships_data():
+    """
+    Mock function to get live ships data
+    In production, this would connect to AIS service
+    """
+    # This would be replaced with actual AIS service call
+    return [
+        {
+            'mmsi': '257158400',
+            'name': 'VICTORIA WILSON', 
+            'type': 'container',
+            'sog': 14.2,
+            'lat': 58.1467,
+            'lon': 8.0980
+        },
+        {
+            'mmsi': '258225000',
+            'name': 'KRISTIANSAND FJORD',
+            'type': 'passenger', 
+            'sog': 8.5,
+            'lat': 58.5,
+            'lon': 9.0
+        },
+        {
+            'mmsi': '259187300',
+            'name': 'OSLO CARRIER',
+            'type': 'tanker',
+            'sog': 11.3,
+            'lat': 59.0,
+            'lon': 10.0
+        }
+    ]
+
+def get_weather_data():
+    """
+    Mock function to get weather data
+    In production, this would connect to MET Norway service
+    """
+    return {
+        'wind_speed': 8.5,
+        'wind_direction': 45,
+        'wave_height': 1.2,
+        'temperature': 9.0
+    }
+
+@analytics_bp.route('/api/analytics/fleet-performance')
+def get_fleet_performance():
+    """
+    Fleet-wide performance analytics for business intelligence
+    Returns comprehensive fleet metrics and optimization opportunities
+    """
+    try:
+        # Get data from AIS service
+        ships_data = get_live_ships_data()
+        
+        fleet_analytics = {
+            'total_ships': len(ships_data),
+            'average_efficiency': 0,
+            'total_fuel_savings_potential': 0,
+            'ships_optimized': 0,
+            'performance_breakdown': {
+                'excellent': 0,  # 90-100%
+                'good': 0,       # 70-89%  
+                'fair': 0,       # 50-69%
+                'poor': 0        # <50%
+            },
+            'optimization_opportunities': []
+        }
+        
+        total_efficiency = 0
+        total_savings_potential = 0
+        
+        for ship in ships_data:
+            weather_data = get_weather_data()
+            performance = optimizer.calculate_optimal_speed_profile(ship, weather_data)
+            total_efficiency += performance.efficiency_score
+            
+            # Calculate savings potential
+            savings_potential = (100 - performance.efficiency_score) * 0.15  # 0.15% per efficiency point
+            total_savings_potential += savings_potential
+            
+            # Categorize performance
+            if performance.efficiency_score >= 90:
+                fleet_analytics['performance_breakdown']['excellent'] += 1
+                fleet_analytics['ships_optimized'] += 1
+            elif performance.efficiency_score >= 70:
+                fleet_analytics['performance_breakdown']['good'] += 1
+            elif performance.efficiency_score >= 50:
+                fleet_analytics['performance_breakdown']['fair'] += 1
+            else:
+                fleet_analytics['performance_breakdown']['poor'] += 1
+                
+                # Add to optimization opportunities
+                fleet_analytics['optimization_opportunities'].append({
+                    'ship_name': ship.get('name', 'Unknown'),
+                    'mmsi': ship.get('mmsi'),
+                    'current_efficiency': performance.efficiency_score,
+                    'recommended_speed': performance.optimal_speed,
+                    'potential_savings_percent': round(savings_potential, 1),
+                    'priority': 'High' if performance.efficiency_score < 40 else 'Medium'
+                })
+        
+        if ships_data:
+            fleet_analytics['average_efficiency'] = round(total_efficiency / len(ships_data), 1)
+            fleet_analytics['total_fuel_savings_potential'] = round(total_savings_potential / len(ships_data), 1)
+        
+        return jsonify({
+            'status': 'success',
+            'analytics': fleet_analytics,
+            'timestamp': datetime.now().isoformat(),
+            'data_source': 'Kystverket AIS + MET Norway'
+        })
+        
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
+@analytics_bp.route('/api/analytics/methanol-transition')
+def get_methanol_transition_analysis():
+    """
+    Methanol transition ROI analysis for business decisions
+    Provides comprehensive cost-benefit analysis for alternative fuels
+    """
+    try:
+        # Sample vessel data - in production this would come from database
+        sample_vessel = {
+            'type': 'container',
+            'name': 'Sample Container Vessel',
+            'fuel_consumption_annual': 5000  # tons per year
+        }
+        
+        roi_analysis = optimizer.calculate_methanol_roi(
+            sample_vessel, 
+            sample_vessel['fuel_consumption_annual']
+        )
+        
+        return jsonify({
+            'status': 'success', 
+            'methanol_analysis': roi_analysis,
+            'vessel_type': sample_vessel['type'],
+            'annual_fuel_usage_tons': sample_vessel['fuel_consumption_annual'],
+            'timestamp': datetime.now().isoformat(),
+            'analysis_basis': 'Maersk operational data + IMO 2025 regulations'
+        })
+        
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
+@analytics_bp.route('/api/analytics/environmental-impact')
+def get_environmental_impact():
+    """
+    Environmental impact analytics for sustainability reporting
+    Calculates CO2 emissions and environmental footprint
+    """
+    try:
+        ships_data = get_live_ships_data()
+        
+        total_co2_emissions = 0
+        total_fuel_consumption = 0
+        
+        for ship in ships_data:
+            # Estimate fuel consumption based on vessel type and speed
+            vessel_type = ship.get('type', 'container')
+            speed = ship.get('sog', 12.0)
+            
+            # Simplified fuel consumption model
+            consumption_rates = {
+                'tanker': 8.0,
+                'container': 6.5, 
+                'bulk_carrier': 7.2,
+                'passenger': 4.8
+            }
+            
+            base_consumption = consumption_rates.get(vessel_type, 6.0)
+            hourly_consumption = base_consumption * (speed / 12.0) ** 3
+            total_fuel_consumption += hourly_consumption
+            
+            # CO2 emissions: 3.114 tons CO2 per ton of fuel
+            total_co2_emissions += hourly_consumption * 3.114
+        
+        return jsonify({
+            'status': 'success',
+            'environmental_metrics': {
+                'total_co2_emissions_tons_hour': round(total_co2_emissions, 2),
+                'total_fuel_consumption_tons_hour': round(total_fuel_consumption, 2),
+                'estimated_annual_co2_tons': round(total_co2_emissions * 24 * 365, 2),
+                'carbon_intensity': round(total_co2_emissions / len(ships_data), 2) if ships_data else 0,
+                'ships_monitored': len(ships_data)
+            },
+            'timestamp': datetime.now().isoformat()
+        })
+        
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
+--- FILE: backend/routes/__init__.py ---
+from .cruise_routes import cruise_blueprint  # ✅ Right name
+
+def register_routes(app):
+    app.register_blueprint(cruise_blueprint, url_prefix='/api')
+
+
+===== GROUP END =====

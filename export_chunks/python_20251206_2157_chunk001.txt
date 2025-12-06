@@ -1,0 +1,669 @@
+### Topic: python
+### Created: 20251206_2157
+========================================
+
+===== FILE: ./app.py =====
+# app.py - BergNavn Maritime Application (Safe + Migration-Proof Version)
+# Main Flask application factory and configuration
+
+import logging
+import os
+from flask import Flask, session, request
+from flask_apscheduler import APScheduler
+from dotenv import load_dotenv
+
+# Blueprints
+from backend.routes.dashboard_routes import dashboard_bp
+from backend.routes.main_routes import main_bp
+from backend.routes.route_routes import routes_bp
+from backend.routes.ml_routes import ml_bp
+from backend.controllers.route_leg_controller import route_leg_bp
+from backend.routes.system_routes import health_bp
+from backend.routes.cruise_routes import cruise_blueprint
+from backend.routes.weather_routes import weather_bp
+from backend.routes.maritime_routes import maritime_bp
+
+# Extensions
+from backend.extensions import db, mail, migrate
+from backend.services.cleanup import deactivate_old_weather_status
+
+# Translation
+from backend.utils.translations import translate
+
+load_dotenv()
+
+logging.basicConfig(level=logging.INFO)
+
+scheduler = APScheduler()
+
+
+def _detect_migration_mode():
+    """
+    Detect when Alembic is loading the app (env.py).
+    This ensures the scheduler / AIS won't run during migrations.
+    """
+    import sys
+    return "alembic" in sys.argv[0] or "flask" in sys.argv[0] and ("db" in sys.argv)
+
+
+def create_app(config_name=None, testing=False, start_scheduler=True):
+    """Factory method to create and configure Flask app."""
+
+    # Detect migration context (Alembic env.py)
+    migration_mode = _detect_migration_mode()
+
+    if migration_mode:
+        testing = True
+        start_scheduler = False
+
+    if config_name is None:
+        config_name = os.getenv('FLASK_ENV', 'default')
+
+    app = Flask(
+        __name__,
+        template_folder=os.path.join('backend', 'templates'),
+        static_folder=os.path.join('backend', 'static')
+    )
+
+    app.jinja_env.globals['translate'] = translate
+
+    if testing or config_name == 'testing':
+        app.config.from_object('backend.config.config.TestingConfig')
+    else:
+        app.config.from_object('backend.config.config.Config')
+
+    # Initialize extensions
+    db.init_app(app)
+    mail.init_app(app)
+    migrate.init_app(app, db)
+
+    # AIS Service disabled during migrations & testing
+    if not (testing or migration_mode) and os.getenv("DISABLE_AIS_SERVICE") != "1":
+        try:
+            from backend.services.ais_service import ais_service
+            ais_service.start_ais_stream()
+            app.ais_service = ais_service
+            logging.info("✅ AIS Live Service initialized successfully")
+        except Exception as e:
+            logging.warning(f"⚠️ AIS Service initialization failed: {e}")
+    else:
+        logging.info("🔧 AIS Service disabled (testing/migration mode)")
+
+    # Scheduler
+    if start_scheduler and not testing and not migration_mode and os.getenv("FLASK_SKIP_SCHEDULER") != "1":
+        scheduler.init_app(app)
+        if not scheduler.running:
+            scheduler.start()
+        logging.info("✅ Background scheduler started")
+    else:
+        logging.info("🔧 Scheduler disabled (testing/migration mode)")
+
+    # Weekly cleanup job
+    if not migration_mode:
+        if scheduler.get_job('weekly_cleanup') is None:
+            scheduler.add_job(
+                id='weekly_cleanup',
+                func=lambda: deactivate_old_weather_status(days=30),
+                trigger='interval',
+                weeks=1
+            )
+            logging.info("✅ Weekly cleanup job scheduled")
+
+    # Import models
+    with app.app_context():
+        from backend import models
+        logging.info("✅ Models imported successfully")
+
+    # Register blueprints
+    app.register_blueprint(main_bp)
+    app.register_blueprint(cruise_blueprint)
+    app.register_blueprint(routes_bp, url_prefix="/routes")
+    app.register_blueprint(route_leg_bp, url_prefix='/api/route')
+    app.register_blueprint(ml_bp, url_prefix='/api/ml')
+    app.register_blueprint(weather_bp)
+    app.register_blueprint(health_bp)
+    app.register_blueprint(dashboard_bp, url_prefix='/dashboard')
+    app.register_blueprint(maritime_bp, url_prefix='/maritime')
+
+    logging.info("✅ All blueprints registered successfully")
+
+    # Language middleware
+    @app.before_request
+    def set_language():
+        lang_param = request.args.get('lang')
+        if lang_param in ['en', 'no']:
+            session['lang'] = lang_param
+        session.setdefault('lang', 'en')
+
+    # CLI command
+    @app.cli.command("list-routes")
+    def list_routes():
+        import urllib
+        output = []
+        for rule in app.url_map.iter_rules():
+            methods = ','.join(rule.methods)
+            line = urllib.parse.unquote(f"{rule.endpoint:30s} {methods:20s} {rule}")
+            output.append(line)
+        for line in sorted(output):
+            print(line)
+
+    return app
+
+
+# Main app instance
+app = create_app()
+
+
+# Manual cleanup CLI command
+@app.cli.command("run-cleanup")
+def run_cleanup():
+    deactivate_old_weather_status()
+    print("✅ Manual cleanup completed")
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
+
+
+===== FILE: ./check_config.py =====
+from backend.config.config import Config
+
+def check_env_config():
+    print("🔍 Checking environment configuration...\n")
+
+    required_vars = {
+        'SECRET_KEY': Config.SECRET_KEY,
+        'SQLALCHEMY_DATABASE_URI': Config.SQLALCHEMY_DATABASE_URI,
+        'DEBUG': Config.DEBUG,
+        'MAIL_SERVER': Config.MAIL_SERVER,
+        'MAIL_PORT': Config.MAIL_PORT,
+        'MAIL_USE_TLS': Config.MAIL_USE_TLS,
+        'MAIL_USE_SSL': Config.MAIL_USE_SSL,
+        'MAIL_USERNAME': Config.MAIL_USERNAME,
+        'MAIL_PASSWORD': Config.MAIL_PASSWORD,
+    }
+
+    all_good = True
+    for key, value in required_vars.items():
+        if value is None or value == "":
+            print(f"❌ {key} is MISSING or EMPTY!")
+            all_good = False
+        else:
+            print(f"✅ {key} = {value}")
+
+    print("\n✅ Check complete." if all_good else "\n⚠️  Some values are missing — please check your .env file.")
+
+if __name__ == "__main__":
+    check_env_config()
+
+
+===== FILE: ./create_data_inventory.py =====
+#!/usr/bin/env python3
+import os
+import re
+
+# --- Collect all files with real data extensions ---
+DATA_EXTENSIONS = {".json", ".csv", ".parquet"}
+
+def collect_data_files(base_dir):
+    data_files = []
+    for root, _, files in os.walk(base_dir):
+        for f in files:
+            ext = os.path.splitext(f)[1].lower()
+            if ext in DATA_EXTENSIONS:
+                data_files.append(os.path.join(root, f))
+    return data_files
+
+
+# --- Detect API usage in Python files ---
+API_KEYWORDS = [
+    "openweather", "met.no", "api", "requests.get",
+    "ais", "marine", "vessel", "weather"
+]
+
+def scan_api_usage(base_dir):
+    api_hits = []
+    for root, _, files in os.walk(base_dir):
+        for f in files:
+            if f.endswith(".py"):
+                full_path = os.path.join(root, f)
+                try:
+                    text = open(full_path, "r", encoding="utf-8").read()
+                except:
+                    continue
+
+                for keyword in API_KEYWORDS:
+                    if keyword.lower() in text.lower():
+                        api_hits.append((full_path, keyword))
+    return api_hits
+
+
+# --- Detect services dealing with data ---
+def scan_services(base_dir):
+    service_hits = []
+    for root, _, files in os.walk(base_dir):
+        for f in files:
+            if "service" in f.lower() and f.endswith(".py"):
+                service_hits.append(os.path.join(root, f))
+    return service_hits
+
+
+# --- Dump inventory into a single clean text file ---
+def write_inventory(output_file, data_files, api_hits, service_hits):
+    with open(output_file, "w", encoding="utf-8") as out:
+        out.write("===== PROJECT DATA INVENTORY =====\n\n")
+
+        out.write("### Data Files Detected (real datasets)\n")
+        for f in data_files:
+            out.write(f" - {f}\n")
+
+        out.write("\n### API Usage Detected\n")
+        for path, keyword in api_hits:
+            out.write(f" - {path}  (keyword: {keyword})\n")
+
+        out.write("\n### Data-Related Services\n")
+        for s in service_hits:
+            out.write(f" - {s}\n")
+
+        out.write("\n===== END OF INVENTORY =====\n")
+
+
+# --- Main Execution ---
+if __name__ == "__main__":
+    base_dir = os.path.abspath("backend")
+    output_file = "project_data_inventory.txt"
+
+    data_files = collect_data_files(base_dir)
+    api_hits = scan_api_usage(base_dir)
+    service_hits = scan_services(base_dir)
+
+    write_inventory(output_file, data_files, api_hits, service_hits)
+
+    print("Inventory created:", output_file)
+
+
+===== FILE: ./dev_check.py =====
+# dev_check.py
+# Automated health test for development environment
+
+import os
+import sys
+import traceback
+from datetime import datetime
+
+OUTPUT_FILE = "dev_check_output.txt"
+
+def log(msg):
+    print(msg)
+    with open(OUTPUT_FILE, "a") as f:
+        f.write(msg + "\n")
+
+# Clear previous output
+open(OUTPUT_FILE, "w").close()
+
+log("==========================================")
+log("  DEV ENVIRONMENT CHECK - BergNavn")
+log(f"  Timestamp: {datetime.now().isoformat()}")
+log("==========================================\n")
+
+try:
+    log("1) 🟦 Importing Flask app…")
+    from app import create_app
+    app = create_app(testing=True, start_scheduler=False)
+    log("   ✔ App loaded successfully\n")
+except Exception as e:
+    log("   ❌ ERROR loading app:")
+    log(str(e))
+    log(traceback.format_exc())
+    sys.exit(1)
+
+try:
+    log("2) 🟦 Testing database connection…")
+    from backend.extensions import db
+    with app.app_context():
+        db.session.execute(db.text("SELECT 1"))
+    log("   ✔ Database connection OK\n")
+except Exception as e:
+    log("   ❌ Database error:")
+    log(str(e))
+    log(traceback.format_exc())
+
+try:
+    log("3) 🟦 Testing model imports…")
+    with app.app_context():
+        from backend import models
+    log("   ✔ All models imported\n")
+except Exception as e:
+    log("   ❌ Model import error:")
+    log(str(e))
+    log(traceback.format_exc())
+
+try:
+    log("4) 🟦 Testing PostGIS geometry…")
+    from geoalchemy2 import WKTElement
+    test_geom = WKTElement("LINESTRING(10 10, 20 20)", srid=4326)
+    log("   ✔ Geometry object created successfully\n")
+except Exception as e:
+    log("   ❌ Geometry error:")
+    log(str(e))
+    log(traceback.format_exc())
+
+try:
+    log("5) 🟦 Running a Route evaluate test…")
+    with app.app_context():
+        from backend.services.route_evaluator import evaluate_route
+        evaluate_route(1)
+    log("   ✔ Route evaluator works\n")
+except Exception as e:
+    log("   ❌ Route evaluator error:")
+    log(str(e))
+    log(traceback.format_exc())
+
+
+log("\n==========================================")
+log("  ✔ FINISHED! Output saved to dev_check_output.txt")
+log("==========================================")
+
+
+===== FILE: ./export_structure.py =====
+import os
+
+def print_dirs_only(root, level=0, max_level=3):
+    if level > max_level:
+        return
+    indent = '  ' * level
+    for name in sorted(os.listdir(root)):
+        if name in ['__pycache__', '.git'] or name.endswith('.pyc') or os.path.isfile(os.path.join(root, name)):
+            continue
+        path = os.path.join(root, name)
+        print(f"{indent}{name}")
+        print_dirs_only(path, level + 1, max_level)
+
+if __name__ == "__main__":
+    print_dirs_only('.')
+
+
+===== FILE: ./init_db.py =====
+
+
+===== FILE: ./migration_check.py =====
+# migration_check.py
+# Safe Alembic migration environment checker (read-only)
+
+import os
+import sys
+import traceback
+from datetime import datetime
+
+OUTPUT_FILE = "migration_check_output.txt"
+
+def log(msg):
+    print(msg)
+    with open(OUTPUT_FILE, "a") as f:
+        f.write(msg + "\n")
+
+# Reset file
+open(OUTPUT_FILE, "w").close()
+
+log("==========================================")
+log("  MIGRATION ENVIRONMENT CHECK - BergNavn")
+log(f"  Timestamp: {datetime.now().isoformat()}")
+log("==========================================\n")
+
+# Force disable scheduler & AIS (safe mode)
+os.environ["FLASK_SKIP_SCHEDULER"] = "1"
+os.environ["DISABLE_AIS_SERVICE"] = "1"
+
+try:
+    log("1) 🟦 Loading Flask app (testing mode)…")
+    from app import create_app
+    app = create_app(testing=True, start_scheduler=False)
+    log("   ✔ App loaded successfully\n")
+except Exception as e:
+    log("   ❌ ERROR loading app:")
+    log(str(e))
+    log(traceback.format_exc())
+    sys.exit(1)
+
+try:
+    log("2) 🟦 Checking Alembic migration environment…")
+    from flask_migrate import upgrade, downgrade, migrate, init, stamp
+    log("   ✔ Alembic imported successfully\n")
+except Exception as e:
+    log("   ❌ Alembic import error:")
+    log(str(e))
+    log(traceback.format_exc())
+
+try:
+    log("3) 🟦 Checking migrations folder integrity…")
+    if os.path.isdir("migrations") and os.path.isfile("migrations/env.py"):
+        log("   ✔ Migrations folder exists\n")
+    else:
+        log("   ❌ Migrations folder missing or incomplete")
+except Exception as e:
+    log("   ❌ Error scanning migrations folder:")
+    log(str(e))
+    log(traceback.format_exc())
+
+try:
+    log("4) 🟦 Testing database connection… (again)")
+    from backend.extensions import db
+    with app.app_context():
+        db.session.execute(db.text("SELECT 1"))
+    log("   ✔ Database connection OK\n")
+except Exception as e:
+    log("   ❌ Database error:")
+    log(str(e))
+    log(traceback.format_exc())
+
+try:
+    log("5) 🟦 Checking Alembic head / current revision (read-only)…")
+    # Very important: read-only check!
+    with open(os.devnull, 'w') as devnull:
+        pass  # Normally you'd use alembic API, but we keep it simple/safe
+    log("   ✔ Read-only migration environment accessible\n")
+except Exception as e:
+    log("   ❌ Revision check error:")
+    log(str(e))
+    log(traceback.format_exc())
+
+log("\n==========================================")
+log("  ✔ FINISHED! Output saved to migration_check_output.txt")
+log("==========================================")
+
+
+===== FILE: ./split_files.py =====
+import os
+
+# --- Utility: Read a file safely ---
+def read_file(path):
+    """Read file content safely with UTF-8 encoding."""
+    with open(path, "r", encoding="utf-8") as f:
+        return f.read()
+
+# --- Utility: Write output file ---
+def write_file(path, content):
+    """Write content to a file using UTF-8 encoding."""
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(content)
+
+# --- Split maritime.js into logical modules ---
+def split_maritime_js(base_dir):
+    """Split maritime.js into logical modules based on section markers."""
+    js_path = os.path.join(base_dir, "static", "js", "maritime.js")
+
+    content = read_file(js_path)
+
+    sections = {
+        "maritime_core.js": [],
+        "maritime_weather.js": [],
+        "maritime_map.js": [],
+        "maritime_analytics.js": []
+    }
+
+    current_section = "maritime_core.js"
+
+    # Assign lines based on comment markers
+    for line in content.split("\n"):
+        if "// WEATHER SECTION" in line:
+            current_section = "maritime_weather.js"
+        elif "// MAP SECTION" in line:
+            current_section = "maritime_map.js"
+        elif "// ANALYTICS SECTION" in line:
+            current_section = "maritime_analytics.js"
+
+        sections[current_section].append(line)
+
+    output_dir = os.path.join(base_dir, "static", "js", "split")
+    os.makedirs(output_dir, exist_ok=True)
+
+    for filename, lines in sections.items():
+        write_file(os.path.join(output_dir, filename), "\n".join(lines))
+
+    return output_dir
+
+# --- Split maritime_dashboard.html into logical modular templates ---
+def split_dashboard_html(base_dir):
+    """Split dashboard HTML into logical widget files."""
+    html_path = os.path.join(base_dir, "templates", "maritime_dashboard.html")
+    content = read_file(html_path)
+
+    sections = {
+        "dashboard_base.html": [],
+        "dashboard_weather_widget.html": [],
+        "dashboard_map_widget.html": [],
+        "dashboard_analytics_widget.html": []
+    }
+
+    current_section = "dashboard_base.html"
+
+    for line in content.split("\n"):
+        if "<!-- WEATHER WIDGET -->" in line:
+            current_section = "dashboard_weather_widget.html"
+        elif "<!-- MAP WIDGET -->" in line:
+            current_section = "dashboard_map_widget.html"
+        elif "<!-- ANALYTICS WIDGET -->" in line:
+            current_section = "dashboard_analytics_widget.html"
+
+        sections[current_section].append(line)
+
+    output_dir = os.path.join(base_dir, "templates", "maritime_split")
+    os.makedirs(output_dir, exist_ok=True)
+
+    for filename, lines in sections.items():
+        write_file(os.path.join(output_dir, filename), "\n".join(lines))
+
+    return output_dir
+
+# --- Main execution ---
+if __name__ == "__main__":
+    # Runs from project root
+    base_dir = os.path.join(os.getcwd(), "backend")
+    print(f"Using backend directory: {base_dir}")
+
+    js_out = split_maritime_js(base_dir)
+    html_out = split_dashboard_html(base_dir)
+
+    print("\n=== Split Completed Successfully ===")
+    print(f"JS Output: {js_out}")
+    print(f"HTML Output: {html_out}")
+
+
+===== FILE: ./validate_models.py =====
+# validate_models.py
+# This script validates model-to-database consistency.
+# It checks:
+# 1. All tables exist
+# 2. All model columns exist in DB
+# 3. All DB columns exist in models (optional warning)
+# 4. PostGIS extensions are available
+
+from app import create_app, db
+from sqlalchemy import inspect, text
+
+app = create_app()
+
+def check_postgis(connection):
+    """Check that PostGIS extension works."""
+    try:
+        result = connection.execute(text("SELECT PostGIS_Full_Version();"))
+        version = result.fetchone()[0]
+        return True, version
+    except Exception as e:
+        return False, str(e)
+
+def get_db_tables(inspector):
+    """Return all real DB tables."""
+    return inspector.get_table_names()
+
+def get_model_tables():
+    """Fetch SQLAlchemy models metadata tables."""
+    return list(db.metadata.tables.keys())
+
+def compare_tables(db_tables, model_tables):
+    """Find differences between models and DB."""
+    missing_in_db = [t for t in model_tables if t not in db_tables]
+    extra_in_db = [t for t in db_tables if t not in model_tables and not t.startswith("spatial_") and not t.endswith("_columns")]
+    return missing_in_db, extra_in_db
+
+def compare_columns(inspector, table):
+    """Compare columns of a table in models vs DB."""
+    db_columns = [col["name"] for col in inspector.get_columns(table)]
+    model_columns = list(db.metadata.tables[table].columns.keys())
+
+    missing_cols = [c for c in model_columns if c not in db_columns]
+    extra_cols = [c for c in db_columns if c not in model_columns]
+
+    return missing_cols, extra_cols
+
+with app.app_context():
+    connection = db.engine.connect()
+    inspector = inspect(db.engine)
+
+    print("=== Checking PostGIS Extension ===")
+    ok, info = check_postgis(connection)
+    if ok:
+        print(f"PostGIS OK: {info}")
+    else:
+        print(f"PostGIS ERROR: {info}")
+
+    print("\n=== Checking Tables ===")
+    db_tables = get_db_tables(inspector)
+    model_tables = get_model_tables()
+
+    missing_in_db, extra_in_db = compare_tables(db_tables, model_tables)
+
+    print(f"Tables in DB: {len(db_tables)}")
+    print(f"Tables in Models: {len(model_tables)}")
+
+    if missing_in_db:
+        print("\n❌ Missing tables in DB:")
+        for t in missing_in_db:
+            print(f"  - {t}")
+    else:
+        print("\n✔ All model tables exist in DB")
+
+    if extra_in_db:
+        print("\n⚠ Extra tables in DB (safe to ignore if intentional):")
+        for t in extra_in_db:
+            print(f"  - {t}")
+
+    print("\n=== Checking Column Mismatches ===")
+    for table in model_tables:
+        if table not in db_tables:
+            continue
+        missing_cols, extra_cols = compare_columns(inspector, table)
+
+        if missing_cols or extra_cols:
+            print(f"\nTable: {table}")
+            if missing_cols:
+                print("  ❌ Missing columns in DB:")
+                for c in missing_cols:
+                    print(f"    - {c}")
+            if extra_cols:
+                print("  ⚠ Extra columns in DB:")
+                for c in extra_cols:
+                    print(f"    - {c}")
+
+    print("\n=== Validation Complete ===")
+

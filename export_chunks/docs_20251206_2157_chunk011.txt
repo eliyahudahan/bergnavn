@@ -1,0 +1,1974 @@
+### Topic: docs
+### Created: 20251206_2157
+========================================
+
+===== FILE: ./frontend/node_modules/prompts/readme.md =====
+<p align="center">
+  <img src="https://github.com/terkelg/prompts/raw/master/prompts.png" alt="Prompts" width="500" />
+</p>
+
+<h1 align="center">❯ Prompts</h1>
+
+<p align="center">
+  <a href="https://npmjs.org/package/prompts">
+    <img src="https://img.shields.io/npm/v/prompts.svg" alt="version" />
+  </a>
+  <a href="https://travis-ci.org/terkelg/prompts">
+    <img src="https://img.shields.io/travis/terkelg/prompts.svg" alt="travis" />
+  </a>
+  <a href="https://npmjs.org/package/prompts">
+    <img src="https://img.shields.io/npm/dm/prompts.svg" alt="downloads" />
+  </a>
+  <!---
+   <a href="https://packagephobia.now.sh/result?p=prompts">
+    <img src="https://packagephobia.now.sh/badge?p=prompts" alt="install size" />
+  </a>
+  --->
+</p>
+
+<p align="center">
+  <b>Lightweight, beautiful and user-friendly interactive prompts</b><br />
+  <sub>>_ Easy to use CLI prompts to enquire users for information▌</sub>
+</p>
+
+<br />
+
+* **Simple**: prompts has [no big dependencies](http://npm.anvaka.com/#/view/2d/prompts) nor is it broken into a [dozen](http://npm.anvaka.com/#/view/2d/inquirer) tiny modules that only work well together.
+* **User friendly**: prompt uses layout and colors to create beautiful cli interfaces.
+* **Promised**: uses promises and `async`/`await`. No callback hell.
+* **Flexible**: all prompts are independent and can be used on their own.
+* **Testable**: provides a way to submit answers programmatically.
+* **Unified**: consistent experience across all [prompts](#-types).
+
+
+![split](https://github.com/terkelg/prompts/raw/master/media/split.png)
+
+
+## ❯ Install
+
+```
+$ npm install --save prompts
+```
+
+> This package supports Node 6 and above
+
+![split](https://github.com/terkelg/prompts/raw/master/media/split.png)
+
+## ❯ Usage
+
+<img src="https://github.com/terkelg/prompts/raw/master/media/example.gif" alt="example prompt" width="499" height="103" />
+
+```js
+const prompts = require('prompts');
+
+(async () => {
+  const response = await prompts({
+    type: 'number',
+    name: 'value',
+    message: 'How old are you?',
+    validate: value => value < 18 ? `Nightclub is 18+ only` : true
+  });
+
+  console.log(response); // => { value: 24 }
+})();
+```
+
+> See [`example.js`](https://github.com/terkelg/prompts/blob/master/example.js) for more options.
+
+
+![split](https://github.com/terkelg/prompts/raw/master/media/split.png)
+
+
+## ❯ Examples
+
+### Single Prompt
+
+Prompt with a single prompt object. Returns an object with the response.
+
+```js
+const prompts = require('prompts');
+
+(async () => {
+  const response = await prompts({
+    type: 'text',
+    name: 'meaning',
+    message: 'What is the meaning of life?'
+  });
+
+  console.log(response.meaning);
+})();
+```
+
+### Prompt Chain
+
+Prompt with a list of prompt objects. Returns an object with the responses.
+Make sure to give each prompt a unique `name` property to prevent overwriting values.
+
+```js
+const prompts = require('prompts');
+
+const questions = [
+  {
+    type: 'text',
+    name: 'username',
+    message: 'What is your GitHub username?'
+  },
+  {
+    type: 'number',
+    name: 'age',
+    message: 'How old are you?'
+  },
+  {
+    type: 'text',
+    name: 'about',
+    message: 'Tell something about yourself',
+    initial: 'Why should I?'
+  }
+];
+
+(async () => {
+  const response = await prompts(questions);
+
+  // => response => { username, age, about }
+})();
+```
+
+### Dynamic Prompts
+
+Prompt properties can be functions too.
+Prompt Objects with `type` set to `falsy` values are skipped.
+
+```js
+const prompts = require('prompts');
+
+const questions = [
+  {
+    type: 'text',
+    name: 'dish',
+    message: 'Do you like pizza?'
+  },
+  {
+    type: prev => prev == 'pizza' ? 'text' : null,
+    name: 'topping',
+    message: 'Name a topping'
+  }
+];
+
+(async () => {
+  const response = await prompts(questions);
+})();
+```
+
+
+![split](https://github.com/terkelg/prompts/raw/master/media/split.png)
+
+
+## ❯ API
+
+### prompts(prompts, options)
+
+Type: `Function`<br>
+Returns: `Object`
+
+Prompter function which takes your [prompt objects](#-prompt-objects) and returns an object with responses.
+
+
+#### prompts
+
+Type: `Array|Object`<br>
+
+Array of [prompt objects](#-prompt-objects).
+ These are the questions the user will be prompted. You can see the list of supported [prompt types here](#-types).
+
+Prompts can be submitted (<kbd>return</kbd>, <kbd>enter</kbd>) or canceled (<kbd>esc</kbd>, <kbd>abort</kbd>, <kbd>ctrl</kbd>+<kbd>c</kbd>, <kbd>ctrl</kbd>+<kbd>d</kbd>). No property is being defined on the returned response object when a prompt is canceled.
+
+#### options.onSubmit
+
+Type: `Function`<br>
+Default: `() => {}`
+
+Callback that's invoked after each prompt submission.
+Its signature is `(prompt, answer, answers)` where `prompt` is the current prompt object, `answer` the user answer to the current question and `answers` the user answers so far. Async functions are supported.
+
+Return `true` to quit the prompt chain and return all collected responses so far, otherwise continue to iterate prompt objects.
+
+**Example:**
+```js
+(async () => {
+  const questions = [{ ... }];
+  const onSubmit = (prompt, answer) => console.log(`Thanks I got ${answer} from ${prompt.name}`);
+  const response = await prompts(questions, { onSubmit });
+})();
+```
+
+#### options.onCancel
+
+Type: `Function`<br>
+Default: `() => {}`
+
+Callback that's invoked when the user cancels/exits the prompt.
+Its signature is `(prompt, answers)` where `prompt` is the current prompt object and `answers` the user answers so far. Async functions are supported.
+
+Return `true` to continue and prevent the prompt loop from aborting.
+On cancel responses collected so far are returned.
+
+**Example:**
+```js
+(async () => {
+  const questions = [{ ... }];
+  const onCancel = prompt => {
+    console.log('Never stop prompting!');
+    return true;
+  }
+  const response = await prompts(questions, { onCancel });
+})();
+```
+
+### override
+
+Type: `Function`
+
+Preanswer questions by passing an object with answers to `prompts.override`.
+Powerful when combined with arguments of process.
+
+**Example**
+```js
+const prompts = require('prompts');
+prompts.override(require('yargs').argv);
+
+(async () => {
+  const response = await prompts([
+    {
+      type: 'text',
+      name: 'twitter',
+      message: `What's your twitter handle?`
+    },
+    {
+      type: 'multiselect',
+      name: 'color',
+      message: 'Pick colors',
+      choices: [
+        { title: 'Red', value: '#ff0000' },
+        { title: 'Green', value: '#00ff00' },
+        { title: 'Blue', value: '#0000ff' }
+      ],
+    }
+  ]);
+
+  console.log(response);
+})();
+```
+
+### inject(values)
+
+Type: `Function`<br>
+
+Programmatically inject responses. This enables you to prepare the responses ahead of time.
+If any injected value is found the prompt is immediately resolved with the injected value.
+This feature is intended for testing only.
+
+#### values
+
+Type: `Array`
+
+Array with values to inject. Resolved values are removed from the internal inject array.
+Each value can be an array of values in order to provide answers for a question asked multiple times.
+If a value is an instance of `Error` it will simulate the user cancelling/exiting the prompt.
+
+**Example:**
+```js
+const prompts = require('prompts');
+
+prompts.inject([ '@terkelg', ['#ff0000', '#0000ff'] ]);
+
+(async () => {
+  const response = await prompts([
+    {
+      type: 'text',
+      name: 'twitter',
+      message: `What's your twitter handle?`
+    },
+    {
+      type: 'multiselect',
+      name: 'color',
+      message: 'Pick colors',
+      choices: [
+        { title: 'Red', value: '#ff0000' },
+        { title: 'Green', value: '#00ff00' },
+        { title: 'Blue', value: '#0000ff' }
+      ],
+    }
+  ]);
+
+  // => { twitter: 'terkelg', color: [ '#ff0000', '#0000ff' ] }
+})();
+```
+
+![split](https://github.com/terkelg/prompts/raw/master/media/split.png)
+
+
+## ❯ Prompt Objects
+
+Prompts Objects are JavaScript objects that define the "questions" and the [type of prompt](#-types).
+Almost all prompt objects have the following properties:
+
+```js
+{
+  type: String | Function,
+  name: String | Function,
+  message: String | Function,
+  initial: String | Function | Async Function
+  format: Function | Async Function,
+  onRender: Function
+  onState: Function
+  stdin: Readable
+  stdout: Writeable
+}
+```
+
+Each property be of type `function` and will be invoked right before prompting the user.
+
+The function signature is `(prev, values, prompt)`, where `prev` is the value from the previous prompt,
+`values` is the response object with all values collected so far and `prompt` is the previous prompt object.
+
+**Function example:**
+```js
+{
+  type: prev => prev > 3 ? 'confirm' : null,
+  name: 'confirm',
+  message: (prev, values) => `Please confirm that you eat ${values.dish} times ${prev} a day?`
+}
+```
+
+The above prompt will be skipped if the value of the previous prompt is less than 3.
+
+### type
+
+Type: `String|Function`
+
+Defines the type of prompt to display. See the list of [prompt types](#-types) for valid values.
+
+If `type` is a falsy value the prompter will skip that question.
+```js
+{
+  type: null,
+  name: 'forgetme',
+  message: `I'll never be shown anyway`,
+}
+```
+
+### name
+
+Type: `String|Function`
+
+The response will be saved under this key/property in the returned response object.
+In case you have multiple prompts with the same name only the latest response will be stored.
+
+> Make sure to give prompts unique names if you don't want to overwrite previous values.
+
+### message
+
+Type: `String|Function`
+
+The message to be displayed to the user.
+
+### initial
+
+Type: `String|Function`
+
+Optional default prompt value. Async functions are supported too.
+
+### format
+
+Type: `Function`
+
+Receive the user input and return the formatted value to be used inside the program.
+The value returned will be added to the response object.
+
+The function signature is `(val, values)`, where `val` is the value from the current prompt and
+`values` is the current response object in case you need to format based on previous responses.
+
+**Example:**
+```js
+{
+  type: 'number',
+  name: 'price',
+  message: 'Enter price',
+  format: val => Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD' }).format(val);
+}
+```
+
+### onRender
+
+Type: `Function`
+
+Callback for when the prompt is rendered.
+The function receives [kleur](https://github.com/lukeed/kleur) as its first argument and `this` refers to the current prompt.
+
+**Example:**
+```js
+{
+  type: 'number',
+  message: 'This message will be overridden',
+  onRender(kleur) {
+    this.msg = kleur.cyan('Enter a number');
+  }
+}
+```
+
+### onState
+
+Type: `Function`
+
+Callback for when the state of the current prompt changes.
+The function signature is `(state)` where `state` is an object with a snapshot of the current state.
+The state object has two properties `value` and `aborted`. E.g `{ value: 'This is ', aborted: false }`
+
+### stdin and stdout
+
+Type: `Stream`
+
+By default, prompts uses `process.stdin` for receiving input and `process.stdout` for writing output.
+If you need to use different streams, for instance `process.stderr`, you can set these with the `stdin` and `stdout` properties.
+
+
+![split](https://github.com/terkelg/prompts/raw/master/media/split.png)
+
+
+## ❯ Types
+
+* [text](#textmessage-initial-style)
+* [password](#passwordmessage-initial)
+* [invisible](#invisiblemessage-initial)
+* [number](#numbermessage-initial-max-min-style)
+* [confirm](#confirmmessage-initial)
+* [list](#listmessage-initial)
+* [toggle](#togglemessage-initial-active-inactive)
+* [select](#selectmessage-choices-initial-hint-warn)
+* [multiselect](#multiselectmessage-choices-initial-max-hint-warn)
+* [autocompleteMultiselect](#multiselectmessage-choices-initial-max-hint-warn)
+* [autocomplete](#autocompletemessage-choices-initial-suggest-limit-style)
+* [date](#datemessage-initial-warn)
+
+***
+
+### text(message, [initial], [style])
+> Text prompt for free text input.
+
+Hit <kbd>tab</kbd> to autocomplete to `initial` value when provided.
+
+#### Example
+<img src="https://github.com/terkelg/prompts/raw/master/media/text.gif" alt="text prompt" width="499" height="103" />
+
+```js
+{
+  type: 'text',
+  name: 'value',
+  message: `What's your twitter handle?`
+}
+```
+
+#### Options
+| Param | Type | Description |
+| ----- | :--: | ----------- |
+| message | `string` | Prompt message to display |
+| initial | `string` | Default string value |
+| style | `string` | Render style (`default`, `password`, `invisible`, `emoji`). Defaults to `default` |
+| format | `function` | Receive user input. The returned value will be added to the response object |
+| validate | `function` | Receive user input. Should return `true` if the value is valid, and an error message `String` otherwise. If `false` is returned, a default error message is shown |
+| onRender | `function` | On render callback. Keyword `this` refers to the current prompt |
+| onState | `function` | On state change callback. Function signature is an `object` with two properties: `value` and `aborted` |
+
+**↑ back to:** [Prompt types](#-types)
+
+***
+
+### password(message, [initial])
+> Password prompt with masked input.
+
+This prompt is a similar to a prompt of type `'text'` with `style` set to `'password'`.
+
+#### Example
+<img src="https://github.com/terkelg/prompts/raw/master/media/password.gif" alt="password prompt" width="499" height="103" />
+
+```js
+{
+  type: 'password',
+  name: 'value',
+  message: 'Tell me a secret'
+}
+```
+
+#### Options
+| Param | Type | Description |
+| ----- | :--: | ----------- |
+| message | `string` | Prompt message to display |
+| initial | `string` | Default string value |
+| format | `function` | Receive user input. The returned value will be added to the response object |
+| validate | `function` | Receive user input. Should return `true` if the value is valid, and an error message `String` otherwise. If `false` is returned, a default error message is shown |
+| onRender | `function` | On render callback. Keyword `this` refers to the current prompt |
+| onState | `function` | On state change callback. Function signature is an `object` with two properties: `value` and `aborted` |
+
+**↑ back to:** [Prompt types](#-types)
+
+***
+
+### invisible(message, [initial])
+> Prompts user for invisible text input.
+
+This prompt is working like `sudo` where the input is invisible.
+This prompt is a similar to a prompt of type `'text'` with style set to `'invisible'`.
+
+#### Example
+<img src="https://github.com/terkelg/prompts/raw/master/media/invisible.gif" alt="invisible prompt" width="499" height="103" />
+
+```js
+{
+  type: 'invisible',
+  name: 'value',
+  message: 'Enter password'
+}
+```
+
+#### Options
+| Param | Type | Description |
+| ----- | :--: | ----------- |
+| message | `string` | Prompt message to display |
+| initial | `string` | Default string value |
+| format | `function` | Receive user input. The returned value will be added to the response object |
+| validate | `function` | Receive user input. Should return `true` if the value is valid, and an error message `String` otherwise. If `false` is returned, a default error message is shown |
+| onRender | `function` | On render callback. Keyword `this` refers to the current prompt |
+| onState | `function` | On state change callback. Function signature is an `object` with two properties: `value` and `aborted` |
+
+**↑ back to:** [Prompt types](#-types)
+
+***
+
+### number(message, initial, [max], [min], [style])
+> Prompts user for number input.
+
+You can type in numbers and use <kbd>up</kbd>/<kbd>down</kbd> to increase/decrease the value. Only numbers are allowed as input. Hit <kbd>tab</kbd> to autocomplete to `initial` value when provided.
+
+#### Example
+<img src="https://github.com/terkelg/prompts/raw/master/media/number.gif" alt="number prompt" width="499" height="103" />
+
+```js
+{
+  type: 'number',
+  name: 'value',
+  message: 'How old are you?',
+  initial: 0,
+  style: 'default',
+  min: 2,
+  max: 10
+}
+```
+
+#### Options
+| Param | Type | Description |
+| ----- | :--: | ----------- |
+| message | `string` | Prompt message to display |
+| initial | `number` | Default number value |
+| format | `function` | Receive user input. The returned value will be added to the response object |
+| validate | `function` | Receive user input. Should return `true` if the value is valid, and an error message `String` otherwise. If `false` is returned, a default error message is shown |
+| max | `number` | Max value. Defaults to `Infinity` |
+| min | `number` | Min value. Defaults to `-infinity` |
+| float | `boolean` | Allow floating point inputs. Defaults to `false` |
+| round | `number` | Round `float` values to x decimals. Defaults to `2` |
+| increment | `number` | Increment step when using <kbd>arrow</kbd> keys. Defaults to `1` |
+| style | `string` | Render style (`default`, `password`, `invisible`, `emoji`). Defaults to `default` |
+| onRender | `function` | On render callback. Keyword `this` refers to the current prompt |
+| onState | `function` | On state change callback. Function signature is an `object` with two properties: `value` and `aborted` |
+
+**↑ back to:** [Prompt types](#-types)
+
+***
+
+### confirm(message, [initial])
+> Classic yes/no prompt.
+
+Hit <kbd>y</kbd> or <kbd>n</kbd> to confirm/reject.
+
+#### Example
+<img src="https://github.com/terkelg/prompts/raw/master/media/confirm.gif" alt="confirm prompt" width="499" height="103" />
+
+```js
+{
+  type: 'confirm',
+  name: 'value',
+  message: 'Can you confirm?',
+  initial: true
+}
+```
+
+
+#### Options
+| Param | Type | Description |
+| ----- | :--: | ----------- |
+| message | `string` | Prompt message to display |
+| initial | `boolean` | Default value. Default is `false` |
+| format | `function` | Receive user input. The returned value will be added to the response object |
+| onRender | `function` | On render callback. Keyword `this` refers to the current prompt |
+| onState | `function` | On state change callback. Function signature is an `object` with two properties: `value` and `aborted` |
+
+**↑ back to:** [Prompt types](#-types)
+
+***
+
+### list(message, [initial])
+> List prompt that return an array.
+
+Similar to the `text` prompt, but the output is an `Array` containing the
+string separated by `separator`.
+
+```js
+{
+  type: 'list',
+  name: 'value',
+  message: 'Enter keywords',
+  initial: '',
+  separator: ','
+}
+```
+
+<img src="https://github.com/terkelg/prompts/raw/master/media/list.gif" alt="list prompt" width="499" height="103" />
+
+
+| Param | Type | Description |
+| ----- | :--: | ----------- |
+| message | `string` | Prompt message to display |
+| initial | `boolean` | Default value |
+| format | `function` | Receive user input. The returned value will be added to the response object |
+| separator | `string` | String separator. Will trim all white-spaces from start and end of string. Defaults to `','`  |
+| onRender | `function` | On render callback. Keyword `this` refers to the current prompt |
+| onState | `function` | On state change callback. Function signature is an `object` with two properties: `value` and `aborted` |
+
+**↑ back to:** [Prompt types](#-types)
+
+***
+
+### toggle(message, [initial], [active], [inactive])
+> Interactive toggle/switch prompt.
+
+Use tab or <kbd>arrow keys</kbd>/<kbd>tab</kbd>/<kbd>space</kbd> to switch between options.
+
+#### Example
+<img src="https://github.com/terkelg/prompts/raw/master/media/toggle.gif" alt="toggle prompt" width="499" height="103" />
+
+```js
+{
+  type: 'toggle',
+  name: 'value',
+  message: 'Can you confirm?',
+  initial: true,
+  active: 'yes',
+  inactive: 'no'
+}
+```
+
+#### Options
+| Param | Type | Description |
+| ----- | :--: | ----------- |
+| message | `string` | Prompt message to display |
+| initial | `boolean` | Default value. Defaults to `false` |
+| format | `function` | Receive user input. The returned value will be added to the response object |
+| active | `string` | Text for `active` state. Defaults to `'on'` |
+| inactive | `string` | Text for `inactive` state. Defaults to `'off'` |
+| onRender | `function` | On render callback. Keyword `this` refers to the current prompt |
+| onState | `function` | On state change callback. Function signature is an `object` with two properties: `value` and `aborted` |
+
+**↑ back to:** [Prompt types](#-types)
+
+***
+
+### select(message, choices, [initial], [hint], [warn])
+> Interactive select prompt.
+
+Use <kbd>up</kbd>/<kbd>down</kbd> to navigate. Use <kbd>tab</kbd> to cycle the list.
+
+#### Example
+<img src="https://github.com/terkelg/prompts/raw/master/media/select.gif" alt="select prompt" width="499" height="130" />
+
+```js
+{
+  type: 'select',
+  name: 'value',
+  message: 'Pick a color',
+  choices: [
+    { title: 'Red', description: 'This option has a description', value: '#ff0000' },
+    { title: 'Green', value: '#00ff00', disabled: true },
+    { title: 'Blue', value: '#0000ff' }
+  ],
+  initial: 1
+}
+```
+
+#### Options
+| Param | Type | Description |
+| ----- | :--: | ----------- |
+| message | `string` | Prompt message to display |
+| initial | `number` | Index of default value |
+| format | `function` | Receive user input. The returned value will be added to the response object |
+| hint | `string` | Hint to display to the user |
+| warn | `string` | Message to display when selecting a disabled option |
+| choices | `Array` | Array of strings or choices objects `[{ title, description, value, disabled }, ...]`. The choice's index in the array will be used as its value if it is not specified. |
+| onRender | `function` | On render callback. Keyword `this` refers to the current prompt |
+| onState | `function` | On state change callback. Function signature is an `object` with two properties: `value` and `aborted` |
+
+**↑ back to:** [Prompt types](#-types)
+
+***
+
+### multiselect(message, choices, [initial], [max], [hint], [warn])
+### autocompleteMultiselect(same)
+> Interactive multi-select prompt.  
+> Autocomplete is a searchable multiselect prompt with the same options. Useful for long lists.
+
+Use <kbd>space</kbd> to toggle select/unselect and <kbd>up</kbd>/<kbd>down</kbd> to navigate. Use <kbd>tab</kbd> to cycle the list. You can also use <kbd>right</kbd> to select and <kbd>left</kbd> to deselect.
+By default this prompt returns an `array` containing the **values** of the selected items - not their display title.
+
+#### Example
+<img src="https://github.com/terkelg/prompts/raw/master/media/multiselect.gif" alt="multiselect prompt" width="499" height="130" />
+
+```js
+{
+  type: 'multiselect',
+  name: 'value',
+  message: 'Pick colors',
+  choices: [
+    { title: 'Red', value: '#ff0000' },
+    { title: 'Green', value: '#00ff00', disabled: true },
+    { title: 'Blue', value: '#0000ff', selected: true }
+  ],
+  max: 2,
+  hint: '- Space to select. Return to submit'
+}
+```
+
+#### Options
+| Param | Type | Description |
+| ----- | :--: | ----------- |
+| message | `string` | Prompt message to display |
+| format | `function` | Receive user input. The returned value will be added to the response object |
+| instructions | `string` or `boolean` | Prompt instructions to display |
+| choices | `Array` | Array of strings or choices objects `[{ title, value, disabled }, ...]`. The choice's index in the array will be used as its value if it is not specified. |
+| optionsPerPage | `number` | Number of options displayed per page (default: 10) |
+| min | `number` | Min select - will display error |
+| max | `number` | Max select |
+| hint | `string` | Hint to display to the user |
+| warn | `string` | Message to display when selecting a disabled option |
+| onRender | `function` | On render callback. Keyword `this` refers to the current prompt |
+| onState | `function` | On state change callback. Function signature is an `object` with two properties: `value` and `aborted` |
+
+This is one of the few prompts that don't take a initial value.
+If you want to predefine selected values, give the choice object an `selected` property of `true`.
+
+**↑ back to:** [Prompt types](#-types)
+
+***
+
+### autocomplete(message, choices, [initial], [suggest], [limit], [style])
+> Interactive auto complete prompt.
+
+The prompt will list options based on user input. Type to filter the list.
+Use <kbd>⇧</kbd>/<kbd>⇩</kbd> to navigate. Use <kbd>tab</kbd> to cycle the result. Use <kbd>Page Up</kbd>/<kbd>Page Down</kbd> (on Mac: <kbd>fn</kbd> + <kbd>⇧</kbd> / <kbd>⇩</kbd>) to change page. Hit <kbd>enter</kbd> to select the highlighted item below the prompt.
+
+The default suggests function is sorting based on the `title` property of the choices.
+You can overwrite how choices are being filtered by passing your own suggest function.
+
+#### Example
+<img src="https://github.com/terkelg/prompts/raw/master/media/autocomplete.gif" alt="auto complete prompt" width="499" height="163" />
+
+```js
+{
+  type: 'autocomplete',
+  name: 'value',
+  message: 'Pick your favorite actor',
+  choices: [
+    { title: 'Cage' },
+    { title: 'Clooney', value: 'silver-fox' },
+    { title: 'Gyllenhaal' },
+    { title: 'Gibson' },
+    { title: 'Grant' }
+  ]
+}
+```
+
+#### Options
+| Param | Type | Description |
+| ----- | :--: | ----------- |
+| message | `string` | Prompt message to display |
+| format | `function` | Receive user input. The returned value will be added to the response object |
+| choices | `Array` | Array of auto-complete choices objects `[{ title, value }, ...]` |
+| suggest | `function` | Filter function. Defaults to sort by `title` property. `suggest` should always return a promise. Filters using `title` by default  |
+| limit | `number` | Max number of results to show. Defaults to `10` |
+| style | `string` | Render style (`default`, `password`, `invisible`, `emoji`). Defaults to `'default'` |
+| initial | `string \| number` | Default initial value |
+| clearFirst | `boolean` | The first ESCAPE keypress will clear the input |
+| fallback | `string` | Fallback message when no match is found. Defaults to `initial` value if provided |
+| onRender | `function` | On render callback. Keyword `this` refers to the current prompt |
+| onState | `function` | On state change callback. Function signature is an `object` with three properties: `value`, `aborted` and `exited` |
+
+Example on what a `suggest` function might look like:
+```js
+const suggestByTitle = (input, choices) =>
+    Promise.resolve(choices.filter(i => i.title.slice(0, input.length) === input))
+```
+
+**↑ back to:** [Prompt types](#-types)
+
+***
+
+### date(message, [initial], [warn])
+> Interactive date prompt.
+
+Use <kbd>left</kbd>/<kbd>right</kbd>/<kbd>tab</kbd> to navigate. Use <kbd>up</kbd>/<kbd>down</kbd> to change date.
+
+#### Example
+<img src="https://github.com/terkelg/prompts/raw/master/media/date.gif" alt="date prompt" width="499" height="103" />
+
+```js
+{
+  type: 'date',
+  name: 'value',
+  message: 'Pick a date',
+  initial: new Date(1997, 09, 12),
+  validate: date => date > Date.now() ? 'Not in the future' : true
+}
+```
+
+#### Options
+| Param | Type | Description |
+| ----- | :--: | ----------- |
+| message | `string` | Prompt message to display |
+| initial | `date` | Default date |
+| locales | `object` | Use to define custom locales. See below for an example. |
+| mask | `string` | The format mask of the date. See below for more information.<br />Default: `YYYY-MM-DD HH:mm:ss` |
+| validate | `function` | Receive user input. Should return `true` if the value is valid, and an error message `String` otherwise. If `false` is returned, a default error message is shown |
+| onRender | `function` | On render callback. Keyword `this` refers to the current prompt |
+| onState | `function` | On state change callback. Function signature is an `object` with two properties: `value` and `aborted` |
+
+Default locales:
+
+```javascript
+{
+  months: [
+    'January', 'February', 'March', 'April',
+    'May', 'June', 'July', 'August',
+    'September', 'October', 'November', 'December'
+  ],
+  monthsShort: [
+    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+  ],
+  weekdays: [
+    'Sunday', 'Monday', 'Tuesday', 'Wednesday',
+    'Thursday', 'Friday', 'Saturday'
+  ],
+  weekdaysShort: [
+    'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'
+  ]
+}
+```
+>**Formatting**: See full list of formatting options in the [wiki](https://github.com/terkelg/prompts/wiki/Date-Time-Formatting)
+
+![split](https://github.com/terkelg/prompts/raw/master/media/split.png)
+
+**↑ back to:** [Prompt types](#-types)
+
+***
+
+## ❯ Credit
+Many of the prompts are based on the work of [derhuerst](https://github.com/derhuerst).
+
+
+## ❯ License
+
+MIT © [Terkel Gjervig](https://terkel.com)
+
+
+===== FILE: ./frontend/node_modules/strip-ansi-cjs/readme.md =====
+# strip-ansi [![Build Status](https://travis-ci.org/chalk/strip-ansi.svg?branch=master)](https://travis-ci.org/chalk/strip-ansi)
+
+> Strip [ANSI escape codes](https://en.wikipedia.org/wiki/ANSI_escape_code) from a string
+
+
+## Install
+
+```
+$ npm install strip-ansi
+```
+
+
+## Usage
+
+```js
+const stripAnsi = require('strip-ansi');
+
+stripAnsi('\u001B[4mUnicorn\u001B[0m');
+//=> 'Unicorn'
+
+stripAnsi('\u001B]8;;https://github.com\u0007Click\u001B]8;;\u0007');
+//=> 'Click'
+```
+
+
+## strip-ansi for enterprise
+
+Available as part of the Tidelift Subscription.
+
+The maintainers of strip-ansi and thousands of other packages are working with Tidelift to deliver commercial support and maintenance for the open source dependencies you use to build your applications. Save time, reduce risk, and improve code health, while paying the maintainers of the exact dependencies you use. [Learn more.](https://tidelift.com/subscription/pkg/npm-strip-ansi?utm_source=npm-strip-ansi&utm_medium=referral&utm_campaign=enterprise&utm_term=repo)
+
+
+## Related
+
+- [strip-ansi-cli](https://github.com/chalk/strip-ansi-cli) - CLI for this module
+- [strip-ansi-stream](https://github.com/chalk/strip-ansi-stream) - Streaming version of this module
+- [has-ansi](https://github.com/chalk/has-ansi) - Check if a string has ANSI escape codes
+- [ansi-regex](https://github.com/chalk/ansi-regex) - Regular expression for matching ANSI escape codes
+- [chalk](https://github.com/chalk/chalk) - Terminal string styling done right
+
+
+## Maintainers
+
+- [Sindre Sorhus](https://github.com/sindresorhus)
+- [Josh Junon](https://github.com/qix-)
+
+
+
+===== FILE: ./frontend/node_modules/pkg-dir/readme.md =====
+# pkg-dir [![Build Status](https://travis-ci.org/sindresorhus/pkg-dir.svg?branch=master)](https://travis-ci.org/sindresorhus/pkg-dir)
+
+> Find the root directory of a Node.js project or npm package
+
+
+## Install
+
+```
+$ npm install pkg-dir
+```
+
+
+## Usage
+
+```
+/
+└── Users
+    └── sindresorhus
+        └── foo
+            ├── package.json
+            └── bar
+                ├── baz
+                └── example.js
+```
+
+```js
+// example.js
+const pkgDir = require('pkg-dir');
+
+(async () => {
+	const rootDir = await pkgDir(__dirname);
+
+	console.log(rootDir);
+	//=> '/Users/sindresorhus/foo'
+})();
+```
+
+
+## API
+
+### pkgDir([cwd])
+
+Returns a `Promise` for either the project root path or `undefined` if it couldn't be found.
+
+### pkgDir.sync([cwd])
+
+Returns the project root path or `undefined` if it couldn't be found.
+
+#### cwd
+
+Type: `string`<br>
+Default: `process.cwd()`
+
+Directory to start from.
+
+
+## Related
+
+- [pkg-dir-cli](https://github.com/sindresorhus/pkg-dir-cli) - CLI for this module
+- [pkg-up](https://github.com/sindresorhus/pkg-up) - Find the closest package.json file
+- [find-up](https://github.com/sindresorhus/find-up) - Find a file by walking up parent directories
+
+
+## License
+
+MIT © [Sindre Sorhus](https://sindresorhus.com)
+
+
+===== FILE: ./frontend/node_modules/is-obj/readme.md =====
+# is-obj [![Build Status](https://travis-ci.org/sindresorhus/is-obj.svg?branch=master)](https://travis-ci.org/sindresorhus/is-obj)
+
+> Check if a value is an object
+
+Keep in mind that array, function, regexp, etc, are objects in JavaScript.<br>
+See [`is-plain-obj`](https://github.com/sindresorhus/is-plain-obj) if you want to check for plain objects.
+
+
+## Install
+
+```
+$ npm install --save is-obj
+```
+
+
+## Usage
+
+```js
+const isObj = require('is-obj');
+
+isObj({foo: 'bar'});
+//=> true
+
+isObj([1, 2, 3]);
+//=> true
+
+isObj('foo');
+//=> false
+```
+
+
+## License
+
+MIT © [Sindre Sorhus](https://sindresorhus.com)
+
+
+===== FILE: ./frontend/node_modules/mimic-fn/readme.md =====
+# mimic-fn [![Build Status](https://travis-ci.org/sindresorhus/mimic-fn.svg?branch=master)](https://travis-ci.org/sindresorhus/mimic-fn)
+
+> Make a function mimic another one
+
+Useful when you wrap a function in another function and like to preserve the original name and other properties.
+
+
+## Install
+
+```
+$ npm install mimic-fn
+```
+
+
+## Usage
+
+```js
+const mimicFn = require('mimic-fn');
+
+function foo() {}
+foo.unicorn = '🦄';
+
+function wrapper() {
+	return foo();
+}
+
+console.log(wrapper.name);
+//=> 'wrapper'
+
+mimicFn(wrapper, foo);
+
+console.log(wrapper.name);
+//=> 'foo'
+
+console.log(wrapper.unicorn);
+//=> '🦄'
+```
+
+
+## API
+
+It will copy over the properties `name`, `length`, `displayName`, and any custom properties you may have set.
+
+### mimicFn(to, from)
+
+Modifies the `to` function and returns it.
+
+#### to
+
+Type: `Function`
+
+Mimicking function.
+
+#### from
+
+Type: `Function`
+
+Function to mimic.
+
+
+## Related
+
+- [rename-fn](https://github.com/sindresorhus/rename-fn) - Rename a function
+- [keep-func-props](https://github.com/ehmicky/keep-func-props) - Wrap a function without changing its name, length and other properties
+
+
+## License
+
+MIT © [Sindre Sorhus](https://sindresorhus.com)
+
+
+===== FILE: ./frontend/node_modules/supports-color/readme.md =====
+# supports-color [![Build Status](https://travis-ci.org/chalk/supports-color.svg?branch=master)](https://travis-ci.org/chalk/supports-color)
+
+> Detect whether a terminal supports color
+
+
+## Install
+
+```
+$ npm install supports-color
+```
+
+
+## Usage
+
+```js
+const supportsColor = require('supports-color');
+
+if (supportsColor.stdout) {
+	console.log('Terminal stdout supports color');
+}
+
+if (supportsColor.stdout.has256) {
+	console.log('Terminal stdout supports 256 colors');
+}
+
+if (supportsColor.stderr.has16m) {
+	console.log('Terminal stderr supports 16 million colors (truecolor)');
+}
+```
+
+
+## API
+
+Returns an `Object` with a `stdout` and `stderr` property for testing either streams. Each property is an `Object`, or `false` if color is not supported.
+
+The `stdout`/`stderr` objects specifies a level of support for color through a `.level` property and a corresponding flag:
+
+- `.level = 1` and `.hasBasic = true`: Basic color support (16 colors)
+- `.level = 2` and `.has256 = true`: 256 color support
+- `.level = 3` and `.has16m = true`: Truecolor support (16 million colors)
+
+
+## Info
+
+It obeys the `--color` and `--no-color` CLI flags.
+
+For situations where using `--color` is not possible, use the environment variable `FORCE_COLOR=1` (level 1), `FORCE_COLOR=2` (level 2), or `FORCE_COLOR=3` (level 3) to forcefully enable color, or `FORCE_COLOR=0` to forcefully disable. The use of `FORCE_COLOR` overrides all other color support checks.
+
+Explicit 256/Truecolor mode can be enabled using the `--color=256` and `--color=16m` flags, respectively.
+
+
+## Related
+
+- [supports-color-cli](https://github.com/chalk/supports-color-cli) - CLI for this module
+- [chalk](https://github.com/chalk/chalk) - Terminal string styling done right
+
+
+## Maintainers
+
+- [Sindre Sorhus](https://github.com/sindresorhus)
+- [Josh Junon](https://github.com/qix-)
+
+
+---
+
+<div align="center">
+	<b>
+		<a href="https://tidelift.com/subscription/pkg/npm-supports-color?utm_source=npm-supports-color&utm_medium=referral&utm_campaign=readme">Get professional support for this package with a Tidelift subscription</a>
+	</b>
+	<br>
+	<sub>
+		Tidelift helps make open source sustainable for maintainers while giving companies<br>assurances about security, maintenance, and licensing for their dependencies.
+	</sub>
+</div>
+
+---
+
+
+===== FILE: ./frontend/node_modules/slash/readme.md =====
+# slash [![Build Status](https://travis-ci.org/sindresorhus/slash.svg?branch=master)](https://travis-ci.org/sindresorhus/slash)
+
+> Convert Windows backslash paths to slash paths: `foo\\bar` ➔ `foo/bar`
+
+[Forward-slash paths can be used in Windows](http://superuser.com/a/176395/6877) as long as they're not extended-length paths and don't contain any non-ascii characters.
+
+This was created since the `path` methods in Node.js outputs `\\` paths on Windows.
+
+
+## Install
+
+```
+$ npm install slash
+```
+
+
+## Usage
+
+```js
+const path = require('path');
+const slash = require('slash');
+
+const string = path.join('foo', 'bar');
+// Unix    => foo/bar
+// Windows => foo\\bar
+
+slash(string);
+// Unix    => foo/bar
+// Windows => foo/bar
+```
+
+
+## API
+
+### slash(path)
+
+Type: `string`
+
+Accepts a Windows backslash path and returns a path with forward slashes.
+
+
+## License
+
+MIT © [Sindre Sorhus](https://sindresorhus.com)
+
+
+===== FILE: ./frontend/node_modules/emittery/readme.md =====
+# <img src="media/header.png" width="1000">
+
+> Simple and modern async event emitter
+
+[![Coverage Status](https://codecov.io/gh/sindresorhus/emittery/branch/master/graph/badge.svg)](https://codecov.io/gh/sindresorhus/emittery)
+[![](https://badgen.net/bundlephobia/minzip/emittery)](https://bundlephobia.com/result?p=emittery)
+
+It works in Node.js and the browser (using a bundler).
+
+Emitting events asynchronously is important for production code where you want the least amount of synchronous operations. Since JavaScript is single-threaded, no other code can run while doing synchronous operations. For Node.js, that means it will block other requests, defeating the strength of the platform, which is scalability through async. In the browser, a synchronous operation could potentially cause lags and block user interaction.
+
+## Install
+
+```
+$ npm install emittery
+```
+
+## Usage
+
+```js
+const Emittery = require('emittery');
+
+const emitter = new Emittery();
+
+emitter.on('🦄', data => {
+	console.log(data);
+});
+
+const myUnicorn = Symbol('🦄');
+
+emitter.on(myUnicorn, data => {
+	console.log(`Unicorns love ${data}`);
+});
+
+emitter.emit('🦄', '🌈'); // Will trigger printing '🌈'
+emitter.emit(myUnicorn, '🦋');  // Will trigger printing 'Unicorns love 🦋'
+```
+
+## API
+
+### eventName
+
+Emittery accepts strings and symbols as event names.
+
+Symbol event names can be used to avoid name collisions when your classes are extended, especially for internal events.
+
+### emitter = new Emittery()
+
+#### on(eventName | eventName[], listener)
+
+Subscribe to one or more events.
+
+Returns an unsubscribe method.
+
+Using the same listener multiple times for the same event will result in only one method call per emitted event.
+
+```js
+const Emittery = require('emittery');
+
+const emitter = new Emittery();
+
+emitter.on('🦄', data => {
+	console.log(data);
+});
+emitter.on(['🦄', '🐶'], data => {
+	console.log(data);
+});
+
+emitter.emit('🦄', '🌈'); // log => '🌈' x2
+emitter.emit('🐶', '🍖'); // log => '🍖'
+```
+
+##### Custom subscribable events
+
+Emittery exports some symbols which represent custom events that can be passed to `Emitter.on` and similar methods.
+
+- `Emittery.listenerAdded` - Fires when an event listener was added.
+- `Emittery.listenerRemoved` - Fires when an event listener was removed.
+
+```js
+const Emittery = require('emittery');
+
+const emitter = new Emittery();
+
+emitter.on(Emittery.listenerAdded, ({listener, eventName}) => {
+	console.log(listener);
+	//=> data => {}
+
+	console.log(eventName);
+	//=> '🦄'
+});
+
+emitter.on('🦄', data => {
+	// Handle data
+});
+```
+
+###### Listener data
+
+- `listener` - The listener that was added.
+- `eventName` - The name of the event that was added or removed if `.on()` or `.off()` was used, or `undefined` if `.onAny()` or `.offAny()` was used.
+
+Only events that are not of this type are able to trigger these events.
+
+##### listener(data)
+
+#### off(eventName | eventName[], listener)
+
+Remove one or more event subscriptions.
+
+```js
+const Emittery = require('emittery');
+
+const emitter = new Emittery();
+
+const listener = data => console.log(data);
+(async () => {
+	emitter.on(['🦄', '🐶', '🦊'], listener);
+	await emitter.emit('🦄', 'a');
+	await emitter.emit('🐶', 'b');
+	await emitter.emit('🦊', 'c');
+	emitter.off('🦄', listener);
+	emitter.off(['🐶', '🦊'], listener);
+	await emitter.emit('🦄', 'a'); // Nothing happens
+	await emitter.emit('🐶', 'b'); // Nothing happens
+	await emitter.emit('🦊', 'c'); // Nothing happens
+})();
+```
+
+##### listener(data)
+
+#### once(eventName | eventName[])
+
+Subscribe to one or more events only once. It will be unsubscribed after the first event.
+
+Returns a promise for the event data when `eventName` is emitted.
+
+```js
+const Emittery = require('emittery');
+
+const emitter = new Emittery();
+
+emitter.once('🦄').then(data => {
+	console.log(data);
+	//=> '🌈'
+});
+emitter.once(['🦄', '🐶']).then(data => {
+	console.log(data);
+});
+
+emitter.emit('🦄', '🌈'); // Log => '🌈' x2
+emitter.emit('🐶', '🍖'); // Nothing happens
+```
+
+#### events(eventName)
+
+Get an async iterator which buffers data each time an event is emitted.
+
+Call `return()` on the iterator to remove the subscription.
+
+```js
+const Emittery = require('emittery');
+
+const emitter = new Emittery();
+const iterator = emitter.events('🦄');
+
+emitter.emit('🦄', '🌈1'); // Buffered
+emitter.emit('🦄', '🌈2'); // Buffered
+
+iterator
+	.next()
+	.then(({value, done}) => {
+		// done === false
+		// value === '🌈1'
+		return iterator.next();
+	})
+	.then(({value, done}) => {
+		// done === false
+		// value === '🌈2'
+		// Revoke subscription
+		return iterator.return();
+	})
+	.then(({done}) => {
+		// done === true
+	});
+```
+
+In practice, you would usually consume the events using the [for await](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for-await...of) statement. In that case, to revoke the subscription simply break the loop.
+
+```js
+const Emittery = require('emittery');
+
+const emitter = new Emittery();
+const iterator = emitter.events('🦄');
+
+emitter.emit('🦄', '🌈1'); // Buffered
+emitter.emit('🦄', '🌈2'); // Buffered
+
+// In an async context.
+for await (const data of iterator) {
+	if (data === '🌈2') {
+		break; // Revoke the subscription when we see the value '🌈2'.
+	}
+}
+```
+
+It accepts multiple event names.
+
+```js
+const Emittery = require('emittery');
+
+const emitter = new Emittery();
+const iterator = emitter.events(['🦄', '🦊']);
+
+emitter.emit('🦄', '🌈1'); // Buffered
+emitter.emit('🦊', '🌈2'); // Buffered
+
+iterator
+	.next()
+	.then(({value, done}) => {
+		// done === false
+		// value === '🌈1'
+		return iterator.next();
+	})
+	.then(({value, done}) => {
+		// done === false
+		// value === '🌈2'
+		// Revoke subscription
+		return iterator.return();
+	})
+	.then(({done}) => {
+		// done === true
+	});
+```
+
+#### emit(eventName, data?)
+
+Trigger an event asynchronously, optionally with some data. Listeners are called in the order they were added, but executed concurrently.
+
+Returns a promise that resolves when all the event listeners are done. *Done* meaning executed if synchronous or resolved when an async/promise-returning function. You usually wouldn't want to wait for this, but you could for example catch possible errors. If any of the listeners throw/reject, the returned promise will be rejected with the error, but the other listeners will not be affected.
+
+#### emitSerial(eventName, data?)
+
+Same as above, but it waits for each listener to resolve before triggering the next one. This can be useful if your events depend on each other. Although ideally they should not. Prefer `emit()` whenever possible.
+
+If any of the listeners throw/reject, the returned promise will be rejected with the error and the remaining listeners will *not* be called.
+
+#### onAny(listener)
+
+Subscribe to be notified about any event.
+
+Returns a method to unsubscribe.
+
+##### listener(eventName, data)
+
+#### offAny(listener)
+
+Remove an `onAny` subscription.
+
+#### anyEvent()
+
+Get an async iterator which buffers a tuple of an event name and data each time an event is emitted.
+
+Call `return()` on the iterator to remove the subscription.
+
+```js
+const Emittery = require('emittery');
+
+const emitter = new Emittery();
+const iterator = emitter.anyEvent();
+
+emitter.emit('🦄', '🌈1'); // Buffered
+emitter.emit('🌟', '🌈2'); // Buffered
+
+iterator.next()
+	.then(({value, done}) => {
+		// done === false
+		// value is ['🦄', '🌈1']
+		return iterator.next();
+	})
+	.then(({value, done}) => {
+		// done === false
+		// value is ['🌟', '🌈2']
+		// Revoke subscription
+		return iterator.return();
+	})
+	.then(({done}) => {
+		// done === true
+	});
+```
+
+In the same way as for `events`, you can subscribe by using the `for await` statement
+
+#### clearListeners(eventNames?)
+
+Clear all event listeners on the instance.
+
+If `eventNames` is given, only the listeners for that events are cleared.
+
+#### listenerCount(eventNames?)
+
+The number of listeners for the `eventNames` or all events if not specified.
+
+#### bindMethods(target, methodNames?)
+
+Bind the given `methodNames`, or all `Emittery` methods if `methodNames` is not defined, into the `target` object.
+
+```js
+import Emittery = require('emittery');
+
+const object = {};
+
+new Emittery().bindMethods(object);
+
+object.emit('event');
+```
+
+## TypeScript
+
+The default `Emittery` class has generic types that can be provided by TypeScript users to strongly type the list of events and the data passed to their event listeners.
+
+```ts
+import Emittery = require('emittery');
+
+const emitter = new Emittery<
+	// Pass `{[eventName]: undefined | <eventArg>}` as the first type argument for events that pass data to their listeners.
+	// A value of `undefined` in this map means the event listeners should expect no data, and a type other than `undefined` means the listeners will receive one argument of that type.
+	{
+		open: string,
+		close: undefined
+	}
+>();
+
+// Typechecks just fine because the data type for the `open` event is `string`.
+emitter.emit('open', 'foo\n');
+
+// Typechecks just fine because `close` is present but points to undefined in the event data type map.
+emitter.emit('close');
+
+// TS compilation error because `1` isn't assignable to `string`.
+emitter.emit('open', 1);
+
+// TS compilation error because `other` isn't defined in the event data type map.
+emitter.emit('other');
+```
+
+### Emittery.mixin(emitteryPropertyName, methodNames?)
+
+A decorator which mixins `Emittery` as property `emitteryPropertyName` and `methodNames`, or all `Emittery` methods if `methodNames` is not defined, into the target class.
+
+```ts
+import Emittery = require('emittery');
+
+@Emittery.mixin('emittery')
+class MyClass {}
+
+const instance = new MyClass();
+
+instance.emit('event');
+```
+
+## Scheduling details
+
+Listeners are not invoked for events emitted *before* the listener was added. Removing a listener will prevent that listener from being invoked, even if events are in the process of being (asynchronously!) emitted. This also applies to `.clearListeners()`, which removes all listeners. Listeners will be called in the order they were added. So-called *any* listeners are called *after* event-specific listeners.
+
+Note that when using `.emitSerial()`, a slow listener will delay invocation of subsequent listeners. It's possible for newer events to overtake older ones.
+
+## FAQ
+
+### How is this different than the built-in `EventEmitter` in Node.js?
+
+There are many things to not like about `EventEmitter`: its huge API surface, synchronous event emitting, magic error event, flawed memory leak detection. Emittery has none of that.
+
+### Isn't `EventEmitter` synchronous for a reason?
+
+Mostly backwards compatibility reasons. The Node.js team can't break the whole ecosystem.
+
+It also allows silly code like this:
+
+```js
+let unicorn = false;
+
+emitter.on('🦄', () => {
+	unicorn = true;
+});
+
+emitter.emit('🦄');
+
+console.log(unicorn);
+//=> true
+```
+
+But I would argue doing that shows a deeper lack of Node.js and async comprehension and is not something we should optimize for. The benefit of async emitting is much greater.
+
+### Can you support multiple arguments for `emit()`?
+
+No, just use [destructuring](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment):
+
+```js
+emitter.on('🦄', ([foo, bar]) => {
+	console.log(foo, bar);
+});
+
+emitter.emit('🦄', [foo, bar]);
+```
+
+## Related
+
+- [p-event](https://github.com/sindresorhus/p-event) - Promisify an event by waiting for it to be emitted
+
+
+===== FILE: ./frontend/node_modules/path-key/readme.md =====
+# path-key [![Build Status](https://travis-ci.org/sindresorhus/path-key.svg?branch=master)](https://travis-ci.org/sindresorhus/path-key)
+
+> Get the [PATH](https://en.wikipedia.org/wiki/PATH_(variable)) environment variable key cross-platform
+
+It's usually `PATH`, but on Windows it can be any casing like `Path`...
+
+
+## Install
+
+```
+$ npm install path-key
+```
+
+
+## Usage
+
+```js
+const pathKey = require('path-key');
+
+const key = pathKey();
+//=> 'PATH'
+
+const PATH = process.env[key];
+//=> '/usr/local/bin:/usr/bin:/bin'
+```
+
+
+## API
+
+### pathKey(options?)
+
+#### options
+
+Type: `object`
+
+##### env
+
+Type: `object`<br>
+Default: [`process.env`](https://nodejs.org/api/process.html#process_process_env)
+
+Use a custom environment variables object.
+
+#### platform
+
+Type: `string`<br>
+Default: [`process.platform`](https://nodejs.org/api/process.html#process_process_platform)
+
+Get the PATH key for a specific platform.
+
+
+---
+
+<div align="center">
+	<b>
+		<a href="https://tidelift.com/subscription/pkg/npm-path-key?utm_source=npm-path-key&utm_medium=referral&utm_campaign=readme">Get professional support for this package with a Tidelift subscription</a>
+	</b>
+	<br>
+	<sub>
+		Tidelift helps make open source sustainable for maintainers while giving companies<br>assurances about security, maintenance, and licensing for their dependencies.
+	</sub>
+</div>
+
+
+===== FILE: ./frontend/node_modules/ansi-regex/readme.md =====
+# ansi-regex
+
+> Regular expression for matching [ANSI escape codes](https://en.wikipedia.org/wiki/ANSI_escape_code)
+
+
+## Install
+
+```
+$ npm install ansi-regex
+```
+
+
+## Usage
+
+```js
+const ansiRegex = require('ansi-regex');
+
+ansiRegex().test('\u001B[4mcake\u001B[0m');
+//=> true
+
+ansiRegex().test('cake');
+//=> false
+
+'\u001B[4mcake\u001B[0m'.match(ansiRegex());
+//=> ['\u001B[4m', '\u001B[0m']
+
+'\u001B[4mcake\u001B[0m'.match(ansiRegex({onlyFirst: true}));
+//=> ['\u001B[4m']
+
+'\u001B]8;;https://github.com\u0007click\u001B]8;;\u0007'.match(ansiRegex());
+//=> ['\u001B]8;;https://github.com\u0007', '\u001B]8;;\u0007']
+```
+
+
+## API
+
+### ansiRegex(options?)
+
+Returns a regex for matching ANSI escape codes.
+
+#### options
+
+Type: `object`
+
+##### onlyFirst
+
+Type: `boolean`<br>
+Default: `false` *(Matches any ANSI escape codes in a string)*
+
+Match only the first ANSI escape.
+
+
+## FAQ
+
+### Why do you test for codes not in the ECMA 48 standard?
+
+Some of the codes we run as a test are codes that we acquired finding various lists of non-standard or manufacturer specific codes. We test for both standard and non-standard codes, as most of them follow the same or similar format and can be safely matched in strings without the risk of removing actual string content. There are a few non-standard control codes that do not follow the traditional format (i.e. they end in numbers) thus forcing us to exclude them from the test because we cannot reliably match them.
+
+On the historical side, those ECMA standards were established in the early 90's whereas the VT100, for example, was designed in the mid/late 70's. At that point in time, control codes were still pretty ungoverned and engineers used them for a multitude of things, namely to activate hardware ports that may have been proprietary. Somewhere else you see a similar 'anarchy' of codes is in the x86 architecture for processors; there are a ton of "interrupts" that can mean different things on certain brands of processors, most of which have been phased out.
+
+
+## Maintainers
+
+- [Sindre Sorhus](https://github.com/sindresorhus)
+- [Josh Junon](https://github.com/qix-)
+
+
+---
+
+<div align="center">
+	<b>
+		<a href="https://tidelift.com/subscription/pkg/npm-ansi-regex?utm_source=npm-ansi-regex&utm_medium=referral&utm_campaign=readme">Get professional support for this package with a Tidelift subscription</a>
+	</b>
+	<br>
+	<sub>
+		Tidelift helps make open source sustainable for maintainers while giving companies<br>assurances about security, maintenance, and licensing for their dependencies.
+	</sub>
+</div>
+
+
+===== FILE: ./frontend/node_modules/pify/readme.md =====
+# pify [![Build Status](https://travis-ci.org/sindresorhus/pify.svg?branch=master)](https://travis-ci.org/sindresorhus/pify)
+
+> Promisify a callback-style function
+
+
+## Install
+
+```
+$ npm install --save pify
+```
+
+
+## Usage
+
+```js
+const fs = require('fs');
+const pify = require('pify');
+
+// promisify a single function
+
+pify(fs.readFile)('package.json', 'utf8').then(data => {
+	console.log(JSON.parse(data).name);
+	//=> 'pify'
+});
+
+// or promisify all methods in a module
+
+pify(fs).readFile('package.json', 'utf8').then(data => {
+	console.log(JSON.parse(data).name);
+	//=> 'pify'
+});
+```
+
+
+## API
+
+### pify(input, [promiseModule], [options])
+
+Returns a promise wrapped version of the supplied function or module.
+
+#### input
+
+Type: `function`, `object`
+
+Callback-style function or module whose methods you want to promisify.
+
+#### promiseModule
+
+Type: `function`
+
+Custom promise module to use instead of the native one.
+
+Check out [`pinkie-promise`](https://github.com/floatdrop/pinkie-promise) if you need a tiny promise polyfill.
+
+#### options
+
+##### multiArgs
+
+Type: `boolean`  
+Default: `false`
+
+By default, the promisified function will only return the second argument from the callback, which works fine for most APIs. This option can be useful for modules like `request` that return multiple arguments. Turning this on will make it return an array of all arguments from the callback, excluding the error argument, instead of just the second argument.
+
+```js
+const request = require('request');
+const pify = require('pify');
+
+pify(request, {multiArgs: true})('https://sindresorhus.com').then(result => {
+	const [httpResponse, body] = result;
+});
+```
+
+##### include
+
+Type: `array` of (`string`|`regex`)
+
+Methods in a module to promisify. Remaining methods will be left untouched.
+
+##### exclude
+
+Type: `array` of (`string`|`regex`)  
+Default: `[/.+Sync$/]`
+
+Methods in a module **not** to promisify. Methods with names ending with `'Sync'` are excluded by default.
+
+##### excludeMain
+
+Type: `boolean`  
+Default: `false`
+
+By default, if given module is a function itself, this function will be promisified. Turn this option on if you want to promisify only methods of the module.
+
+```js
+const pify = require('pify');
+
+function fn() {
+	return true;
+}
+
+fn.method = (data, callback) => {
+	setImmediate(() => {
+		callback(data, null);
+	});
+};
+
+// promisify methods but not fn()
+const promiseFn = pify(fn, {excludeMain: true});
+
+if (promiseFn()) {
+	promiseFn.method('hi').then(data => {
+		console.log(data);
+	});
+}
+```
+
+
+## License
+
+MIT © [Sindre Sorhus](http://sindresorhus.com)
+
+
+===== FILE: ./frontend/node_modules/crypto-random-string/readme.md =====
+# crypto-random-string [![Build Status](https://travis-ci.org/sindresorhus/crypto-random-string.svg?branch=master)](https://travis-ci.org/sindresorhus/crypto-random-string)
+
+> Generate a [cryptographically strong](https://en.m.wikipedia.org/wiki/Strong_cryptography) random string
+
+Can be useful for creating an identifier, slug, salt, fixture, etc.
+
+
+## Install
+
+```
+$ npm install crypto-random-string
+```
+
+
+## Usage
+
+```js
+const cryptoRandomString = require('crypto-random-string');
+
+cryptoRandomString(10);
+//=> '2cf05d94db'
+```
+
+
+## API
+
+### cryptoRandomString(length)
+
+Returns a [`hex`](https://en.wikipedia.org/wiki/Hexadecimal) string.
+
+#### length
+
+Type: `number`
+
+Length of the returned string.
+
+
+## Related
+
+- [random-int](https://github.com/sindresorhus/random-int) - Generate a random integer
+- [random-float](https://github.com/sindresorhus/random-float) - Generate a random float
+- [random-item](https://github.com/sindresorhus/random-item) - Get a random item from an array
+- [random-boolean](https://github.com/arthurvr/random-boolean) - Get a random boolean
+- [random-obj-key](https://github.com/sindresorhus/random-obj-key) - Get a random key from an object
+- [random-obj-prop](https://github.com/sindresorhus/random-obj-prop) - Get a random property from an object
+- [unique-random](https://github.com/sindresorhus/unique-random) - Generate random numbers that are consecutively unique
+
+
+## License
+
+MIT © [Sindre Sorhus](https://sindresorhus.com)
+

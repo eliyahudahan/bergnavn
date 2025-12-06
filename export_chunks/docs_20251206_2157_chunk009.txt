@@ -1,0 +1,1923 @@
+### Topic: docs
+### Created: 20251206_2157
+========================================
+
+===== FILE: ./frontend/node_modules/p-retry/readme.md =====
+# p-retry
+
+> Retry a promise-returning or async function
+
+It does exponential backoff and supports custom retry strategies for failed operations.
+
+## Install
+
+```
+$ npm install p-retry
+```
+
+## Usage
+
+```js
+const pRetry = require('p-retry');
+const fetch = require('node-fetch');
+
+const run = async () => {
+	const response = await fetch('https://sindresorhus.com/unicorn');
+
+	// Abort retrying if the resource doesn't exist
+	if (response.status === 404) {
+		throw new pRetry.AbortError(response.statusText);
+	}
+
+	return response.blob();
+};
+
+(async () => {
+	console.log(await pRetry(run, {retries: 5}));
+})();
+```
+
+## API
+
+### pRetry(input, options?)
+
+Returns a `Promise` that is fulfilled when calling `input` returns a fulfilled promise. If calling `input` returns a rejected promise, `input` is called again until the maximum number of retries is reached. It then rejects with the last rejection reason.
+
+
+Does not retry on most `TypeErrors`, with the exception of network errors. This is done on a best case basis as different browsers have different [messages](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch#Checking_that_the_fetch_was_successful) to indicate this. See [whatwg/fetch#526 (comment)](https://github.com/whatwg/fetch/issues/526#issuecomment-554604080)
+
+
+#### input
+
+Type: `Function`
+
+Receives the current attempt number as the first argument and is expected to return a `Promise` or any value.
+
+#### options
+
+Type: `object`
+
+Options are passed to the [`retry`](https://github.com/tim-kos/node-retry#retryoperationoptions) module.
+
+##### onFailedAttempt(error)
+
+Type: `Function`
+
+Callback invoked on each retry. Receives the error thrown by `input` as the first argument with properties `attemptNumber` and `retriesLeft` which indicate the current attempt number and the number of attempts left, respectively.
+
+```js
+const run = async () => {
+	const response = await fetch('https://sindresorhus.com/unicorn');
+
+	if (!response.ok) {
+		throw new Error(response.statusText);
+	}
+
+	return response.json();
+};
+
+(async () => {
+	const result = await pRetry(run, {
+		onFailedAttempt: error => {
+			console.log(`Attempt ${error.attemptNumber} failed. There are ${error.retriesLeft} retries left.`);
+			// 1st request => Attempt 1 failed. There are 4 retries left.
+			// 2nd request => Attempt 2 failed. There are 3 retries left.
+			// …
+		},
+		retries: 5
+	});
+
+	console.log(result);
+})();
+```
+
+The `onFailedAttempt` function can return a promise. For example, you can do some async logging:
+
+```js
+const pRetry = require('p-retry');
+const logger = require('./some-logger');
+
+const run = async () => { … };
+
+(async () => {
+	const result = await pRetry(run, {
+		onFailedAttempt: async error => {
+			await logger.log(error);
+		}
+	});
+})();
+```
+
+If the `onFailedAttempt` function throws, all retries will be aborted and the original promise will reject with the thrown error.
+
+### pRetry.AbortError(message)
+### pRetry.AbortError(error)
+
+Abort retrying and reject the promise.
+
+### message
+
+Type: `string`
+
+Error message.
+
+### error
+
+Type: `Error`
+
+Custom error.
+
+## Tip
+
+You can pass arguments to the function being retried by wrapping it in an inline arrow function:
+
+```js
+const pRetry = require('p-retry');
+
+const run = async emoji => {
+	// …
+};
+
+(async () => {
+	// Without arguments
+	await pRetry(run, {retries: 5});
+
+	// With arguments
+	await pRetry(() => run('🦄'), {retries: 5});
+})();
+```
+
+## Related
+
+- [p-timeout](https://github.com/sindresorhus/p-timeout) - Timeout a promise after a specified amount of time
+- [More…](https://github.com/sindresorhus/promise-fun)
+
+
+===== FILE: ./frontend/node_modules/string-width-cjs/readme.md =====
+# string-width
+
+> Get the visual width of a string - the number of columns required to display it
+
+Some Unicode characters are [fullwidth](https://en.wikipedia.org/wiki/Halfwidth_and_fullwidth_forms) and use double the normal width. [ANSI escape codes](https://en.wikipedia.org/wiki/ANSI_escape_code) are stripped and doesn't affect the width.
+
+Useful to be able to measure the actual width of command-line output.
+
+
+## Install
+
+```
+$ npm install string-width
+```
+
+
+## Usage
+
+```js
+const stringWidth = require('string-width');
+
+stringWidth('a');
+//=> 1
+
+stringWidth('古');
+//=> 2
+
+stringWidth('\u001B[1m古\u001B[22m');
+//=> 2
+```
+
+
+## Related
+
+- [string-width-cli](https://github.com/sindresorhus/string-width-cli) - CLI for this module
+- [string-length](https://github.com/sindresorhus/string-length) - Get the real length of a string
+- [widest-line](https://github.com/sindresorhus/widest-line) - Get the visual width of the widest line in a string
+
+
+---
+
+<div align="center">
+	<b>
+		<a href="https://tidelift.com/subscription/pkg/npm-string-width?utm_source=npm-string-width&utm_medium=referral&utm_campaign=readme">Get professional support for this package with a Tidelift subscription</a>
+	</b>
+	<br>
+	<sub>
+		Tidelift helps make open source sustainable for maintainers while giving companies<br>assurances about security, maintenance, and licensing for their dependencies.
+	</sub>
+</div>
+
+
+===== FILE: ./frontend/node_modules/css-what/readme.md =====
+# css-what
+
+[![Build Status](https://img.shields.io/github/workflow/status/fb55/css-what/Node.js%20CI/master)](https://github.com/fb55/css-what/actions/workflows/nodejs-test.yml)
+[![Coverage](https://img.shields.io/coveralls/github/fb55/css-what/master)](https://coveralls.io/github/fb55/css-what?branch=master)
+
+A CSS selector parser.
+
+## Example
+
+```js
+import * as CSSwhat from "css-what";
+
+CSSwhat.parse("foo[bar]:baz")
+
+~> [
+    [
+        { type: "tag", name: "foo" },
+        {
+            type: "attribute",
+            name: "bar",
+            action: "exists",
+            value: "",
+            ignoreCase: null
+        },
+        { type: "pseudo", name: "baz", data: null }
+    ]
+]
+```
+
+## API
+
+**`CSSwhat.parse(selector)` - Parses `selector`.**
+
+The function returns a two-dimensional array. The first array represents selectors separated by commas (eg. `sub1, sub2`), the second contains the relevant tokens for that selector. Possible token types are:
+
+| name                | properties                              | example       | output                                                                                   |
+| ------------------- | --------------------------------------- | ------------- | ---------------------------------------------------------------------------------------- |
+| `tag`               | `name`                                  | `div`         | `{ type: 'tag', name: 'div' }`                                                           |
+| `universal`         | -                                       | `*`           | `{ type: 'universal' }`                                                                  |
+| `pseudo`            | `name`, `data`                          | `:name(data)` | `{ type: 'pseudo', name: 'name', data: 'data' }`                                         |
+| `pseudo`            | `name`, `data`                          | `:name`       | `{ type: 'pseudo', name: 'name', data: null }`                                           |
+| `pseudo-element`    | `name`                                  | `::name`      | `{ type: 'pseudo-element', name: 'name' }`                                               |
+| `attribute`         | `name`, `action`, `value`, `ignoreCase` | `[attr]`      | `{ type: 'attribute', name: 'attr', action: 'exists', value: '', ignoreCase: false }`    |
+| `attribute`         | `name`, `action`, `value`, `ignoreCase` | `[attr=val]`  | `{ type: 'attribute', name: 'attr', action: 'equals', value: 'val', ignoreCase: false }` |
+| `attribute`         | `name`, `action`, `value`, `ignoreCase` | `[attr^=val]` | `{ type: 'attribute', name: 'attr', action: 'start', value: 'val', ignoreCase: false }`  |
+| `attribute`         | `name`, `action`, `value`, `ignoreCase` | `[attr$=val]` | `{ type: 'attribute', name: 'attr', action: 'end', value: 'val', ignoreCase: false }`    |
+| `child`             | -                                       | `>`           | `{ type: 'child' }`                                                                      |
+| `parent`            | -                                       | `<`           | `{ type: 'parent' }`                                                                     |
+| `sibling`           | -                                       | `~`           | `{ type: 'sibling' }`                                                                    |
+| `adjacent`          | -                                       | `+`           | `{ type: 'adjacent' }`                                                                   |
+| `descendant`        | -                                       |               | `{ type: 'descendant' }`                                                                 |
+| `column-combinator` | -                                       | `\|\|`        | `{ type: 'column-combinator' }`                                                          |
+
+**`CSSwhat.stringify(selector)` - Turns `selector` back into a string.**
+
+---
+
+License: BSD-2-Clause
+
+## Security contact information
+
+To report a security vulnerability, please use the [Tidelift security contact](https://tidelift.com/security).
+Tidelift will coordinate the fix and disclosure.
+
+## `css-what` for enterprise
+
+Available as part of the Tidelift Subscription
+
+The maintainers of `css-what` and thousands of other packages are working with Tidelift to deliver commercial support and maintenance for the open source dependencies you use to build your applications. Save time, reduce risk, and improve code health, while paying the maintainers of the exact dependencies you use. [Learn more.](https://tidelift.com/subscription/pkg/npm-css-what?utm_source=npm-css-what&utm_medium=referral&utm_campaign=enterprise&utm_term=repo)
+
+
+===== FILE: ./frontend/node_modules/stringify-object/readme.md =====
+# stringify-object [![Build Status](https://secure.travis-ci.org/yeoman/stringify-object.svg?branch=master)](http://travis-ci.org/yeoman/stringify-object)
+
+> Stringify an object/array like JSON.stringify just without all the double-quotes
+
+Useful for when you want to get the string representation of an object in a formatted way.
+
+It also handles circular references and lets you specify quote type.
+
+
+## Install
+
+```
+$ npm install stringify-object
+```
+
+
+## Usage
+
+```js
+const stringifyObject = require('stringify-object');
+
+const obj = {
+	foo: 'bar',
+	'arr': [1, 2, 3],
+	nested: { hello: "world" }
+};
+
+const pretty = stringifyObject(obj, {
+	indent: '  ',
+	singleQuotes: false
+});
+
+console.log(pretty);
+/*
+{
+	foo: "bar",
+	arr: [
+		1,
+		2,
+		3
+	],
+	nested: {
+		hello: "world"
+	}
+}
+*/
+```
+
+
+## API
+
+### stringifyObject(input, [options])
+
+Circular references will be replaced with `"[Circular]"`.
+
+#### input
+
+Type: `Object` `Array`
+
+#### options
+
+##### indent
+
+Type: `string`<br>
+Default: `\t`
+
+Preferred indentation.
+
+##### singleQuotes
+
+Type: `boolean`<br>
+Default: `true`
+
+Set to false to get double-quoted strings.
+
+##### filter(obj, prop)
+
+Type: `Function`
+
+Expected to return a `boolean` of whether to include the property `prop` of the object `obj` in the output.
+
+##### transform(obj, prop, originalResult)
+
+Type: `Function`<br>
+Default: `undefined`
+
+Expected to return a `string` that transforms the string that resulted from stringifying `obj[prop]`. This can be used to detect special types of objects that need to be stringified in a particular way. The `transform` function might return an alternate string in this case, otherwise returning the `originalResult`.
+
+Here's an example that uses the `transform` option to mask fields named "password":
+
+```js
+const obj = {
+	user: 'becky',
+	password: 'secret'
+}
+
+const pretty = stringifyObject(obj, {
+	transform: (obj, prop, originalResult) => {
+		if (prop === 'password') {
+			return originalResult.replace(/\w/g, '*');
+		} else {
+			return originalResult;
+		}
+	}
+});
+
+console.log(pretty);
+/*
+{
+	user: 'becky',
+	password: '******'
+}
+*/
+```
+
+
+##### inlineCharacterLimit
+
+Type: `number`
+
+When set, will inline values up to `inlineCharacterLimit` length for the sake of more terse output.
+
+For example, given the example at the top of the README:
+
+```js
+const obj = {
+	foo: 'bar',
+	'arr': [1, 2, 3],
+	nested: { hello: "world" }
+};
+
+const pretty = stringifyObject(obj, {
+	indent: '  ',
+	singleQuotes: false,
+	inlineCharacterLimit: 12
+});
+
+console.log(pretty);
+/*
+{
+	foo: "bar",
+	arr: [1, 2, 3],
+	nested: {
+		hello: "world"
+	}
+}
+*/
+```
+
+As you can see, `arr` was printed as a one-liner because its string was shorter than 12 characters.
+
+
+## License
+
+BSD-2-Clause © Yeoman team
+
+
+===== FILE: ./frontend/node_modules/execa/readme.md =====
+<img src="media/logo.svg" width="400">
+<br>
+
+[![Coverage Status](https://codecov.io/gh/sindresorhus/execa/branch/main/graph/badge.svg)](https://codecov.io/gh/sindresorhus/execa)
+
+> Process execution for humans
+
+## Why
+
+This package improves [`child_process`](https://nodejs.org/api/child_process.html) methods with:
+
+- Promise interface.
+- [Strips the final newline](#stripfinalnewline) from the output so you don't have to do `stdout.trim()`.
+- Supports [shebang](https://en.wikipedia.org/wiki/Shebang_(Unix)) binaries cross-platform.
+- [Improved Windows support.](https://github.com/IndigoUnited/node-cross-spawn#why)
+- Higher max buffer. 100 MB instead of 200 KB.
+- [Executes locally installed binaries by name.](#preferlocal)
+- [Cleans up spawned processes when the parent process dies.](#cleanup)
+- [Get interleaved output](#all) from `stdout` and `stderr` similar to what is printed on the terminal. [*(Async only)*](#execasyncfile-arguments-options)
+- [Can specify file and arguments as a single string without a shell](#execacommandcommand-options)
+- More descriptive errors.
+
+## Install
+
+```
+$ npm install execa
+```
+
+## Usage
+
+```js
+const execa = require('execa');
+
+(async () => {
+	const {stdout} = await execa('echo', ['unicorns']);
+	console.log(stdout);
+	//=> 'unicorns'
+})();
+```
+
+### Pipe the child process stdout to the parent
+
+```js
+const execa = require('execa');
+
+execa('echo', ['unicorns']).stdout.pipe(process.stdout);
+```
+
+### Handling Errors
+
+```js
+const execa = require('execa');
+
+(async () => {
+	// Catching an error
+	try {
+		await execa('unknown', ['command']);
+	} catch (error) {
+		console.log(error);
+		/*
+		{
+			message: 'Command failed with ENOENT: unknown command spawn unknown ENOENT',
+			errno: -2,
+			code: 'ENOENT',
+			syscall: 'spawn unknown',
+			path: 'unknown',
+			spawnargs: ['command'],
+			originalMessage: 'spawn unknown ENOENT',
+			shortMessage: 'Command failed with ENOENT: unknown command spawn unknown ENOENT',
+			command: 'unknown command',
+			escapedCommand: 'unknown command',
+			stdout: '',
+			stderr: '',
+			all: '',
+			failed: true,
+			timedOut: false,
+			isCanceled: false,
+			killed: false
+		}
+		*/
+	}
+
+})();
+```
+
+### Cancelling a spawned process
+
+```js
+const execa = require('execa');
+
+(async () => {
+	const subprocess = execa('node');
+
+	setTimeout(() => {
+		subprocess.cancel();
+	}, 1000);
+
+	try {
+		await subprocess;
+	} catch (error) {
+		console.log(subprocess.killed); // true
+		console.log(error.isCanceled); // true
+	}
+})()
+```
+
+### Catching an error with the sync method
+
+```js
+try {
+	execa.sync('unknown', ['command']);
+} catch (error) {
+	console.log(error);
+	/*
+	{
+		message: 'Command failed with ENOENT: unknown command spawnSync unknown ENOENT',
+		errno: -2,
+		code: 'ENOENT',
+		syscall: 'spawnSync unknown',
+		path: 'unknown',
+		spawnargs: ['command'],
+		originalMessage: 'spawnSync unknown ENOENT',
+		shortMessage: 'Command failed with ENOENT: unknown command spawnSync unknown ENOENT',
+		command: 'unknown command',
+		escapedCommand: 'unknown command',
+		stdout: '',
+		stderr: '',
+		all: '',
+		failed: true,
+		timedOut: false,
+		isCanceled: false,
+		killed: false
+	}
+	*/
+}
+```
+
+### Kill a process
+
+Using SIGTERM, and after 2 seconds, kill it with SIGKILL.
+
+```js
+const subprocess = execa('node');
+
+setTimeout(() => {
+	subprocess.kill('SIGTERM', {
+		forceKillAfterTimeout: 2000
+	});
+}, 1000);
+```
+
+## API
+
+### execa(file, arguments, options?)
+
+Execute a file. Think of this as a mix of [`child_process.execFile()`](https://nodejs.org/api/child_process.html#child_process_child_process_execfile_file_args_options_callback) and [`child_process.spawn()`](https://nodejs.org/api/child_process.html#child_process_child_process_spawn_command_args_options).
+
+No escaping/quoting is needed.
+
+Unless the [`shell`](#shell) option is used, no shell interpreter (Bash, `cmd.exe`, etc.) is used, so shell features such as variables substitution (`echo $PATH`) are not allowed.
+
+Returns a [`child_process` instance](https://nodejs.org/api/child_process.html#child_process_class_childprocess) which:
+  - is also a `Promise` resolving or rejecting with a [`childProcessResult`](#childProcessResult).
+  - exposes the following additional methods and properties.
+
+#### kill(signal?, options?)
+
+Same as the original [`child_process#kill()`](https://nodejs.org/api/child_process.html#child_process_subprocess_kill_signal) except: if `signal` is `SIGTERM` (the default value) and the child process is not terminated after 5 seconds, force it by sending `SIGKILL`.
+
+##### options.forceKillAfterTimeout
+
+Type: `number | false`\
+Default: `5000`
+
+Milliseconds to wait for the child process to terminate before sending `SIGKILL`.
+
+Can be disabled with `false`.
+
+#### cancel()
+
+Similar to [`childProcess.kill()`](https://nodejs.org/api/child_process.html#child_process_subprocess_kill_signal). This is preferred when cancelling the child process execution as the error is more descriptive and [`childProcessResult.isCanceled`](#iscanceled) is set to `true`.
+
+#### all
+
+Type: `ReadableStream | undefined`
+
+Stream combining/interleaving [`stdout`](https://nodejs.org/api/child_process.html#child_process_subprocess_stdout) and [`stderr`](https://nodejs.org/api/child_process.html#child_process_subprocess_stderr).
+
+This is `undefined` if either:
+  - the [`all` option](#all-2) is `false` (the default value)
+  - both [`stdout`](#stdout-1) and [`stderr`](#stderr-1) options are set to [`'inherit'`, `'ipc'`, `Stream` or `integer`](https://nodejs.org/dist/latest-v6.x/docs/api/child_process.html#child_process_options_stdio)
+
+### execa.sync(file, arguments?, options?)
+
+Execute a file synchronously.
+
+Returns or throws a [`childProcessResult`](#childProcessResult).
+
+### execa.command(command, options?)
+
+Same as [`execa()`](#execafile-arguments-options) except both file and arguments are specified in a single `command` string. For example, `execa('echo', ['unicorns'])` is the same as `execa.command('echo unicorns')`.
+
+If the file or an argument contains spaces, they must be escaped with backslashes. This matters especially if `command` is not a constant but a variable, for example with `__dirname` or `process.cwd()`. Except for spaces, no escaping/quoting is needed.
+
+The [`shell` option](#shell) must be used if the `command` uses shell-specific features (for example, `&&` or `||`), as opposed to being a simple `file` followed by its `arguments`.
+
+### execa.commandSync(command, options?)
+
+Same as [`execa.command()`](#execacommand-command-options) but synchronous.
+
+Returns or throws a [`childProcessResult`](#childProcessResult).
+
+### execa.node(scriptPath, arguments?, options?)
+
+Execute a Node.js script as a child process.
+
+Same as `execa('node', [scriptPath, ...arguments], options)` except (like [`child_process#fork()`](https://nodejs.org/api/child_process.html#child_process_child_process_fork_modulepath_args_options)):
+  - the current Node version and options are used. This can be overridden using the [`nodePath`](#nodepath-for-node-only) and [`nodeOptions`](#nodeoptions-for-node-only) options.
+  - the [`shell`](#shell) option cannot be used
+  - an extra channel [`ipc`](https://nodejs.org/api/child_process.html#child_process_options_stdio) is passed to [`stdio`](#stdio)
+
+### childProcessResult
+
+Type: `object`
+
+Result of a child process execution. On success this is a plain object. On failure this is also an `Error` instance.
+
+The child process [fails](#failed) when:
+- its [exit code](#exitcode) is not `0`
+- it was [killed](#killed) with a [signal](#signal)
+- [timing out](#timedout)
+- [being canceled](#iscanceled)
+- there's not enough memory or there are already too many child processes
+
+#### command
+
+Type: `string`
+
+The file and arguments that were run, for logging purposes.
+
+This is not escaped and should not be executed directly as a process, including using [`execa()`](#execafile-arguments-options) or [`execa.command()`](#execacommandcommand-options).
+
+#### escapedCommand
+
+Type: `string`
+
+Same as [`command`](#command) but escaped.
+
+This is meant to be copy and pasted into a shell, for debugging purposes.
+Since the escaping is fairly basic, this should not be executed directly as a process, including using [`execa()`](#execafile-arguments-options) or [`execa.command()`](#execacommandcommand-options).
+
+#### exitCode
+
+Type: `number`
+
+The numeric exit code of the process that was run.
+
+#### stdout
+
+Type: `string | Buffer`
+
+The output of the process on stdout.
+
+#### stderr
+
+Type: `string | Buffer`
+
+The output of the process on stderr.
+
+#### all
+
+Type: `string | Buffer | undefined`
+
+The output of the process with `stdout` and `stderr` interleaved.
+
+This is `undefined` if either:
+  - the [`all` option](#all-2) is `false` (the default value)
+  - `execa.sync()` was used
+
+#### failed
+
+Type: `boolean`
+
+Whether the process failed to run.
+
+#### timedOut
+
+Type: `boolean`
+
+Whether the process timed out.
+
+#### isCanceled
+
+Type: `boolean`
+
+Whether the process was canceled.
+
+#### killed
+
+Type: `boolean`
+
+Whether the process was killed.
+
+#### signal
+
+Type: `string | undefined`
+
+The name of the signal that was used to terminate the process. For example, `SIGFPE`.
+
+If a signal terminated the process, this property is defined and included in the error message. Otherwise it is `undefined`.
+
+#### signalDescription
+
+Type: `string | undefined`
+
+A human-friendly description of the signal that was used to terminate the process. For example, `Floating point arithmetic error`.
+
+If a signal terminated the process, this property is defined and included in the error message. Otherwise it is `undefined`. It is also `undefined` when the signal is very uncommon which should seldomly happen.
+
+#### message
+
+Type: `string`
+
+Error message when the child process failed to run. In addition to the [underlying error message](#originalMessage), it also contains some information related to why the child process errored.
+
+The child process [stderr](#stderr) then [stdout](#stdout) are appended to the end, separated with newlines and not interleaved.
+
+#### shortMessage
+
+Type: `string`
+
+This is the same as the [`message` property](#message) except it does not include the child process stdout/stderr.
+
+#### originalMessage
+
+Type: `string | undefined`
+
+Original error message. This is the same as the `message` property except it includes neither the child process stdout/stderr nor some additional information added by Execa.
+
+This is `undefined` unless the child process exited due to an `error` event or a timeout.
+
+### options
+
+Type: `object`
+
+#### cleanup
+
+Type: `boolean`\
+Default: `true`
+
+Kill the spawned process when the parent process exits unless either:
+	- the spawned process is [`detached`](https://nodejs.org/api/child_process.html#child_process_options_detached)
+	- the parent process is terminated abruptly, for example, with `SIGKILL` as opposed to `SIGTERM` or a normal exit
+
+#### preferLocal
+
+Type: `boolean`\
+Default: `false`
+
+Prefer locally installed binaries when looking for a binary to execute.\
+If you `$ npm install foo`, you can then `execa('foo')`.
+
+#### localDir
+
+Type: `string`\
+Default: `process.cwd()`
+
+Preferred path to find locally installed binaries in (use with `preferLocal`).
+
+#### execPath
+
+Type: `string`\
+Default: `process.execPath` (Current Node.js executable)
+
+Path to the Node.js executable to use in child processes.
+
+This can be either an absolute path or a path relative to the [`cwd` option](#cwd).
+
+Requires [`preferLocal`](#preferlocal) to be `true`.
+
+For example, this can be used together with [`get-node`](https://github.com/ehmicky/get-node) to run a specific Node.js version in a child process.
+
+#### buffer
+
+Type: `boolean`\
+Default: `true`
+
+Buffer the output from the spawned process. When set to `false`, you must read the output of [`stdout`](#stdout-1) and [`stderr`](#stderr-1) (or [`all`](#all) if the [`all`](#all-2) option is `true`). Otherwise the returned promise will not be resolved/rejected.
+
+If the spawned process fails, [`error.stdout`](#stdout), [`error.stderr`](#stderr), and [`error.all`](#all) will contain the buffered data.
+
+#### input
+
+Type: `string | Buffer | stream.Readable`
+
+Write some input to the `stdin` of your binary.\
+Streams are not allowed when using the synchronous methods.
+
+#### stdin
+
+Type: `string | number | Stream | undefined`\
+Default: `pipe`
+
+Same options as [`stdio`](https://nodejs.org/dist/latest-v6.x/docs/api/child_process.html#child_process_options_stdio).
+
+#### stdout
+
+Type: `string | number | Stream | undefined`\
+Default: `pipe`
+
+Same options as [`stdio`](https://nodejs.org/dist/latest-v6.x/docs/api/child_process.html#child_process_options_stdio).
+
+#### stderr
+
+Type: `string | number | Stream | undefined`\
+Default: `pipe`
+
+Same options as [`stdio`](https://nodejs.org/dist/latest-v6.x/docs/api/child_process.html#child_process_options_stdio).
+
+#### all
+
+Type: `boolean`\
+Default: `false`
+
+Add an `.all` property on the [promise](#all) and the [resolved value](#all-1). The property contains the output of the process with `stdout` and `stderr` interleaved.
+
+#### reject
+
+Type: `boolean`\
+Default: `true`
+
+Setting this to `false` resolves the promise with the error instead of rejecting it.
+
+#### stripFinalNewline
+
+Type: `boolean`\
+Default: `true`
+
+Strip the final [newline character](https://en.wikipedia.org/wiki/Newline) from the output.
+
+#### extendEnv
+
+Type: `boolean`\
+Default: `true`
+
+Set to `false` if you don't want to extend the environment variables when providing the `env` property.
+
+---
+
+Execa also accepts the below options which are the same as the options for [`child_process#spawn()`](https://nodejs.org/api/child_process.html#child_process_child_process_spawn_command_args_options)/[`child_process#exec()`](https://nodejs.org/api/child_process.html#child_process_child_process_exec_command_options_callback)
+
+#### cwd
+
+Type: `string`\
+Default: `process.cwd()`
+
+Current working directory of the child process.
+
+#### env
+
+Type: `object`\
+Default: `process.env`
+
+Environment key-value pairs. Extends automatically from `process.env`. Set [`extendEnv`](#extendenv) to `false` if you don't want this.
+
+#### argv0
+
+Type: `string`
+
+Explicitly set the value of `argv[0]` sent to the child process. This will be set to `file` if not specified.
+
+#### stdio
+
+Type: `string | string[]`\
+Default: `pipe`
+
+Child's [stdio](https://nodejs.org/api/child_process.html#child_process_options_stdio) configuration.
+
+#### serialization
+
+Type: `string`\
+Default: `'json'`
+
+Specify the kind of serialization used for sending messages between processes when using the [`stdio: 'ipc'`](#stdio) option or [`execa.node()`](#execanodescriptpath-arguments-options):
+	- `json`: Uses `JSON.stringify()` and `JSON.parse()`.
+	- `advanced`: Uses [`v8.serialize()`](https://nodejs.org/api/v8.html#v8_v8_serialize_value)
+
+Requires Node.js `13.2.0` or later.
+
+[More info.](https://nodejs.org/api/child_process.html#child_process_advanced_serialization)
+
+#### detached
+
+Type: `boolean`
+
+Prepare child to run independently of its parent process. Specific behavior [depends on the platform](https://nodejs.org/api/child_process.html#child_process_options_detached).
+
+#### uid
+
+Type: `number`
+
+Sets the user identity of the process.
+
+#### gid
+
+Type: `number`
+
+Sets the group identity of the process.
+
+#### shell
+
+Type: `boolean | string`\
+Default: `false`
+
+If `true`, runs `file` inside of a shell. Uses `/bin/sh` on UNIX and `cmd.exe` on Windows. A different shell can be specified as a string. The shell should understand the `-c` switch on UNIX or `/d /s /c` on Windows.
+
+We recommend against using this option since it is:
+- not cross-platform, encouraging shell-specific syntax.
+- slower, because of the additional shell interpretation.
+- unsafe, potentially allowing command injection.
+
+#### encoding
+
+Type: `string | null`\
+Default: `utf8`
+
+Specify the character encoding used to decode the `stdout` and `stderr` output. If set to `null`, then `stdout` and `stderr` will be a `Buffer` instead of a string.
+
+#### timeout
+
+Type: `number`\
+Default: `0`
+
+If timeout is greater than `0`, the parent will send the signal identified by the `killSignal` property (the default is `SIGTERM`) if the child runs longer than timeout milliseconds.
+
+#### maxBuffer
+
+Type: `number`\
+Default: `100_000_000` (100 MB)
+
+Largest amount of data in bytes allowed on `stdout` or `stderr`.
+
+#### killSignal
+
+Type: `string | number`\
+Default: `SIGTERM`
+
+Signal value to be used when the spawned process will be killed.
+
+#### windowsVerbatimArguments
+
+Type: `boolean`\
+Default: `false`
+
+If `true`, no quoting or escaping of arguments is done on Windows. Ignored on other platforms. This is set to `true` automatically when the `shell` option is `true`.
+
+#### windowsHide
+
+Type: `boolean`\
+Default: `true`
+
+On Windows, do not create a new console window. Please note this also prevents `CTRL-C` [from working](https://github.com/nodejs/node/issues/29837) on Windows.
+
+#### nodePath *(For `.node()` only)*
+
+Type: `string`\
+Default: [`process.execPath`](https://nodejs.org/api/process.html#process_process_execpath)
+
+Node.js executable used to create the child process.
+
+#### nodeOptions *(For `.node()` only)*
+
+Type: `string[]`\
+Default: [`process.execArgv`](https://nodejs.org/api/process.html#process_process_execargv)
+
+List of [CLI options](https://nodejs.org/api/cli.html#cli_options) passed to the Node.js executable.
+
+## Tips
+
+### Retry on error
+
+Gracefully handle failures by using automatic retries and exponential backoff with the [`p-retry`](https://github.com/sindresorhus/p-retry) package:
+
+```js
+const pRetry = require('p-retry');
+
+const run = async () => {
+	const results = await execa('curl', ['-sSL', 'https://sindresorhus.com/unicorn']);
+	return results;
+};
+
+(async () => {
+	console.log(await pRetry(run, {retries: 5}));
+})();
+```
+
+### Save and pipe output from a child process
+
+Let's say you want to show the output of a child process in real-time while also saving it to a variable.
+
+```js
+const execa = require('execa');
+
+const subprocess = execa('echo', ['foo']);
+subprocess.stdout.pipe(process.stdout);
+
+(async () => {
+	const {stdout} = await subprocess;
+	console.log('child output:', stdout);
+})();
+```
+
+### Redirect output to a file
+
+```js
+const execa = require('execa');
+
+const subprocess = execa('echo', ['foo'])
+subprocess.stdout.pipe(fs.createWriteStream('stdout.txt'))
+```
+
+### Redirect input from a file
+
+```js
+const execa = require('execa');
+
+const subprocess = execa('cat')
+fs.createReadStream('stdin.txt').pipe(subprocess.stdin)
+```
+
+### Execute the current package's binary
+
+```js
+const {getBinPathSync} = require('get-bin-path');
+
+const binPath = getBinPathSync();
+const subprocess = execa(binPath);
+```
+
+`execa` can be combined with [`get-bin-path`](https://github.com/ehmicky/get-bin-path) to test the current package's binary. As opposed to hard-coding the path to the binary, this validates that the `package.json` `bin` field is correctly set up.
+
+## Related
+
+- [gulp-execa](https://github.com/ehmicky/gulp-execa) - Gulp plugin for `execa`
+- [nvexeca](https://github.com/ehmicky/nvexeca) - Run `execa` using any Node.js version
+- [sudo-prompt](https://github.com/jorangreef/sudo-prompt) - Run commands with elevated privileges.
+
+## Maintainers
+
+- [Sindre Sorhus](https://github.com/sindresorhus)
+- [@ehmicky](https://github.com/ehmicky)
+
+---
+
+<div align="center">
+	<b>
+		<a href="https://tidelift.com/subscription/pkg/npm-execa?utm_source=npm-execa&utm_medium=referral&utm_campaign=readme">Get professional support for this package with a Tidelift subscription</a>
+	</b>
+	<br>
+	<sub>
+		Tidelift helps make open source sustainable for maintainers while giving companies<br>assurances about security, maintenance, and licensing for their dependencies.
+	</sub>
+</div>
+
+
+===== FILE: ./frontend/node_modules/process-nextick-args/readme.md =====
+process-nextick-args
+=====
+
+[![Build Status](https://travis-ci.org/calvinmetcalf/process-nextick-args.svg?branch=master)](https://travis-ci.org/calvinmetcalf/process-nextick-args)
+
+```bash
+npm install --save process-nextick-args
+```
+
+Always be able to pass arguments to process.nextTick, no matter the platform
+
+```js
+var pna = require('process-nextick-args');
+
+pna.nextTick(function (a, b, c) {
+  console.log(a, b, c);
+}, 'step', 3,  'profit');
+```
+
+
+===== FILE: ./frontend/node_modules/stack-utils/readme.md =====
+# stack-utils 
+
+> Captures and cleans stack traces.
+
+[![Linux Build](https://travis-ci.org/tapjs/stack-utils.svg?branch=master)](https://travis-ci.org/tapjs/stack-utils) [![Build status](https://ci.appveyor.com/api/projects/status/fb9i157knoixe3iq/branch/master?svg=true)](https://ci.appveyor.com/project/jamestalmage/stack-utils-oiw96/branch/master)  [![Coverage](https://coveralls.io/repos/tapjs/stack-utils/badge.svg?branch=master&service=github)](https://coveralls.io/github/tapjs/stack-utils?branch=master)
+
+
+Extracted from `lib/stack.js` in the [`node-tap` project](https://github.com/tapjs/node-tap)
+
+## Install
+
+```
+$ npm install --save stack-utils
+```
+
+
+## Usage
+
+```js
+const StackUtils = require('stack-utils');
+const stack = new StackUtils({cwd: process.cwd(), internals: StackUtils.nodeInternals()});
+
+console.log(stack.clean(new Error().stack));
+// outputs a beautified stack trace
+```
+
+
+## API
+
+
+### new StackUtils([options])
+
+Creates a new `stackUtils` instance.
+
+#### options
+
+##### internals
+
+Type: `array` of `RegularExpression`s  
+
+A set of regular expressions that match internal stack stack trace lines which should be culled from the stack trace.
+The default is `StackUtils.nodeInternals()`, this can be disabled by setting `[]` or appended using
+`StackUtils.nodeInternals().concat(additionalRegExp)`.  See also `ignoredPackages`.
+
+##### ignoredPackages
+
+Type: `array` of `string`s
+
+An array of npm modules to be culled from the stack trace.  This list will mapped to regular
+expressions and merged with the `internals`.
+
+Default `''`.
+
+##### cwd
+
+Type: `string`
+
+The path to the current working directory. File names in the stack trace will be shown relative to this directory.
+
+##### wrapCallSite
+
+Type: `function(CallSite)`
+
+A mapping function for manipulating CallSites before processing. The first argument is a CallSite instance, and the function should return a modified CallSite. This is useful for providing source map support.
+
+
+### StackUtils.nodeInternals()
+
+Returns an array of regular expressions that be used to cull lines from the stack trace that reference common Node.js internal files.
+
+
+### stackUtils.clean(stack, indent = 0)
+
+Cleans up a stack trace by deleting any lines that match the `internals` passed to the constructor, and shortening file names relative to `cwd`.
+
+Returns a `string` with the cleaned up stack (always terminated with a `\n` newline character).
+Spaces at the start of each line are trimmed, indentation can be added by setting `indent` to the desired number of spaces.
+
+#### stack
+
+*Required*  
+Type: `string` or an `array` of `string`s
+
+
+### stackUtils.capture([limit], [startStackFunction])
+
+Captures the current stack trace, returning an array of `CallSite`s. There are good overviews of the available CallSite methods [here](https://github.com/v8/v8/wiki/Stack%20Trace%20API#customizing-stack-traces), and [here](https://github.com/sindresorhus/callsites#api).
+
+#### limit
+
+Type: `number`
+Default: `Infinity`
+
+Limits the number of lines returned by dropping all lines in excess of the limit. This removes lines from the stack trace.
+
+#### startStackFunction
+
+Type: `function`
+
+The function where the stack trace should start. The first line of the stack trace will be the function that called `startStackFunction`. This removes lines from the end of the stack trace.
+
+
+### stackUtils.captureString([limit], [startStackFunction])
+
+Captures the current stack trace, cleans it using `stackUtils.clean(stack)`, and returns a string with the cleaned stack trace. It takes the same arguments as `stackUtils.capture`.
+
+
+### stackUtils.at([startStackFunction])
+
+Captures the first line of the stack trace (or the first line after `startStackFunction` if supplied), and returns a `CallSite` like object that is serialization friendly (properties are actual values instead of getter functions). 
+
+The available properties are:
+
+ - `line`: `number` 
+ - `column`: `number`
+ - `file`: `string`
+ - `constructor`: `boolean`
+ - `evalOrigin`: `string`
+ - `native`: `boolean`
+ - `type`: `string`
+ - `function`: `string`
+ - `method`: `string`
+
+### stackUtils.parseLine(line)
+
+Parses a `string` (which should be a single line from a stack trace), and generates an object with the following properties:
+
+ - `line`: `number` 
+ - `column`: `number`
+ - `file`: `string`
+ - `constructor`: `boolean`
+ - `evalOrigin`: `string`
+ - `evalLine`: `number`
+ - `evalColumn`: `number`
+ - `evalFile`: `string`
+ - `native`: `boolean`
+ - `function`: `string`
+ - `method`: `string`
+
+
+## License
+
+MIT © [Isaac Z. Schlueter](http://github.com/isaacs), [James Talmage](http://github.com/jamestalmage)
+
+
+===== FILE: ./frontend/node_modules/stack-utils/node_modules/escape-string-regexp/readme.md =====
+# escape-string-regexp [![Build Status](https://travis-ci.org/sindresorhus/escape-string-regexp.svg?branch=master)](https://travis-ci.org/sindresorhus/escape-string-regexp)
+
+> Escape RegExp special characters
+
+
+## Install
+
+```
+$ npm install escape-string-regexp
+```
+
+
+## Usage
+
+```js
+const escapeStringRegexp = require('escape-string-regexp');
+
+const escapedString = escapeStringRegexp('How much $ for a 🦄?');
+//=> 'How much \\$ for a 🦄\\?'
+
+new RegExp(escapedString);
+```
+
+You can also use this to escape a string that is inserted into the middle of a regex, for example, into a character class.
+
+
+## License
+
+MIT © [Sindre Sorhus](https://sindresorhus.com)
+
+
+===== FILE: ./frontend/node_modules/wrap-ansi/readme.md =====
+# wrap-ansi [![Build Status](https://travis-ci.com/chalk/wrap-ansi.svg?branch=master)](https://travis-ci.com/chalk/wrap-ansi) [![Coverage Status](https://coveralls.io/repos/github/chalk/wrap-ansi/badge.svg?branch=master)](https://coveralls.io/github/chalk/wrap-ansi?branch=master)
+
+> Wordwrap a string with [ANSI escape codes](https://en.wikipedia.org/wiki/ANSI_escape_code#Colors_and_Styles)
+
+## Install
+
+```
+$ npm install wrap-ansi
+```
+
+## Usage
+
+```js
+const chalk = require('chalk');
+const wrapAnsi = require('wrap-ansi');
+
+const input = 'The quick brown ' + chalk.red('fox jumped over ') +
+	'the lazy ' + chalk.green('dog and then ran away with the unicorn.');
+
+console.log(wrapAnsi(input, 20));
+```
+
+<img width="331" src="screenshot.png">
+
+## API
+
+### wrapAnsi(string, columns, options?)
+
+Wrap words to the specified column width.
+
+#### string
+
+Type: `string`
+
+String with ANSI escape codes. Like one styled by [`chalk`](https://github.com/chalk/chalk). Newline characters will be normalized to `\n`.
+
+#### columns
+
+Type: `number`
+
+Number of columns to wrap the text to.
+
+#### options
+
+Type: `object`
+
+##### hard
+
+Type: `boolean`\
+Default: `false`
+
+By default the wrap is soft, meaning long words may extend past the column width. Setting this to `true` will make it hard wrap at the column width.
+
+##### wordWrap
+
+Type: `boolean`\
+Default: `true`
+
+By default, an attempt is made to split words at spaces, ensuring that they don't extend past the configured columns. If wordWrap is `false`, each column will instead be completely filled splitting words as necessary.
+
+##### trim
+
+Type: `boolean`\
+Default: `true`
+
+Whitespace on all lines is removed by default. Set this option to `false` if you don't want to trim.
+
+## Related
+
+- [slice-ansi](https://github.com/chalk/slice-ansi) - Slice a string with ANSI escape codes
+- [cli-truncate](https://github.com/sindresorhus/cli-truncate) - Truncate a string to a specific width in the terminal
+- [chalk](https://github.com/chalk/chalk) - Terminal string styling done right
+- [jsesc](https://github.com/mathiasbynens/jsesc) - Generate ASCII-only output from Unicode strings. Useful for creating test fixtures.
+
+## Maintainers
+
+- [Sindre Sorhus](https://github.com/sindresorhus)
+- [Josh Junon](https://github.com/qix-)
+- [Benjamin Coe](https://github.com/bcoe)
+
+---
+
+<div align="center">
+	<b>
+		<a href="https://tidelift.com/subscription/pkg/npm-wrap_ansi?utm_source=npm-wrap-ansi&utm_medium=referral&utm_campaign=readme">Get professional support for this package with a Tidelift subscription</a>
+	</b>
+	<br>
+	<sub>
+		Tidelift helps make open source sustainable for maintainers while giving companies<br>assurances about security, maintenance, and licensing for their dependencies.
+	</sub>
+</div>
+
+
+===== FILE: ./frontend/node_modules/strip-ansi/readme.md =====
+# strip-ansi [![Build Status](https://travis-ci.org/chalk/strip-ansi.svg?branch=master)](https://travis-ci.org/chalk/strip-ansi)
+
+> Strip [ANSI escape codes](https://en.wikipedia.org/wiki/ANSI_escape_code) from a string
+
+
+## Install
+
+```
+$ npm install strip-ansi
+```
+
+
+## Usage
+
+```js
+const stripAnsi = require('strip-ansi');
+
+stripAnsi('\u001B[4mUnicorn\u001B[0m');
+//=> 'Unicorn'
+
+stripAnsi('\u001B]8;;https://github.com\u0007Click\u001B]8;;\u0007');
+//=> 'Click'
+```
+
+
+## strip-ansi for enterprise
+
+Available as part of the Tidelift Subscription.
+
+The maintainers of strip-ansi and thousands of other packages are working with Tidelift to deliver commercial support and maintenance for the open source dependencies you use to build your applications. Save time, reduce risk, and improve code health, while paying the maintainers of the exact dependencies you use. [Learn more.](https://tidelift.com/subscription/pkg/npm-strip-ansi?utm_source=npm-strip-ansi&utm_medium=referral&utm_campaign=enterprise&utm_term=repo)
+
+
+## Related
+
+- [strip-ansi-cli](https://github.com/chalk/strip-ansi-cli) - CLI for this module
+- [strip-ansi-stream](https://github.com/chalk/strip-ansi-stream) - Streaming version of this module
+- [has-ansi](https://github.com/chalk/has-ansi) - Check if a string has ANSI escape codes
+- [ansi-regex](https://github.com/chalk/ansi-regex) - Regular expression for matching ANSI escape codes
+- [chalk](https://github.com/chalk/chalk) - Terminal string styling done right
+
+
+## Maintainers
+
+- [Sindre Sorhus](https://github.com/sindresorhus)
+- [Josh Junon](https://github.com/qix-)
+
+
+
+===== FILE: ./frontend/node_modules/import-fresh/readme.md =====
+# import-fresh
+
+> Import a module while bypassing the [cache](https://nodejs.org/api/modules.html#modules_caching)
+
+Useful for testing purposes when you need to freshly import a module.
+
+## ESM
+
+For ESM, you can use this snippet:
+
+```js
+const importFresh = moduleName => import(`${moduleName}?${Date.now()}`);
+
+const {default: foo} = await importFresh('foo');
+```
+
+**This snippet causes a memory leak, so only use it for short-lived tests.**
+
+## Install
+
+```sh
+npm install import-fresh
+```
+
+## Usage
+
+```js
+// foo.js
+let i = 0;
+module.exports = () => ++i;
+```
+
+```js
+const importFresh = require('import-fresh');
+
+require('./foo')();
+//=> 1
+
+require('./foo')();
+//=> 2
+
+importFresh('./foo')();
+//=> 1
+
+importFresh('./foo')();
+//=> 1
+```
+
+## Related
+
+- [clear-module](https://github.com/sindresorhus/clear-module) - Clear a module from the import cache
+- [import-from](https://github.com/sindresorhus/import-from) - Import a module from a given path
+- [import-cwd](https://github.com/sindresorhus/import-cwd) - Import a module from the current working directory
+- [import-lazy](https://github.com/sindresorhus/import-lazy) - Import modules lazily
+
+
+===== FILE: ./frontend/node_modules/import-fresh/node_modules/resolve-from/readme.md =====
+# resolve-from [![Build Status](https://travis-ci.org/sindresorhus/resolve-from.svg?branch=master)](https://travis-ci.org/sindresorhus/resolve-from)
+
+> Resolve the path of a module like [`require.resolve()`](https://nodejs.org/api/globals.html#globals_require_resolve) but from a given path
+
+
+## Install
+
+```
+$ npm install resolve-from
+```
+
+
+## Usage
+
+```js
+const resolveFrom = require('resolve-from');
+
+// There is a file at `./foo/bar.js`
+
+resolveFrom('foo', './bar');
+//=> '/Users/sindresorhus/dev/test/foo/bar.js'
+```
+
+
+## API
+
+### resolveFrom(fromDir, moduleId)
+
+Like `require()`, throws when the module can't be found.
+
+### resolveFrom.silent(fromDir, moduleId)
+
+Returns `null` instead of throwing when the module can't be found.
+
+#### fromDir
+
+Type: `string`
+
+Directory to resolve from.
+
+#### moduleId
+
+Type: `string`
+
+What you would use in `require()`.
+
+
+## Tip
+
+Create a partial using a bound function if you want to resolve from the same `fromDir` multiple times:
+
+```js
+const resolveFromFoo = resolveFrom.bind(null, 'foo');
+
+resolveFromFoo('./bar');
+resolveFromFoo('./baz');
+```
+
+
+## Related
+
+- [resolve-cwd](https://github.com/sindresorhus/resolve-cwd) - Resolve the path of a module from the current working directory
+- [import-from](https://github.com/sindresorhus/import-from) - Import a module from a given path
+- [import-cwd](https://github.com/sindresorhus/import-cwd) - Import a module from the current working directory
+- [resolve-pkg](https://github.com/sindresorhus/resolve-pkg) - Resolve the path of a package regardless of it having an entry point
+- [import-lazy](https://github.com/sindresorhus/import-lazy) - Import a module lazily
+- [resolve-global](https://github.com/sindresorhus/resolve-global) - Resolve the path of a globally installed module
+
+
+## License
+
+MIT © [Sindre Sorhus](https://sindresorhus.com)
+
+
+===== FILE: ./frontend/node_modules/p-limit/readme.md =====
+# p-limit [![Build Status](https://travis-ci.org/sindresorhus/p-limit.svg?branch=master)](https://travis-ci.org/sindresorhus/p-limit)
+
+> Run multiple promise-returning & async functions with limited concurrency
+
+## Install
+
+```
+$ npm install p-limit
+```
+
+## Usage
+
+```js
+const pLimit = require('p-limit');
+
+const limit = pLimit(1);
+
+const input = [
+	limit(() => fetchSomething('foo')),
+	limit(() => fetchSomething('bar')),
+	limit(() => doSomething())
+];
+
+(async () => {
+	// Only one promise is run at once
+	const result = await Promise.all(input);
+	console.log(result);
+})();
+```
+
+## API
+
+### pLimit(concurrency)
+
+Returns a `limit` function.
+
+#### concurrency
+
+Type: `number`\
+Minimum: `1`\
+Default: `Infinity`
+
+Concurrency limit.
+
+### limit(fn, ...args)
+
+Returns the promise returned by calling `fn(...args)`.
+
+#### fn
+
+Type: `Function`
+
+Promise-returning/async function.
+
+#### args
+
+Any arguments to pass through to `fn`.
+
+Support for passing arguments on to the `fn` is provided in order to be able to avoid creating unnecessary closures. You probably don't need this optimization unless you're pushing a *lot* of functions.
+
+### limit.activeCount
+
+The number of promises that are currently running.
+
+### limit.pendingCount
+
+The number of promises that are waiting to run (i.e. their internal `fn` was not called yet).
+
+### limit.clearQueue()
+
+Discard pending promises that are waiting to run.
+
+This might be useful if you want to teardown the queue at the end of your program's lifecycle or discard any function calls referencing an intermediary state of your app.
+
+Note: This does not cancel promises that are already running.
+
+## FAQ
+
+### How is this different from the [`p-queue`](https://github.com/sindresorhus/p-queue) package?
+
+This package is only about limiting the number of concurrent executions, while `p-queue` is a fully featured queue implementation with lots of different options, introspection, and ability to pause the queue.
+
+## Related
+
+- [p-queue](https://github.com/sindresorhus/p-queue) - Promise queue with concurrency control
+- [p-throttle](https://github.com/sindresorhus/p-throttle) - Throttle promise-returning & async functions
+- [p-debounce](https://github.com/sindresorhus/p-debounce) - Debounce promise-returning & async functions
+- [p-all](https://github.com/sindresorhus/p-all) - Run promise-returning & async functions concurrently with optional limited concurrency
+- [More…](https://github.com/sindresorhus/promise-fun)
+
+---
+
+<div align="center">
+	<b>
+		<a href="https://tidelift.com/subscription/pkg/npm-p-limit?utm_source=npm-p-limit&utm_medium=referral&utm_campaign=readme">Get professional support for this package with a Tidelift subscription</a>
+	</b>
+	<br>
+	<sub>
+		Tidelift helps make open source sustainable for maintainers while giving companies<br>assurances about security, maintenance, and licensing for their dependencies.
+	</sub>
+</div>
+
+
+===== FILE: ./frontend/node_modules/globals/readme.md =====
+# globals [![Build Status](https://travis-ci.org/sindresorhus/globals.svg?branch=master)](https://travis-ci.org/sindresorhus/globals)
+
+> Global identifiers from different JavaScript environments
+
+Extracted from [JSHint](https://github.com/jshint/jshint/blob/3a8efa979dbb157bfb5c10b5826603a55a33b9ad/src/vars.js) and [ESLint](https://github.com/eslint/eslint/blob/b648406218f8a2d7302b98f5565e23199f44eb31/conf/environments.json) and merged.
+
+It's just a [JSON file](globals.json), so use it in whatever environment you like.
+
+**This module [no longer accepts](https://github.com/sindresorhus/globals/issues/82) new environments. If you need it for ESLint, just [create a plugin](http://eslint.org/docs/developer-guide/working-with-plugins#environments-in-plugins).**
+
+
+## Install
+
+```
+$ npm install globals
+```
+
+
+## Usage
+
+```js
+const globals = require('globals');
+
+console.log(globals.browser);
+/*
+{
+	addEventListener: false,
+	applicationCache: false,
+	ArrayBuffer: false,
+	atob: false,
+	...
+}
+*/
+```
+
+Each global is given a value of `true` or `false`. A value of `true` indicates that the variable may be overwritten. A value of `false` indicates that the variable should be considered read-only. This information is used by static analysis tools to flag incorrect behavior. We assume all variables should be `false` unless we hear otherwise.
+
+
+## License
+
+MIT © [Sindre Sorhus](https://sindresorhus.com)
+
+
+===== FILE: ./frontend/node_modules/strip-final-newline/readme.md =====
+# strip-final-newline [![Build Status](https://travis-ci.com/sindresorhus/strip-final-newline.svg?branch=master)](https://travis-ci.com/sindresorhus/strip-final-newline)
+
+> Strip the final [newline character](https://en.wikipedia.org/wiki/Newline) from a string/buffer
+
+Can be useful when parsing the output of, for example, `ChildProcess#execFile`, as [binaries usually output a newline at the end](https://stackoverflow.com/questions/729692/why-should-text-files-end-with-a-newline). Normally, you would use `stdout.trim()`, but that would also remove newlines at the start and whitespace.
+
+
+## Install
+
+```
+$ npm install strip-final-newline
+```
+
+
+## Usage
+
+```js
+const stripFinalNewline = require('strip-final-newline');
+
+stripFinalNewline('foo\nbar\n\n');
+//=> 'foo\nbar\n'
+
+stripFinalNewline(Buffer.from('foo\nbar\n\n')).toString();
+//=> 'foo\nbar\n'
+```
+
+
+## License
+
+MIT © [Sindre Sorhus](https://sindresorhus.com)
+
+
+===== FILE: ./frontend/node_modules/is-root/readme.md =====
+# is-root [![Build Status](https://travis-ci.org/sindresorhus/is-root.svg?branch=master)](https://travis-ci.org/sindresorhus/is-root)
+
+> Check if the process is running as root user, for example, one started with `sudo`
+
+
+## Install
+
+```
+$ npm install is-root
+```
+
+
+## Usage
+
+```
+$ sudo node index.js
+```
+
+```js
+// index.js
+const isRoot = require('is-root');
+
+isRoot();
+//=> true
+```
+
+
+## Related
+
+- [is-elevated](https://github.com/sindresorhus/is-elevated) - Check if the process is running with elevated privileges *(cross-platform)*
+
+
+## License
+
+MIT © [Sindre Sorhus](https://sindresorhus.com)
+
+
+===== FILE: ./frontend/node_modules/get-stream/readme.md =====
+# get-stream
+
+> Get a stream as a string, buffer, or array
+
+## Install
+
+```
+$ npm install get-stream
+```
+
+## Usage
+
+```js
+const fs = require('fs');
+const getStream = require('get-stream');
+
+(async () => {
+	const stream = fs.createReadStream('unicorn.txt');
+
+	console.log(await getStream(stream));
+	/*
+	              ,,))))))));,
+	           __)))))))))))))),
+	\|/       -\(((((''''((((((((.
+	-*-==//////((''  .     `)))))),
+	/|\      ))| o    ;-.    '(((((                                  ,(,
+	         ( `|    /  )    ;))))'                               ,_))^;(~
+	            |   |   |   ,))((((_     _____------~~~-.        %,;(;(>';'~
+	            o_);   ;    )))(((` ~---~  `::           \      %%~~)(v;(`('~
+	                  ;    ''''````         `:       `:::|\,__,%%    );`'; ~
+	                 |   _                )     /      `:|`----'     `-'
+	           ______/\/~    |                 /        /
+	         /~;;.____/;;'  /          ___--,-(   `;;;/
+	        / //  _;______;'------~~~~~    /;;/\    /
+	       //  | |                        / ;   \;;,\
+	      (<_  | ;                      /',/-----'  _>
+	       \_| ||_                     //~;~~~~~~~~~
+	           `\_|                   (,~~
+	                                   \~\
+	                                    ~~
+	*/
+})();
+```
+
+## API
+
+The methods returns a promise that resolves when the `end` event fires on the stream, indicating that there is no more data to be read. The stream is switched to flowing mode.
+
+### getStream(stream, options?)
+
+Get the `stream` as a string.
+
+#### options
+
+Type: `object`
+
+##### encoding
+
+Type: `string`\
+Default: `'utf8'`
+
+[Encoding](https://nodejs.org/api/buffer.html#buffer_buffer) of the incoming stream.
+
+##### maxBuffer
+
+Type: `number`\
+Default: `Infinity`
+
+Maximum length of the returned string. If it exceeds this value before the stream ends, the promise will be rejected with a `getStream.MaxBufferError` error.
+
+### getStream.buffer(stream, options?)
+
+Get the `stream` as a buffer.
+
+It honors the `maxBuffer` option as above, but it refers to byte length rather than string length.
+
+### getStream.array(stream, options?)
+
+Get the `stream` as an array of values.
+
+It honors both the `maxBuffer` and `encoding` options. The behavior changes slightly based on the encoding chosen:
+
+- When `encoding` is unset, it assumes an [object mode stream](https://nodesource.com/blog/understanding-object-streams/) and collects values emitted from `stream` unmodified. In this case `maxBuffer` refers to the number of items in the array (not the sum of their sizes).
+
+- When `encoding` is set to `buffer`, it collects an array of buffers. `maxBuffer` refers to the summed byte lengths of every buffer in the array.
+
+- When `encoding` is set to anything else, it collects an array of strings. `maxBuffer` refers to the summed character lengths of every string in the array.
+
+## Errors
+
+If the input stream emits an `error` event, the promise will be rejected with the error. The buffered data will be attached to the `bufferedData` property of the error.
+
+```js
+(async () => {
+	try {
+		await getStream(streamThatErrorsAtTheEnd('unicorn'));
+	} catch (error) {
+		console.log(error.bufferedData);
+		//=> 'unicorn'
+	}
+})()
+```
+
+## FAQ
+
+### How is this different from [`concat-stream`](https://github.com/maxogden/concat-stream)?
+
+This module accepts a stream instead of being one and returns a promise instead of using a callback. The API is simpler and it only supports returning a string, buffer, or array. It doesn't have a fragile type inference. You explicitly choose what you want. And it doesn't depend on the huge `readable-stream` package.
+
+## Related
+
+- [get-stdin](https://github.com/sindresorhus/get-stdin) - Get stdin as a string or buffer
+
+---
+
+<div align="center">
+	<b>
+		<a href="https://tidelift.com/subscription/pkg/npm-get-stream?utm_source=npm-get-stream&utm_medium=referral&utm_campaign=readme">Get professional support for this package with a Tidelift subscription</a>
+	</b>
+	<br>
+	<sub>
+		Tidelift helps make open source sustainable for maintainers while giving companies<br>assurances about security, maintenance, and licensing for their dependencies.
+	</sub>
+</div>
+

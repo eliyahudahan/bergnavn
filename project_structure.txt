@@ -8,6 +8,8 @@ backend
       cache
   assets
     ais_data
+    fuel_models
+    route_data
     routeinfo_routes
       alesund
       andalsnes
@@ -20,6 +22,7 @@ backend
       sandefjord
       stavanger
       trondheim
+    weather_data
   config
   controllers
   middleware
@@ -44,6 +47,7 @@ backend
 database
   seeders
 docs
+export_chunks
 frontend
   components
   hooks
@@ -2258,6 +2262,9 @@ myenv
     python3.12
       site-packages
 scripts
+static
+  js
+    split
 tools
 venv
   bin

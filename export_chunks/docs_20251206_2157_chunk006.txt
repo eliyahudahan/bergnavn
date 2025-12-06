@@ -1,0 +1,1932 @@
+### Topic: docs
+### Created: 20251206_2157
+========================================
+
+===== FILE: ./frontend/node_modules/upath/readme.md =====
+# upath v1.2.0
+
+[![Build Status](https://travis-ci.org/anodynos/upath.svg?branch=master)](https://travis-ci.org/anodynos/upath)
+[![Up to date Status](https://david-dm.org/anodynos/upath.png)](https://david-dm.org/anodynos/upath)
+
+A drop-in replacement / proxy to nodejs's `path` that:
+
+  * Replaces the windows `\` with the unix `/` in all string params & results. This has significant positives - see below.
+
+  * Adds **filename extensions** functions `addExt`, `trimExt`, `removeExt`, `changeExt`, and `defaultExt`.
+
+  * Add a `normalizeSafe` function to preserve any meaningful leading `./` & a `normalizeTrim` which additionally trims any useless ending `/`.
+
+  * Plus a helper `toUnix` that simply converts `\` to `/` and consolidates duplicates.
+
+**Useful note: these docs are actually auto generated from [specs](https://github.com/anodynos/upath/blob/master/source/spec/upath-spec.coffee), running on Linux.**
+
+Notes:
+
+ * `upath.sep` is set to `'/'` for seamless replacement (as of 1.0.3).
+
+ * upath has no runtime dependencies, except built-in `path` (as of 1.0.4)
+
+ * travis-ci tested in node versions 4 to 12
+      
+
+## Why ?
+
+Normal `path` doesn't convert paths to a unified format (ie `/`) before calculating paths (`normalize`, `join`), which can lead to numerous problems.
+Also path joining, normalization etc on the two formats is not consistent, depending on where it runs. Running `path` on Windows yields different results than when it runs on Linux / Mac.
+
+In general, if you code your paths logic while developing on Unix/Mac and it runs on Windows, you may run into problems when using `path`.
+
+Note that using **Unix `/` on Windows** works perfectly inside nodejs (and other languages), so there's no reason to stick to the Windows legacy at all.
+
+##### Examples / specs
+        
+
+Check out the different (improved) behavior to vanilla `path`:
+
+    `upath.normalize(path)`        --returns-->
+
+          ✓ `'c:/windows/nodejs/path'`           --->      `'c:/windows/nodejs/path'`  // equal to `path.normalize()`
+          ✓ `'c:/windows/../nodejs/path'`        --->              `'c:/nodejs/path'`  // equal to `path.normalize()`
+          ✓ `'c:\\windows\\nodejs\\path'`        --->      `'c:/windows/nodejs/path'`  // `path.normalize()` gives `'c:\windows\nodejs\path'`
+          ✓ `'c:\\windows\\..\\nodejs\\path'`    --->              `'c:/nodejs/path'`  // `path.normalize()` gives `'c:\windows\..\nodejs\path'`
+          ✓ `'//windows\\unix/mixed'`            --->         `'/windows/unix/mixed'`  // `path.normalize()` gives `'/windows\unix/mixed'`
+          ✓ `'\\windows//unix/mixed'`            --->         `'/windows/unix/mixed'`  // `path.normalize()` gives `'\windows/unix/mixed'`
+          ✓ `'////\\windows\\..\\unix/mixed/'`   --->                `'/unix/mixed/'`  // `path.normalize()` gives `'/\windows\..\unix/mixed/'`
+        
+
+Joining paths can also be a problem:
+
+    `upath.join(paths...)`        --returns-->
+
+          ✓ `'some/nodejs/deep', '../path'`       --->       `'some/nodejs/path'`  // equal to `path.join()`
+          ✓ `'some/nodejs\\windows', '../path'`   --->       `'some/nodejs/path'`  // `path.join()` gives `'some/path'`
+          ✓ `'some\\windows\\only', '..\\path'`   --->      `'some/windows/path'`  // `path.join()` gives `'some\windows\only/..\path'`
+        
+
+Parsing with `path.parse()` should also be consistent across OSes:
+
+  `upath.parse(path)`        --returns-->
+
+          ✓ `'c:\Windows\Directory\somefile.ext'`      ---> `{ root: '', dir: 'c:/Windows/Directory', base: 'somefile.ext', ext: '.ext', name: 'somefile' }`
+                                    // `path.parse()` gives `'{ root: '', dir: '', base: 'c:\\Windows\\Directory\\somefile.ext', ext: '.ext', name: 'c:\\Windows\\Directory\\somefile' }'`
+          ✓ `'/root/of/unix/somefile.ext'`             ---> `{ root: '/', dir: '/root/of/unix', base: 'somefile.ext', ext: '.ext', name: 'somefile' }`  // equal to `path.parse()`
+    
+
+## Added functions
+      
+
+#### `upath.toUnix(path)`
+
+Just converts all `` to `/` and consolidates duplicates, without performing any normalization.
+
+##### Examples / specs
+
+    `upath.toUnix(path)`        --returns-->
+
+        ✓ `'.//windows\//unix//mixed////'`      --->         `'./windows/unix/mixed/'`
+        ✓ `'..///windows\..\\unix/mixed'`       --->      `'../windows/../unix/mixed'`
+      
+
+#### `upath.normalizeSafe(path)`
+
+Exactly like `path.normalize(path)`, but it keeps the first meaningful `./`.
+
+Note that the unix `/` is returned everywhere, so windows `\` is always converted to unix `/`.
+
+##### Examples / specs & how it differs from vanilla `path`
+
+    `upath.normalizeSafe(path)`        --returns-->
+
+        ✓ `''`                               --->                          `'.'`  // equal to `path.normalize()`
+        ✓ `'.'`                              --->                          `'.'`  // equal to `path.normalize()`
+        ✓ `'./'`                             --->                         `'./'`  // equal to `path.normalize()`
+        ✓ `'.//'`                            --->                         `'./'`  // equal to `path.normalize()`
+        ✓ `'.\\'`                            --->                         `'./'`  // `path.normalize()` gives `'.\'`
+        ✓ `'.\\//'`                          --->                         `'./'`  // `path.normalize()` gives `'.\/'`
+        ✓ `'./..'`                           --->                         `'..'`  // equal to `path.normalize()`
+        ✓ `'.//..'`                          --->                         `'..'`  // equal to `path.normalize()`
+        ✓ `'./../'`                          --->                        `'../'`  // equal to `path.normalize()`
+        ✓ `'.\\..\\'`                        --->                        `'../'`  // `path.normalize()` gives `'.\..\'`
+        ✓ `'./../dep'`                       --->                     `'../dep'`  // equal to `path.normalize()`
+        ✓ `'../dep'`                         --->                     `'../dep'`  // equal to `path.normalize()`
+        ✓ `'../path/dep'`                    --->                `'../path/dep'`  // equal to `path.normalize()`
+        ✓ `'../path/../dep'`                 --->                     `'../dep'`  // equal to `path.normalize()`
+        ✓ `'dep'`                            --->                        `'dep'`  // equal to `path.normalize()`
+        ✓ `'path//dep'`                      --->                   `'path/dep'`  // equal to `path.normalize()`
+        ✓ `'./dep'`                          --->                      `'./dep'`  // `path.normalize()` gives `'dep'`
+        ✓ `'./path/dep'`                     --->                 `'./path/dep'`  // `path.normalize()` gives `'path/dep'`
+        ✓ `'./path/../dep'`                  --->                      `'./dep'`  // `path.normalize()` gives `'dep'`
+        ✓ `'.//windows\\unix/mixed/'`        --->      `'./windows/unix/mixed/'`  // `path.normalize()` gives `'windows\unix/mixed/'`
+        ✓ `'..//windows\\unix/mixed'`        --->      `'../windows/unix/mixed'`  // `path.normalize()` gives `'../windows\unix/mixed'`
+        ✓ `'windows\\unix/mixed/'`           --->        `'windows/unix/mixed/'`  // `path.normalize()` gives `'windows\unix/mixed/'`
+        ✓ `'..//windows\\..\\unix/mixed'`    --->              `'../unix/mixed'`  // `path.normalize()` gives `'../windows\..\unix/mixed'`
+      
+
+#### `upath.normalizeTrim(path)`
+
+Exactly like `path.normalizeSafe(path)`, but it trims any useless ending `/`.
+
+##### Examples / specs
+
+    `upath.normalizeTrim(path)`        --returns-->
+
+        ✓ `'./'`                          --->                         `'.'`  // `upath.normalizeSafe()` gives `'./'`
+        ✓ `'./../'`                       --->                        `'..'`  // `upath.normalizeSafe()` gives `'../'`
+        ✓ `'./../dep/'`                   --->                    `'../dep'`  // `upath.normalizeSafe()` gives `'../dep/'`
+        ✓ `'path//dep\\'`                 --->                  `'path/dep'`  // `upath.normalizeSafe()` gives `'path/dep/'`
+        ✓ `'.//windows\\unix/mixed/'`     --->      `'./windows/unix/mixed'`  // `upath.normalizeSafe()` gives `'./windows/unix/mixed/'`
+      
+
+#### `upath.joinSafe([path1][, path2][, ...])`
+
+Exactly like `path.join()`, but it keeps the first meaningful `./`.
+
+Note that the unix `/` is returned everywhere, so windows `\` is always converted to unix `/`.
+
+##### Examples / specs & how it differs from vanilla `path`
+
+    `upath.joinSafe(path)`        --returns-->
+
+        ✓ `'some/nodejs/deep', '../path'`                --->           `'some/nodejs/path'`  // equal to `path.join()`
+        ✓ `'./some/local/unix/', '../path'`              --->          `'./some/local/path'`  // `path.join()` gives `'some/local/path'`
+        ✓ `'./some\\current\\mixed', '..\\path'`         --->        `'./some/current/path'`  // `path.join()` gives `'some\current\mixed/..\path'`
+        ✓ `'../some/relative/destination', '..\\path'`   --->      `'../some/relative/path'`  // `path.join()` gives `'../some/relative/destination/..\path'`
+    
+
+## Added functions for *filename extension* manipulation.
+
+**Happy notes:**
+
+  In all functions you can:
+
+  * use both `.ext` & `ext` - the dot `.` on the extension is always adjusted correctly.
+
+  * omit the `ext` param (pass null/undefined/empty string) and the common sense thing will happen.
+
+  * ignore specific extensions from being considered as valid ones (eg `.min`, `.dev` `.aLongExtIsNotAnExt` etc), hence no trimming or replacement takes place on them.
+
+       
+
+#### `upath.addExt(filename, [ext])`
+
+Adds `.ext` to `filename`, but only if it doesn't already have the exact extension.
+
+##### Examples / specs
+
+    `upath.addExt(filename, 'js')`     --returns-->
+
+        ✓ `'myfile/addExt'`           --->           `'myfile/addExt.js'`
+        ✓ `'myfile/addExt.txt'`       --->       `'myfile/addExt.txt.js'`
+        ✓ `'myfile/addExt.js'`        --->           `'myfile/addExt.js'`
+        ✓ `'myfile/addExt.min.'`      --->      `'myfile/addExt.min..js'`
+        
+
+It adds nothing if no `ext` param is passed.
+
+    `upath.addExt(filename)`           --returns-->
+
+          ✓ `'myfile/addExt'`           --->              `'myfile/addExt'`
+          ✓ `'myfile/addExt.txt'`       --->          `'myfile/addExt.txt'`
+          ✓ `'myfile/addExt.js'`        --->           `'myfile/addExt.js'`
+          ✓ `'myfile/addExt.min.'`      --->         `'myfile/addExt.min.'`
+      
+
+#### `upath.trimExt(filename, [ignoreExts], [maxSize=7])`
+
+Trims a filename's extension.
+
+  * Extensions are considered to be up to `maxSize` chars long, counting the dot (defaults to 7).
+
+  * An `Array` of `ignoreExts` (eg `['.min']`) prevents these from being considered as extension, thus are not trimmed.
+
+##### Examples / specs
+
+    `upath.trimExt(filename)`          --returns-->
+
+        ✓ `'my/trimedExt.txt'`             --->                 `'my/trimedExt'`
+        ✓ `'my/trimedExt'`                 --->                 `'my/trimedExt'`
+        ✓ `'my/trimedExt.min'`             --->                 `'my/trimedExt'`
+        ✓ `'my/trimedExt.min.js'`          --->             `'my/trimedExt.min'`
+        ✓ `'../my/trimedExt.longExt'`      --->      `'../my/trimedExt.longExt'`
+        
+
+It is ignoring `.min` & `.dev` as extensions, and considers exts with up to 8 chars.
+
+    `upath.trimExt(filename, ['min', '.dev'], 8)`          --returns-->
+
+          ✓ `'my/trimedExt.txt'`              --->                  `'my/trimedExt'`
+          ✓ `'my/trimedExt.min'`              --->              `'my/trimedExt.min'`
+          ✓ `'my/trimedExt.dev'`              --->              `'my/trimedExt.dev'`
+          ✓ `'../my/trimedExt.longExt'`       --->               `'../my/trimedExt'`
+          ✓ `'../my/trimedExt.longRExt'`      --->      `'../my/trimedExt.longRExt'`
+      
+
+#### `upath.removeExt(filename, ext)`
+
+Removes the specific `ext` extension from filename, if it has it. Otherwise it leaves it as is.
+As in all upath functions, it be `.ext` or `ext`.
+
+##### Examples / specs
+
+    `upath.removeExt(filename, '.js')`          --returns-->
+
+        ✓ `'removedExt.js'`          --->          `'removedExt'`
+        ✓ `'removedExt.txt.js'`      --->      `'removedExt.txt'`
+        ✓ `'notRemoved.txt'`         --->      `'notRemoved.txt'`
+
+It does not care about the length of exts.
+
+    `upath.removeExt(filename, '.longExt')`          --returns-->
+
+        ✓ `'removedExt.longExt'`          --->          `'removedExt'`
+        ✓ `'removedExt.txt.longExt'`      --->      `'removedExt.txt'`
+        ✓ `'notRemoved.txt'`              --->      `'notRemoved.txt'`
+
+
+#### `upath.changeExt(filename, [ext], [ignoreExts], [maxSize=7])`
+
+Changes a filename's extension to `ext`. If it has no (valid) extension, it adds it.
+
+  * Valid extensions are considered to be up to `maxSize` chars long, counting the dot (defaults to 7).
+
+  * An `Array` of `ignoreExts` (eg `['.min']`) prevents these from being considered as extension, thus are not changed - the new extension is added instead.
+
+##### Examples / specs
+
+    `upath.changeExt(filename, '.js')`  --returns-->
+
+        ✓ `'my/module.min'`            --->                `'my/module.js'`
+        ✓ `'my/module.coffee'`         --->                `'my/module.js'`
+        ✓ `'my/module'`                --->                `'my/module.js'`
+        ✓ `'file/withDot.'`            --->             `'file/withDot.js'`
+        ✓ `'file/change.longExt'`      --->      `'file/change.longExt.js'`
+        
+
+If no `ext` param is given, it trims the current extension (if any).
+
+    `upath.changeExt(filename)`        --returns-->
+
+          ✓ `'my/module.min'`            --->                   `'my/module'`
+          ✓ `'my/module.coffee'`         --->                   `'my/module'`
+          ✓ `'my/module'`                --->                   `'my/module'`
+          ✓ `'file/withDot.'`            --->                `'file/withDot'`
+          ✓ `'file/change.longExt'`      --->         `'file/change.longExt'`
+        
+
+It is ignoring `.min` & `.dev` as extensions, and considers exts with up to 8 chars.
+
+    `upath.changeExt(filename, 'js', ['min', '.dev'], 8)`        --returns-->
+
+          ✓ `'my/module.coffee'`          --->                 `'my/module.js'`
+          ✓ `'file/notValidExt.min'`      --->      `'file/notValidExt.min.js'`
+          ✓ `'file/notValidExt.dev'`      --->      `'file/notValidExt.dev.js'`
+          ✓ `'file/change.longExt'`       --->               `'file/change.js'`
+          ✓ `'file/change.longRExt'`      --->      `'file/change.longRExt.js'`
+      
+
+#### `upath.defaultExt(filename, [ext], [ignoreExts], [maxSize=7])`
+
+Adds `.ext` to `filename`, only if it doesn't already have _any_ *old* extension.
+
+  * (Old) extensions are considered to be up to `maxSize` chars long, counting the dot (defaults to 7).
+
+  * An `Array` of `ignoreExts` (eg `['.min']`) will force adding default `.ext` even if one of these is present.
+
+##### Examples / specs
+
+    `upath.defaultExt(filename, 'js')`   --returns-->
+
+        ✓ `'fileWith/defaultExt'`              --->              `'fileWith/defaultExt.js'`
+        ✓ `'fileWith/defaultExt.js'`           --->              `'fileWith/defaultExt.js'`
+        ✓ `'fileWith/defaultExt.min'`          --->             `'fileWith/defaultExt.min'`
+        ✓ `'fileWith/defaultExt.longExt'`      --->      `'fileWith/defaultExt.longExt.js'`
+        
+
+If no `ext` param is passed, it leaves filename intact.
+
+    `upath.defaultExt(filename)`       --returns-->
+
+          ✓ `'fileWith/defaultExt'`              --->                 `'fileWith/defaultExt'`
+          ✓ `'fileWith/defaultExt.js'`           --->              `'fileWith/defaultExt.js'`
+          ✓ `'fileWith/defaultExt.min'`          --->             `'fileWith/defaultExt.min'`
+          ✓ `'fileWith/defaultExt.longExt'`      --->         `'fileWith/defaultExt.longExt'`
+        
+
+It is ignoring `.min` & `.dev` as extensions, and considers exts with up to 8 chars.
+
+    `upath.defaultExt(filename, 'js', ['min', '.dev'], 8)` --returns-->
+
+          ✓ `'fileWith/defaultExt'`               --->               `'fileWith/defaultExt.js'`
+          ✓ `'fileWith/defaultExt.min'`           --->           `'fileWith/defaultExt.min.js'`
+          ✓ `'fileWith/defaultExt.dev'`           --->           `'fileWith/defaultExt.dev.js'`
+          ✓ `'fileWith/defaultExt.longExt'`       --->          `'fileWith/defaultExt.longExt'`
+          ✓ `'fileWith/defaultExt.longRext'`      --->      `'fileWith/defaultExt.longRext.js'`
+
+
+Copyright(c) 2014-2019 Angelos Pikoulas (agelos.pikoulas@gmail.com)
+
+Permission is hereby granted, free of charge, to any person
+obtaining a copy of this software and associated documentation
+files (the "Software"), to deal in the Software without
+restriction, including without limitation the rights to use,
+copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following
+conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+
+
+===== FILE: ./frontend/node_modules/escalade/readme.md =====
+# escalade [![CI](https://github.com/lukeed/escalade/workflows/CI/badge.svg)](https://github.com/lukeed/escalade/actions) [![licenses](https://licenses.dev/b/npm/escalade)](https://licenses.dev/npm/escalade) [![codecov](https://badgen.now.sh/codecov/c/github/lukeed/escalade)](https://codecov.io/gh/lukeed/escalade)
+
+> A tiny (183B to 210B) and [fast](#benchmarks) utility to ascend parent directories
+
+With [escalade](https://en.wikipedia.org/wiki/Escalade), you can scale parent directories until you've found what you're looking for.<br>Given an input file or directory, `escalade` will continue executing your callback function until either:
+
+1) the callback returns a truthy value
+2) `escalade` has reached the system root directory (eg, `/`)
+
+> **Important:**<br>Please note that `escalade` only deals with direct ancestry – it will not dive into parents' sibling directories.
+
+---
+
+**Notice:** As of v3.1.0, `escalade` now includes [Deno support](http://deno.land/x/escalade)! Please see [Deno Usage](#deno) below.
+
+---
+
+## Install
+
+```
+$ npm install --save escalade
+```
+
+
+## Modes
+
+There are two "versions" of `escalade` available:
+
+#### "async"
+> **Node.js:** >= 8.x<br>
+> **Size (gzip):** 210 bytes<br>
+> **Availability:** [CommonJS](https://unpkg.com/escalade/dist/index.js), [ES Module](https://unpkg.com/escalade/dist/index.mjs)
+
+This is the primary/default mode. It makes use of `async`/`await` and [`util.promisify`](https://nodejs.org/api/util.html#util_util_promisify_original).
+
+#### "sync"
+> **Node.js:** >= 6.x<br>
+> **Size (gzip):** 183 bytes<br>
+> **Availability:** [CommonJS](https://unpkg.com/escalade/sync/index.js), [ES Module](https://unpkg.com/escalade/sync/index.mjs)
+
+This is the opt-in mode, ideal for scenarios where `async` usage cannot be supported.
+
+
+## Usage
+
+***Example Structure***
+
+```
+/Users/lukeed
+  └── oss
+    ├── license
+    └── escalade
+      ├── package.json
+      └── test
+        └── fixtures
+          ├── index.js
+          └── foobar
+            └── demo.js
+```
+
+***Example Usage***
+
+```js
+//~> demo.js
+import { join } from 'path';
+import escalade from 'escalade';
+
+const input = join(__dirname, 'demo.js');
+// or: const input = __dirname;
+
+const pkg = await escalade(input, (dir, names) => {
+  console.log('~> dir:', dir);
+  console.log('~> names:', names);
+  console.log('---');
+
+  if (names.includes('package.json')) {
+    // will be resolved into absolute
+    return 'package.json';
+  }
+});
+
+//~> dir: /Users/lukeed/oss/escalade/test/fixtures/foobar
+//~> names: ['demo.js']
+//---
+//~> dir: /Users/lukeed/oss/escalade/test/fixtures
+//~> names: ['index.js', 'foobar']
+//---
+//~> dir: /Users/lukeed/oss/escalade/test
+//~> names: ['fixtures']
+//---
+//~> dir: /Users/lukeed/oss/escalade
+//~> names: ['package.json', 'test']
+//---
+
+console.log(pkg);
+//=> /Users/lukeed/oss/escalade/package.json
+
+// Now search for "missing123.txt"
+// (Assume it doesn't exist anywhere!)
+const missing = await escalade(input, (dir, names) => {
+  console.log('~> dir:', dir);
+  return names.includes('missing123.txt') && 'missing123.txt';
+});
+
+//~> dir: /Users/lukeed/oss/escalade/test/fixtures/foobar
+//~> dir: /Users/lukeed/oss/escalade/test/fixtures
+//~> dir: /Users/lukeed/oss/escalade/test
+//~> dir: /Users/lukeed/oss/escalade
+//~> dir: /Users/lukeed/oss
+//~> dir: /Users/lukeed
+//~> dir: /Users
+//~> dir: /
+
+console.log(missing);
+//=> undefined
+```
+
+> **Note:** To run the above example with "sync" mode, import from `escalade/sync` and remove the `await` keyword.
+
+
+## API
+
+### escalade(input, callback)
+Returns: `string|void` or `Promise<string|void>`
+
+When your `callback` locates a file, `escalade` will resolve/return with an absolute path.<br>
+If your `callback` was never satisfied, then `escalade` will resolve/return with nothing (undefined).
+
+> **Important:**<br>The `sync` and `async` versions share the same API.<br>The **only** difference is that `sync` is not Promise-based.
+
+#### input
+Type: `string`
+
+The path from which to start ascending.
+
+This may be a file or a directory path.<br>However, when `input` is a file, `escalade` will begin with its parent directory.
+
+> **Important:** Unless given an absolute path, `input` will be resolved from `process.cwd()` location.
+
+#### callback
+Type: `Function`
+
+The callback to execute for each ancestry level. It always is given two arguments:
+
+1) `dir` - an absolute path of the current parent directory
+2) `names` - a list (`string[]`) of contents _relative to_ the `dir` parent
+
+> **Note:** The `names` list can contain names of files _and_ directories.
+
+When your callback returns a _falsey_ value, then `escalade` will continue with `dir`'s parent directory, re-invoking your callback with new argument values.
+
+When your callback returns a string, then `escalade` stops iteration immediately.<br>
+If the string is an absolute path, then it's left as is. Otherwise, the string is resolved into an absolute path _from_ the `dir` that housed the satisfying condition.
+
+> **Important:** Your `callback` can be a `Promise/AsyncFunction` when using the "async" version of `escalade`.
+
+## Benchmarks
+
+> Running on Node.js v10.13.0
+
+```
+# Load Time
+  find-up         3.891ms
+  escalade        0.485ms
+  escalade/sync   0.309ms
+
+# Levels: 6 (target = "foo.txt"):
+  find-up          x 24,856 ops/sec ±6.46% (55 runs sampled)
+  escalade         x 73,084 ops/sec ±4.23% (73 runs sampled)
+  find-up.sync     x  3,663 ops/sec ±1.12% (83 runs sampled)
+  escalade/sync    x  9,360 ops/sec ±0.62% (88 runs sampled)
+
+# Levels: 12 (target = "package.json"):
+  find-up          x 29,300 ops/sec ±10.68% (70 runs sampled)
+  escalade         x 73,685 ops/sec ± 5.66% (66 runs sampled)
+  find-up.sync     x  1,707 ops/sec ± 0.58% (91 runs sampled)
+  escalade/sync    x  4,667 ops/sec ± 0.68% (94 runs sampled)
+
+# Levels: 18 (target = "missing123.txt"):
+  find-up          x 21,818 ops/sec ±17.37% (14 runs sampled)
+  escalade         x 67,101 ops/sec ±21.60% (20 runs sampled)
+  find-up.sync     x  1,037 ops/sec ± 2.86% (88 runs sampled)
+  escalade/sync    x  1,248 ops/sec ± 0.50% (93 runs sampled)
+```
+
+## Deno
+
+As of v3.1.0, `escalade` is available on the Deno registry.
+
+Please note that the [API](#api) is identical and that there are still [two modes](#modes) from which to choose:
+
+```ts
+// Choose "async" mode
+import escalade from 'https://deno.land/escalade/async.ts';
+
+// Choose "sync" mode
+import escalade from 'https://deno.land/escalade/sync.ts';
+```
+
+> **Important:** The `allow-read` permission is required!
+
+
+## Related
+
+- [premove](https://github.com/lukeed/premove) - A tiny (247B) utility to remove items recursively
+- [totalist](https://github.com/lukeed/totalist) - A tiny (195B to 224B) utility to recursively list all (total) files in a directory
+- [mk-dirs](https://github.com/lukeed/mk-dirs) - A tiny (420B) utility to make a directory and its parents, recursively
+
+## License
+
+MIT © [Luke Edwards](https://lukeed.com)
+
+
+===== FILE: ./frontend/node_modules/svgo/node_modules/escape-string-regexp/readme.md =====
+# escape-string-regexp [![Build Status](https://travis-ci.org/sindresorhus/escape-string-regexp.svg?branch=master)](https://travis-ci.org/sindresorhus/escape-string-regexp)
+
+> Escape RegExp special characters
+
+
+## Install
+
+```
+$ npm install --save escape-string-regexp
+```
+
+
+## Usage
+
+```js
+const escapeStringRegexp = require('escape-string-regexp');
+
+const escapedString = escapeStringRegexp('how much $ for a unicorn?');
+//=> 'how much \$ for a unicorn\?'
+
+new RegExp(escapedString);
+```
+
+
+## License
+
+MIT © [Sindre Sorhus](http://sindresorhus.com)
+
+
+===== FILE: ./frontend/node_modules/svgo/node_modules/has-flag/readme.md =====
+# has-flag [![Build Status](https://travis-ci.org/sindresorhus/has-flag.svg?branch=master)](https://travis-ci.org/sindresorhus/has-flag)
+
+> Check if [`argv`](https://nodejs.org/docs/latest/api/process.html#process_process_argv) has a specific flag
+
+Correctly stops looking after an `--` argument terminator.
+
+
+## Install
+
+```
+$ npm install has-flag
+```
+
+
+## Usage
+
+```js
+// foo.js
+const hasFlag = require('has-flag');
+
+hasFlag('unicorn');
+//=> true
+
+hasFlag('--unicorn');
+//=> true
+
+hasFlag('f');
+//=> true
+
+hasFlag('-f');
+//=> true
+
+hasFlag('foo=bar');
+//=> true
+
+hasFlag('foo');
+//=> false
+
+hasFlag('rainbow');
+//=> false
+```
+
+```
+$ node foo.js -f --unicorn --foo=bar -- --rainbow
+```
+
+
+## API
+
+### hasFlag(flag, [argv])
+
+Returns a boolean for whether the flag exists.
+
+#### flag
+
+Type: `string`
+
+CLI flag to look for. The `--` prefix is optional.
+
+#### argv
+
+Type: `string[]`<br>
+Default: `process.argv`
+
+CLI arguments.
+
+
+## License
+
+MIT © [Sindre Sorhus](https://sindresorhus.com)
+
+
+===== FILE: ./frontend/node_modules/svgo/node_modules/ansi-styles/readme.md =====
+# ansi-styles [![Build Status](https://travis-ci.org/chalk/ansi-styles.svg?branch=master)](https://travis-ci.org/chalk/ansi-styles)
+
+> [ANSI escape codes](http://en.wikipedia.org/wiki/ANSI_escape_code#Colors_and_Styles) for styling strings in the terminal
+
+You probably want the higher-level [chalk](https://github.com/chalk/chalk) module for styling your strings.
+
+<img src="https://cdn.rawgit.com/chalk/ansi-styles/8261697c95bf34b6c7767e2cbe9941a851d59385/screenshot.svg" width="900">
+
+
+## Install
+
+```
+$ npm install ansi-styles
+```
+
+
+## Usage
+
+```js
+const style = require('ansi-styles');
+
+console.log(`${style.green.open}Hello world!${style.green.close}`);
+
+
+// Color conversion between 16/256/truecolor
+// NOTE: If conversion goes to 16 colors or 256 colors, the original color
+//       may be degraded to fit that color palette. This means terminals
+//       that do not support 16 million colors will best-match the
+//       original color.
+console.log(style.bgColor.ansi.hsl(120, 80, 72) + 'Hello world!' + style.bgColor.close);
+console.log(style.color.ansi256.rgb(199, 20, 250) + 'Hello world!' + style.color.close);
+console.log(style.color.ansi16m.hex('#ABCDEF') + 'Hello world!' + style.color.close);
+```
+
+## API
+
+Each style has an `open` and `close` property.
+
+
+## Styles
+
+### Modifiers
+
+- `reset`
+- `bold`
+- `dim`
+- `italic` *(Not widely supported)*
+- `underline`
+- `inverse`
+- `hidden`
+- `strikethrough` *(Not widely supported)*
+
+### Colors
+
+- `black`
+- `red`
+- `green`
+- `yellow`
+- `blue`
+- `magenta`
+- `cyan`
+- `white`
+- `gray` ("bright black")
+- `redBright`
+- `greenBright`
+- `yellowBright`
+- `blueBright`
+- `magentaBright`
+- `cyanBright`
+- `whiteBright`
+
+### Background colors
+
+- `bgBlack`
+- `bgRed`
+- `bgGreen`
+- `bgYellow`
+- `bgBlue`
+- `bgMagenta`
+- `bgCyan`
+- `bgWhite`
+- `bgBlackBright`
+- `bgRedBright`
+- `bgGreenBright`
+- `bgYellowBright`
+- `bgBlueBright`
+- `bgMagentaBright`
+- `bgCyanBright`
+- `bgWhiteBright`
+
+
+## Advanced usage
+
+By default, you get a map of styles, but the styles are also available as groups. They are non-enumerable so they don't show up unless you access them explicitly. This makes it easier to expose only a subset in a higher-level module.
+
+- `style.modifier`
+- `style.color`
+- `style.bgColor`
+
+###### Example
+
+```js
+console.log(style.color.green.open);
+```
+
+Raw escape codes (i.e. without the CSI escape prefix `\u001B[` and render mode postfix `m`) are available under `style.codes`, which returns a `Map` with the open codes as keys and close codes as values.
+
+###### Example
+
+```js
+console.log(style.codes.get(36));
+//=> 39
+```
+
+
+## [256 / 16 million (TrueColor) support](https://gist.github.com/XVilka/8346728)
+
+`ansi-styles` uses the [`color-convert`](https://github.com/Qix-/color-convert) package to allow for converting between various colors and ANSI escapes, with support for 256 and 16 million colors.
+
+To use these, call the associated conversion function with the intended output, for example:
+
+```js
+style.color.ansi.rgb(100, 200, 15); // RGB to 16 color ansi foreground code
+style.bgColor.ansi.rgb(100, 200, 15); // RGB to 16 color ansi background code
+
+style.color.ansi256.hsl(120, 100, 60); // HSL to 256 color ansi foreground code
+style.bgColor.ansi256.hsl(120, 100, 60); // HSL to 256 color ansi foreground code
+
+style.color.ansi16m.hex('#C0FFEE'); // Hex (RGB) to 16 million color foreground code
+style.bgColor.ansi16m.hex('#C0FFEE'); // Hex (RGB) to 16 million color background code
+```
+
+
+## Related
+
+- [ansi-escapes](https://github.com/sindresorhus/ansi-escapes) - ANSI escape codes for manipulating the terminal
+
+
+## Maintainers
+
+- [Sindre Sorhus](https://github.com/sindresorhus)
+- [Josh Junon](https://github.com/qix-)
+
+
+## License
+
+MIT
+
+
+===== FILE: ./frontend/node_modules/svgo/node_modules/domutils/readme.md =====
+Utilities for working with htmlparser2's dom
+
+[![Build Status](https://travis-ci.org/fb55/domutils.svg?branch=master)](https://travis-ci.org/fb55/domutils)
+
+
+===== FILE: ./frontend/node_modules/svgo/node_modules/domutils/node_modules/domelementtype/readme.md =====
+all the types of nodes in htmlparser2's dom
+
+
+===== FILE: ./frontend/node_modules/svgo/node_modules/css-what/readme.md =====
+# css-what [![Build Status](https://secure.travis-ci.org/fb55/css-what.svg?branch=master)](http://travis-ci.org/fb55/css-what)
+
+a CSS selector parser
+
+## Example
+
+```js
+const CSSwhat = require("css-what")
+CSSwhat.parse("foo[bar]:baz")
+
+~> [
+    [
+        { type: "tag", name: "foo" },
+        {
+            type: "attribute",
+            name: "bar",
+            action: "exists",
+            value: "",
+            ignoreCase: false
+        },
+        { type: "pseudo", name: "baz", data: null }
+    ]
+]
+```
+
+## API
+
+**`CSSwhat.parse(str, options)` - Parses `str`, optionally with the passed `options`.**
+
+The function returns a two-dimensional array. The first array represents selectors separated by commas (eg. `sub1, sub2`), the second contains the relevant tokens for that selector. Possible token types are:
+
+| name             | attributes                              | example       | output                                                                                   |
+| ---------------- | --------------------------------------- | ------------- | ---------------------------------------------------------------------------------------- |
+| `tag`            | `name`                                  | `div`         | `{ type: 'tag', name: 'div' }`                                                           |
+| `universal`      | -                                       | `*`           | `{ type: 'universal' }`                                                                  |
+| `pseudo`         | `name`, `data`                          | `:name(data)` | `{ type: 'pseudo', name: 'name', data: 'data' }`                                         |
+| `pseudo`         | `name`, `data`                          | `:name`       | `{ type: 'pseudo', name: 'name', data: null }`                                           |
+| `pseudo-element` | `name`                                  | `::name`      | `{ type: 'pseudo-element', name: 'name' }`                                               |
+| `attribute`      | `name`, `action`, `value`, `ignoreCase` | `[attr]`      | `{ type: 'attribute', name: 'attr', action: 'exists', value: '', ignoreCase: false }`    |
+| `attribute`      | `name`, `action`, `value`, `ignoreCase` | `[attr=val]`  | `{ type: 'attribute', name: 'attr', action: 'equals', value: 'val', ignoreCase: false }` |
+| `attribute`      | `name`, `action`, `value`, `ignoreCase` | `[attr^=val]` | `{ type: 'attribute', name: 'attr', action: 'start', value: 'val', ignoreCase: false }`  |
+| `attribute`      | `name`, `action`, `value`, `ignoreCase` | `[attr$=val]` | `{ type: 'attribute', name: 'attr', action: 'end', value: 'val', ignoreCase: false }`    |
+| `child`          | -                                       | `>`           | `{ type: 'child' }`                                                                      |
+| `parent`         | -                                       | `<`           | `{ type: 'parent' }`                                                                     |
+| `sibling`        | -                                       | `~`           | `{ type: 'sibling' }`                                                                    |
+| `adjacent`       | -                                       | `+`           | `{ type: 'adjacent' }`                                                                   |
+| `descendant`     | -                                       |               | `{ type: 'descendant' }`                                                                 |
+
+**Options:**
+
+-   `lowerCaseTags`: When false, tag names will not be lowercased. Defaults to `true`.
+-   `lowerCaseAttributeNames`: When false, attribute names will not be lowercased. Defaults to `true`.
+-   `xmlMode`: When `true`, `xmlMode` implies both `lowerCaseTags` and `lowerCaseAttributeNames` are set to `false`.
+
+**`CSSwhat.stringify(selector)` - Turns `selector` back into a string.**
+
+---
+
+License: BSD-2-Clause
+
+## Security contact information
+
+To report a security vulnerability, please use the [Tidelift security contact](https://tidelift.com/security).
+Tidelift will coordinate the fix and disclosure.
+
+## `css-what` for enterprise
+
+Available as part of the Tidelift Subscription
+
+The maintainers of `css-what` and thousands of other packages are working with Tidelift to deliver commercial support and maintenance for the open source dependencies you use to build your applications. Save time, reduce risk, and improve code health, while paying the maintainers of the exact dependencies you use. [Learn more.](https://tidelift.com/subscription/pkg/npm-css-what?utm_source=npm-css-what&utm_medium=referral&utm_campaign=enterprise&utm_term=repo)
+
+
+===== FILE: ./frontend/node_modules/svgo/node_modules/supports-color/readme.md =====
+# supports-color [![Build Status](https://travis-ci.org/chalk/supports-color.svg?branch=master)](https://travis-ci.org/chalk/supports-color)
+
+> Detect whether a terminal supports color
+
+
+## Install
+
+```
+$ npm install supports-color
+```
+
+
+## Usage
+
+```js
+const supportsColor = require('supports-color');
+
+if (supportsColor.stdout) {
+	console.log('Terminal stdout supports color');
+}
+
+if (supportsColor.stdout.has256) {
+	console.log('Terminal stdout supports 256 colors');
+}
+
+if (supportsColor.stderr.has16m) {
+	console.log('Terminal stderr supports 16 million colors (truecolor)');
+}
+```
+
+
+## API
+
+Returns an `Object` with a `stdout` and `stderr` property for testing either streams. Each property is an `Object`, or `false` if color is not supported.
+
+The `stdout`/`stderr` objects specifies a level of support for color through a `.level` property and a corresponding flag:
+
+- `.level = 1` and `.hasBasic = true`: Basic color support (16 colors)
+- `.level = 2` and `.has256 = true`: 256 color support
+- `.level = 3` and `.has16m = true`: Truecolor support (16 million colors)
+
+
+## Info
+
+It obeys the `--color` and `--no-color` CLI flags.
+
+Can be overridden by the user with the flags `--color` and `--no-color`. For situations where using `--color` is not possible, add the environment variable `FORCE_COLOR=1` to forcefully enable color or `FORCE_COLOR=0` to forcefully disable. The use of `FORCE_COLOR` overrides all other color support checks.
+
+Explicit 256/Truecolor mode can be enabled using the `--color=256` and `--color=16m` flags, respectively.
+
+
+## Related
+
+- [supports-color-cli](https://github.com/chalk/supports-color-cli) - CLI for this module
+- [chalk](https://github.com/chalk/chalk) - Terminal string styling done right
+
+
+## Maintainers
+
+- [Sindre Sorhus](https://github.com/sindresorhus)
+- [Josh Junon](https://github.com/qix-)
+
+
+## License
+
+MIT
+
+
+===== FILE: ./frontend/node_modules/svgo/node_modules/chalk/readme.md =====
+<h1 align="center">
+	<br>
+	<br>
+	<img width="320" src="media/logo.svg" alt="Chalk">
+	<br>
+	<br>
+	<br>
+</h1>
+
+> Terminal string styling done right
+
+[![Build Status](https://travis-ci.org/chalk/chalk.svg?branch=master)](https://travis-ci.org/chalk/chalk) [![Coverage Status](https://coveralls.io/repos/github/chalk/chalk/badge.svg?branch=master)](https://coveralls.io/github/chalk/chalk?branch=master) [![](https://img.shields.io/badge/unicorn-approved-ff69b4.svg)](https://www.youtube.com/watch?v=9auOCbH5Ns4) [![XO code style](https://img.shields.io/badge/code_style-XO-5ed9c7.svg)](https://github.com/xojs/xo) [![Mentioned in Awesome Node.js](https://awesome.re/mentioned-badge.svg)](https://github.com/sindresorhus/awesome-nodejs)
+
+### [See what's new in Chalk 2](https://github.com/chalk/chalk/releases/tag/v2.0.0)
+
+<img src="https://cdn.rawgit.com/chalk/ansi-styles/8261697c95bf34b6c7767e2cbe9941a851d59385/screenshot.svg" alt="" width="900">
+
+
+## Highlights
+
+- Expressive API
+- Highly performant
+- Ability to nest styles
+- [256/Truecolor color support](#256-and-truecolor-color-support)
+- Auto-detects color support
+- Doesn't extend `String.prototype`
+- Clean and focused
+- Actively maintained
+- [Used by ~23,000 packages](https://www.npmjs.com/browse/depended/chalk) as of December 31, 2017
+
+
+## Install
+
+```console
+$ npm install chalk
+```
+
+<a href="https://www.patreon.com/sindresorhus">
+	<img src="https://c5.patreon.com/external/logo/become_a_patron_button@2x.png" width="160">
+</a>
+
+
+## Usage
+
+```js
+const chalk = require('chalk');
+
+console.log(chalk.blue('Hello world!'));
+```
+
+Chalk comes with an easy to use composable API where you just chain and nest the styles you want.
+
+```js
+const chalk = require('chalk');
+const log = console.log;
+
+// Combine styled and normal strings
+log(chalk.blue('Hello') + ' World' + chalk.red('!'));
+
+// Compose multiple styles using the chainable API
+log(chalk.blue.bgRed.bold('Hello world!'));
+
+// Pass in multiple arguments
+log(chalk.blue('Hello', 'World!', 'Foo', 'bar', 'biz', 'baz'));
+
+// Nest styles
+log(chalk.red('Hello', chalk.underline.bgBlue('world') + '!'));
+
+// Nest styles of the same type even (color, underline, background)
+log(chalk.green(
+	'I am a green line ' +
+	chalk.blue.underline.bold('with a blue substring') +
+	' that becomes green again!'
+));
+
+// ES2015 template literal
+log(`
+CPU: ${chalk.red('90%')}
+RAM: ${chalk.green('40%')}
+DISK: ${chalk.yellow('70%')}
+`);
+
+// ES2015 tagged template literal
+log(chalk`
+CPU: {red ${cpu.totalPercent}%}
+RAM: {green ${ram.used / ram.total * 100}%}
+DISK: {rgb(255,131,0) ${disk.used / disk.total * 100}%}
+`);
+
+// Use RGB colors in terminal emulators that support it.
+log(chalk.keyword('orange')('Yay for orange colored text!'));
+log(chalk.rgb(123, 45, 67).underline('Underlined reddish color'));
+log(chalk.hex('#DEADED').bold('Bold gray!'));
+```
+
+Easily define your own themes:
+
+```js
+const chalk = require('chalk');
+
+const error = chalk.bold.red;
+const warning = chalk.keyword('orange');
+
+console.log(error('Error!'));
+console.log(warning('Warning!'));
+```
+
+Take advantage of console.log [string substitution](https://nodejs.org/docs/latest/api/console.html#console_console_log_data_args):
+
+```js
+const name = 'Sindre';
+console.log(chalk.green('Hello %s'), name);
+//=> 'Hello Sindre'
+```
+
+
+## API
+
+### chalk.`<style>[.<style>...](string, [string...])`
+
+Example: `chalk.red.bold.underline('Hello', 'world');`
+
+Chain [styles](#styles) and call the last one as a method with a string argument. Order doesn't matter, and later styles take precedent in case of a conflict. This simply means that `chalk.red.yellow.green` is equivalent to `chalk.green`.
+
+Multiple arguments will be separated by space.
+
+### chalk.enabled
+
+Color support is automatically detected, as is the level (see `chalk.level`). However, if you'd like to simply enable/disable Chalk, you can do so via the `.enabled` property.
+
+Chalk is enabled by default unless explicitly disabled via the constructor or `chalk.level` is `0`.
+
+If you need to change this in a reusable module, create a new instance:
+
+```js
+const ctx = new chalk.constructor({enabled: false});
+```
+
+### chalk.level
+
+Color support is automatically detected, but you can override it by setting the `level` property. You should however only do this in your own code as it applies globally to all Chalk consumers.
+
+If you need to change this in a reusable module, create a new instance:
+
+```js
+const ctx = new chalk.constructor({level: 0});
+```
+
+Levels are as follows:
+
+0. All colors disabled
+1. Basic color support (16 colors)
+2. 256 color support
+3. Truecolor support (16 million colors)
+
+### chalk.supportsColor
+
+Detect whether the terminal [supports color](https://github.com/chalk/supports-color). Used internally and handled for you, but exposed for convenience.
+
+Can be overridden by the user with the flags `--color` and `--no-color`. For situations where using `--color` is not possible, add the environment variable `FORCE_COLOR=1` to forcefully enable color or `FORCE_COLOR=0` to forcefully disable. The use of `FORCE_COLOR` overrides all other color support checks.
+
+Explicit 256/Truecolor mode can be enabled using the `--color=256` and `--color=16m` flags, respectively.
+
+
+## Styles
+
+### Modifiers
+
+- `reset`
+- `bold`
+- `dim`
+- `italic` *(Not widely supported)*
+- `underline`
+- `inverse`
+- `hidden`
+- `strikethrough` *(Not widely supported)*
+- `visible` (Text is emitted only if enabled)
+
+### Colors
+
+- `black`
+- `red`
+- `green`
+- `yellow`
+- `blue` *(On Windows the bright version is used since normal blue is illegible)*
+- `magenta`
+- `cyan`
+- `white`
+- `gray` ("bright black")
+- `redBright`
+- `greenBright`
+- `yellowBright`
+- `blueBright`
+- `magentaBright`
+- `cyanBright`
+- `whiteBright`
+
+### Background colors
+
+- `bgBlack`
+- `bgRed`
+- `bgGreen`
+- `bgYellow`
+- `bgBlue`
+- `bgMagenta`
+- `bgCyan`
+- `bgWhite`
+- `bgBlackBright`
+- `bgRedBright`
+- `bgGreenBright`
+- `bgYellowBright`
+- `bgBlueBright`
+- `bgMagentaBright`
+- `bgCyanBright`
+- `bgWhiteBright`
+
+
+## Tagged template literal
+
+Chalk can be used as a [tagged template literal](http://exploringjs.com/es6/ch_template-literals.html#_tagged-template-literals).
+
+```js
+const chalk = require('chalk');
+
+const miles = 18;
+const calculateFeet = miles => miles * 5280;
+
+console.log(chalk`
+  There are {bold 5280 feet} in a mile.
+  In {bold ${miles} miles}, there are {green.bold ${calculateFeet(miles)} feet}.
+`);
+```
+
+Blocks are delimited by an opening curly brace (`{`), a style, some content, and a closing curly brace (`}`).
+
+Template styles are chained exactly like normal Chalk styles. The following two statements are equivalent:
+
+```js
+console.log(chalk.bold.rgb(10, 100, 200)('Hello!'));
+console.log(chalk`{bold.rgb(10,100,200) Hello!}`);
+```
+
+Note that function styles (`rgb()`, `hsl()`, `keyword()`, etc.) may not contain spaces between parameters.
+
+All interpolated values (`` chalk`${foo}` ``) are converted to strings via the `.toString()` method. All curly braces (`{` and `}`) in interpolated value strings are escaped.
+
+
+## 256 and Truecolor color support
+
+Chalk supports 256 colors and [Truecolor](https://gist.github.com/XVilka/8346728) (16 million colors) on supported terminal apps.
+
+Colors are downsampled from 16 million RGB values to an ANSI color format that is supported by the terminal emulator (or by specifying `{level: n}` as a Chalk option). For example, Chalk configured to run at level 1 (basic color support) will downsample an RGB value of #FF0000 (red) to 31 (ANSI escape for red).
+
+Examples:
+
+- `chalk.hex('#DEADED').underline('Hello, world!')`
+- `chalk.keyword('orange')('Some orange text')`
+- `chalk.rgb(15, 100, 204).inverse('Hello!')`
+
+Background versions of these models are prefixed with `bg` and the first level of the module capitalized (e.g. `keyword` for foreground colors and `bgKeyword` for background colors).
+
+- `chalk.bgHex('#DEADED').underline('Hello, world!')`
+- `chalk.bgKeyword('orange')('Some orange text')`
+- `chalk.bgRgb(15, 100, 204).inverse('Hello!')`
+
+The following color models can be used:
+
+- [`rgb`](https://en.wikipedia.org/wiki/RGB_color_model) - Example: `chalk.rgb(255, 136, 0).bold('Orange!')`
+- [`hex`](https://en.wikipedia.org/wiki/Web_colors#Hex_triplet) - Example: `chalk.hex('#FF8800').bold('Orange!')`
+- [`keyword`](https://www.w3.org/wiki/CSS/Properties/color/keywords) (CSS keywords) - Example: `chalk.keyword('orange').bold('Orange!')`
+- [`hsl`](https://en.wikipedia.org/wiki/HSL_and_HSV) - Example: `chalk.hsl(32, 100, 50).bold('Orange!')`
+- [`hsv`](https://en.wikipedia.org/wiki/HSL_and_HSV) - Example: `chalk.hsv(32, 100, 100).bold('Orange!')`
+- [`hwb`](https://en.wikipedia.org/wiki/HWB_color_model)  - Example: `chalk.hwb(32, 0, 50).bold('Orange!')`
+- `ansi16`
+- `ansi256`
+
+
+## Windows
+
+If you're on Windows, do yourself a favor and use [`cmder`](http://cmder.net/) instead of `cmd.exe`.
+
+
+## Origin story
+
+[colors.js](https://github.com/Marak/colors.js) used to be the most popular string styling module, but it has serious deficiencies like extending `String.prototype` which causes all kinds of [problems](https://github.com/yeoman/yo/issues/68) and the package is unmaintained. Although there are other packages, they either do too much or not enough. Chalk is a clean and focused alternative.
+
+
+## Related
+
+- [chalk-cli](https://github.com/chalk/chalk-cli) - CLI for this module
+- [ansi-styles](https://github.com/chalk/ansi-styles) - ANSI escape codes for styling strings in the terminal
+- [supports-color](https://github.com/chalk/supports-color) - Detect whether a terminal supports color
+- [strip-ansi](https://github.com/chalk/strip-ansi) - Strip ANSI escape codes
+- [strip-ansi-stream](https://github.com/chalk/strip-ansi-stream) - Strip ANSI escape codes from a stream
+- [has-ansi](https://github.com/chalk/has-ansi) - Check if a string has ANSI escape codes
+- [ansi-regex](https://github.com/chalk/ansi-regex) - Regular expression for matching ANSI escape codes
+- [wrap-ansi](https://github.com/chalk/wrap-ansi) - Wordwrap a string with ANSI escape codes
+- [slice-ansi](https://github.com/chalk/slice-ansi) - Slice a string with ANSI escape codes
+- [color-convert](https://github.com/qix-/color-convert) - Converts colors between different models
+- [chalk-animation](https://github.com/bokub/chalk-animation) - Animate strings in the terminal
+- [gradient-string](https://github.com/bokub/gradient-string) - Apply color gradients to strings
+- [chalk-pipe](https://github.com/LitoMore/chalk-pipe) - Create chalk style schemes with simpler style strings
+- [terminal-link](https://github.com/sindresorhus/terminal-link) - Create clickable links in the terminal
+
+
+## Maintainers
+
+- [Sindre Sorhus](https://github.com/sindresorhus)
+- [Josh Junon](https://github.com/qix-)
+
+
+## License
+
+MIT
+
+
+===== FILE: ./frontend/node_modules/leven/readme.md =====
+# leven [![Build Status](https://travis-ci.org/sindresorhus/leven.svg?branch=master)](https://travis-ci.org/sindresorhus/leven)
+
+> Measure the difference between two strings<br>
+> One of the fastest JS implementations of the [Levenshtein distance](https://en.wikipedia.org/wiki/Levenshtein_distance) algorithm
+
+
+## Install
+
+```
+$ npm install leven
+```
+
+
+## Usage
+
+```js
+const leven = require('leven');
+
+leven('cat', 'cow');
+//=> 2
+```
+
+
+## Benchmark
+
+```
+$ npm run bench
+```
+
+```
+         165,926 op/s » leven
+         164,398 op/s » talisman
+           1,044 op/s » levenshtein-edit-distance
+             628 op/s » fast-levenshtein
+             497 op/s » levenshtein-component
+             195 op/s » ld
+             190 op/s » levenshtein
+             168 op/s » levdist
+              10 op/s » natural
+```
+
+
+## Related
+
+- [leven-cli](https://github.com/sindresorhus/leven-cli) - CLI for this module
+
+
+## License
+
+MIT © [Sindre Sorhus](https://sindresorhus.com)
+
+
+===== FILE: ./frontend/node_modules/is-regexp/readme.md =====
+# is-regexp [![Build Status](https://travis-ci.org/sindresorhus/is-regexp.svg?branch=master)](https://travis-ci.org/sindresorhus/is-regexp)
+
+> Check whether a variable is a regular expression
+
+
+## Install
+
+```sh
+$ npm install --save is-regexp
+```
+
+
+## Usage
+
+```js
+var isRegexp = require('is-regexp');
+
+isRegexp('unicorn');
+//=> false
+
+isRegexp(/unicorn/);
+//=> true
+
+isRegexp(new RegExp('unicorn'));
+//=> true
+```
+
+
+## License
+
+MIT © [Sindre Sorhus](http://sindresorhus.com)
+
+
+===== FILE: ./frontend/node_modules/express/node_modules/ms/readme.md =====
+# ms
+
+[![Build Status](https://travis-ci.org/zeit/ms.svg?branch=master)](https://travis-ci.org/zeit/ms)
+[![Slack Channel](http://zeit-slackin.now.sh/badge.svg)](https://zeit.chat/)
+
+Use this package to easily convert various time formats to milliseconds.
+
+## Examples
+
+```js
+ms('2 days')  // 172800000
+ms('1d')      // 86400000
+ms('10h')     // 36000000
+ms('2.5 hrs') // 9000000
+ms('2h')      // 7200000
+ms('1m')      // 60000
+ms('5s')      // 5000
+ms('1y')      // 31557600000
+ms('100')     // 100
+```
+
+### Convert from milliseconds
+
+```js
+ms(60000)             // "1m"
+ms(2 * 60000)         // "2m"
+ms(ms('10 hours'))    // "10h"
+```
+
+### Time format written-out
+
+```js
+ms(60000, { long: true })             // "1 minute"
+ms(2 * 60000, { long: true })         // "2 minutes"
+ms(ms('10 hours'), { long: true })    // "10 hours"
+```
+
+## Features
+
+- Works both in [node](https://nodejs.org) and in the browser.
+- If a number is supplied to `ms`, a string with a unit is returned.
+- If a string that contains the number is supplied, it returns it as a number (e.g.: it returns `100` for `'100'`).
+- If you pass a string with a number and a valid unit, the number of equivalent ms is returned.
+
+## Caught a bug?
+
+1. [Fork](https://help.github.com/articles/fork-a-repo/) this repository to your own GitHub account and then [clone](https://help.github.com/articles/cloning-a-repository/) it to your local device
+2. Link the package to the global module directory: `npm link`
+3. Within the module you want to test your local development instance of ms, just link it to the dependencies: `npm link ms`. Instead of the default one from npm, node will now use your clone of ms!
+
+As always, you can run the tests using: `npm test`
+
+
+===== FILE: ./frontend/node_modules/adjust-sourcemap-loader/readme.md =====
+# Adjust Source-map Loader
+
+[![NPM](https://nodei.co/npm/adjust-sourcemap-loader.png)](http://github.com/bholloway/adjust-sourcemap-loader)
+
+Webpack loader that adjusts source maps.
+
+Use as a **loader** to debug source-maps or to adjust source-maps between other loaders.
+
+Use as a **module filename template** to ensure the final source-map are to your liking.
+
+## Usage : Loader
+
+``` javascript
+require('adjust-sourcemap?format=absolute!babel?sourceMap');
+```
+
+### Source maps required
+
+Note that **source maps** must be enabled on any preceding loader. In the above example we use `babel?sourceMap`.
+
+### Apply via webpack config
+
+It is preferable to adjust your `webpack.config` so to avoid having to prefix every `require()` statement:
+
+``` javascript
+module.exports = {
+  module: {
+    loaders: [
+      {
+        test   : /\.js/,
+        loaders: ['adjust-sourcemap?format=absolute', 'babel?sourceMap']
+      }
+    ]
+  }
+};
+```
+
+## Usage : Module filename template
+
+Specifying a certain format as the final step in a loader chain will **not** influence the final source format that Webpack will output. Instead the format is determined by the **module filename template**.
+
+There are limitations to the filename templating that Webpack provides. This package may also operate as a custom template function that will convert output source-map sources to the desired `format`.
+
+In the following example we ensure project-relative source-map sources are output.
+
+```javascript
+var templateFn = require('adjust-sourcemap-loader')
+  .moduleFilenameTemplate({
+    format: 'projectRelative'
+  });
+
+module.exports = {
+  output: {
+    ...
+    devtoolModuleFilenameTemplate        : templateFn,
+    devtoolFallbackModuleFilenameTemplate: templateFn
+  }
+};
+```
+
+## Options
+
+As a loader, options may be set using [query parameters](https://webpack.github.io/docs/using-loaders.html#query-parameters) or by using [programmatic parameters](https://webpack.github.io/docs/how-to-write-a-loader.html#programmable-objects-as-query-option). Programmatic means the following in your `webpack.config`.
+
+```javascript
+module.exports = {
+   adjustSourcemapLoader: {
+      ...
+   }
+}
+```
+
+Where `...` is a hash of any of the following options.
+
+* **`debug`** : `boolean|RegExp` May be used alone (boolean) or with a `RegExp` to match the resource(s) you are interested in debugging.
+
+* **`fail`** : `boolean` Implies an **Error** if a source-map source cannot be decoded.
+
+* **`format`** : `string` Optional output format for source-map `sources`. Must be the name of one of the available `codecs`. Omitting the format will result in **no change** and the outgoing source-map will match the incomming one.
+
+* **`root`** : `boolean` A boolean flag that indices that a `sourceRoot` path sould be included in the output map. This is contingent on a `format` being specified.
+
+* **`codecs`** : `Array.<{name:string, decode:function, encode:function, root:function}>` Optional Array of codecs. There are a number of built-in codecs available. If you specify you own codecs you will loose those that are built-in. However you can include them from the `codec/` directory.
+
+Note that **query** parameters take precedence over **programmatic** parameters.
+
+### Changing the format
+
+Built-in codecs that may be specified as a `format` include:
+
+* `absolute`
+* `outputRelative`
+* `projectRelative`
+* `webpackProtocol`
+* `sourceRelative` (works for loader only, **not** Module filename template)
+
+### Specifying codecs
+
+There are additional built-in codecs that do not support encoding. These are still necessary to decode source-map sources. If you specify your own `options.codecs` then you should **also include the built-in codecs**. Otherwise you will find that some sources cannot be decoded.
+
+The existing codecs may be found in `/codec`, or on the loader itself:
+
+```javascript
+var inBuiltCodecs = require('adjust-sourcemap-loader').codecs,
+    myCodecs      = [
+      {
+        name  : 'foo',
+        decode: function(uri) {...},
+        encode: function(absolute) {...},
+        root  : function() {...}
+      },
+      ...
+    ];
+
+module.exports = {
+   adjustSourcemapLoader: {
+      codecs: inBuiltCodecs.concat(myCodecs)
+   }
+}
+```
+
+The codec **order is important**. Those that come first have precedence. Any codec that detects a distinct URI should be foremost so that illegal paths are not encountered by successive codecs.
+
+### Abstract codecs
+
+A codec that detects generated code and cannot `decode()` a URI to an absolute file path.
+
+Instead of implementing `encode()` or `root()` it should instead specify `abstract:true`. Its `decode()` function then may return `boolean` where it detects such generated sources.
+
+For example, a built-in abstract codec will match the **Webpack bootstrap** code and ensure that its illegal source uri is not encountered by later coders.
+
+## How it works
+
+The loader will receive a source map as its second parameter, so long as the preceding loader was using source-maps.
+
+The exception is the **css-loader** where the source-map is in the content, which is **not currently supported** .
+
+The source-map `sources` are parsed by applying **codec.decode()** functions until one of them returns an absolute path to a file that exists. The exception is abstract codecs, where the source with remain unchanged.
+
+If a format is specified then the source-map `sources` are recreated by applying the **codec.encode()** function for the stated `format` and (where the `root` option is specified) the **codec.root()** function will set the source-map `sourceRoot`.
+
+If a codec does not specify **codec.encode()** or **codec.root()** then it may **not** be used as the `format`.
+
+
+
+===== FILE: ./frontend/node_modules/send/node_modules/debug/node_modules/ms/readme.md =====
+# ms
+
+[![Build Status](https://travis-ci.org/zeit/ms.svg?branch=master)](https://travis-ci.org/zeit/ms)
+[![Slack Channel](http://zeit-slackin.now.sh/badge.svg)](https://zeit.chat/)
+
+Use this package to easily convert various time formats to milliseconds.
+
+## Examples
+
+```js
+ms('2 days')  // 172800000
+ms('1d')      // 86400000
+ms('10h')     // 36000000
+ms('2.5 hrs') // 9000000
+ms('2h')      // 7200000
+ms('1m')      // 60000
+ms('5s')      // 5000
+ms('1y')      // 31557600000
+ms('100')     // 100
+```
+
+### Convert from milliseconds
+
+```js
+ms(60000)             // "1m"
+ms(2 * 60000)         // "2m"
+ms(ms('10 hours'))    // "10h"
+```
+
+### Time format written-out
+
+```js
+ms(60000, { long: true })             // "1 minute"
+ms(2 * 60000, { long: true })         // "2 minutes"
+ms(ms('10 hours'), { long: true })    // "10 hours"
+```
+
+## Features
+
+- Works both in [node](https://nodejs.org) and in the browser.
+- If a number is supplied to `ms`, a string with a unit is returned.
+- If a string that contains the number is supplied, it returns it as a number (e.g.: it returns `100` for `'100'`).
+- If you pass a string with a number and a valid unit, the number of equivalent ms is returned.
+
+## Caught a bug?
+
+1. [Fork](https://help.github.com/articles/fork-a-repo/) this repository to your own GitHub account and then [clone](https://help.github.com/articles/cloning-a-repository/) it to your local device
+2. Link the package to the global module directory: `npm link`
+3. Within the module you want to test your local development instance of ms, just link it to the dependencies: `npm link ms`. Instead of the default one from npm, node will now use your clone of ms!
+
+As always, you can run the tests using: `npm test`
+
+
+===== FILE: ./frontend/node_modules/strip-bom/readme.md =====
+# strip-bom [![Build Status](https://travis-ci.org/sindresorhus/strip-bom.svg?branch=master)](https://travis-ci.org/sindresorhus/strip-bom)
+
+> Strip UTF-8 [byte order mark](https://en.wikipedia.org/wiki/Byte_order_mark#UTF-8) (BOM) from a string
+
+From Wikipedia:
+
+> The Unicode Standard permits the BOM in UTF-8, but does not require nor recommend its use. Byte order has no meaning in UTF-8.
+
+---
+
+<div align="center">
+	<b>
+		<a href="https://tidelift.com/subscription/pkg/npm-strip-bom?utm_source=npm-strip-bom&utm_medium=referral&utm_campaign=readme">Get professional support for 'strip-bom' with a Tidelift subscription</a>
+	</b>
+	<br>
+	<sub>
+		Tidelift helps make open source sustainable for maintainers while giving companies<br>assurances about security, maintenance, and licensing for their dependencies.
+	</sub>
+</div>
+
+---
+
+## Install
+
+```
+$ npm install strip-bom
+```
+
+
+## Usage
+
+```js
+const stripBom = require('strip-bom');
+
+stripBom('\uFEFFunicorn');
+//=> 'unicorn'
+```
+
+
+## Security
+
+To report a security vulnerability, please use the [Tidelift security contact](https://tidelift.com/security). Tidelift will coordinate the fix and disclosure.
+
+
+## Related
+
+- [strip-bom-cli](https://github.com/sindresorhus/strip-bom-cli) - CLI for this module
+- [strip-bom-buf](https://github.com/sindresorhus/strip-bom-buf) - Buffer version of this module
+- [strip-bom-stream](https://github.com/sindresorhus/strip-bom-stream) - Stream version of this module
+
+
+## License
+
+MIT © [Sindre Sorhus](https://sindresorhus.com)
+
+
+===== FILE: ./frontend/node_modules/find-cache-dir/readme.md =====
+# find-cache-dir [![Coverage Status](https://codecov.io/gh/avajs/find-cache-dir/branch/master/graph/badge.svg)](https://codecov.io/gh/avajs/find-cache-dir/branch/master)
+
+> Finds the common standard cache directory
+
+The [`nyc`](https://github.com/istanbuljs/nyc) and [`AVA`](https://ava.li) projects decided to standardize on a common directory structure for storing cache information:
+
+```sh
+# nyc
+./node_modules/.cache/nyc
+
+# ava
+./node_modules/.cache/ava
+
+# your-module
+./node_modules/.cache/your-module
+```
+
+This module makes it easy to correctly locate the cache directory according to this shared spec. If this pattern becomes ubiquitous, clearing the cache for multiple dependencies becomes easy and consistent:
+
+```
+rm -rf ./node_modules/.cache
+```
+
+If you decide to adopt this pattern, please file a PR adding your name to the list of adopters below.
+
+## Install
+
+```
+$ npm install find-cache-dir
+```
+
+## Usage
+
+```js
+const findCacheDir = require('find-cache-dir');
+
+findCacheDir({name: 'unicorns'});
+//=> '/user/path/node-modules/.cache/unicorns'
+```
+
+## API
+
+### findCacheDir(options?)
+
+Finds the cache directory using the supplied options. The algorithm checks for the `CACHE_DIR` environmental variable and uses it if it is not set to `true`, `false`, `1` or `0`. If one is not found, it tries to find a `package.json` file, searching every parent directory of the `cwd` specified (or implied from other options). It returns a `string` containing the absolute path to the cache directory, or `undefined` if `package.json` was never found or if the `node_modules` directory is unwritable.
+
+#### options
+
+Type: `object`
+
+##### name
+
+*Required*\
+Type: `string`
+
+Should be the same as your project name in `package.json`.
+
+##### files
+
+Type: `string[] | string`
+
+An array of files that will be searched for a common parent directory. This common parent directory will be used in lieu of the `cwd` option below.
+
+##### cwd
+
+Type: `string`\
+Default `process.cwd()`
+
+Directory to start searching for a `package.json` from.
+
+##### create
+
+Type: `boolean`\
+Default `false`
+
+If `true`, the directory will be created synchronously before returning.
+
+##### thunk
+
+Type: `boolean`\
+Default `false`
+
+If `true`, this modifies the return type to be a function that is a thunk for `path.join(theFoundCacheDirectory)`.
+
+```js
+const thunk = findCacheDir({name: 'foo', thunk: true});
+
+thunk();
+//=> '/some/path/node_modules/.cache/foo'
+
+thunk('bar.js')
+//=> '/some/path/node_modules/.cache/foo/bar.js'
+
+thunk('baz', 'quz.js')
+//=> '/some/path/node_modules/.cache/foo/baz/quz.js'
+```
+
+This is helpful for actually putting actual files in the cache!
+
+## Tips
+
+- To test modules using `find-cache-dir`, set the `CACHE_DIR` environment variable to temporarily override the directory that is resolved.
+
+## Adopters
+
+- [`ava`](https://avajs.dev)
+- [`nyc`](https://github.com/istanbuljs/nyc)
+- [`storybook`](https://github.com/storybookjs/storybook)
+- [`babel-loader`](https://github.com/babel/babel-loader)
+- [`eslint-loader`](https://github.com/MoOx/eslint-loader)
+- [More…](https://www.npmjs.com/browse/depended/find-cache-dir)
+
+---
+
+<div align="center">
+	<b>
+		<a href="https://tidelift.com/subscription/pkg/npm-find_cache-dir?utm_source=npm-find-cache-dir&utm_medium=referral&utm_campaign=readme">Get professional support for this package with a Tidelift subscription</a>
+	</b>
+	<br>
+	<sub>
+		Tidelift helps make open source sustainable for maintainers while giving companies<br>assurances about security, maintenance, and licensing for their dependencies.
+	</sub>
+</div>
+
+
+===== FILE: ./frontend/node_modules/pkg-up/readme.md =====
+# pkg-up [![Build Status](https://travis-ci.org/sindresorhus/pkg-up.svg?branch=master)](https://travis-ci.org/sindresorhus/pkg-up)
+
+> Find the closest package.json file
+
+
+## Install
+
+```
+$ npm install pkg-up
+```
+
+
+## Usage
+
+```
+/
+└── Users
+    └── sindresorhus
+        └── foo
+            ├── package.json
+            └── bar
+                ├── baz
+                └── example.js
+```
+
+```js
+// example.js
+const pkgUp = require('pkg-up');
+
+(async () => {
+	console.log(await pkgUp());
+	//=> '/Users/sindresorhus/foo/package.json'
+})();
+```
+
+
+## API
+
+### pkgUp([options])
+
+Returns a `Promise<string>` for the filepath, or `Promise<null>` if it couldn't be found.
+
+### pkgUp.sync([options])
+
+Returns the filepath, or `null` if it couldn't be found.
+
+#### options
+
+Type: `Object`
+
+#### cwd
+
+Type: `string`<br>
+Default: `process.cwd()`
+
+Directory to start from.
+
+
+## Related
+
+- [read-pkg-up](https://github.com/sindresorhus/read-pkg-up) - Read the closest package.json file
+- [pkg-dir](https://github.com/sindresorhus/pkg-dir) - Find the root directory of an npm package
+- [find-up](https://github.com/sindresorhus/find-up) - Find a file by walking up parent directories
+
+
+## License
+
+MIT © [Sindre Sorhus](https://sindresorhus.com)
+
+
+===== FILE: ./frontend/node_modules/pkg-up/node_modules/path-exists/readme.md =====
+# path-exists [![Build Status](https://travis-ci.org/sindresorhus/path-exists.svg?branch=master)](https://travis-ci.org/sindresorhus/path-exists)
+
+> Check if a path exists
+
+Because [`fs.exists()`](https://nodejs.org/api/fs.html#fs_fs_exists_path_callback) is being [deprecated](https://github.com/iojs/io.js/issues/103), but there's still a genuine use-case of being able to check if a path exists for other purposes than doing IO with it.
+
+Never use this before handling a file though:
+
+> In particular, checking if a file exists before opening it is an anti-pattern that leaves you vulnerable to race conditions: another process may remove the file between the calls to `fs.exists()` and `fs.open()`. Just open the file and handle the error when it's not there.
+
+
+## Install
+
+```
+$ npm install --save path-exists
+```
+
+
+## Usage
+
+```js
+// foo.js
+const pathExists = require('path-exists');
+
+pathExists('foo.js').then(exists => {
+	console.log(exists);
+	//=> true
+});
+```
+
+
+## API
+
+### pathExists(path)
+
+Returns a promise for a boolean of whether the path exists.
+
+### pathExists.sync(path)
+
+Returns a boolean of whether the path exists.
+
+
+## Related
+
+- [path-exists-cli](https://github.com/sindresorhus/path-exists-cli) - CLI for this module
+
+
+## License
+
+MIT © [Sindre Sorhus](https://sindresorhus.com)
+

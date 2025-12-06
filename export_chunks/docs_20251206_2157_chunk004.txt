@@ -1,0 +1,1876 @@
+### Topic: docs
+### Created: 20251206_2157
+========================================
+
+===== FILE: ./frontend/node_modules/coa/node_modules/supports-color/readme.md =====
+# supports-color [![Build Status](https://travis-ci.org/chalk/supports-color.svg?branch=master)](https://travis-ci.org/chalk/supports-color)
+
+> Detect whether a terminal supports color
+
+
+## Install
+
+```
+$ npm install supports-color
+```
+
+
+## Usage
+
+```js
+const supportsColor = require('supports-color');
+
+if (supportsColor.stdout) {
+	console.log('Terminal stdout supports color');
+}
+
+if (supportsColor.stdout.has256) {
+	console.log('Terminal stdout supports 256 colors');
+}
+
+if (supportsColor.stderr.has16m) {
+	console.log('Terminal stderr supports 16 million colors (truecolor)');
+}
+```
+
+
+## API
+
+Returns an `Object` with a `stdout` and `stderr` property for testing either streams. Each property is an `Object`, or `false` if color is not supported.
+
+The `stdout`/`stderr` objects specifies a level of support for color through a `.level` property and a corresponding flag:
+
+- `.level = 1` and `.hasBasic = true`: Basic color support (16 colors)
+- `.level = 2` and `.has256 = true`: 256 color support
+- `.level = 3` and `.has16m = true`: Truecolor support (16 million colors)
+
+
+## Info
+
+It obeys the `--color` and `--no-color` CLI flags.
+
+Can be overridden by the user with the flags `--color` and `--no-color`. For situations where using `--color` is not possible, add the environment variable `FORCE_COLOR=1` to forcefully enable color or `FORCE_COLOR=0` to forcefully disable. The use of `FORCE_COLOR` overrides all other color support checks.
+
+Explicit 256/Truecolor mode can be enabled using the `--color=256` and `--color=16m` flags, respectively.
+
+
+## Related
+
+- [supports-color-cli](https://github.com/chalk/supports-color-cli) - CLI for this module
+- [chalk](https://github.com/chalk/chalk) - Terminal string styling done right
+
+
+## Maintainers
+
+- [Sindre Sorhus](https://github.com/sindresorhus)
+- [Josh Junon](https://github.com/qix-)
+
+
+## License
+
+MIT
+
+
+===== FILE: ./frontend/node_modules/coa/node_modules/chalk/readme.md =====
+<h1 align="center">
+	<br>
+	<br>
+	<img width="320" src="media/logo.svg" alt="Chalk">
+	<br>
+	<br>
+	<br>
+</h1>
+
+> Terminal string styling done right
+
+[![Build Status](https://travis-ci.org/chalk/chalk.svg?branch=master)](https://travis-ci.org/chalk/chalk) [![Coverage Status](https://coveralls.io/repos/github/chalk/chalk/badge.svg?branch=master)](https://coveralls.io/github/chalk/chalk?branch=master) [![](https://img.shields.io/badge/unicorn-approved-ff69b4.svg)](https://www.youtube.com/watch?v=9auOCbH5Ns4) [![XO code style](https://img.shields.io/badge/code_style-XO-5ed9c7.svg)](https://github.com/xojs/xo) [![Mentioned in Awesome Node.js](https://awesome.re/mentioned-badge.svg)](https://github.com/sindresorhus/awesome-nodejs)
+
+### [See what's new in Chalk 2](https://github.com/chalk/chalk/releases/tag/v2.0.0)
+
+<img src="https://cdn.rawgit.com/chalk/ansi-styles/8261697c95bf34b6c7767e2cbe9941a851d59385/screenshot.svg" alt="" width="900">
+
+
+## Highlights
+
+- Expressive API
+- Highly performant
+- Ability to nest styles
+- [256/Truecolor color support](#256-and-truecolor-color-support)
+- Auto-detects color support
+- Doesn't extend `String.prototype`
+- Clean and focused
+- Actively maintained
+- [Used by ~23,000 packages](https://www.npmjs.com/browse/depended/chalk) as of December 31, 2017
+
+
+## Install
+
+```console
+$ npm install chalk
+```
+
+<a href="https://www.patreon.com/sindresorhus">
+	<img src="https://c5.patreon.com/external/logo/become_a_patron_button@2x.png" width="160">
+</a>
+
+
+## Usage
+
+```js
+const chalk = require('chalk');
+
+console.log(chalk.blue('Hello world!'));
+```
+
+Chalk comes with an easy to use composable API where you just chain and nest the styles you want.
+
+```js
+const chalk = require('chalk');
+const log = console.log;
+
+// Combine styled and normal strings
+log(chalk.blue('Hello') + ' World' + chalk.red('!'));
+
+// Compose multiple styles using the chainable API
+log(chalk.blue.bgRed.bold('Hello world!'));
+
+// Pass in multiple arguments
+log(chalk.blue('Hello', 'World!', 'Foo', 'bar', 'biz', 'baz'));
+
+// Nest styles
+log(chalk.red('Hello', chalk.underline.bgBlue('world') + '!'));
+
+// Nest styles of the same type even (color, underline, background)
+log(chalk.green(
+	'I am a green line ' +
+	chalk.blue.underline.bold('with a blue substring') +
+	' that becomes green again!'
+));
+
+// ES2015 template literal
+log(`
+CPU: ${chalk.red('90%')}
+RAM: ${chalk.green('40%')}
+DISK: ${chalk.yellow('70%')}
+`);
+
+// ES2015 tagged template literal
+log(chalk`
+CPU: {red ${cpu.totalPercent}%}
+RAM: {green ${ram.used / ram.total * 100}%}
+DISK: {rgb(255,131,0) ${disk.used / disk.total * 100}%}
+`);
+
+// Use RGB colors in terminal emulators that support it.
+log(chalk.keyword('orange')('Yay for orange colored text!'));
+log(chalk.rgb(123, 45, 67).underline('Underlined reddish color'));
+log(chalk.hex('#DEADED').bold('Bold gray!'));
+```
+
+Easily define your own themes:
+
+```js
+const chalk = require('chalk');
+
+const error = chalk.bold.red;
+const warning = chalk.keyword('orange');
+
+console.log(error('Error!'));
+console.log(warning('Warning!'));
+```
+
+Take advantage of console.log [string substitution](https://nodejs.org/docs/latest/api/console.html#console_console_log_data_args):
+
+```js
+const name = 'Sindre';
+console.log(chalk.green('Hello %s'), name);
+//=> 'Hello Sindre'
+```
+
+
+## API
+
+### chalk.`<style>[.<style>...](string, [string...])`
+
+Example: `chalk.red.bold.underline('Hello', 'world');`
+
+Chain [styles](#styles) and call the last one as a method with a string argument. Order doesn't matter, and later styles take precedent in case of a conflict. This simply means that `chalk.red.yellow.green` is equivalent to `chalk.green`.
+
+Multiple arguments will be separated by space.
+
+### chalk.enabled
+
+Color support is automatically detected, as is the level (see `chalk.level`). However, if you'd like to simply enable/disable Chalk, you can do so via the `.enabled` property.
+
+Chalk is enabled by default unless explicitly disabled via the constructor or `chalk.level` is `0`.
+
+If you need to change this in a reusable module, create a new instance:
+
+```js
+const ctx = new chalk.constructor({enabled: false});
+```
+
+### chalk.level
+
+Color support is automatically detected, but you can override it by setting the `level` property. You should however only do this in your own code as it applies globally to all Chalk consumers.
+
+If you need to change this in a reusable module, create a new instance:
+
+```js
+const ctx = new chalk.constructor({level: 0});
+```
+
+Levels are as follows:
+
+0. All colors disabled
+1. Basic color support (16 colors)
+2. 256 color support
+3. Truecolor support (16 million colors)
+
+### chalk.supportsColor
+
+Detect whether the terminal [supports color](https://github.com/chalk/supports-color). Used internally and handled for you, but exposed for convenience.
+
+Can be overridden by the user with the flags `--color` and `--no-color`. For situations where using `--color` is not possible, add the environment variable `FORCE_COLOR=1` to forcefully enable color or `FORCE_COLOR=0` to forcefully disable. The use of `FORCE_COLOR` overrides all other color support checks.
+
+Explicit 256/Truecolor mode can be enabled using the `--color=256` and `--color=16m` flags, respectively.
+
+
+## Styles
+
+### Modifiers
+
+- `reset`
+- `bold`
+- `dim`
+- `italic` *(Not widely supported)*
+- `underline`
+- `inverse`
+- `hidden`
+- `strikethrough` *(Not widely supported)*
+- `visible` (Text is emitted only if enabled)
+
+### Colors
+
+- `black`
+- `red`
+- `green`
+- `yellow`
+- `blue` *(On Windows the bright version is used since normal blue is illegible)*
+- `magenta`
+- `cyan`
+- `white`
+- `gray` ("bright black")
+- `redBright`
+- `greenBright`
+- `yellowBright`
+- `blueBright`
+- `magentaBright`
+- `cyanBright`
+- `whiteBright`
+
+### Background colors
+
+- `bgBlack`
+- `bgRed`
+- `bgGreen`
+- `bgYellow`
+- `bgBlue`
+- `bgMagenta`
+- `bgCyan`
+- `bgWhite`
+- `bgBlackBright`
+- `bgRedBright`
+- `bgGreenBright`
+- `bgYellowBright`
+- `bgBlueBright`
+- `bgMagentaBright`
+- `bgCyanBright`
+- `bgWhiteBright`
+
+
+## Tagged template literal
+
+Chalk can be used as a [tagged template literal](http://exploringjs.com/es6/ch_template-literals.html#_tagged-template-literals).
+
+```js
+const chalk = require('chalk');
+
+const miles = 18;
+const calculateFeet = miles => miles * 5280;
+
+console.log(chalk`
+  There are {bold 5280 feet} in a mile.
+  In {bold ${miles} miles}, there are {green.bold ${calculateFeet(miles)} feet}.
+`);
+```
+
+Blocks are delimited by an opening curly brace (`{`), a style, some content, and a closing curly brace (`}`).
+
+Template styles are chained exactly like normal Chalk styles. The following two statements are equivalent:
+
+```js
+console.log(chalk.bold.rgb(10, 100, 200)('Hello!'));
+console.log(chalk`{bold.rgb(10,100,200) Hello!}`);
+```
+
+Note that function styles (`rgb()`, `hsl()`, `keyword()`, etc.) may not contain spaces between parameters.
+
+All interpolated values (`` chalk`${foo}` ``) are converted to strings via the `.toString()` method. All curly braces (`{` and `}`) in interpolated value strings are escaped.
+
+
+## 256 and Truecolor color support
+
+Chalk supports 256 colors and [Truecolor](https://gist.github.com/XVilka/8346728) (16 million colors) on supported terminal apps.
+
+Colors are downsampled from 16 million RGB values to an ANSI color format that is supported by the terminal emulator (or by specifying `{level: n}` as a Chalk option). For example, Chalk configured to run at level 1 (basic color support) will downsample an RGB value of #FF0000 (red) to 31 (ANSI escape for red).
+
+Examples:
+
+- `chalk.hex('#DEADED').underline('Hello, world!')`
+- `chalk.keyword('orange')('Some orange text')`
+- `chalk.rgb(15, 100, 204).inverse('Hello!')`
+
+Background versions of these models are prefixed with `bg` and the first level of the module capitalized (e.g. `keyword` for foreground colors and `bgKeyword` for background colors).
+
+- `chalk.bgHex('#DEADED').underline('Hello, world!')`
+- `chalk.bgKeyword('orange')('Some orange text')`
+- `chalk.bgRgb(15, 100, 204).inverse('Hello!')`
+
+The following color models can be used:
+
+- [`rgb`](https://en.wikipedia.org/wiki/RGB_color_model) - Example: `chalk.rgb(255, 136, 0).bold('Orange!')`
+- [`hex`](https://en.wikipedia.org/wiki/Web_colors#Hex_triplet) - Example: `chalk.hex('#FF8800').bold('Orange!')`
+- [`keyword`](https://www.w3.org/wiki/CSS/Properties/color/keywords) (CSS keywords) - Example: `chalk.keyword('orange').bold('Orange!')`
+- [`hsl`](https://en.wikipedia.org/wiki/HSL_and_HSV) - Example: `chalk.hsl(32, 100, 50).bold('Orange!')`
+- [`hsv`](https://en.wikipedia.org/wiki/HSL_and_HSV) - Example: `chalk.hsv(32, 100, 100).bold('Orange!')`
+- [`hwb`](https://en.wikipedia.org/wiki/HWB_color_model)  - Example: `chalk.hwb(32, 0, 50).bold('Orange!')`
+- `ansi16`
+- `ansi256`
+
+
+## Windows
+
+If you're on Windows, do yourself a favor and use [`cmder`](http://cmder.net/) instead of `cmd.exe`.
+
+
+## Origin story
+
+[colors.js](https://github.com/Marak/colors.js) used to be the most popular string styling module, but it has serious deficiencies like extending `String.prototype` which causes all kinds of [problems](https://github.com/yeoman/yo/issues/68) and the package is unmaintained. Although there are other packages, they either do too much or not enough. Chalk is a clean and focused alternative.
+
+
+## Related
+
+- [chalk-cli](https://github.com/chalk/chalk-cli) - CLI for this module
+- [ansi-styles](https://github.com/chalk/ansi-styles) - ANSI escape codes for styling strings in the terminal
+- [supports-color](https://github.com/chalk/supports-color) - Detect whether a terminal supports color
+- [strip-ansi](https://github.com/chalk/strip-ansi) - Strip ANSI escape codes
+- [strip-ansi-stream](https://github.com/chalk/strip-ansi-stream) - Strip ANSI escape codes from a stream
+- [has-ansi](https://github.com/chalk/has-ansi) - Check if a string has ANSI escape codes
+- [ansi-regex](https://github.com/chalk/ansi-regex) - Regular expression for matching ANSI escape codes
+- [wrap-ansi](https://github.com/chalk/wrap-ansi) - Wordwrap a string with ANSI escape codes
+- [slice-ansi](https://github.com/chalk/slice-ansi) - Slice a string with ANSI escape codes
+- [color-convert](https://github.com/qix-/color-convert) - Converts colors between different models
+- [chalk-animation](https://github.com/bokub/chalk-animation) - Animate strings in the terminal
+- [gradient-string](https://github.com/bokub/gradient-string) - Apply color gradients to strings
+- [chalk-pipe](https://github.com/LitoMore/chalk-pipe) - Create chalk style schemes with simpler style strings
+- [terminal-link](https://github.com/sindresorhus/terminal-link) - Create clickable links in the terminal
+
+
+## Maintainers
+
+- [Sindre Sorhus](https://github.com/sindresorhus)
+- [Josh Junon](https://github.com/qix-)
+
+
+## License
+
+MIT
+
+
+===== FILE: ./frontend/node_modules/sisteransi/readme.md =====
+# sister ANSI [![Version](https://img.shields.io/npm/v/sisteransi.svg)](https://www.npmjs.com/package/sisteransi) [![Build Status](https://travis-ci.org/terkelg/sisteransi.svg?branch=master)](https://travis-ci.org/terkelg/sisteransi) [![Downloads](https://img.shields.io/npm/dm/sisteransi.svg)](https://www.npmjs.com/package/sisteransi)
+
+> Ansi escape codes faster than you can say "[Bam bam](https://www.youtube.com/watch?v=OcaPu9JPenU)".
+
+## Installation
+
+```
+npm install sisteransi
+```
+
+
+## Usage
+
+```js
+const ansi = require('sisteransi');
+// or const { cursor } = require('sisteransi');
+
+const p = str => process.stdout.write(str);
+
+// move cursor to 2, 1
+p(ansi.cursor.to(2, 1));
+
+// to up, one down
+p(ansi.cursor.up(2)+ansi.cursor.down(1));
+```
+
+## API
+
+### cursor
+
+#### to(x, y)
+Set the absolute position of the cursor. `x0` `y0` is the top left of the screen.
+
+#### move(x, y)
+Set the position of the cursor relative to its current position.
+
+#### up(count = 1)
+Move cursor up a specific amount of rows. Default is `1`.
+
+#### down(count = 1)
+Move cursor down a specific amount of rows. Default is `1`.
+
+#### forward(count = 1)
+Move cursor forward a specific amount of rows. Default is `1`.
+
+#### backward(count = 1)
+Move cursor backward a specific amount of rows. Default is `1`.
+
+#### nextLine(count = 1)
+Move cursor to the next line a specific amount of lines. Default is `1`.
+
+#### prevLine(count = 1)
+Move cursor to the previous a specific amount of lines. Default is `1`.
+
+#### left
+Move cursor to the left side.
+
+#### hide
+Hide cursor.
+
+#### show
+Show cursor.
+
+#### save
+
+Save cursor position.
+
+#### restore
+
+Restore cursor position.
+
+
+### scroll
+
+#### up(count = 1)
+Scroll display up a specific amount of lines. Default to `1`.
+
+#### down(count = 1)
+Scroll display down a specific amount of lines. Default to `1`.
+
+
+### erase
+
+#### screen
+Erase the screen and move the cursor the top left position.
+
+#### up(count = 1)
+Erase the screen from the current line up to the top of the screen. Default to `1`.
+
+#### down(count = 2)
+Erase the screen from the current line down to the bottom of the screen. Default to `1`.
+
+#### line
+Erase the entire current line.
+
+#### lineEnd
+Erase from the current cursor position to the end of the current line.
+
+#### lineStart
+Erase from the current cursor position to the start of the current line.
+
+#### lines(count)
+Erase from the current cursor position up the specified amount of rows.
+
+
+## Credit
+
+This is a fork of [ansi-escapes](https://github.com/sindresorhus/ansi-escapes).
+
+
+## License
+
+MIT © [Terkel Gjervig](https://terkel.com)
+
+
+===== FILE: ./frontend/node_modules/terminal-link/readme.md =====
+# terminal-link [![Build Status](https://travis-ci.org/sindresorhus/terminal-link.svg?branch=master)](https://travis-ci.org/sindresorhus/terminal-link)
+
+> Create clickable links in the terminal
+
+<img src="screenshot.gif" width="301" height="148">
+
+## Install
+
+```
+$ npm install terminal-link
+```
+
+## Usage
+
+```js
+const terminalLink = require('terminal-link');
+
+const link = terminalLink('My Website', 'https://sindresorhus.com');
+console.log(link);
+```
+
+## API
+
+### terminalLink(text, url, options?)
+
+Create a link for use in stdout.
+
+[Supported terminals.](https://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda)
+
+For unsupported terminals, the link will be printed in parens after the text: `My website (https://sindresorhus.com)`.
+
+#### text
+
+Type: `string`
+
+Text to linkify.
+
+#### url
+
+Type: `string`
+
+URL to link to.
+
+#### options
+
+Type: `object`
+
+##### fallback
+
+Type: `Function | boolean`
+
+Override the default fallback. The function receives the `text` and `url` as parameters and is expected to return a string.
+
+If set to `false`, the fallback will be disabled when a terminal is unsupported.
+
+### terminalLink.isSupported
+
+Type: `boolean`
+
+Check whether the terminal's stdout supports links.
+
+Prefer just using the default fallback or the `fallback` option whenever possible.
+
+### terminalLink.stderr(text, url, options?)
+
+Create a link for use in stdout.
+
+Same arguments as `terminalLink()`.
+
+### terminalLink.stderr.isSupported
+
+Type: `boolean`
+
+Check whether the terminal's stderr supports links.
+
+Prefer just using the default fallback or the `fallback` option whenever possible.
+
+## Related
+
+- [terminal-link-cli](https://github.com/sindresorhus/terminal-link-cli) - CLI for this module
+- [ink-link](https://github.com/sindresorhus/ink-link) - Link component for Ink
+- [chalk](https://github.com/chalk/chalk) - Terminal string styling done right
+
+
+===== FILE: ./frontend/node_modules/pretty-bytes/readme.md =====
+# pretty-bytes
+
+> Convert bytes to a human readable string: `1337` → `1.34 kB`
+
+Useful for displaying file sizes for humans.
+
+*Note that it uses base-10 (e.g. kilobyte).
+[Read about the difference between kilobyte and kibibyte.](https://web.archive.org/web/20150324153922/https://pacoup.com/2009/05/26/kb-kb-kib-whats-up-with-that/)*
+
+## Install
+
+```
+$ npm install pretty-bytes
+```
+
+## Usage
+
+```js
+const prettyBytes = require('pretty-bytes');
+
+prettyBytes(1337);
+//=> '1.34 kB'
+
+prettyBytes(100);
+//=> '100 B'
+
+// Display with units of bits
+prettyBytes(1337, {bits: true});
+//=> '1.34 kbit'
+
+// Display file size differences
+prettyBytes(42, {signed: true});
+//=> '+42 B'
+
+// Localized output using German locale
+prettyBytes(1337, {locale: 'de'});
+//=> '1,34 kB'
+```
+
+## API
+
+### prettyBytes(number, options?)
+
+#### number
+
+Type: `number`
+
+The number to format.
+
+#### options
+
+Type: `object`
+
+##### signed
+
+Type: `boolean`\
+Default: `false`
+
+Include plus sign for positive numbers. If the difference is exactly zero a space character will be prepended instead for better alignment.
+
+##### bits
+
+Type: `boolean`\
+Default: `false`
+
+Format the number as [bits](https://en.wikipedia.org/wiki/Bit) instead of [bytes](https://en.wikipedia.org/wiki/Byte). This can be useful when, for example, referring to [bit rate](https://en.wikipedia.org/wiki/Bit_rate).
+
+##### binary
+
+Type: `boolean`\
+Default: `false`
+
+Format the number using the [Binary Prefix](https://en.wikipedia.org/wiki/Binary_prefix) instead of the [SI Prefix](https://en.wikipedia.org/wiki/SI_prefix). This can be useful for presenting memory amounts. However, this should not be used for presenting file sizes.
+
+##### locale
+
+Type: `boolean | string`\
+Default: `false` *(No localization)*
+
+**Important:** Only the number and decimal separator are localized. The unit title is not and will not be localized.
+
+- If `true`: Localize the output using the system/browser locale.
+- If `string`: Expects a [BCP 47 language tag](https://en.wikipedia.org/wiki/IETF_language_tag) (For example: `en`, `de`, …)
+- If `string[]`: Expects a list of [BCP 47 language tags](https://en.wikipedia.org/wiki/IETF_language_tag) (For example: `en`, `de`, …)
+
+**Note:** Localization should generally work in browsers. Node.js needs to be [built](https://github.com/nodejs/node/wiki/Intl) with `full-icu` or `system-icu`. Alternatively, the [`full-icu`](https://github.com/unicode-org/full-icu-npm) module can be used to provide support at runtime. [Node.js 13](https://nodejs.org/en/blog/release/v13.0.0/) and later ships with ICU by default.
+
+##### minimumFractionDigits
+
+Type: `number`\
+Default: `undefined`
+
+The minimum number of fraction digits to display.
+
+If neither `minimumFractionDigits` or `maximumFractionDigits` are set, the default behavior is to round to 3 significant digits.
+
+```js
+const prettyBytes = require('pretty-bytes');
+
+// Show the number with at least 3 fractional digits
+prettyBytes(1900, {minimumFractionDigits: 3});
+//=> '1.900 kB'
+
+prettyBytes(1900);
+//=> '1.9 kB'
+```
+
+##### maximumFractionDigits
+
+Type: `number`\
+Default: `undefined`
+
+The maximum number of fraction digits to display.
+
+If neither `minimumFractionDigits` or `maximumFractionDigits` are set, the default behavior is to round to 3 significant digits.
+
+```js
+const prettyBytes = require('pretty-bytes');
+
+// Show the number with at most 1 fractional digit
+prettyBytes(1920, {maximumFractionDigits: 1});
+//=> '1.9 kB'
+
+prettyBytes(1920);
+//=> '1.92 kB'
+```
+
+## Related
+
+- [pretty-bytes-cli](https://github.com/sindresorhus/pretty-bytes-cli) - CLI for this module
+- [pretty-ms](https://github.com/sindresorhus/pretty-ms) - Convert milliseconds to a human readable string
+
+
+===== FILE: ./frontend/node_modules/css-declaration-sorter/readme.md =====
+<img alt='CSS declaration sorter logo' src='https://raw.githubusercontent.com/Siilwyn/css-declaration-sorter/master/logo.svg?sanitize=true' height='260' align='right'>
+
+# CSS Declaration Sorter
+[![npm][npm-badge]][npm]
+
+A Node.js module and [PostCSS] plugin to sort CSS, SCSS or Less declarations based on their property names. Ensuring styling is organized, more consistent and in order... The goal of this package is to sort the source code of a project in the build process or to decrease the distributed CSS gzipped size.
+
+Check out [the Prettier plugin](https://github.com/Siilwyn/prettier-plugin-css-order) for usage with a variety of file formats.
+
+## Niceness
+- Up-to-date CSS properties fetched from the [MDN Compatibility Data](https://github.com/mdn/browser-compat-data/) project.
+- Choose your wanted order or provide your own.
+- Nested rules sorting support.
+- SCSS and Less support when combined with either [postcss-scss](https://github.com/postcss/postcss-scss) or [postcss-less](https://github.com/webschik/postcss-less).
+- Thought-out sorting orders out of the box, **approved by their authors**.
+
+## Alphabetical example
+Input:
+```css
+body {
+    display: block;
+    animation: none;
+    color: #C55;
+    border: 0;
+}
+```
+
+Output:
+```css
+body {
+    animation: none;
+    border: 0;
+    color: #C55;
+    display: block;
+}
+```
+
+## Built-in sorting orders
+- Alphabetical  
+`alphabetical`  
+*Default, order in a simple alphabetical manner from a - z.*
+
+- [SMACSS](http://smacss.com/book/formatting#grouping)  
+`smacss`  
+*Order from most important, flow affecting properties, to least important properties.*
+  1. Box
+  2. Border
+  3. Background
+  4. Text
+  5. Other
+
+- [Concentric CSS](https://github.com/brandon-rhodes/Concentric-CSS)  
+`concentric-css`  
+*Order properties applying outside the box model, moving inward to intrinsic changes.*
+  1. Positioning
+  2. Visibility
+  3. Box model
+  4. Dimensions
+  5. Text
+
+## Usage
+Following the PostCSS plugin guidelines, this package depends on PostCSS as a peer dependency:  
+`npm install postcss css-declaration-sorter --save-dev`
+
+### CLI
+This module does not include its own CLI but works with the official [PostCSS CLI](https://github.com/postcss/postcss-cli). To use the examples below, the `postcss-cli` package is a required dependency.
+
+Piping out result from file:  
+`postcss input.css --use css-declaration-sorter | cat`
+
+Sorting multiple files by overwriting:  
+`postcss *.css --use css-declaration-sorter --replace --no-map`
+
+Sorting all files in a directory with SCSS syntax using [postcss-scss](https://github.com/postcss/postcss-scss) by overwriting:  
+`postcss ./src/**/*.scss --syntax postcss-scss --use css-declaration-sorter --replace --no-map`
+
+Sorting all files in the directory with SCSS syntax and SMACSS order by overwriting, using `package.json` configuration:  
+```json
+"postcss": {
+  "syntax": "postcss-scss",
+  "map": false,
+  "plugins": {
+    "css-declaration-sorter": { "order": "smacss" }
+  }
+}
+```
+
+`postcss ./src/**/*.scss --replace --config package.json`
+
+### Vanilla JS
+```js
+import postcss from 'postcss';
+import { cssDeclarationSorter } from 'css-declaration-sorter';
+
+postcss([cssDeclarationSorter({ order: 'smacss' })])
+  .process('a { color: hyperblue; display: block; }', { from: undefined })
+  .then(result => console.log(
+    result.css === 'a { display: block; color: hyperblue; }'
+  ));
+```
+___
+
+**[View more usage examples](/examples) in combination with other tools.**  
+
+___
+
+## API
+### cssDeclarationSorter({ order, keepOverrides })
+
+#### order
+Type: `string` or `function`  
+Default: `alphabetical`  
+Options: `alphabetical`, `smacss`, `concentric-css`
+
+Provide the name of one of the built-in sort orders or a comparison function that is passed to ([`Array.sort`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort)). This function receives two declaration names and is expected to return `-1`, `0` or `1` depending on the wanted order.
+
+#### keepOverrides
+Type: `Boolean`  
+Default: `false`  
+
+To prevent breaking legacy CSS where shorthand declarations override longhand declarations (also taking into account vendor prefixes) this option can enabled. For example `animation-name: some; animation: greeting;` will be kept in this order when `keepOverrides` is `true`.
+
+[PostCSS]: https://github.com/postcss/postcss
+
+[npm]: https://www.npmjs.com/package/css-declaration-sorter
+[npm-badge]: https://tinyshields.dev/npm/css-declaration-sorter.svg
+
+
+===== FILE: ./frontend/node_modules/camelcase/readme.md =====
+# camelcase
+
+> Convert a dash/dot/underscore/space separated string to camelCase or PascalCase: `foo-bar` → `fooBar`
+
+Correctly handles Unicode strings.
+
+If you use this on untrusted user input, don't forget to limit the length to something reasonable.
+
+## Install
+
+```
+$ npm install camelcase
+```
+
+*If you need to support Firefox < 78, stay on version 5 as version 6 uses regex features not available in Firefox < 78.*
+
+## Usage
+
+```js
+const camelCase = require('camelcase');
+
+camelCase('foo-bar');
+//=> 'fooBar'
+
+camelCase('foo_bar');
+//=> 'fooBar'
+
+camelCase('Foo-Bar');
+//=> 'fooBar'
+
+camelCase('розовый_пушистый_единорог');
+//=> 'розовыйПушистыйЕдинорог'
+
+camelCase('Foo-Bar', {pascalCase: true});
+//=> 'FooBar'
+
+camelCase('--foo.bar', {pascalCase: false});
+//=> 'fooBar'
+
+camelCase('Foo-BAR', {preserveConsecutiveUppercase: true});
+//=> 'fooBAR'
+
+camelCase('fooBAR', {pascalCase: true, preserveConsecutiveUppercase: true}));
+//=> 'FooBAR'
+
+camelCase('foo bar');
+//=> 'fooBar'
+
+console.log(process.argv[3]);
+//=> '--foo-bar'
+camelCase(process.argv[3]);
+//=> 'fooBar'
+
+camelCase(['foo', 'bar']);
+//=> 'fooBar'
+
+camelCase(['__foo__', '--bar'], {pascalCase: true});
+//=> 'FooBar'
+
+camelCase(['foo', 'BAR'], {pascalCase: true, preserveConsecutiveUppercase: true})
+//=> 'FooBAR'
+
+camelCase('lorem-ipsum', {locale: 'en-US'});
+//=> 'loremIpsum'
+```
+
+## API
+
+### camelCase(input, options?)
+
+#### input
+
+Type: `string | string[]`
+
+String to convert to camel case.
+
+#### options
+
+Type: `object`
+
+##### pascalCase
+
+Type: `boolean`\
+Default: `false`
+
+Uppercase the first character: `foo-bar` → `FooBar`
+
+##### preserveConsecutiveUppercase
+
+Type: `boolean`\
+Default: `false`
+
+Preserve the consecutive uppercase characters: `foo-BAR` → `FooBAR`.
+
+##### locale
+
+Type: `false | string | string[]`\
+Default: The host environment’s current locale.
+
+The locale parameter indicates the locale to be used to convert to upper/lower case according to any locale-specific case mappings. If multiple locales are given in an array, the best available locale is used.
+
+```js
+const camelCase = require('camelcase');
+
+camelCase('lorem-ipsum', {locale: 'en-US'});
+//=> 'loremIpsum'
+
+camelCase('lorem-ipsum', {locale: 'tr-TR'});
+//=> 'loremİpsum'
+
+camelCase('lorem-ipsum', {locale: ['en-US', 'en-GB']});
+//=> 'loremIpsum'
+
+camelCase('lorem-ipsum', {locale: ['tr', 'TR', 'tr-TR']});
+//=> 'loremİpsum'
+```
+
+Setting `locale: false` ignores the platform locale and uses the [Unicode Default Case Conversion](https://unicode-org.github.io/icu/userguide/transforms/casemappings.html#simple-single-character-case-mapping) algorithm:
+
+```js
+const camelCase = require('camelcase');
+
+// On a platform with 'tr-TR'
+
+camelCase('lorem-ipsum');
+//=> 'loremİpsum'
+
+camelCase('lorem-ipsum', {locale: false});
+//=> 'loremIpsum'
+```
+
+## camelcase for enterprise
+
+Available as part of the Tidelift Subscription.
+
+The maintainers of camelcase and thousands of other packages are working with Tidelift to deliver commercial support and maintenance for the open source dependencies you use to build your applications. Save time, reduce risk, and improve code health, while paying the maintainers of the exact dependencies you use. [Learn more.](https://tidelift.com/subscription/pkg/npm-camelcase?utm_source=npm-camelcase&utm_medium=referral&utm_campaign=enterprise&utm_term=repo)
+
+## Related
+
+- [decamelize](https://github.com/sindresorhus/decamelize) - The inverse of this module
+- [uppercamelcase](https://github.com/SamVerschueren/uppercamelcase) - Like this module, but to PascalCase instead of camelCase
+- [titleize](https://github.com/sindresorhus/titleize) - Capitalize every word in string
+- [humanize-string](https://github.com/sindresorhus/humanize-string) - Convert a camelized/dasherized/underscored string into a humanized one
+- [camelcase-keys](https://github.com/sindresorhus/camelcase-keys) - Convert object keys to camel case
+
+
+===== FILE: ./frontend/node_modules/globby/readme.md =====
+# globby
+
+> User-friendly glob matching
+
+Based on [`fast-glob`](https://github.com/mrmlnc/fast-glob) but adds a bunch of useful features.
+
+## Features
+
+- Promise API
+- Multiple patterns
+- Negated patterns: `['foo*', '!foobar']`
+- Expands directories: `foo` → `foo/**/*`
+- Supports `.gitignore`
+
+## Install
+
+```
+$ npm install globby
+```
+
+## Usage
+
+```
+├── unicorn
+├── cake
+└── rainbow
+```
+
+```js
+const globby = require('globby');
+
+(async () => {
+	const paths = await globby(['*', '!cake']);
+
+	console.log(paths);
+	//=> ['unicorn', 'rainbow']
+})();
+```
+
+## API
+
+Note that glob patterns can only contain forward-slashes, not backward-slashes, so if you want to construct a glob pattern from path components, you need to use `path.posix.join()` instead of `path.join()`.
+
+### globby(patterns, options?)
+
+Returns a `Promise<string[]>` of matching paths.
+
+#### patterns
+
+Type: `string | string[]`
+
+See supported `minimatch` [patterns](https://github.com/isaacs/minimatch#usage).
+
+#### options
+
+Type: `object`
+
+See the [`fast-glob` options](https://github.com/mrmlnc/fast-glob#options-3) in addition to the ones below.
+
+##### expandDirectories
+
+Type: `boolean | string[] | object`\
+Default: `true`
+
+If set to `true`, `globby` will automatically glob directories for you. If you define an `Array` it will only glob files that matches the patterns inside the `Array`. You can also define an `object` with `files` and `extensions` like below:
+
+```js
+const globby = require('globby');
+
+(async () => {
+	const paths = await globby('images', {
+		expandDirectories: {
+			files: ['cat', 'unicorn', '*.jpg'],
+			extensions: ['png']
+		}
+	});
+
+	console.log(paths);
+	//=> ['cat.png', 'unicorn.png', 'cow.jpg', 'rainbow.jpg']
+})();
+```
+
+Note that if you set this option to `false`, you won't get back matched directories unless you set `onlyFiles: false`.
+
+##### gitignore
+
+Type: `boolean`\
+Default: `false`
+
+Respect ignore patterns in `.gitignore` files that apply to the globbed files.
+
+### globby.sync(patterns, options?)
+
+Returns `string[]` of matching paths.
+
+### globby.stream(patterns, options?)
+
+Returns a [`stream.Readable`](https://nodejs.org/api/stream.html#stream_readable_streams) of matching paths.
+
+Since Node.js 10, [readable streams are iterable](https://nodejs.org/api/stream.html#stream_readable_symbol_asynciterator), so you can loop over glob matches in a [`for await...of` loop](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for-await...of) like this:
+
+```js
+const globby = require('globby');
+
+(async () => {
+	for await (const path of globby.stream('*.tmp')) {
+		console.log(path);
+	}
+})();
+```
+
+### globby.generateGlobTasks(patterns, options?)
+
+Returns an `object[]` in the format `{pattern: string, options: Object}`, which can be passed as arguments to [`fast-glob`](https://github.com/mrmlnc/fast-glob). This is useful for other globbing-related packages.
+
+Note that you should avoid running the same tasks multiple times as they contain a file system cache. Instead, run this method each time to ensure file system changes are taken into consideration.
+
+### globby.hasMagic(patterns, options?)
+
+Returns a `boolean` of whether there are any special glob characters in the `patterns`.
+
+Note that the options affect the results.
+
+This function is backed by [`fast-glob`](https://github.com/mrmlnc/fast-glob#isdynamicpatternpattern-options).
+
+### globby.gitignore(options?)
+
+Returns a `Promise<(path: string) => boolean>` indicating whether a given path is ignored via a `.gitignore` file.
+
+Takes `cwd?: string` and `ignore?: string[]` as options. `.gitignore` files matched by the ignore config are not used for the resulting filter function.
+
+```js
+const {gitignore} = require('globby');
+
+(async () => {
+	const isIgnored = await gitignore();
+	console.log(isIgnored('some/file'));
+})();
+```
+
+### globby.gitignore.sync(options?)
+
+Returns a `(path: string) => boolean` indicating whether a given path is ignored via a `.gitignore` file.
+
+Takes the same options as `globby.gitignore`.
+
+## Globbing patterns
+
+Just a quick overview.
+
+- `*` matches any number of characters, but not `/`
+- `?` matches a single character, but not `/`
+- `**` matches any number of characters, including `/`, as long as it's the only thing in a path part
+- `{}` allows for a comma-separated list of "or" expressions
+- `!` at the beginning of a pattern will negate the match
+
+[Various patterns and expected matches.](https://github.com/sindresorhus/multimatch/blob/main/test/test.js)
+
+## globby for enterprise
+
+Available as part of the Tidelift Subscription.
+
+The maintainers of globby and thousands of other packages are working with Tidelift to deliver commercial support and maintenance for the open source dependencies you use to build your applications. Save time, reduce risk, and improve code health, while paying the maintainers of the exact dependencies you use. [Learn more.](https://tidelift.com/subscription/pkg/npm-globby?utm_source=npm-globby&utm_medium=referral&utm_campaign=enterprise&utm_term=repo)
+
+## Related
+
+- [multimatch](https://github.com/sindresorhus/multimatch) - Match against a list instead of the filesystem
+- [matcher](https://github.com/sindresorhus/matcher) - Simple wildcard matching
+- [del](https://github.com/sindresorhus/del) - Delete files and directories
+- [make-dir](https://github.com/sindresorhus/make-dir) - Make a directory and its parents if needed
+
+
+===== FILE: ./frontend/node_modules/import-local/readme.md =====
+# import-local
+
+> Let a globally installed package use a locally installed version of itself if available
+
+Useful for CLI tools that want to defer to the user's locally installed version when available, but still work if it's not installed locally. For example, [AVA](https://avajs.dev) and [XO](https://github.com/xojs/xo) uses this method.
+
+## Install
+
+```sh
+npm install import-local
+```
+
+## Usage
+
+```js
+import importLocal from 'import-local';
+
+if (importLocal(import.meta.url)) {
+	console.log('Using local version of this package');
+} else {
+	// Code for both global and local version here…
+}
+```
+
+You can also pass in `__filename` when used in a CommonJS context.
+
+
+===== FILE: ./frontend/node_modules/normalize-range/readme.md =====
+# normalize-range 
+
+Utility for normalizing a numeric range, with a wrapping function useful for polar coordinates.
+
+[![Build Status](https://travis-ci.org/jamestalmage/normalize-range.svg?branch=master)](https://travis-ci.org/jamestalmage/normalize-range)
+[![Coverage Status](https://coveralls.io/repos/jamestalmage/normalize-range/badge.svg?branch=master&service=github)](https://coveralls.io/github/jamestalmage/normalize-range?branch=master)
+[![Code Climate](https://codeclimate.com/github/jamestalmage/normalize-range/badges/gpa.svg)](https://codeclimate.com/github/jamestalmage/normalize-range)
+[![Dependency Status](https://david-dm.org/jamestalmage/normalize-range.svg)](https://david-dm.org/jamestalmage/normalize-range)
+[![devDependency Status](https://david-dm.org/jamestalmage/normalize-range/dev-status.svg)](https://david-dm.org/jamestalmage/normalize-range#info=devDependencies)
+
+[![NPM](https://nodei.co/npm/normalize-range.png)](https://nodei.co/npm/normalize-range/)
+
+## Usage
+
+```js
+var nr = require('normalize-range');
+
+nr.wrap(0, 360, 400);
+//=> 40
+
+nr.wrap(0, 360, -90);
+//=> 270
+
+nr.limit(0, 100, 500);
+//=> 100
+
+nr.limit(0, 100, -20);
+//=> 0
+
+// There is a convenient currying function
+var wrapAngle = nr.curry(0, 360).wrap;
+var limitTo10 = nr.curry(0, 10).limit;
+
+wrapAngle(-30);
+//=> 330
+```
+## API
+
+### wrap(min, max, value)
+
+Normalizes a values that "wraps around". For example, in a polar coordinate system, 270˚ can also be
+represented as -90˚. 
+For wrapping purposes we assume `max` is functionally equivalent to `min`, and that `wrap(max + 1) === wrap(min + 1)`.
+Wrap always assumes that `min` is *inclusive*, and `max` is *exclusive*.
+In other words, if `value === max` the function will wrap it, and return `min`, but `min` will not be wrapped.
+
+```js
+nr.wrap(0, 360, 0) === 0;
+nr.wrap(0, 360, 360) === 0;
+nr.wrap(0, 360, 361) === 1;
+nr.wrap(0, 360, -1) === 359;
+```
+
+You are not restricted to whole numbers, and ranges can be negative.
+
+```js
+var π = Math.PI;
+var radianRange = nr.curry(-π, π);
+
+redianRange.wrap(0) === 0;
+nr.wrap(π) === -π;
+nr.wrap(4 * π / 3) === -2 * π / 3;
+```
+
+### limit(min, max, value)
+
+Normalize the value by bringing it within the range.
+If `value` is greater than `max`, `max` will be returned.
+If `value` is less than `min`, `min` will be returned.
+Otherwise, `value` is returned unaltered.
+Both ends of this range are *inclusive*.
+
+### test(min, max, value, [minExclusive], [maxExclusive])
+
+Returns `true` if `value` is within the range, `false` otherwise.
+It defaults to `inclusive` on both ends of the range, but that can be
+changed by setting `minExclusive` and/or `maxExclusive` to a truthy value.
+
+### validate(min, max, value, [minExclusive], [maxExclusive])
+
+Returns `value` or throws an error if `value` is outside the specified range.
+
+### name(min, max, value, [minExclusive], [maxExclusive])
+
+Returns a string representing this range in 
+[range notation](https://en.wikipedia.org/wiki/Interval_(mathematics)#Classification_of_intervals).
+
+### curry(min, max, [minExclusive], [maxExclusive])
+
+Convenience method for currying all method arguments except `value`.
+
+```js
+var angle = require('normalize-range').curry(-180, 180, false, true);
+
+angle.wrap(270)
+//=> -90
+
+angle.limit(200)
+//=> 180
+
+angle.test(0)
+//=> true
+
+angle.validate(300)
+//=> throws an Error
+
+angle.toString() // or angle.name()
+//=> "[-180,180)"
+```
+
+#### min
+
+*Required*  
+Type: `number`
+
+The minimum value (inclusive) of the range.
+
+#### max
+
+*Required*  
+Type: `number`
+
+The maximum value (exclusive) of the range.
+
+#### value
+
+*Required*  
+Type: `number`
+
+The value to be normalized.
+
+#### returns
+
+Type: `number`
+
+The normalized value.
+
+## Building and Releasing
+
+- `npm test`: tests, linting, coverage and style checks.
+- `npm run watch`: autotest mode for active development.
+- `npm run debug`: run tests without coverage (istanbul can obscure line #'s) 
+
+Release via `cut-release` tool.
+
+## License
+
+MIT © [James Talmage](http://github.com/jamestalmage)
+
+
+===== FILE: ./frontend/node_modules/tmpl/readme.md =====
+tmpl [![Build Status](https://secure.travis-ci.org/nshah/nodejs-tmpl.png)](http://travis-ci.org/nshah/nodejs-tmpl)
+====
+
+Simple string formatting using `{}`.
+
+```javascript
+assert.equal(
+  tmpl('the answer is {answer}', { answer: 42 }),
+  'the answer is 42')
+```
+
+
+===== FILE: ./frontend/node_modules/immer/readme.md =====
+<img src="images/immer-logo.svg" height="200px" align="right"/>
+
+# Immer
+
+[![npm](https://img.shields.io/npm/v/immer.svg)](https://www.npmjs.com/package/immer) [![Build Status](https://travis-ci.org/immerjs/immer.svg?branch=main)](https://travis-ci.org/immerjs/immer) [![Coverage Status](https://coveralls.io/repos/github/mweststrate/immer/badge.svg?branch=main)](https://coveralls.io/github/mweststrate/immer?branch=main) [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier) [![OpenCollective](https://opencollective.com/immer/backers/badge.svg)](#backers) [![OpenCollective](https://opencollective.com/immer/sponsors/badge.svg)](#sponsors) [![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/immerjs/immer)
+
+_Create the next immutable state tree by simply modifying the current tree_
+
+Winner of the "Breakthrough of the year" [React open source award](https://osawards.com/react/) and "Most impactful contribution" [JavaScript open source award](https://osawards.com/javascript/) in 2019
+
+## Contribute using one-click online setup
+
+You can use Gitpod (a free online VS Code like IDE) for contributing online. With a single click it will launch a workspace and automatically:
+
+- clone the immer repo.
+- install the dependencies.
+- run `yarn run start`.
+
+so that you can start coding straight away.
+
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/from-referrer/)
+
+## Documentation
+
+The documentation of this package is hosted at https://immerjs.github.io/immer/
+
+## Support
+
+Did Immer make a difference to your project? Join the open collective at https://opencollective.com/immer!
+
+## Release notes
+
+https://github.com/immerjs/immer/releases
+
+
+===== FILE: ./frontend/node_modules/onetime/readme.md =====
+# onetime [![Build Status](https://travis-ci.com/sindresorhus/onetime.svg?branch=master)](https://travis-ci.com/github/sindresorhus/onetime)
+
+> Ensure a function is only called once
+
+When called multiple times it will return the return value from the first call.
+
+*Unlike the module [once](https://github.com/isaacs/once), this one isn't naughty and extending `Function.prototype`.*
+
+## Install
+
+```
+$ npm install onetime
+```
+
+## Usage
+
+```js
+const onetime = require('onetime');
+
+let i = 0;
+
+const foo = onetime(() => ++i);
+
+foo(); //=> 1
+foo(); //=> 1
+foo(); //=> 1
+
+onetime.callCount(foo); //=> 3
+```
+
+```js
+const onetime = require('onetime');
+
+const foo = onetime(() => {}, {throw: true});
+
+foo();
+
+foo();
+//=> Error: Function `foo` can only be called once
+```
+
+## API
+
+### onetime(fn, options?)
+
+Returns a function that only calls `fn` once.
+
+#### fn
+
+Type: `Function`
+
+Function that should only be called once.
+
+#### options
+
+Type: `object`
+
+##### throw
+
+Type: `boolean`\
+Default: `false`
+
+Throw an error when called more than once.
+
+### onetime.callCount(fn)
+
+Returns a number representing how many times `fn` has been called.
+
+Note: It throws an error if you pass in a function that is not wrapped by `onetime`.
+
+```js
+const onetime = require('onetime');
+
+const foo = onetime(() => {});
+
+foo();
+foo();
+foo();
+
+console.log(onetime.callCount(foo));
+//=> 3
+```
+
+#### fn
+
+Type: `Function`
+
+Function to get call count from.
+
+## onetime for enterprise
+
+Available as part of the Tidelift Subscription.
+
+The maintainers of onetime and thousands of other packages are working with Tidelift to deliver commercial support and maintenance for the open source dependencies you use to build your applications. Save time, reduce risk, and improve code health, while paying the maintainers of the exact dependencies you use. [Learn more.](https://tidelift.com/subscription/pkg/npm-onetime?utm_source=npm-onetime&utm_medium=referral&utm_campaign=enterprise&utm_term=repo)
+
+
+===== FILE: ./frontend/node_modules/string-length/readme.md =====
+# string-length
+
+> Get the real length of a string - by correctly counting astral symbols and ignoring [ansi escape codes](https://github.com/sindresorhus/strip-ansi)
+
+`String#length` erroneously counts [astral symbols](https://web.archive.org/web/20150721114550/http://www.tlg.uci.edu/~opoudjis/unicode/unicode_astral.html) as two characters.
+
+## Install
+
+```
+$ npm install string-length
+```
+
+## Usage
+
+```js
+const stringLength = require('string-length');
+
+'🐴'.length;
+//=> 2
+
+stringLength('🐴');
+//=> 1
+
+stringLength('\u001B[1municorn\u001B[22m');
+//=> 7
+```
+
+## Related
+
+- [string-length-cli](https://github.com/LitoMore/string-length-cli) - CLI for this module
+- [string-width](https://github.com/sindresorhus/string-width) - Get visual width of a string
+
+---
+
+<div align="center">
+	<b>
+		<a href="https://tidelift.com/subscription/pkg/npm-string-length?utm_source=npm-string-length&utm_medium=referral&utm_campaign=readme">Get professional support for this package with a Tidelift subscription</a>
+	</b>
+	<br>
+	<sub>
+		Tidelift helps make open source sustainable for maintainers while giving companies<br>assurances about security, maintenance, and licensing for their dependencies.
+	</sub>
+</div>
+
+
+===== FILE: ./frontend/node_modules/wrap-ansi-cjs/readme.md =====
+# wrap-ansi [![Build Status](https://travis-ci.com/chalk/wrap-ansi.svg?branch=master)](https://travis-ci.com/chalk/wrap-ansi) [![Coverage Status](https://coveralls.io/repos/github/chalk/wrap-ansi/badge.svg?branch=master)](https://coveralls.io/github/chalk/wrap-ansi?branch=master)
+
+> Wordwrap a string with [ANSI escape codes](https://en.wikipedia.org/wiki/ANSI_escape_code#Colors_and_Styles)
+
+## Install
+
+```
+$ npm install wrap-ansi
+```
+
+## Usage
+
+```js
+const chalk = require('chalk');
+const wrapAnsi = require('wrap-ansi');
+
+const input = 'The quick brown ' + chalk.red('fox jumped over ') +
+	'the lazy ' + chalk.green('dog and then ran away with the unicorn.');
+
+console.log(wrapAnsi(input, 20));
+```
+
+<img width="331" src="screenshot.png">
+
+## API
+
+### wrapAnsi(string, columns, options?)
+
+Wrap words to the specified column width.
+
+#### string
+
+Type: `string`
+
+String with ANSI escape codes. Like one styled by [`chalk`](https://github.com/chalk/chalk). Newline characters will be normalized to `\n`.
+
+#### columns
+
+Type: `number`
+
+Number of columns to wrap the text to.
+
+#### options
+
+Type: `object`
+
+##### hard
+
+Type: `boolean`\
+Default: `false`
+
+By default the wrap is soft, meaning long words may extend past the column width. Setting this to `true` will make it hard wrap at the column width.
+
+##### wordWrap
+
+Type: `boolean`\
+Default: `true`
+
+By default, an attempt is made to split words at spaces, ensuring that they don't extend past the configured columns. If wordWrap is `false`, each column will instead be completely filled splitting words as necessary.
+
+##### trim
+
+Type: `boolean`\
+Default: `true`
+
+Whitespace on all lines is removed by default. Set this option to `false` if you don't want to trim.
+
+## Related
+
+- [slice-ansi](https://github.com/chalk/slice-ansi) - Slice a string with ANSI escape codes
+- [cli-truncate](https://github.com/sindresorhus/cli-truncate) - Truncate a string to a specific width in the terminal
+- [chalk](https://github.com/chalk/chalk) - Terminal string styling done right
+- [jsesc](https://github.com/mathiasbynens/jsesc) - Generate ASCII-only output from Unicode strings. Useful for creating test fixtures.
+
+## Maintainers
+
+- [Sindre Sorhus](https://github.com/sindresorhus)
+- [Josh Junon](https://github.com/qix-)
+- [Benjamin Coe](https://github.com/bcoe)
+
+---
+
+<div align="center">
+	<b>
+		<a href="https://tidelift.com/subscription/pkg/npm-wrap_ansi?utm_source=npm-wrap-ansi&utm_medium=referral&utm_campaign=readme">Get professional support for this package with a Tidelift subscription</a>
+	</b>
+	<br>
+	<sub>
+		Tidelift helps make open source sustainable for maintainers while giving companies<br>assurances about security, maintenance, and licensing for their dependencies.
+	</sub>
+</div>
+
+
+===== FILE: ./frontend/node_modules/is-generator-fn/readme.md =====
+# is-generator-fn [![Build Status](https://travis-ci.org/sindresorhus/is-generator-fn.svg?branch=master)](https://travis-ci.org/sindresorhus/is-generator-fn)
+
+> Check if something is a [generator function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function*)
+
+
+## Install
+
+```
+$ npm install is-generator-fn
+```
+
+
+## Usage
+
+```js
+const isGeneratorFn = require('is-generator-fn');
+
+isGeneratorFn(function * () {});
+//=> true
+
+isGeneratorFn(function () {});
+//=> false
+```
+
+
+## Related
+
+- [is](https://github.com/sindresorhus/is) - Type check values
+
+
+## License
+
+MIT © [Sindre Sorhus](https://sindresorhus.com)
+
+
+===== FILE: ./frontend/node_modules/temp-dir/readme.md =====
+# temp-dir [![Build Status](https://travis-ci.org/sindresorhus/temp-dir.svg?branch=master)](https://travis-ci.org/sindresorhus/temp-dir)
+
+> Get the real path of the system temp directory
+
+[The `os.tmpdir()` built-in doesn't return the real path.](https://github.com/nodejs/node/issues/11422) That can cause problems when the returned path is a symlink, which is the case on macOS. Use this module to get the resolved path.
+
+
+## Install
+
+```
+$ npm install temp-dir
+```
+
+
+## Usage
+
+```js
+const tempDirectory = require('temp-dir');
+
+console.log(tempDirectory);
+//=> '/private/var/folders/3x/jf5977fn79jbglr7rk0tq4d00000gn/T'
+
+console.log(require('os').tmpdir());
+//=> '/var/folders/3x/jf5977fn79jbglr7rk0tq4d00000gn/T' // <= Symlink
+```
+
+
+## License
+
+MIT © [Sindre Sorhus](https://sindresorhus.com)
+
+
+===== FILE: ./frontend/node_modules/has-flag/readme.md =====
+# has-flag [![Build Status](https://travis-ci.org/sindresorhus/has-flag.svg?branch=master)](https://travis-ci.org/sindresorhus/has-flag)
+
+> Check if [`argv`](https://nodejs.org/docs/latest/api/process.html#process_process_argv) has a specific flag
+
+Correctly stops looking after an `--` argument terminator.
+
+---
+
+<div align="center">
+	<b>
+		<a href="https://tidelift.com/subscription/pkg/npm-has-flag?utm_source=npm-has-flag&utm_medium=referral&utm_campaign=readme">Get professional support for this package with a Tidelift subscription</a>
+	</b>
+	<br>
+	<sub>
+		Tidelift helps make open source sustainable for maintainers while giving companies<br>assurances about security, maintenance, and licensing for their dependencies.
+	</sub>
+</div>
+
+---
+
+
+## Install
+
+```
+$ npm install has-flag
+```
+
+
+## Usage
+
+```js
+// foo.js
+const hasFlag = require('has-flag');
+
+hasFlag('unicorn');
+//=> true
+
+hasFlag('--unicorn');
+//=> true
+
+hasFlag('f');
+//=> true
+
+hasFlag('-f');
+//=> true
+
+hasFlag('foo=bar');
+//=> true
+
+hasFlag('foo');
+//=> false
+
+hasFlag('rainbow');
+//=> false
+```
+
+```
+$ node foo.js -f --unicorn --foo=bar -- --rainbow
+```
+
+
+## API
+
+### hasFlag(flag, [argv])
+
+Returns a boolean for whether the flag exists.
+
+#### flag
+
+Type: `string`
+
+CLI flag to look for. The `--` prefix is optional.
+
+#### argv
+
+Type: `string[]`<br>
+Default: `process.argv`
+
+CLI arguments.
+
+
+## Security
+
+To report a security vulnerability, please use the [Tidelift security contact](https://tidelift.com/security). Tidelift will coordinate the fix and disclosure.
+
+
+## License
+
+MIT © [Sindre Sorhus](https://sindresorhus.com)
+
+
+===== FILE: ./frontend/node_modules/minimalistic-assert/readme.md =====
+minimalistic-assert
+===
+
+very minimalistic assert module.
+
+
+===== FILE: ./frontend/node_modules/@isaacs/cliui/node_modules/string-width/readme.md =====
+# string-width
+
+> Get the visual width of a string - the number of columns required to display it
+
+Some Unicode characters are [fullwidth](https://en.wikipedia.org/wiki/Halfwidth_and_fullwidth_forms) and use double the normal width. [ANSI escape codes](https://en.wikipedia.org/wiki/ANSI_escape_code) are stripped and doesn't affect the width.
+
+Useful to be able to measure the actual width of command-line output.
+
+## Install
+
+```
+$ npm install string-width
+```
+
+## Usage
+
+```js
+import stringWidth from 'string-width';
+
+stringWidth('a');
+//=> 1
+
+stringWidth('古');
+//=> 2
+
+stringWidth('\u001B[1m古\u001B[22m');
+//=> 2
+```
+
+## API
+
+### stringWidth(string, options?)
+
+#### string
+
+Type: `string`
+
+The string to be counted.
+
+#### options
+
+Type: `object`
+
+##### ambiguousIsNarrow
+
+Type: `boolean`\
+Default: `false`
+
+Count [ambiguous width characters](https://www.unicode.org/reports/tr11/#Ambiguous) as having narrow width (count of 1) instead of wide width (count of 2).
+
+## Related
+
+- [string-width-cli](https://github.com/sindresorhus/string-width-cli) - CLI for this module
+- [string-length](https://github.com/sindresorhus/string-length) - Get the real length of a string
+- [widest-line](https://github.com/sindresorhus/widest-line) - Get the visual width of the widest line in a string
+
+---
+
+<div align="center">
+	<b>
+		<a href="https://tidelift.com/subscription/pkg/npm-string-width?utm_source=npm-string-width&utm_medium=referral&utm_campaign=readme">Get professional support for this package with a Tidelift subscription</a>
+	</b>
+	<br>
+	<sub>
+		Tidelift helps make open source sustainable for maintainers while giving companies<br>assurances about security, maintenance, and licensing for their dependencies.
+	</sub>
+</div>
+

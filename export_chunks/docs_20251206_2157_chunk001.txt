@@ -1,0 +1,1681 @@
+### Topic: docs
+### Created: 20251206_2157
+========================================
+
+===== FILE: ./readme.md =====
+````markdown
+# 🇬🇧 English Version
+
+```bash
+git clone ...
+````
+
+# **BergNavn**
+
+**BergNavn** is a project tailored for travelers, couples, and families.
+It offers personalized cruise planning with a focus on safety and precise timing.
+
+---
+
+## 🚀 Quickstart
+
+> 🛠️ Recommended: Run this project in a Linux environment or use WSL on Windows.
+> It also works on Windows as long as Python and pip are properly installed.
+
+1. Clone the repository:
+
+   ```bash
+   git clone ...
+   cd bergnavn
+   ```
+
+2. Create a virtual environment:
+
+   ```bash
+   python3 -m venv venv
+   source venv/bin/activate    # Linux / WSL
+   venv\Scripts\activate       # Windows
+   ```
+
+3. Install dependencies:
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. Run the server:
+
+   ```bash
+   flask run
+   ```
+
+   The server will run at: [http://127.0.0.1:5000/](http://127.0.0.1:5000/)
+
+---
+
+## 🧰 Technologies
+
+The project uses the following libraries and tools:
+
+* **Flask** – Lightweight Python framework for building web applications
+* **Flask-SQLAlchemy** – ORM layer for database interaction
+* **Flask-Login** – User authentication management
+* **PostgreSQL** – Relational database
+* **Python** – Main programming language
+* **Jinja2** – Templating engine for separating logic and UI
+* **SQLAlchemy** – Advanced ORM toolkit
+* **pytest** – Unit testing framework
+* **python-dotenv** – For managing environment variables securely
+
+---
+
+## 📁 Project Structure
+
+The project is organized into modular folders for clarity and scalability:
+
+```
+bergnavn/
+├── backend/                   # Server-side code
+│   ├── models/                # Database models (user, cruise)
+│   ├── routes/                # API endpoints using Flask Blueprints
+│   ├── controllers/           # Business logic connecting routes and models
+│   ├── services/              # External integrations (e.g., APIs, email)
+│   ├── middleware/            # Security and authorization layers
+│   ├── config/                # Configuration (env, secrets)
+│   ├── tests/                 # Unit tests (pytest)
+│   ├── app.py                 # Flask entry point
+│   └── .env                   # Environment variables (not tracked by git)
+│
+├── frontend/                  # React-based UI (currently under development)
+│   ⚠️ Note: May contain legacy `react-scripts` warnings; not critical for functionality
+│
+├── database/                  # DB schema setup (optional)
+├── .gitignore                 # Excludes env files, logs, venvs, etc.
+├── config.py                  # Global configuration (if not in backend/config)
+└── readme.md                  # This documentation
+```
+
+---
+
+## 🗺️ Vision & Roadmap
+
+**BergNavn** aspires to become a trusted digital companion for modern travelers — combining safety, clarity, and elegance in cruise planning.
+
+Future development goals include:
+
+* **Smart User Interface** – Dynamic cruise planning UI with real-time feedback
+* **API Integrations** – Real-time weather data, maps, and navigation services
+* **Performance Optimization** – Caching and advanced query handling
+* **Multi-language Support** – Especially for Nordic and Central European users
+* **Mobile-ready Experience** – PWA support for seamless use on all devices
+
+> *"This project started with a passion for the sea, and a desire to bring clarity to complex journeys. With every feature, we aim to make travel feel more human, more informed — and more beautiful."*
+
+---
+
+## ✅ Alembic Migration Test Instructions
+
+To verify your Alembic configuration is working correctly:
+
+1. **Make sure your app and Alembic are correctly linked:**
+
+   * Check that `create_app()` is properly imported and used inside `env.py`
+   * Ensure `get_engine_url()` is defined before it is called.
+
+2. **Run a dry migration test:**
+
+   ```bash
+   alembic revision --autogenerate -m "Test migration after config change"
+   ```
+
+3. **Check the generated file:**
+
+   * Look under the `migrations/versions/` folder for a `.py` file.
+   * It should contain valid `op.create_table(...)` or similar migration code.
+
+4. **If all looks good, apply the migration:**
+
+   ```bash
+   alembic upgrade head
+   ```
+
+> If you encounter issues such as `create_app not found` or `get_engine_url() not defined`, double-check import paths and function definitions inside your `migrations/env.py`.
+
+---
+
+## 👤 Project Creator
+
+Created by:
+**Eli**
+[GitHub Profile](https://github.com/eliyahudahan)
+Email: [framgangsrik747@gmail.com](mailto:framgangsrik747@gmail.com)
+
+```
+
+
+===== FILE: ./frontend/node_modules/resolve-from/readme.md =====
+# resolve-from [![Build Status](https://travis-ci.org/sindresorhus/resolve-from.svg?branch=master)](https://travis-ci.org/sindresorhus/resolve-from)
+
+> Resolve the path of a module like [`require.resolve()`](https://nodejs.org/api/globals.html#globals_require_resolve) but from a given path
+
+
+## Install
+
+```
+$ npm install resolve-from
+```
+
+
+## Usage
+
+```js
+const resolveFrom = require('resolve-from');
+
+// There is a file at `./foo/bar.js`
+
+resolveFrom('foo', './bar');
+//=> '/Users/sindresorhus/dev/test/foo/bar.js'
+```
+
+
+## API
+
+### resolveFrom(fromDirectory, moduleId)
+
+Like `require()`, throws when the module can't be found.
+
+### resolveFrom.silent(fromDirectory, moduleId)
+
+Returns `undefined` instead of throwing when the module can't be found.
+
+#### fromDirectory
+
+Type: `string`
+
+Directory to resolve from.
+
+#### moduleId
+
+Type: `string`
+
+What you would use in `require()`.
+
+
+## Tip
+
+Create a partial using a bound function if you want to resolve from the same `fromDirectory` multiple times:
+
+```js
+const resolveFromFoo = resolveFrom.bind(null, 'foo');
+
+resolveFromFoo('./bar');
+resolveFromFoo('./baz');
+```
+
+
+## Related
+
+- [resolve-cwd](https://github.com/sindresorhus/resolve-cwd) - Resolve the path of a module from the current working directory
+- [import-from](https://github.com/sindresorhus/import-from) - Import a module from a given path
+- [import-cwd](https://github.com/sindresorhus/import-cwd) - Import a module from the current working directory
+- [resolve-pkg](https://github.com/sindresorhus/resolve-pkg) - Resolve the path of a package regardless of it having an entry point
+- [import-lazy](https://github.com/sindresorhus/import-lazy) - Import a module lazily
+- [resolve-global](https://github.com/sindresorhus/resolve-global) - Resolve the path of a globally installed module
+
+
+## License
+
+MIT © [Sindre Sorhus](https://sindresorhus.com)
+
+
+===== FILE: ./frontend/node_modules/finalhandler/node_modules/ms/readme.md =====
+# ms
+
+[![Build Status](https://travis-ci.org/zeit/ms.svg?branch=master)](https://travis-ci.org/zeit/ms)
+[![Slack Channel](http://zeit-slackin.now.sh/badge.svg)](https://zeit.chat/)
+
+Use this package to easily convert various time formats to milliseconds.
+
+## Examples
+
+```js
+ms('2 days')  // 172800000
+ms('1d')      // 86400000
+ms('10h')     // 36000000
+ms('2.5 hrs') // 9000000
+ms('2h')      // 7200000
+ms('1m')      // 60000
+ms('5s')      // 5000
+ms('1y')      // 31557600000
+ms('100')     // 100
+```
+
+### Convert from milliseconds
+
+```js
+ms(60000)             // "1m"
+ms(2 * 60000)         // "2m"
+ms(ms('10 hours'))    // "10h"
+```
+
+### Time format written-out
+
+```js
+ms(60000, { long: true })             // "1 minute"
+ms(2 * 60000, { long: true })         // "2 minutes"
+ms(ms('10 hours'), { long: true })    // "10 hours"
+```
+
+## Features
+
+- Works both in [node](https://nodejs.org) and in the browser.
+- If a number is supplied to `ms`, a string with a unit is returned.
+- If a string that contains the number is supplied, it returns it as a number (e.g.: it returns `100` for `'100'`).
+- If you pass a string with a number and a valid unit, the number of equivalent ms is returned.
+
+## Caught a bug?
+
+1. [Fork](https://help.github.com/articles/fork-a-repo/) this repository to your own GitHub account and then [clone](https://help.github.com/articles/cloning-a-repository/) it to your local device
+2. Link the package to the global module directory: `npm link`
+3. Within the module you want to test your local development instance of ms, just link it to the dependencies: `npm link ms`. Instead of the default one from npm, node will now use your clone of ms!
+
+As always, you can run the tests using: `npm test`
+
+
+===== FILE: ./frontend/node_modules/serve-index/node_modules/ms/readme.md =====
+# ms
+
+[![Build Status](https://travis-ci.org/zeit/ms.svg?branch=master)](https://travis-ci.org/zeit/ms)
+[![Slack Channel](http://zeit-slackin.now.sh/badge.svg)](https://zeit.chat/)
+
+Use this package to easily convert various time formats to milliseconds.
+
+## Examples
+
+```js
+ms('2 days')  // 172800000
+ms('1d')      // 86400000
+ms('10h')     // 36000000
+ms('2.5 hrs') // 9000000
+ms('2h')      // 7200000
+ms('1m')      // 60000
+ms('5s')      // 5000
+ms('1y')      // 31557600000
+ms('100')     // 100
+```
+
+### Convert from milliseconds
+
+```js
+ms(60000)             // "1m"
+ms(2 * 60000)         // "2m"
+ms(ms('10 hours'))    // "10h"
+```
+
+### Time format written-out
+
+```js
+ms(60000, { long: true })             // "1 minute"
+ms(2 * 60000, { long: true })         // "2 minutes"
+ms(ms('10 hours'), { long: true })    // "10 hours"
+```
+
+## Features
+
+- Works both in [node](https://nodejs.org) and in the browser.
+- If a number is supplied to `ms`, a string with a unit is returned.
+- If a string that contains the number is supplied, it returns it as a number (e.g.: it returns `100` for `'100'`).
+- If you pass a string with a number and a valid unit, the number of equivalent ms is returned.
+
+## Caught a bug?
+
+1. [Fork](https://help.github.com/articles/fork-a-repo/) this repository to your own GitHub account and then [clone](https://help.github.com/articles/cloning-a-repository/) it to your local device
+2. Link the package to the global module directory: `npm link`
+3. Within the module you want to test your local development instance of ms, just link it to the dependencies: `npm link ms`. Instead of the default one from npm, node will now use your clone of ms!
+
+As always, you can run the tests using: `npm test`
+
+
+===== FILE: ./frontend/node_modules/eslint-webpack-plugin/node_modules/supports-color/readme.md =====
+# supports-color
+
+> Detect whether a terminal supports color
+
+## Install
+
+```
+$ npm install supports-color
+```
+
+## Usage
+
+```js
+const supportsColor = require('supports-color');
+
+if (supportsColor.stdout) {
+	console.log('Terminal stdout supports color');
+}
+
+if (supportsColor.stdout.has256) {
+	console.log('Terminal stdout supports 256 colors');
+}
+
+if (supportsColor.stderr.has16m) {
+	console.log('Terminal stderr supports 16 million colors (truecolor)');
+}
+```
+
+## API
+
+Returns an `Object` with a `stdout` and `stderr` property for testing either streams. Each property is an `Object`, or `false` if color is not supported.
+
+The `stdout`/`stderr` objects specifies a level of support for color through a `.level` property and a corresponding flag:
+
+- `.level = 1` and `.hasBasic = true`: Basic color support (16 colors)
+- `.level = 2` and `.has256 = true`: 256 color support
+- `.level = 3` and `.has16m = true`: Truecolor support (16 million colors)
+
+### `require('supports-color').supportsColor(stream, options?)`
+
+Additionally, `supports-color` exposes the `.supportsColor()` function that takes an arbitrary write stream (e.g. `process.stdout`) and an optional options object to (re-)evaluate color support for an arbitrary stream.
+
+For example, `require('supports-color').stdout` is the equivalent of `require('supports-color').supportsColor(process.stdout)`.
+
+The options object supports a single boolean property `sniffFlags`. By default it is `true`, which instructs `supportsColor()` to sniff `process.argv` for the multitude of `--color` flags (see _Info_ below). If `false`, then `process.argv` is not considered when determining color support.
+
+## Info
+
+It obeys the `--color` and `--no-color` CLI flags.
+
+For situations where using `--color` is not possible, use the environment variable `FORCE_COLOR=1` (level 1), `FORCE_COLOR=2` (level 2), or `FORCE_COLOR=3` (level 3) to forcefully enable color, or `FORCE_COLOR=0` to forcefully disable. The use of `FORCE_COLOR` overrides all other color support checks.
+
+Explicit 256/Truecolor mode can be enabled using the `--color=256` and `--color=16m` flags, respectively.
+
+## Related
+
+- [supports-color-cli](https://github.com/chalk/supports-color-cli) - CLI for this module
+- [chalk](https://github.com/chalk/chalk) - Terminal string styling done right
+
+## Maintainers
+
+- [Sindre Sorhus](https://github.com/sindresorhus)
+- [Josh Junon](https://github.com/qix-)
+
+---
+
+<div align="center">
+	<b>
+		<a href="https://tidelift.com/subscription/pkg/npm-supports-color?utm_source=npm-supports-color&utm_medium=referral&utm_campaign=readme">Get professional support for this package with a Tidelift subscription</a>
+	</b>
+	<br>
+	<sub>
+		Tidelift helps make open source sustainable for maintainers while giving companies<br>assurances about security, maintenance, and licensing for their dependencies.
+	</sub>
+</div>
+
+---
+
+
+===== FILE: ./frontend/node_modules/path-exists/readme.md =====
+# path-exists [![Build Status](https://travis-ci.org/sindresorhus/path-exists.svg?branch=master)](https://travis-ci.org/sindresorhus/path-exists)
+
+> Check if a path exists
+
+NOTE: `fs.existsSync` has been un-deprecated in Node.js since 6.8.0. If you only need to check synchronously, this module is not needed.
+
+While [`fs.exists()`](https://nodejs.org/api/fs.html#fs_fs_exists_path_callback) is being [deprecated](https://github.com/iojs/io.js/issues/103), there's still a genuine use-case of being able to check if a path exists for other purposes than doing IO with it.
+
+Never use this before handling a file though:
+
+> In particular, checking if a file exists before opening it is an anti-pattern that leaves you vulnerable to race conditions: another process may remove the file between the calls to `fs.exists()` and `fs.open()`. Just open the file and handle the error when it's not there.
+
+
+## Install
+
+```
+$ npm install path-exists
+```
+
+
+## Usage
+
+```js
+// foo.js
+const pathExists = require('path-exists');
+
+(async () => {
+	console.log(await pathExists('foo.js'));
+	//=> true
+})();
+```
+
+
+## API
+
+### pathExists(path)
+
+Returns a `Promise<boolean>` of whether the path exists.
+
+### pathExists.sync(path)
+
+Returns a `boolean` of whether the path exists.
+
+
+## Related
+
+- [path-exists-cli](https://github.com/sindresorhus/path-exists-cli) - CLI for this module
+
+
+## License
+
+MIT © [Sindre Sorhus](https://sindresorhus.com)
+
+
+===== FILE: ./frontend/node_modules/is-plain-obj/readme.md =====
+# is-plain-obj [![Build Status](https://travis-ci.com/sindresorhus/is-plain-obj.svg?branch=master)](https://travis-ci.com/github/sindresorhus/is-plain-obj)
+
+> Check if a value is a plain object
+
+An object is plain if it's created by either `{}`, `new Object()`, or `Object.create(null)`.
+
+## Install
+
+```
+$ npm install is-plain-obj
+```
+
+## Usage
+
+```js
+const isPlainObject = require('is-plain-obj');
+
+isPlainObject({foo: 'bar'});
+//=> true
+
+isPlainObject(new Object());
+//=> true
+
+isPlainObject(Object.create(null));
+//=> true
+
+isPlainObject([1, 2, 3]);
+//=> false
+
+class Unicorn {}
+isPlainObject(new Unicorn());
+//=> false
+```
+
+## Related
+
+- [is-obj](https://github.com/sindresorhus/is-obj) - Check if a value is an object
+- [is](https://github.com/sindresorhus/is) - Type check values
+
+
+---
+
+<div align="center">
+	<b>
+		<a href="https://tidelift.com/subscription/pkg/npm-is-plain-obj?utm_source=npm-is-plain-obj&utm_medium=referral&utm_campaign=readme">Get professional support for this package with a Tidelift subscription</a>
+	</b>
+	<br>
+	<sub>
+		Tidelift helps make open source sustainable for maintainers while giving companies<br>assurances about security, maintenance, and licensing for their dependencies.
+	</sub>
+</div>
+
+
+===== FILE: ./frontend/node_modules/is-path-inside/readme.md =====
+# is-path-inside
+
+> Check if a path is inside another path
+
+
+## Install
+
+```
+$ npm install is-path-inside
+```
+
+
+## Usage
+
+```js
+const isPathInside = require('is-path-inside');
+
+isPathInside('a/b/c', 'a/b');
+//=> true
+
+isPathInside('a/b/c', 'x/y');
+//=> false
+
+isPathInside('a/b/c', 'a/b/c');
+//=> false
+
+isPathInside('/Users/sindresorhus/dev/unicorn', '/Users/sindresorhus');
+//=> true
+```
+
+
+## API
+
+### isPathInside(childPath, parentPath)
+
+Note that relative paths are resolved against `process.cwd()` to make them absolute.
+
+**Important:** This package is meant for use with path manipulation. It does not check if the paths exist nor does it resolve symlinks. You should not use this as a security mechanism to guard against access to certain places on the file system.
+
+#### childPath
+
+Type: `string`
+
+The path that should be inside `parentPath`.
+
+#### parentPath
+
+Type: `string`
+
+The path that should contain `childPath`.
+
+
+---
+
+<div align="center">
+	<b>
+		<a href="https://tidelift.com/subscription/pkg/npm-is-path-inside?utm_source=npm-is-path-inside&utm_medium=referral&utm_campaign=readme">Get professional support for this package with a Tidelift subscription</a>
+	</b>
+	<br>
+	<sub>
+		Tidelift helps make open source sustainable for maintainers while giving companies<br>assurances about security, maintenance, and licensing for their dependencies.
+	</sub>
+</div>
+
+
+===== FILE: ./frontend/node_modules/parent-module/readme.md =====
+# parent-module [![Build Status](https://travis-ci.org/sindresorhus/parent-module.svg?branch=master)](https://travis-ci.org/sindresorhus/parent-module)
+
+> Get the path of the parent module
+
+Node.js exposes `module.parent`, but it only gives you the first cached parent, which is not necessarily the actual parent.
+
+
+## Install
+
+```
+$ npm install parent-module
+```
+
+
+## Usage
+
+```js
+// bar.js
+const parentModule = require('parent-module');
+
+module.exports = () => {
+	console.log(parentModule());
+	//=> '/Users/sindresorhus/dev/unicorn/foo.js'
+};
+```
+
+```js
+// foo.js
+const bar = require('./bar');
+
+bar();
+```
+
+
+## API
+
+### parentModule([filepath])
+
+By default, it will return the path of the immediate parent.
+
+#### filepath
+
+Type: `string`<br>
+Default: [`__filename`](https://nodejs.org/api/globals.html#globals_filename)
+
+Filepath of the module of which to get the parent path.
+
+Useful if you want it to work [multiple module levels down](https://github.com/sindresorhus/parent-module/tree/master/fixtures/filepath).
+
+
+## Tip
+
+Combine it with [`read-pkg-up`](https://github.com/sindresorhus/read-pkg-up) to read the package.json of the parent module.
+
+```js
+const path = require('path');
+const readPkgUp = require('read-pkg-up');
+const parentModule = require('parent-module');
+
+console.log(readPkgUp.sync({cwd: path.dirname(parentModule())}).pkg);
+//=> {name: 'chalk', version: '1.0.0', …}
+```
+
+
+## License
+
+MIT © [Sindre Sorhus](https://sindresorhus.com)
+
+
+===== FILE: ./frontend/node_modules/open/readme.md =====
+# open
+
+> Open stuff like URLs, files, executables. Cross-platform.
+
+This is meant to be used in command-line tools and scripts, not in the browser.
+
+If you need this for Electron, use [`shell.openPath()`](https://www.electronjs.org/docs/api/shell#shellopenpathpath) instead.
+
+This package does not make any security guarantees. If you pass in untrusted input, it's up to you to properly sanitize it.
+
+#### Why?
+
+- Actively maintained.
+- Supports app arguments.
+- Safer as it uses `spawn` instead of `exec`.
+- Fixes most of the original `node-open` issues.
+- Includes the latest [`xdg-open` script](https://gitlab.freedesktop.org/xdg/xdg-utils/-/blob/master/scripts/xdg-open.in) for Linux.
+- Supports WSL paths to Windows apps.
+
+## Install
+
+```sh
+npm install open
+```
+
+## Usage
+
+```js
+const open = require('open');
+
+// Opens the image in the default image viewer and waits for the opened app to quit.
+await open('unicorn.png', {wait: true});
+console.log('The image viewer app quit');
+
+// Opens the URL in the default browser.
+await open('https://sindresorhus.com');
+
+// Opens the URL in a specified browser.
+await open('https://sindresorhus.com', {app: {name: 'firefox'}});
+
+// Specify app arguments.
+await open('https://sindresorhus.com', {app: {name: 'google chrome', arguments: ['--incognito']}});
+
+// Open an app
+await open.openApp('xcode');
+
+// Open an app with arguments
+await open.openApp(open.apps.chrome, {arguments: ['--incognito']});
+```
+
+## API
+
+It uses the command `open` on macOS, `start` on Windows and `xdg-open` on other platforms.
+
+### open(target, options?)
+
+Returns a promise for the [spawned child process](https://nodejs.org/api/child_process.html#child_process_class_childprocess). You would normally not need to use this for anything, but it can be useful if you'd like to attach custom event listeners or perform other operations directly on the spawned process.
+
+#### target
+
+Type: `string`
+
+The thing you want to open. Can be a URL, file, or executable.
+
+Opens in the default app for the file type. For example, URLs opens in your default browser.
+
+#### options
+
+Type: `object`
+
+##### wait
+
+Type: `boolean`\
+Default: `false`
+
+Wait for the opened app to exit before fulfilling the promise. If `false` it's fulfilled immediately when opening the app.
+
+Note that it waits for the app to exit, not just for the window to close.
+
+On Windows, you have to explicitly specify an app for it to be able to wait.
+
+##### background <sup>(macOS only)</sup>
+
+Type: `boolean`\
+Default: `false`
+
+Do not bring the app to the foreground.
+
+##### newInstance <sup>(macOS only)</sup>
+
+Type: `boolean`\
+Default: `false`
+
+Open a new instance of the app even it's already running.
+
+A new instance is always opened on other platforms.
+
+##### app
+
+Type: `{name: string | string[], arguments?: string[]} | Array<{name: string | string[], arguments: string[]}>`
+
+Specify the `name` of the app to open the `target` with, and optionally, app `arguments`. `app` can be an array of apps to try to open and `name` can be an array of app names to try. If each app fails, the last error will be thrown.
+
+The app name is platform dependent. Don't hard code it in reusable modules. For example, Chrome is `google chrome` on macOS, `google-chrome` on Linux and `chrome` on Windows. If possible, use [`open.apps`](#openapps) which auto-detects the correct binary to use.
+
+You may also pass in the app's full path. For example on WSL, this can be `/mnt/c/Program Files (x86)/Google/Chrome/Application/chrome.exe` for the Windows installation of Chrome.
+
+The app `arguments` are app dependent. Check the app's documentation for what arguments it accepts.
+
+##### allowNonzeroExitCode
+
+Type: `boolean`\
+Default: `false`
+
+Allow the opened app to exit with nonzero exit code when the `wait` option is `true`.
+
+We do not recommend setting this option. The convention for success is exit code zero.
+
+### open.apps
+
+An object containing auto-detected binary names for common apps. Useful to work around [cross-platform differences](#app).
+
+```js
+const open = require('open');
+
+await open('https://google.com', {
+	app: {
+		name: open.apps.chrome
+	}
+});
+```
+
+#### Supported apps
+
+- [`chrome`](https://www.google.com/chrome) - Web browser
+- [`firefox`](https://www.mozilla.org/firefox) - Web browser
+- [`edge`](https://www.microsoft.com/edge) - Web browser
+
+### open.openApp(name, options?)
+
+Open an app.
+
+Returns a promise for the [spawned child process](https://nodejs.org/api/child_process.html#child_process_class_childprocess). You would normally not need to use this for anything, but it can be useful if you'd like to attach custom event listeners or perform other operations directly on the spawned process.
+
+#### name
+
+Type: `string`
+
+The app name is platform dependent. Don't hard code it in reusable modules. For example, Chrome is `google chrome` on macOS, `google-chrome` on Linux and `chrome` on Windows. If possible, use [`open.apps`](#openapps) which auto-detects the correct binary to use.
+
+You may also pass in the app's full path. For example on WSL, this can be `/mnt/c/Program Files (x86)/Google/Chrome/Application/chrome.exe` for the Windows installation of Chrome.
+
+#### options
+
+Type: `object`
+
+Same options as [`open`](#options) except `app` and with the following additions:
+
+##### arguments
+
+Type: `string[]`\
+Default: `[]`
+
+Arguments passed to the app.
+
+These arguments are app dependent. Check the app's documentation for what arguments it accepts.
+
+## Related
+
+- [open-cli](https://github.com/sindresorhus/open-cli) - CLI for this module
+- [open-editor](https://github.com/sindresorhus/open-editor) - Open files in your editor at a specific line and column
+
+
+===== FILE: ./frontend/node_modules/p-try/readme.md =====
+# p-try [![Build Status](https://travis-ci.org/sindresorhus/p-try.svg?branch=master)](https://travis-ci.org/sindresorhus/p-try)
+
+> Start a promise chain
+
+[How is it useful?](http://cryto.net/~joepie91/blog/2016/05/11/what-is-promise-try-and-why-does-it-matter/)
+
+
+## Install
+
+```
+$ npm install p-try
+```
+
+
+## Usage
+
+```js
+const pTry = require('p-try');
+
+(async () => {
+	try {
+		const value = await pTry(() => {
+			return synchronousFunctionThatMightThrow();
+		});
+		console.log(value);
+	} catch (error) {
+		console.error(error);
+	}
+})();
+```
+
+
+## API
+
+### pTry(fn, ...arguments)
+
+Returns a `Promise` resolved with the value of calling `fn(...arguments)`. If the function throws an error, the returned `Promise` will be rejected with that error.
+
+Support for passing arguments on to the `fn` is provided in order to be able to avoid creating unnecessary closures. You probably don't need this optimization unless you're pushing a *lot* of functions.
+
+#### fn
+
+The function to run to start the promise chain.
+
+#### arguments
+
+Arguments to pass to `fn`.
+
+
+## Related
+
+- [p-finally](https://github.com/sindresorhus/p-finally) - `Promise#finally()` ponyfill - Invoked when the promise is settled regardless of outcome
+- [More…](https://github.com/sindresorhus/promise-fun)
+
+
+## License
+
+MIT © [Sindre Sorhus](https://sindresorhus.com)
+
+
+===== FILE: ./frontend/node_modules/buffer-from/readme.md =====
+# Buffer From
+
+A [ponyfill](https://ponyfill.com) for `Buffer.from`, uses native implementation if available.
+
+## Installation
+
+```sh
+npm install --save buffer-from
+```
+
+## Usage
+
+```js
+const bufferFrom = require('buffer-from')
+
+console.log(bufferFrom([1, 2, 3, 4]))
+//=> <Buffer 01 02 03 04>
+
+const arr = new Uint8Array([1, 2, 3, 4])
+console.log(bufferFrom(arr.buffer, 1, 2))
+//=> <Buffer 02 03>
+
+console.log(bufferFrom('test', 'utf8'))
+//=> <Buffer 74 65 73 74>
+
+const buf = bufferFrom('test')
+console.log(bufferFrom(buf))
+//=> <Buffer 74 65 73 74>
+```
+
+## API
+
+### bufferFrom(array)
+
+- `array` &lt;Array&gt;
+
+Allocates a new `Buffer` using an `array` of octets.
+
+### bufferFrom(arrayBuffer[, byteOffset[, length]])
+
+- `arrayBuffer` &lt;ArrayBuffer&gt; The `.buffer` property of a TypedArray or ArrayBuffer
+- `byteOffset` &lt;Integer&gt; Where to start copying from `arrayBuffer`. **Default:** `0`
+- `length` &lt;Integer&gt; How many bytes to copy from `arrayBuffer`. **Default:** `arrayBuffer.length - byteOffset`
+
+When passed a reference to the `.buffer` property of a TypedArray instance, the
+newly created `Buffer` will share the same allocated memory as the TypedArray.
+
+The optional `byteOffset` and `length` arguments specify a memory range within
+the `arrayBuffer` that will be shared by the `Buffer`.
+
+### bufferFrom(buffer)
+
+- `buffer` &lt;Buffer&gt; An existing `Buffer` to copy data from
+
+Copies the passed `buffer` data onto a new `Buffer` instance.
+
+### bufferFrom(string[, encoding])
+
+- `string` &lt;String&gt; A string to encode.
+- `encoding` &lt;String&gt; The encoding of `string`. **Default:** `'utf8'`
+
+Creates a new `Buffer` containing the given JavaScript string `string`. If
+provided, the `encoding` parameter identifies the character encoding of
+`string`.
+
+## See also
+
+- [buffer-alloc](https://github.com/LinusU/buffer-alloc) A ponyfill for `Buffer.alloc`
+- [buffer-alloc-unsafe](https://github.com/LinusU/buffer-alloc-unsafe) A ponyfill for `Buffer.allocUnsafe`
+
+
+===== FILE: ./frontend/node_modules/shebang-regex/readme.md =====
+# shebang-regex [![Build Status](https://travis-ci.org/sindresorhus/shebang-regex.svg?branch=master)](https://travis-ci.org/sindresorhus/shebang-regex)
+
+> Regular expression for matching a [shebang](https://en.wikipedia.org/wiki/Shebang_(Unix)) line
+
+
+## Install
+
+```
+$ npm install shebang-regex
+```
+
+
+## Usage
+
+```js
+const shebangRegex = require('shebang-regex');
+
+const string = '#!/usr/bin/env node\nconsole.log("unicorns");';
+
+shebangRegex.test(string);
+//=> true
+
+shebangRegex.exec(string)[0];
+//=> '#!/usr/bin/env node'
+
+shebangRegex.exec(string)[1];
+//=> '/usr/bin/env node'
+```
+
+
+## License
+
+MIT © [Sindre Sorhus](https://sindresorhus.com)
+
+
+===== FILE: ./frontend/node_modules/p-locate/readme.md =====
+# p-locate [![Build Status](https://travis-ci.org/sindresorhus/p-locate.svg?branch=master)](https://travis-ci.org/sindresorhus/p-locate)
+
+> Get the first fulfilled promise that satisfies the provided testing function
+
+Think of it like an async version of [`Array#find`](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Array/find).
+
+
+## Install
+
+```
+$ npm install p-locate
+```
+
+
+## Usage
+
+Here we find the first file that exists on disk, in array order.
+
+```js
+const pathExists = require('path-exists');
+const pLocate = require('p-locate');
+
+const files = [
+	'unicorn.png',
+	'rainbow.png', // Only this one actually exists on disk
+	'pony.png'
+];
+
+(async () => {
+	const foundPath = await pLocate(files, file => pathExists(file));
+
+	console.log(foundPath);
+	//=> 'rainbow'
+})();
+```
+
+*The above is just an example. Use [`locate-path`](https://github.com/sindresorhus/locate-path) if you need this.*
+
+
+## API
+
+### pLocate(input, tester, [options])
+
+Returns a `Promise` that is fulfilled when `tester` resolves to `true` or the iterable is done, or rejects if any of the promises reject. The fulfilled value is the current iterable value or `undefined` if `tester` never resolved to `true`.
+
+#### input
+
+Type: `Iterable<Promise | unknown>`
+
+An iterable of promises/values to test.
+
+#### tester(element)
+
+Type: `Function`
+
+This function will receive resolved values from `input` and is expected to return a `Promise<boolean>` or `boolean`.
+
+#### options
+
+Type: `Object`
+
+##### concurrency
+
+Type: `number`<br>
+Default: `Infinity`<br>
+Minimum: `1`
+
+Number of concurrently pending promises returned by `tester`.
+
+##### preserveOrder
+
+Type: `boolean`<br>
+Default: `true`
+
+Preserve `input` order when searching.
+
+Disable this to improve performance if you don't care about the order.
+
+
+## Related
+
+- [p-map](https://github.com/sindresorhus/p-map) - Map over promises concurrently
+- [p-filter](https://github.com/sindresorhus/p-filter) - Filter promises concurrently
+- [p-any](https://github.com/sindresorhus/p-any) - Wait for any promise to be fulfilled
+- [More…](https://github.com/sindresorhus/promise-fun)
+
+
+## License
+
+MIT © [Sindre Sorhus](https://sindresorhus.com)
+
+
+===== FILE: ./frontend/node_modules/jest-watch-typeahead/node_modules/jest-message-util/node_modules/slash/readme.md =====
+# slash [![Build Status](https://travis-ci.org/sindresorhus/slash.svg?branch=master)](https://travis-ci.org/sindresorhus/slash)
+
+> Convert Windows backslash paths to slash paths: `foo\\bar` ➔ `foo/bar`
+
+[Forward-slash paths can be used in Windows](http://superuser.com/a/176395/6877) as long as they're not extended-length paths and don't contain any non-ascii characters.
+
+This was created since the `path` methods in Node.js outputs `\\` paths on Windows.
+
+
+## Install
+
+```
+$ npm install slash
+```
+
+
+## Usage
+
+```js
+const path = require('path');
+const slash = require('slash');
+
+const string = path.join('foo', 'bar');
+// Unix    => foo/bar
+// Windows => foo\\bar
+
+slash(string);
+// Unix    => foo/bar
+// Windows => foo/bar
+```
+
+
+## API
+
+### slash(path)
+
+Type: `string`
+
+Accepts a Windows backslash path and returns a path with forward slashes.
+
+
+## License
+
+MIT © [Sindre Sorhus](https://sindresorhus.com)
+
+
+===== FILE: ./frontend/node_modules/jest-watch-typeahead/node_modules/string-length/readme.md =====
+# string-length
+
+> Get the real length of a string - by correctly counting astral symbols and ignoring [ansi escape codes](https://github.com/sindresorhus/strip-ansi)
+
+`String#length` erroneously counts [astral symbols](https://web.archive.org/web/20150721114550/http://www.tlg.uci.edu/~opoudjis/unicode/unicode_astral.html) as two characters.
+
+## Install
+
+```
+$ npm install string-length
+```
+
+## Usage
+
+```js
+import stringLength from 'string-length';
+
+'🐴'.length;
+//=> 2
+
+stringLength('🐴');
+//=> 1
+
+stringLength('\u001B[1municorn\u001B[22m');
+//=> 7
+```
+
+## API
+
+### stringLength(string, options?)
+
+#### options
+
+Type: `object`
+
+##### countAnsiEscapeCodes
+
+Type: `boolean`\
+Default: `false`
+
+Whether [ANSI escape codes](https://en.wikipedia.org/wiki/ANSI_escape_code) should be counted. They are ignored by default.
+
+## Related
+
+- [string-length-cli](https://github.com/LitoMore/string-length-cli) - CLI for this module
+- [string-width](https://github.com/sindresorhus/string-width) - Get visual width of a string
+
+---
+
+<div align="center">
+	<b>
+		<a href="https://tidelift.com/subscription/pkg/npm-string-length?utm_source=npm-string-length&utm_medium=referral&utm_campaign=readme">Get professional support for this package with a Tidelift subscription</a>
+	</b>
+	<br>
+	<sub>
+		Tidelift helps make open source sustainable for maintainers while giving companies<br>assurances about security, maintenance, and licensing for their dependencies.
+	</sub>
+</div>
+
+
+===== FILE: ./frontend/node_modules/jest-watch-typeahead/node_modules/string-length/node_modules/char-regex/readme.md =====
+# char-regex
+
+A regex to match any full character, considering weird character ranges. Tested on every single emoji and unicode character. Based on the Lodash implementation.
+
+## Install
+
+```sh
+npm install char-regex
+```
+
+## Usage
+
+```js
+import charRegex from 'char-regex';
+
+'❤️👊🏽'.match(/./);
+//=> ['', '', '', '', '', '', '']
+
+'❤️👊🏽'.match(charRegex());
+//=> ['❤️', '👊🏽']
+```
+
+## Related
+
+- [string-length](https://github.com/sindresorhus/string-length) - Get the real length of a string
+
+
+===== FILE: ./frontend/node_modules/jest-watch-typeahead/node_modules/jest-watcher/node_modules/string-length/readme.md =====
+# string-length
+
+> Get the real length of a string - by correctly counting astral symbols and ignoring [ansi escape codes](https://github.com/sindresorhus/strip-ansi)
+
+`String#length` erroneously counts [astral symbols](https://web.archive.org/web/20150721114550/http://www.tlg.uci.edu/~opoudjis/unicode/unicode_astral.html) as two characters.
+
+## Install
+
+```
+$ npm install string-length
+```
+
+## Usage
+
+```js
+const stringLength = require('string-length');
+
+'🐴'.length;
+//=> 2
+
+stringLength('🐴');
+//=> 1
+
+stringLength('\u001B[1municorn\u001B[22m');
+//=> 7
+```
+
+## Related
+
+- [string-length-cli](https://github.com/LitoMore/string-length-cli) - CLI for this module
+- [string-width](https://github.com/sindresorhus/string-width) - Get visual width of a string
+
+---
+
+<div align="center">
+	<b>
+		<a href="https://tidelift.com/subscription/pkg/npm-string-length?utm_source=npm-string-length&utm_medium=referral&utm_campaign=readme">Get professional support for this package with a Tidelift subscription</a>
+	</b>
+	<br>
+	<sub>
+		Tidelift helps make open source sustainable for maintainers while giving companies<br>assurances about security, maintenance, and licensing for their dependencies.
+	</sub>
+</div>
+
+
+===== FILE: ./frontend/node_modules/jest-watch-typeahead/node_modules/jest-watcher/node_modules/strip-ansi/readme.md =====
+# strip-ansi [![Build Status](https://travis-ci.org/chalk/strip-ansi.svg?branch=master)](https://travis-ci.org/chalk/strip-ansi)
+
+> Strip [ANSI escape codes](https://en.wikipedia.org/wiki/ANSI_escape_code) from a string
+
+
+## Install
+
+```
+$ npm install strip-ansi
+```
+
+
+## Usage
+
+```js
+const stripAnsi = require('strip-ansi');
+
+stripAnsi('\u001B[4mUnicorn\u001B[0m');
+//=> 'Unicorn'
+
+stripAnsi('\u001B]8;;https://github.com\u0007Click\u001B]8;;\u0007');
+//=> 'Click'
+```
+
+
+## strip-ansi for enterprise
+
+Available as part of the Tidelift Subscription.
+
+The maintainers of strip-ansi and thousands of other packages are working with Tidelift to deliver commercial support and maintenance for the open source dependencies you use to build your applications. Save time, reduce risk, and improve code health, while paying the maintainers of the exact dependencies you use. [Learn more.](https://tidelift.com/subscription/pkg/npm-strip-ansi?utm_source=npm-strip-ansi&utm_medium=referral&utm_campaign=enterprise&utm_term=repo)
+
+
+## Related
+
+- [strip-ansi-cli](https://github.com/chalk/strip-ansi-cli) - CLI for this module
+- [strip-ansi-stream](https://github.com/chalk/strip-ansi-stream) - Streaming version of this module
+- [has-ansi](https://github.com/chalk/has-ansi) - Check if a string has ANSI escape codes
+- [ansi-regex](https://github.com/chalk/ansi-regex) - Regular expression for matching ANSI escape codes
+- [chalk](https://github.com/chalk/chalk) - Terminal string styling done right
+
+
+## Maintainers
+
+- [Sindre Sorhus](https://github.com/sindresorhus)
+- [Josh Junon](https://github.com/qix-)
+
+
+
+===== FILE: ./frontend/node_modules/jest-watch-typeahead/node_modules/ansi-styles/readme.md =====
+# ansi-styles
+
+> [ANSI escape codes](https://en.wikipedia.org/wiki/ANSI_escape_code#Colors_and_Styles) for styling strings in the terminal
+
+You probably want the higher-level [chalk](https://github.com/chalk/chalk) module for styling your strings.
+
+<img src="screenshot.svg" width="900">
+
+## Install
+
+```
+$ npm install ansi-styles
+```
+
+## Usage
+
+```js
+const style = require('ansi-styles');
+
+console.log(`${style.green.open}Hello world!${style.green.close}`);
+
+
+// Color conversion between 256/truecolor
+// NOTE: When converting from truecolor to 256 colors, the original color
+//       may be degraded to fit the new color palette. This means terminals
+//       that do not support 16 million colors will best-match the
+//       original color.
+console.log(`${style.color.ansi256(style.rgbToAnsi256(199, 20, 250))}Hello World${style.color.close}`)
+console.log(`${style.color.ansi16m(...style.hexToRgb('#abcdef'))}Hello World${style.color.close}`)
+```
+
+## API
+
+Each style has an `open` and `close` property.
+
+## Styles
+
+### Modifiers
+
+- `reset`
+- `bold`
+- `dim`
+- `italic` *(Not widely supported)*
+- `underline`
+- `overline` *Supported on VTE-based terminals, the GNOME terminal, mintty, and Git Bash.*
+- `inverse`
+- `hidden`
+- `strikethrough` *(Not widely supported)*
+
+### Colors
+
+- `black`
+- `red`
+- `green`
+- `yellow`
+- `blue`
+- `magenta`
+- `cyan`
+- `white`
+- `blackBright` (alias: `gray`, `grey`)
+- `redBright`
+- `greenBright`
+- `yellowBright`
+- `blueBright`
+- `magentaBright`
+- `cyanBright`
+- `whiteBright`
+
+### Background colors
+
+- `bgBlack`
+- `bgRed`
+- `bgGreen`
+- `bgYellow`
+- `bgBlue`
+- `bgMagenta`
+- `bgCyan`
+- `bgWhite`
+- `bgBlackBright` (alias: `bgGray`, `bgGrey`)
+- `bgRedBright`
+- `bgGreenBright`
+- `bgYellowBright`
+- `bgBlueBright`
+- `bgMagentaBright`
+- `bgCyanBright`
+- `bgWhiteBright`
+
+## Advanced usage
+
+By default, you get a map of styles, but the styles are also available as groups. They are non-enumerable so they don't show up unless you access them explicitly. This makes it easier to expose only a subset in a higher-level module.
+
+- `style.modifier`
+- `style.color`
+- `style.bgColor`
+
+###### Example
+
+```js
+console.log(style.color.green.open);
+```
+
+Raw escape codes (i.e. without the CSI escape prefix `\u001B[` and render mode postfix `m`) are available under `style.codes`, which returns a `Map` with the open codes as keys and close codes as values.
+
+###### Example
+
+```js
+console.log(style.codes.get(36));
+//=> 39
+```
+
+## [256 / 16 million (TrueColor) support](https://gist.github.com/XVilka/8346728)
+
+`ansi-styles` allows converting between various color formats and ANSI escapes, with support for 256 and 16 million colors.
+
+The following color spaces from `color-convert` are supported:
+
+- `rgb`
+- `hex`
+- `ansi256`
+
+To use these, call the associated conversion function with the intended output, for example:
+
+```js
+style.color.ansi256(style.rgbToAnsi256(100, 200, 15)); // RGB to 256 color ansi foreground code
+style.bgColor.ansi256(style.hexToAnsi256('#C0FFEE')); // HEX to 256 color ansi foreground code
+
+style.color.ansi16m(100, 200, 15); // RGB to 16 million color foreground code
+style.bgColor.ansi16m(...style.hexToRgb('#C0FFEE')); // Hex (RGB) to 16 million color foreground code
+```
+
+## Related
+
+- [ansi-escapes](https://github.com/sindresorhus/ansi-escapes) - ANSI escape codes for manipulating the terminal
+
+## Maintainers
+
+- [Sindre Sorhus](https://github.com/sindresorhus)
+- [Josh Junon](https://github.com/qix-)
+
+## For enterprise
+
+Available as part of the Tidelift Subscription.
+
+The maintainers of `ansi-styles` and thousands of other packages are working with Tidelift to deliver commercial support and maintenance for the open source dependencies you use to build your applications. Save time, reduce risk, and improve code health, while paying the maintainers of the exact dependencies you use. [Learn more.](https://tidelift.com/subscription/pkg/npm-ansi-styles?utm_source=npm-ansi-styles&utm_medium=referral&utm_campaign=enterprise&utm_term=repo)
+
+
+===== FILE: ./frontend/node_modules/jest-watch-typeahead/node_modules/@jest/console/node_modules/slash/readme.md =====
+# slash [![Build Status](https://travis-ci.org/sindresorhus/slash.svg?branch=master)](https://travis-ci.org/sindresorhus/slash)
+
+> Convert Windows backslash paths to slash paths: `foo\\bar` ➔ `foo/bar`
+
+[Forward-slash paths can be used in Windows](http://superuser.com/a/176395/6877) as long as they're not extended-length paths and don't contain any non-ascii characters.
+
+This was created since the `path` methods in Node.js outputs `\\` paths on Windows.
+
+
+## Install
+
+```
+$ npm install slash
+```
+
+
+## Usage
+
+```js
+const path = require('path');
+const slash = require('slash');
+
+const string = path.join('foo', 'bar');
+// Unix    => foo/bar
+// Windows => foo\\bar
+
+slash(string);
+// Unix    => foo/bar
+// Windows => foo/bar
+```
+
+
+## API
+
+### slash(path)
+
+Type: `string`
+
+Accepts a Windows backslash path and returns a path with forward slashes.
+
+
+## License
+
+MIT © [Sindre Sorhus](https://sindresorhus.com)
+
+
+===== FILE: ./frontend/node_modules/jest-watch-typeahead/node_modules/strip-ansi/readme.md =====
+# strip-ansi
+
+> Strip [ANSI escape codes](https://en.wikipedia.org/wiki/ANSI_escape_code) from a string
+
+## Install
+
+```
+$ npm install strip-ansi
+```
+
+## Usage
+
+```js
+import stripAnsi from 'strip-ansi';
+
+stripAnsi('\u001B[4mUnicorn\u001B[0m');
+//=> 'Unicorn'
+
+stripAnsi('\u001B]8;;https://github.com\u0007Click\u001B]8;;\u0007');
+//=> 'Click'
+```
+
+## strip-ansi for enterprise
+
+Available as part of the Tidelift Subscription.
+
+The maintainers of strip-ansi and thousands of other packages are working with Tidelift to deliver commercial support and maintenance for the open source dependencies you use to build your applications. Save time, reduce risk, and improve code health, while paying the maintainers of the exact dependencies you use. [Learn more.](https://tidelift.com/subscription/pkg/npm-strip-ansi?utm_source=npm-strip-ansi&utm_medium=referral&utm_campaign=enterprise&utm_term=repo)
+
+## Related
+
+- [strip-ansi-cli](https://github.com/chalk/strip-ansi-cli) - CLI for this module
+- [strip-ansi-stream](https://github.com/chalk/strip-ansi-stream) - Streaming version of this module
+- [has-ansi](https://github.com/chalk/has-ansi) - Check if a string has ANSI escape codes
+- [ansi-regex](https://github.com/chalk/ansi-regex) - Regular expression for matching ANSI escape codes
+- [chalk](https://github.com/chalk/chalk) - Terminal string styling done right
+
+## Maintainers
+
+- [Sindre Sorhus](https://github.com/sindresorhus)
+- [Josh Junon](https://github.com/qix-)
+
+
+
+===== FILE: ./frontend/node_modules/jest-watch-typeahead/node_modules/strip-ansi/node_modules/ansi-regex/readme.md =====
+# ansi-regex
+
+> Regular expression for matching [ANSI escape codes](https://en.wikipedia.org/wiki/ANSI_escape_code)
+
+## Install
+
+```sh
+npm install ansi-regex
+```
+
+## Usage
+
+```js
+import ansiRegex from 'ansi-regex';
+
+ansiRegex().test('\u001B[4mcake\u001B[0m');
+//=> true
+
+ansiRegex().test('cake');
+//=> false
+
+'\u001B[4mcake\u001B[0m'.match(ansiRegex());
+//=> ['\u001B[4m', '\u001B[0m']
+
+'\u001B[4mcake\u001B[0m'.match(ansiRegex({onlyFirst: true}));
+//=> ['\u001B[4m']
+
+'\u001B]8;;https://github.com\u0007click\u001B]8;;\u0007'.match(ansiRegex());
+//=> ['\u001B]8;;https://github.com\u0007', '\u001B]8;;\u0007']
+```
+
+## API
+
+### ansiRegex(options?)
+
+Returns a regex for matching ANSI escape codes.
+
+#### options
+
+Type: `object`
+
+##### onlyFirst
+
+Type: `boolean`\
+Default: `false` *(Matches any ANSI escape codes in a string)*
+
+Match only the first ANSI escape.
+
+## FAQ
+
+### Why do you test for codes not in the ECMA 48 standard?
+
+Some of the codes we run as a test are codes that we acquired finding various lists of non-standard or manufacturer specific codes. We test for both standard and non-standard codes, as most of them follow the same or similar format and can be safely matched in strings without the risk of removing actual string content. There are a few non-standard control codes that do not follow the traditional format (i.e. they end in numbers) thus forcing us to exclude them from the test because we cannot reliably match them.
+
+On the historical side, those ECMA standards were established in the early 90's whereas the VT100, for example, was designed in the mid/late 70's. At that point in time, control codes were still pretty ungoverned and engineers used them for a multitude of things, namely to activate hardware ports that may have been proprietary. Somewhere else you see a similar 'anarchy' of codes is in the x86 architecture for processors; there are a ton of "interrupts" that can mean different things on certain brands of processors, most of which have been phased out.
+
+## Maintainers
+
+- [Sindre Sorhus](https://github.com/sindresorhus)
+- [Josh Junon](https://github.com/qix-)
+
+
+===== FILE: ./frontend/node_modules/jest-watch-typeahead/node_modules/slash/readme.md =====
+# slash
+
+> Convert Windows backslash paths to slash paths: `foo\\bar` ➔ `foo/bar`
+
+[Forward-slash paths can be used in Windows](http://superuser.com/a/176395/6877) as long as they're not extended-length paths and don't contain any non-ascii characters.
+
+This was created since the `path` methods in Node.js outputs `\\` paths on Windows.
+
+## Install
+
+```
+$ npm install slash
+```
+
+## Usage
+
+```js
+import path from 'path';
+import slash from 'slash';
+
+const string = path.join('foo', 'bar');
+// Unix    => foo/bar
+// Windows => foo\\bar
+
+slash(string);
+// Unix    => foo/bar
+// Windows => foo/bar
+```
+
+## API
+
+### slash(path)
+
+Type: `string`
+
+Accepts a Windows backslash path and returns a path with forward slashes.
+
+---
+
+<div align="center">
+	<b>
+		<a href="https://tidelift.com/subscription/pkg/npm-slash?utm_source=npm-slash&utm_medium=referral&utm_campaign=readme">Get professional support for this package with a Tidelift subscription</a>
+	</b>
+	<br>
+	<sub>
+		Tidelift helps make open source sustainable for maintainers while giving companies<br>assurances about security, maintenance, and licensing for their dependencies.
+	</sub>
+</div>
+
