@@ -1,0 +1,32 @@
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-danger text-white">
+        <i class="bi bi-exclamation-triangle"></i> Alerts
+    </div>
+    <div class="card-body">
+        <ul id="alertsList" class="list-group"></ul>
+    </div>
+</div>
+
+<script>
+fetch("/maritime/api/alerts")
+    .then(r => r.json())
+    .then(data => {
+        const container = document.getElementById("alertsList");
+
+        if (!data.length) {
+            container.innerHTML = `<li class="list-group-item">No active alerts.</li>`;
+            return;
+        }
+
+        data.forEach(alert => {
+            const li = document.createElement("li");
+            li.className = "list-group-item list-group-item-danger";
+            li.innerHTML = `<strong>${alert.type}</strong>: ${alert.message}`;
+            container.appendChild(li);
+        });
+    })
+    .catch(() => {
+        document.getElementById("alertsList").innerHTML =
+            `<li class="list-group-item text-danger">Alert system unavailable.</li>`;
+    });
+</script>

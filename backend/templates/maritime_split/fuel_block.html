@@ -1,0 +1,24 @@
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-warning">
+        <i class="bi bi-fuel-pump"></i> Fuel Optimization
+    </div>
+    <div class="card-body">
+        <div id="fuelOptimizer">Loading fuel efficiency data...</div>
+    </div>
+</div>
+
+<script>
+fetch("/maritime/api/analytics/fuel-optimization")
+    .then(r => r.json())
+    .then(data => {
+        document.getElementById("fuelOptimizer").innerHTML = `
+            <strong>Predicted Usage:</strong> ${data.predicted_usage} L<br>
+            <strong>Optimal Speed:</strong> ${data.optimal_speed} kn<br>
+            <strong>Fuel Savings:</strong> ${data.savings}%
+        `;
+    })
+    .catch(() => {
+        document.getElementById("fuelOptimizer").innerHTML = 
+            "<span class='text-danger'>Fuel optimizer unavailable</span>";
+    });
+</script>

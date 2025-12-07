@@ -1,0 +1,20 @@
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-secondary text-white">
+        <i class="bi bi-clock-history"></i> ETA Calculation
+    </div>
+    <div class="card-body">
+        <div id="etaData">Loading ETA data...</div>
+    </div>
+</div>
+
+<script>
+fetch("/maritime/api/route/eta-enhanced")
+    .then(r => r.json())
+    .then(data => {
+        document.getElementById("etaData").innerHTML = `
+            <strong>Destination:</strong> ${data.destination}<br>
+            <strong>ETA:</strong> ${data.eta}<br>
+            <strong>Delay Risk:</strong> ${data.delay_risk}
+        `;
+    });
+</script>

@@ -1,0 +1,23 @@
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-success text-white">
+        <i class="bi bi-ship"></i> Live Ships
+    </div>
+    <div class="card-body">
+        <ul id="shipsList" class="list-group"></ul>
+    </div>
+</div>
+
+<script>
+fetch("/maritime/api/ships-live")
+    .then(r => r.json())
+    .then(data => {
+        const container = document.getElementById("shipsList");
+
+        data.forEach(s => {
+            const li = document.createElement("li");
+            li.className = "list-group-item";
+            li.innerHTML = `<strong>${s.name}</strong> — ${s.speed} kn`;
+            container.appendChild(li);
+        });
+    });
+</script>
