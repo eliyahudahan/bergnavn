@@ -1,23 +1,36 @@
-<div class="card shadow-sm mb-4">
-    <div class="card-header bg-success text-white">
-        <i class="bi bi-ship"></i> Live Ships
-    </div>
-    <div class="card-body">
-        <ul id="shipsList" class="list-group"></ul>
-    </div>
+<!-- Ships widget -->
+<div class="card maritime-card shadow-sm">
+  <div class="card-header bg-success text-white">
+    <i class="bi bi-ship"></i> Live Ships
+  </div>
+  <div class="card-body">
+    <ul id="shipsList" class="list-group list-group-flush small">
+      <li class="list-group-item text-center">
+        <div class="spinner-border text-success" role="status"></div>
+        <div class="mt-2">Loading AIS...</div>
+      </li>
+    </ul>
+  </div>
 </div>
-
 <script>
-fetch("/maritime/api/ships-live")
-    .then(r => r.json())
-    .then(data => {
-        const container = document.getElementById("shipsList");
-
-        data.forEach(s => {
-            const li = document.createElement("li");
-            li.className = "list-group-item";
-            li.innerHTML = `<strong>${s.name}</strong> — ${s.speed} kn`;
-            container.appendChild(li);
-        });
-    });
+(async function loadShips() {
+  const container = document.getElementById("shipsList");
+  const res = await fetchSafeJson('/maritime/api/ships-live');
+  container.innerHTML = '';
+  if (res.ok) {
+    const ships = (res.data && res.data.ships) || [];
+    if (!ships.length) {
+      container.innerHTML = '<li class="list-group-item text-center">No vessels</li>';
+      return;
+    }
+    for (const s of ships.slice(0, 8)) {
+      const li = document.createElement('li');
+      li.className = 'list-group-item';
+      li.innerHTML = `<strong>${s.name || s.mmsi}</strong> — ${s.sog ?? '—'} kn <br><small class="text-muted">${s.destination || ''}</small>`;
+      container.appendChild(li);
+    }
+  } else {
+    container.innerHTML = `<li class="list-group-item text-warning">AIS unavailable — ${res.message || 'fallback'}</li>`;
+  }
+})();
 </script>

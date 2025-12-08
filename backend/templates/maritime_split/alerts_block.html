@@ -1,32 +1,38 @@
-<div class="card shadow-sm mb-4">
-    <div class="card-header bg-danger text-white">
-        <i class="bi bi-exclamation-triangle"></i> Alerts
-    </div>
-    <div class="card-body">
-        <ul id="alertsList" class="list-group"></ul>
-    </div>
+<!-- Alerts widget (English comments only) -->
+<div class="card maritime-card shadow-sm">
+  <div class="card-header bg-danger text-white">
+    <i class="bi bi-exclamation-triangle"></i> Alerts
+  </div>
+  <div class="card-body">
+    <ul id="alertsList" class="list-group list-group-flush small">
+      <li class="list-group-item text-center">
+        <div class="spinner-border text-danger" role="status"></div>
+        <div class="mt-2">Checking alerts...</div>
+      </li>
+    </ul>
+  </div>
 </div>
 
 <script>
-fetch("/maritime/api/alerts")
-    .then(r => r.json())
-    .then(data => {
-        const container = document.getElementById("alertsList");
-
-        if (!data.length) {
-            container.innerHTML = `<li class="list-group-item">No active alerts.</li>`;
-            return;
-        }
-
-        data.forEach(alert => {
-            const li = document.createElement("li");
-            li.className = "list-group-item list-group-item-danger";
-            li.innerHTML = `<strong>${alert.type}</strong>: ${alert.message}`;
-            container.appendChild(li);
-        });
-    })
-    .catch(() => {
-        document.getElementById("alertsList").innerHTML =
-            `<li class="list-group-item text-danger">Alert system unavailable.</li>`;
-    });
+/* Alerts widget: fetch /maritime/api/alerts */
+(async function loadAlerts() {
+  const container = document.getElementById('alertsList');
+  const res = await fetchSafeJson('/maritime/api/alerts');
+  container.innerHTML = '';
+  if (res.ok) {
+    const alerts = (res.data && res.data.alerts) || [];
+    if (!alerts.length) {
+      container.innerHTML = '<li class="list-group-item">No active alerts</li>';
+      return;
+    }
+    for (const a of alerts.slice(0, 5)) {
+      const li = document.createElement('li');
+      li.className = 'list-group-item';
+      li.innerHTML = `<strong>${a.type || 'Alert'}</strong> — ${a.message || ''}<br><small class="text-muted">${a.priority || ''}</small>`;
+      container.appendChild(li);
+    }
+  } else {
+    container.innerHTML = `<li class="list-group-item text-warning">Alerts unavailable — ${res.message || 'fallback'}</li>`;
+  }
+})();
 </script>

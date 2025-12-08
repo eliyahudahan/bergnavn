@@ -1,20 +1,32 @@
-<div class="card shadow-sm mb-4">
-    <div class="card-header bg-secondary text-white">
-        <i class="bi bi-clock-history"></i> ETA Calculation
+<!-- ETA widget -->
+<div class="card maritime-card shadow-sm">
+  <div class="card-header bg-secondary text-white">
+    <i class="bi bi-clock-history"></i> ETA
+  </div>
+  <div class="card-body">
+    <div id="etaWidget">
+      <div class="text-center">
+        <div class="spinner-border text-secondary" role="status"></div>
+        <div class="mt-2">Calculating ETA...</div>
+      </div>
     </div>
-    <div class="card-body">
-        <div id="etaData">Loading ETA data...</div>
-    </div>
+  </div>
 </div>
-
 <script>
-fetch("/maritime/api/route/eta-enhanced")
-    .then(r => r.json())
-    .then(data => {
-        document.getElementById("etaData").innerHTML = `
-            <strong>Destination:</strong> ${data.destination}<br>
-            <strong>ETA:</strong> ${data.eta}<br>
-            <strong>Delay Risk:</strong> ${data.delay_risk}
-        `;
-    });
+(async function loadETA() {
+  const c = document.getElementById('etaWidget');
+  const res = await fetchSafeJson('/maritime/api/route/eta-enhanced');
+  if (res.ok) {
+    const eta = res.data || {};
+    c.innerHTML = `
+      <div>
+        <div><strong>Base ETA:</strong> ${eta.base_eta_hours ?? '—'} h</div>
+        <div><strong>Adjusted ETA:</strong> ${eta.adjusted_eta_hours ?? '—'} h</div>
+        <div class="mt-2 small text-muted">Weather impact: ${eta.weather_impact_percent ?? 0}%</div>
+      </div>
+    `;
+  } else {
+    c.innerHTML = `<div class="text-warning">ETA unavailable — ${res.message || 'fallback'}</div>`;
+  }
+})();
 </script>

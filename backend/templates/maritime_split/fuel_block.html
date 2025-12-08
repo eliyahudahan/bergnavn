@@ -1,24 +1,32 @@
-<div class="card shadow-sm mb-4">
-    <div class="card-header bg-warning">
-        <i class="bi bi-fuel-pump"></i> Fuel Optimization
+<!-- Fuel widget -->
+<div class="card maritime-card shadow-sm">
+  <div class="card-header bg-warning text-dark">
+    <i class="bi bi-fuel-pump"></i> Fuel Optimization
+  </div>
+  <div class="card-body">
+    <div id="fuelWidget">
+      <div class="text-center">
+        <div class="spinner-border text-warning" role="status"></div>
+        <div class="mt-2">Loading optimization...</div>
+      </div>
     </div>
-    <div class="card-body">
-        <div id="fuelOptimizer">Loading fuel efficiency data...</div>
-    </div>
+  </div>
 </div>
-
 <script>
-fetch("/maritime/api/analytics/fuel-optimization")
-    .then(r => r.json())
-    .then(data => {
-        document.getElementById("fuelOptimizer").innerHTML = `
-            <strong>Predicted Usage:</strong> ${data.predicted_usage} L<br>
-            <strong>Optimal Speed:</strong> ${data.optimal_speed} kn<br>
-            <strong>Fuel Savings:</strong> ${data.savings}%
-        `;
-    })
-    .catch(() => {
-        document.getElementById("fuelOptimizer").innerHTML = 
-            "<span class='text-danger'>Fuel optimizer unavailable</span>";
-    });
+(async function loadFuel() {
+  const container = document.getElementById('fuelWidget');
+  const res = await fetchSafeJson('/maritime/api/analytics/fuel-optimization');
+  if (res.ok) {
+    const opt = (res.data && res.data.optimization) || {};
+    container.innerHTML = `
+      <div class="text-center">
+        <div>Current: ${(opt.current_speed_knots ?? '—')} kn</div>
+        <div>Optimal: ${(opt.optimal_speed_knots ?? '—')} kn</div>
+        <div class="mt-2"><strong>${(opt.fuel_saving_percent ?? 0)}%</strong> estimated savings</div>
+      </div>
+    `;
+  } else {
+    container.innerHTML = `<div class="text-warning">Fuel optimizer unavailable — ${res.message || 'fallback'}</div>`;
+  }
+})();
 </script>

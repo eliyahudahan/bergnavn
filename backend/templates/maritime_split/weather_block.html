@@ -1,20 +1,34 @@
-<div class="card shadow-sm mb-4">
-    <div class="card-header bg-info text-white">
-        <i class="bi bi-cloud-sun"></i> Weather Overview
+<!-- Weather widget -->
+<div class="card maritime-card shadow-sm">
+  <div class="card-header bg-info text-white">
+    <i class="bi bi-cloud-sun"></i> Weather (MET Norway preferred)
+  </div>
+  <div class="card-body">
+    <div id="weatherWidget">
+      <div class="text-center">
+        <div class="spinner-border text-info" role="status"></div>
+        <div class="mt-2">Loading weather...</div>
+      </div>
     </div>
-    <div class="card-body">
-        <div id="weatherData">Loading weather data...</div>
-    </div>
+  </div>
 </div>
-
 <script>
-fetch("/maritime/api/weather-pro")
-    .then(r => r.json())
-    .then(data => {
-        document.getElementById("weatherData").innerHTML = `
-            <strong>Temperature:</strong> ${data.temp}°C<br>
-            <strong>Wind:</strong> ${data.wind} m/s<br>
-            <strong>Condition:</strong> ${data.condition}
-        `;
-    });
+(async function loadWeather() {
+  const container = document.getElementById('weatherWidget');
+  const res = await fetchSafeJson('/maritime/api/weather-pro?lat=60.39&lon=5.32');
+  if (res.ok) {
+    const w = res.data || {};
+    container.innerHTML = `
+      <div class="text-center">
+        <h4 class="mb-1">${w.temperature !== undefined ? Math.round(w.temperature) + '°C' : 'N/A'}</h4>
+        <div>${w.condition || (w.source || '—')}</div>
+        <div class="mt-2 small text-muted">
+          Wind: ${w.wind_speed ?? '—'} m/s · Dir: ${w.wind_direction ?? '—'}°
+        </div>
+      </div>
+    `;
+  } else {
+    container.innerHTML = `<div class="text-warning">Weather unavailable — ${res.message || 'fallback'}</div>`;
+  }
+})();
 </script>

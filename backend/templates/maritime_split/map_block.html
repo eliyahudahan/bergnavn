@@ -1,28 +1,54 @@
-<div class="card shadow-sm mb-4">
-    <div class="card-header bg-primary text-white">
-        <i class="bi bi-map"></i> Live Vessel Map
-    </div>
-    <div class="card-body">
-        <div id="vesselMap" style="height: 400px; border-radius: 8px;"></div>
-    </div>
+<!-- Map widget -->
+<div class="card maritime-card shadow-sm">
+  <div class="card-header bg-dark text-white">
+    <i class="bi bi-map"></i> Live Vessel Map
+  </div>
+  <div class="card-body p-0">
+    <div id="maritimeMap" class="maritime-map"></div>
+  </div>
 </div>
-
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    const map = L.map("vesselMap").setView([63.4305, 10.3951], 7);
-
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: "&copy; OpenStreetMap contributors"
-    }).addTo(map);
-
-    fetch("/maritime/api/ships-live")
-        .then(r => r.json())
-        .then(data => {
-            data.forEach(ship => {
-                L.marker([ship.lat, ship.lon])
-                    .addTo(map)
-                    .bindPopup(`<strong>${ship.name}</strong><br>MMSI: ${ship.mmsi}`);
-            });
-        });
-});
+let _maritimeMap = null;
+let _vesselMarkers = [];
+function initMaritimeMap() {
+  if (_maritimeMap) return;
+  _maritimeMap = L.map('maritimeMap').setView([59.0, 9.0], 7);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(_maritimeMap);
+}
+function clearMarkers() {
+  _vesselMarkers.forEach(m => _maritimeMap.removeLayer(m));
+  _vesselMarkers = [];
+}
+function addShipMarker(s) {
+  try {
+    const lat = parseFloat(s.lat);
+    const lon = parseFloat(s.lon);
+    if (Number.isFinite(lat) && Number.isFinite(lon)) {
+      const iconHtml = `<div class="vessel-marker" style="background:${(s.type && s.type==='Tanker')? '#ffa500' : '#ff6b6b'}"></div>`;
+      const icon = L.divIcon({ html: iconHtml, className: '', iconSize: [18, 18], iconAnchor: [9,9] });
+      const marker = L.marker([lat, lon], { icon }).addTo(_maritimeMap)
+        .bindPopup(`<strong>${s.name || s.mmsi}</strong><br>${s.sog ?? '—'} kn`);
+      _vesselMarkers.push(marker);
+    }
+  } catch (e) { /* fail quietly */ }
+}
+(async function loadMapAndShips() {
+  initMaritimeMap();
+  try {
+    const res = await fetchSafeJson('/maritime/api/ships-live');
+    clearMarkers();
+    if (res.ok) {
+      const ships = (res.data && res.data.ships) || [];
+      ships.forEach(addShipMarker);
+      if (_vesselMarkers.length) {
+        const group = new L.featureGroup(_vesselMarkers);
+        _maritimeMap.fitBounds(group.getBounds().pad(0.15));
+      }
+    }
+  } catch (e) {
+    console.warn('Map load failed', e);
+  }
+})();
 </script>
