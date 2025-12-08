@@ -1,38 +1,43 @@
-<!-- Alerts widget (English comments only) -->
-<div class="card maritime-card shadow-sm">
+<!-- templates/blocks/alerts_block.html -->
+<!-- English-only comments: Alerts block - uses /maritime/api/alerts and shows top priority alerts -->
+<div id="alerts_block" class="card maritime-card shadow-sm">
   <div class="card-header bg-danger text-white">
     <i class="bi bi-exclamation-triangle"></i> Alerts
   </div>
   <div class="card-body">
-    <ul id="alertsList" class="list-group list-group-flush small">
-      <li class="list-group-item text-center">
+    <div id="alerts_block_list" class="small">
+      <div class="text-center">
         <div class="spinner-border text-danger" role="status"></div>
         <div class="mt-2">Checking alerts...</div>
-      </li>
-    </ul>
+      </div>
+    </div>
   </div>
 </div>
 
 <script>
-/* Alerts widget: fetch /maritime/api/alerts */
-(async function loadAlerts() {
-  const container = document.getElementById('alertsList');
+/* English-only comments:
+   Fetches /maritime/api/alerts. Expects data.alerts = [{type, priority, message, timestamp}, ...]
+*/
+(async function loadAlertsBlock() {
+  const container = document.getElementById('alerts_block_list');
   const res = await fetchSafeJson('/maritime/api/alerts');
-  container.innerHTML = '';
-  if (res.ok) {
-    const alerts = (res.data && res.data.alerts) || [];
-    if (!alerts.length) {
-      container.innerHTML = '<li class="list-group-item">No active alerts</li>';
-      return;
-    }
-    for (const a of alerts.slice(0, 5)) {
-      const li = document.createElement('li');
-      li.className = 'list-group-item';
-      li.innerHTML = `<strong>${a.type || 'Alert'}</strong> — ${a.message || ''}<br><small class="text-muted">${a.priority || ''}</small>`;
-      container.appendChild(li);
-    }
-  } else {
-    container.innerHTML = `<li class="list-group-item text-warning">Alerts unavailable — ${res.message || 'fallback'}</li>`;
+  if (!res.ok) {
+    container.innerHTML = `<div class="text-warning">Alerts unavailable — ${res.message || 'fallback'}</div>`;
+    return;
   }
+  const alerts = (res.data && res.data.alerts) || [];
+  if (!alerts.length) {
+    container.innerHTML = `<div class="text-success">No active alerts</div>`;
+    return;
+  }
+  // show up to 5 alerts, sorted by priority if present
+  const order = { high: 3, medium: 2, low: 1 };
+  alerts.sort((a,b) => (order[b.priority]||0) - (order[a.priority]||0));
+  container.innerHTML = alerts.slice(0,5).map(a => `
+    <div class="mb-2">
+      <strong>${a.type || 'Alert'}</strong> — ${a.message || ''}
+      <div class="text-muted small">${a.priority ? 'Priority: ' + a.priority : ''} ${a.timestamp ? ' • ' + new Date(a.timestamp).toLocaleString() : ''}</div>
+    </div>
+  `).join('');
 })();
 </script>

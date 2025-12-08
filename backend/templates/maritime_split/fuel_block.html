@@ -1,10 +1,11 @@
-<!-- Fuel widget -->
-<div class="card maritime-card shadow-sm">
+<!-- templates/blocks/fuel_block.html -->
+<!-- English-only comments: Fuel optimization block - calls /maritime/api/analytics/fuel-optimization -->
+<div id="fuel_block" class="card maritime-card shadow-sm">
   <div class="card-header bg-warning text-dark">
     <i class="bi bi-fuel-pump"></i> Fuel Optimization
   </div>
   <div class="card-body">
-    <div id="fuelWidget">
+    <div id="fuel_block_content" class="small">
       <div class="text-center">
         <div class="spinner-border text-warning" role="status"></div>
         <div class="mt-2">Loading optimization...</div>
@@ -12,21 +13,30 @@
     </div>
   </div>
 </div>
+
 <script>
-(async function loadFuel() {
-  const container = document.getElementById('fuelWidget');
+/* English-only comments:
+   Calls GET /maritime/api/analytics/fuel-optimization (or POST with AIS+weather).
+   Displays current vs optimal speed and estimated savings.
+*/
+(async function loadFuelBlock() {
+  const container = document.getElementById('fuel_block_content');
   const res = await fetchSafeJson('/maritime/api/analytics/fuel-optimization');
-  if (res.ok) {
-    const opt = (res.data && res.data.optimization) || {};
-    container.innerHTML = `
-      <div class="text-center">
-        <div>Current: ${(opt.current_speed_knots ?? '—')} kn</div>
-        <div>Optimal: ${(opt.optimal_speed_knots ?? '—')} kn</div>
-        <div class="mt-2"><strong>${(opt.fuel_saving_percent ?? 0)}%</strong> estimated savings</div>
-      </div>
-    `;
-  } else {
+  if (!res.ok) {
     container.innerHTML = `<div class="text-warning">Fuel optimizer unavailable — ${res.message || 'fallback'}</div>`;
+    return;
   }
+  const d = res.data && res.data.optimization ? res.data.optimization : (res.data || {});
+  const current = d.current_speed_knots ?? d.current_speed ?? '—';
+  const optimal = d.optimal_speed_knots ?? d.optimal_speed ?? '—';
+  const saving = (d.fuel_saving_percent ?? d.saving_percent ?? 0);
+
+  container.innerHTML = `
+    <div class="text-center">
+      <div><strong>Current:</strong> ${current} kn</div>
+      <div><strong>Optimal:</strong> ${optimal} kn</div>
+      <div class="mt-2"><strong>${saving}%</strong> estimated savings</div>
+    </div>
+  `;
 })();
 </script>

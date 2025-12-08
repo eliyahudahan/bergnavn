@@ -1,36 +1,50 @@
-<!-- Ships widget -->
-<div class="card maritime-card shadow-sm">
+<!-- templates/blocks/ships_block.html -->
+<!-- English comments only: Live AIS ships list, shows top vessels from /maritime/api/ships-live -->
+<div id="ships_block" class="card maritime-card shadow-sm">
   <div class="card-header bg-success text-white">
     <i class="bi bi-ship"></i> Live Ships
   </div>
   <div class="card-body">
-    <ul id="shipsList" class="list-group list-group-flush small">
+    <ul id="ships_block_list" class="list-group list-group-flush small">
       <li class="list-group-item text-center">
         <div class="spinner-border text-success" role="status"></div>
-        <div class="mt-2">Loading AIS...</div>
+        <div class="mt-2">Loading ships...</div>
       </li>
     </ul>
   </div>
 </div>
+
 <script>
-(async function loadShips() {
-  const container = document.getElementById("shipsList");
+/* English-only comments:
+   Fetches /maritime/api/ships-live expected safe_response returning {ships: [...]}
+*/
+(async function loadShipsBlock() {
+  const list = document.getElementById('ships_block_list');
   const res = await fetchSafeJson('/maritime/api/ships-live');
-  container.innerHTML = '';
-  if (res.ok) {
-    const ships = (res.data && res.data.ships) || [];
-    if (!ships.length) {
-      container.innerHTML = '<li class="list-group-item text-center">No vessels</li>';
-      return;
-    }
-    for (const s of ships.slice(0, 8)) {
-      const li = document.createElement('li');
-      li.className = 'list-group-item';
-      li.innerHTML = `<strong>${s.name || s.mmsi}</strong> — ${s.sog ?? '—'} kn <br><small class="text-muted">${s.destination || ''}</small>`;
-      container.appendChild(li);
-    }
-  } else {
-    container.innerHTML = `<li class="list-group-item text-warning">AIS unavailable — ${res.message || 'fallback'}</li>`;
+  list.innerHTML = '';
+  if (!res.ok) {
+    list.innerHTML = `<li class="list-group-item text-warning">Ships unavailable — ${res.message || 'fallback'}</li>`;
+    return;
+  }
+  const ships = (res.data && res.data.ships) || [];
+  if (!ships.length) {
+    list.innerHTML = `<li class="list-group-item text-muted">No active ships</li>`;
+    return;
+  }
+  for (const s of ships.slice(0, 8)) {
+    const li = document.createElement('li');
+    li.className = 'list-group-item d-flex justify-content-between align-items-start';
+    li.innerHTML = `
+      <div>
+        <strong>${s.name || s.mmsi || 'Unknown'}</strong><br>
+        <small class="text-muted">${s.destination || ''}</small>
+      </div>
+      <div class="text-end">
+        <div>${(s.sog ?? s.speed ?? '—')} kn</div>
+        <small class="text-muted">${s.timestamp ? new Date(s.timestamp).toLocaleTimeString() : ''}</small>
+      </div>
+    `;
+    list.appendChild(li);
   }
 })();
 </script>

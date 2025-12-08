@@ -2,61 +2,32 @@
 {% block title %}Maritime Dashboard | BergNavn{% endblock %}
 {% block head %}
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-<style>
-  .maritime-map { height: 500px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
-  .maritime-card { border-radius: 12px; }
-  .vessel-marker { width: 14px; height: 14px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
-</style>
+<link href="{{ url_for('static', filename='css/dashboard.css') }}" rel="stylesheet">
 {% endblock %}
 {% block content %}
 <div class="container-fluid py-4">
   <div class="row mb-4">
     <div class="col-12 text-center">
-      <h1 class="fw-bold">🌊 Maritime Dashboard</h1>
-      <p class="text-muted">Real-time maritime intel — MET Norway + OpenWeather + AIS + Fuel optimizer</p>
+      <h1 class="fw-bold">🌊 Maritime Dashboard (Real-time)</h1>
+      <p class="text-muted">MET Norway + Empirical fallback • Live AIS • Fuel optimizer</p>
     </div>
   </div>
 
-  <div class="row mb-4">
-    <div class="col-lg-3 col-md-6 mb-3">
-      {% include "maritime_split/weather_block.html" %}
-    </div>
-    <div class="col-lg-3 col-md-6 mb-3">
-      {% include "maritime_split/ships_block.html" %}
-    </div>
-    <div class="col-lg-3 col-md-6 mb-3">
-      {% include "maritime_split/fuel_block.html" %}
-    </div>
-    <div class="col-lg-3 col-md-6 mb-3">
-      {% include "maritime_split/alerts_block.html" %}
-    </div>
+  <div class="row mb-3">
+    <div class="col-lg-3 col-md-6 mb-3">{% include "maritime_split/weather_block.html" %}</div>
+    <div class="col-lg-3 col-md-6 mb-3">{% include "maritime_split/ships_block.html" %}</div>
+    <div class="col-lg-3 col-md-6 mb-3">{% include "maritime_split/fuel_block.html" %}</div>
+    <div class="col-lg-3 col-md-6 mb-3">{% include "maritime_split/alerts_block.html" %}</div>
   </div>
 
-  <div class="row mb-4">
-    <div class="col-lg-8 mb-3">
-      {% include "maritime_split/map_block.html" %}
-    </div>
-    <div class="col-lg-4 mb-3">
-      {% include "maritime_split/eta_block.html" %}
-    </div>
+  <div class="row mb-3">
+    <div class="col-lg-8 mb-3">{% include "maritime_split/map_block.html" %}</div>
+    <div class="col-lg-4 mb-3">{% include "maritime_split/eta_block.html" %}</div>
   </div>
 </div>
 {% endblock %}
+
 {% block scripts %}
 <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-<script>
-/* helper to read backend safe_response shape */
-async function fetchSafeJson(path, options) {
-  try {
-    const resp = await fetch(path, options);
-    const json = await resp.json();
-    if (json && (json.status === 'success' || json.status === 'live')) {
-      return { ok: true, data: json.data || json };
-    }
-    return { ok: false, message: json.message || 'fallback', data: json.data || {} };
-  } catch (err) {
-    return { ok: false, message: err.message, data: {} };
-  }
-}
-</script>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 {% endblock %}

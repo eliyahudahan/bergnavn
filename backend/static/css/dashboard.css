@@ -1,0 +1,60 @@
+/* backend/static/css/dashboard.css */
+/* English-only comments. Clean maritime theme, responsive. */
+
+:root{
+  --primary-blue:#1a2980;
+  --accent:#ff6b6b;
+  --muted:#6c757d;
+  --card-radius:12px;
+  --shadow:0 8px 24px rgba(10,20,40,0.08);
+}
+
+body{
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background: linear-gradient(180deg,#f6f8fb 0%,#eef3f8 100%);
+  color:#1f2937;
+  padding-top:76px;
+}
+
+/* container basics */
+.container-fluid.py-4{ padding-top:1.5rem; padding-bottom:1.5rem; }
+
+/* cards */
+.maritime-card{
+  background:#fff;
+  border-radius:var(--card-radius);
+  box-shadow:var(--shadow);
+  border:none;
+  overflow:hidden;
+}
+
+/* map container */
+.maritime-map{
+  width:100%;
+  height:520px;
+  border-radius:10px;
+}
+
+/* small widgets */
+.card-header.bg-info, .card-header.bg-primary, .card-header.bg-warning, .card-header.bg-success {
+  font-weight:700;
+}
+
+/* list & markers */
+.list-group-item{ border:none; padding:0.6rem 1rem; }
+.vessel-marker{
+  width:14px; height:14px; border-radius:50%; border:2px solid #fff;
+  box-shadow:0 2px 6px rgba(0,0,0,0.18);
+}
+
+/* status bar */
+#statusAlert{ margin-bottom:1rem; border-radius:10px; }
+
+/* loading */
+.spinner-border{ width:2rem; height:2rem; }
+
+/* small screens */
+@media (max-width:768px){
+  .maritime-map{ height:360px; }
+  body{ padding-top:70px; }
+}

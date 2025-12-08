@@ -1,32 +1,33 @@
-<!-- ETA widget -->
-<div class="card maritime-card shadow-sm">
+<!-- templates/blocks/eta_block.html -->
+<!-- English-only comments: ETA block - calls /maritime/api/route/eta-enhanced (query params optional) -->
+<div id="eta_block" class="card maritime-card shadow-sm">
   <div class="card-header bg-secondary text-white">
     <i class="bi bi-clock-history"></i> ETA
   </div>
   <div class="card-body">
-    <div id="etaWidget">
-      <div class="text-center">
-        <div class="spinner-border text-secondary" role="status"></div>
-        <div class="mt-2">Calculating ETA...</div>
-      </div>
+    <div id="eta_block_content" class="small text-center">
+      <div class="spinner-border text-secondary" role="status"></div>
+      <div class="mt-2">Calculating ETA...</div>
     </div>
   </div>
 </div>
+
 <script>
-(async function loadETA() {
-  const c = document.getElementById('etaWidget');
+/* English-only comments:
+   Default uses no query params; calls ETA endpoint and shows base vs adjusted ETA.
+*/
+(async function loadEtaBlock() {
+  const container = document.getElementById('eta_block_content');
   const res = await fetchSafeJson('/maritime/api/route/eta-enhanced');
-  if (res.ok) {
-    const eta = res.data || {};
-    c.innerHTML = `
-      <div>
-        <div><strong>Base ETA:</strong> ${eta.base_eta_hours ?? '—'} h</div>
-        <div><strong>Adjusted ETA:</strong> ${eta.adjusted_eta_hours ?? '—'} h</div>
-        <div class="mt-2 small text-muted">Weather impact: ${eta.weather_impact_percent ?? 0}%</div>
-      </div>
-    `;
-  } else {
-    c.innerHTML = `<div class="text-warning">ETA unavailable — ${res.message || 'fallback'}</div>`;
+  if (!res.ok) {
+    container.innerHTML = `<div class="text-warning">ETA unavailable — ${res.message || 'fallback'}</div>`;
+    return;
   }
+  const e = res.data || {};
+  container.innerHTML = `
+    <div><strong>Base ETA:</strong> ${e.base_eta_hours ?? '—'} h</div>
+    <div><strong>Adjusted ETA:</strong> ${e.adjusted_eta_hours ?? '—'} h</div>
+    <div class="mt-1 small text-muted">Weather impact: ${e.weather_impact_percent ?? 0}%</div>
+  `;
 })();
 </script>

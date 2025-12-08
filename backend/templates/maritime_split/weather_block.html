@@ -1,10 +1,11 @@
-<!-- Weather widget -->
-<div class="card maritime-card shadow-sm">
+<!-- templates/blocks/weather_block.html -->
+<!-- English comments only: Weather block - shows consolidated weather from MET Norway or empirical fallback -->
+<div id="weather_block" class="card maritime-card shadow-sm">
   <div class="card-header bg-info text-white">
-    <i class="bi bi-cloud-sun"></i> Weather (MET Norway preferred)
+    <i class="bi bi-cloud-sun"></i> Weather
   </div>
-  <div class="card-body">
-    <div id="weatherWidget">
+  <div class="card-body" style="min-height:110px">
+    <div id="weather_block_content" class="small">
       <div class="text-center">
         <div class="spinner-border text-info" role="status"></div>
         <div class="mt-2">Loading weather...</div>
@@ -12,23 +13,38 @@
     </div>
   </div>
 </div>
+
 <script>
-(async function loadWeather() {
-  const container = document.getElementById('weatherWidget');
-  const res = await fetchSafeJson('/maritime/api/weather-pro?lat=60.39&lon=5.32');
-  if (res.ok) {
-    const w = res.data || {};
-    container.innerHTML = `
-      <div class="text-center">
-        <h4 class="mb-1">${w.temperature !== undefined ? Math.round(w.temperature) + '°C' : 'N/A'}</h4>
-        <div>${w.condition || (w.source || '—')}</div>
-        <div class="mt-2 small text-muted">
-          Wind: ${w.wind_speed ?? '—'} m/s · Dir: ${w.wind_direction ?? '—'}°
-        </div>
-      </div>
-    `;
-  } else {
+/* English-only comments:
+   This block expects global fetchSafeJson('/maritime/api/weather-pro').
+   It displays temperature, wind, waves, source and confidence.
+*/
+(async function loadWeatherBlock() {
+  const container = document.getElementById('weather_block_content');
+  const res = await fetchSafeJson('/maritime/api/weather-pro');
+  if (!res.ok) {
     container.innerHTML = `<div class="text-warning">Weather unavailable — ${res.message || 'fallback'}</div>`;
+    return;
   }
+  const d = res.data || {};
+  // Normalize keys if API returns different names
+  const temp = d.temperature ?? d.temp ?? d.temp_c ?? '—';
+  const wind = d.wind_speed ?? d.wind ?? '—';
+  const gust = d.wind_gust ?? d.gust ?? '—';
+  const waves = d.wave_height ?? d.significant_wave_height ?? '—';
+  const source = (d.source || d.metadata?.source) ?? 'unknown';
+  const confidence = d.confidence ?? d.metadata?.confidence ?? (source === 'met_norway' ? 'high' : 'medium');
+
+  container.innerHTML = `
+    <div class="text-center">
+      <h4 class="mb-1">${temp !== '—' ? Math.round(temp) + '°C' : 'N/A'}</h4>
+      <div class="small text-muted mb-2">${source} • confidence: ${confidence}</div>
+      <div class="d-flex justify-content-between small">
+        <div>Wind: ${wind} m/s</div>
+        <div>Gust: ${gust} m/s</div>
+        <div>Waves: ${waves} m</div>
+      </div>
+    </div>
+  `;
 })();
 </script>

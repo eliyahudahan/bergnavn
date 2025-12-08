@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block title %}Maritime Live Dashboard — Real‑Time Intelligence{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+<style>
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+        gap: 1.5rem;
+        padding-top: 5rem;
+    }
+
+    .dash-card {
+        background: #fff;
+        border-radius: 12px;
+        padding: 1.3rem 1.4rem;
+        border: 1px solid #e7e7e7;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        transition: 0.2s;
+    }
+    .dash-card:hover {
+        box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+    }
+
+    .section-title {
+        font-size: 1.35rem;
+        font-weight: 600;
+        color: #003b8a;
+        margin-bottom: 10px;
+    }
+
+    #liveMap {
+        height: 430px;
+        width: 100%;
+        border-radius: 14px;
+        border: 2px solid #c7e2ff;
+        background: #eef6ff;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-grid">
+
+    {% include 'maritime_split/weather_block.html' %}
+    {% include 'maritime_split/ships_block.html' %}
+    {% include 'maritime_split/alerts_block.html' %}
+    {% include 'maritime_split/fuel_block.html' %}
+    {% include 'maritime_split/eta_block.html' %}
+    {% include 'maritime_split/waves_block.html' %}
+    {% include 'maritime_split/sea_depth_block.html' %}
+
+    <div class="dash-card" style="grid-column: 1 / -1;">
+        <div class="section-title">🗺️ Live Vessel Map</div>
+        <div id="liveMap">Loading live maritime map…</div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}
