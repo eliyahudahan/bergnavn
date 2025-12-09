@@ -1,120 +1,99 @@
-// ======================================================
-//   Maritime Dashboard - Clean + MET-Based Map Logic
-//   No email exposed, no external secrets.
-//   Fully backend-driven.
-// ======================================================
+// static/js/maritime.js
+// Core maritime real-time map + data fetch logic.
+// English comments only.
 
 let map;
 let aisLayer;
 let weatherLayer;
 
-// Initialize the map
+// Initialize the map element with id "maritime-map" or "map"
 function initMap() {
-    map = L.map("map", {
+    const mapId = document.getElementById('maritime-map') ? 'maritime-map' : 'map';
+    map = L.map(mapId, {
         zoomControl: true,
         scrollWheelZoom: true
-    }).setView([63.4305, 10.3951], 8); // Trondheim default
+    }).setView([63.4305, 10.3951], 7);
 
-    // Base map from OpenStreetMap
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         maxZoom: 18,
         attribution: "&copy; OpenStreetMap contributors"
     }).addTo(map);
 
-    // Layers
     aisLayer = L.layerGroup().addTo(map);
     weatherLayer = L.layerGroup().addTo(map);
 
-    // Load initial data
+    // Initial load
     fetchAIS();
     fetchWeather();
 
-    // Auto-refresh AIS every 30 sec
-    setInterval(fetchAIS, 30000);
-    // Auto-refresh weather every 5 min
-    setInterval(fetchWeather, 300000);
+    // Auto-refresh
+    setInterval(fetchAIS, 30000);       // AIS every 30s
+    setInterval(fetchWeather, 300000);  // Weather every 5min
 }
-
-// ======================================================
-//                 AIS LIVE DATA
-// ======================================================
 
 async function fetchAIS() {
     try {
-        const response = await fetch("/api/ais/live");
-        const data = await response.json();
+        const res = await fetch("/maritime/api/live-ships");
+        const payload = await res.json();
+        if (!payload || payload.status !== 'success') {
+            console.warn("AIS payload not success", payload);
+            return;
+        }
+        const data = payload.vessels || [];
 
         aisLayer.clearLayers();
 
-        data.forEach(vessel => {
-            if (!vessel.lat || !vessel.lon) return;
+        data.forEach(v => {
+            const lat = parseFloat(v.lat || v.latitude || v.lat_dd);
+            const lon = parseFloat(v.lon || v.longitude || v.lon_dd);
+            if (!lat || !lon) return;
 
-            const marker = L.circleMarker([vessel.lat, vessel.lon], {
+            const marker = L.circleMarker([lat, lon], {
                 radius: 6,
                 color: "#0077ff",
                 fillColor: "#66aaff",
-                fillOpacity: 0.7
+                fillOpacity: 0.8
             });
 
-            marker.bindPopup(`
-                <b>${vessel.name || "Unknown Vessel"}</b><br>
-                MMSI: ${vessel.mmsi}<br>
-                Speed: ${vessel.speed} kn<br>
-                Course: ${vessel.course}°
-            `);
-
+            const popup = `<b>${v.name || "Unknown Vessel"}</b><br/>MMSI: ${v.mmsi || 'N/A'}<br/>SOG: ${v.sog || v.speed || 'N/A'} kn`;
+            marker.bindPopup(popup);
             marker.addTo(aisLayer);
         });
-
     } catch (err) {
         console.error("AIS fetch error:", err);
     }
 }
 
-// ======================================================
-//                 MET WEATHER (Wind, Waves)
-// ======================================================
-
 async function fetchWeather() {
     try {
-        const response = await fetch("/api/weather/current");
-        const wx = await response.json();
+        const res = await fetch("/weather/api/maritime-weather");
+        const payload = await res.json();
+        // payload may be {status:'success', data: {...}} or fallback
+        let data = null;
+        if (payload && payload.status === 'success') data = [payload.data];
+        else if (Array.isArray(payload)) data = payload;
+        else data = [];
 
         weatherLayer.clearLayers();
 
-        wx.forEach(point => {
-            if (!point.lat || !point.lon) return;
+        data.forEach(point => {
+            const lat = parseFloat(point.lat || point.latitude || point.lat_dd);
+            const lon = parseFloat(point.lon || point.longitude || point.lon_dd);
+            if (!lat || !lon) return;
 
             const icon = L.divIcon({
                 className: "weather-marker",
-                html: `
-                    <div style="font-size: 14px; text-align:center;">
-                        🌬️${point.wind_speed} m/s<br>
-                        ↗ ${point.wind_dir}°
-                    </div>
-                `
+                html: `<div style="font-size:12px;text-align:center;">${point.source || 'WX'}<br/>${Math.round(point.temperature||0)}°C</div>`
             });
 
-            L.marker([point.lat, point.lon], { icon }).addTo(weatherLayer);
+            L.marker([lat, lon], { icon }).addTo(weatherLayer);
         });
-
     } catch (err) {
         console.error("Weather fetch error:", err);
     }
 }
 
-// ======================================================
-//         Optional: Toggle Layers (Dashboard UI)
-// ======================================================
-
-function toggleLayer(layerName, state) {
-    if (layerName === "ais") {
-        state ? map.addLayer(aisLayer) : map.removeLayer(aisLayer);
-    } else if (layerName === "weather") {
-        state ? map.addLayer(weatherLayer) : map.removeLayer(weatherLayer);
-    }
-}
-
-// Export
+// Expose functions globally
 window.initMap = initMap;
-window.toggleLayer = toggleLayer;
+window.fetchAIS = fetchAIS;
+window.fetchWeather = fetchWeather;

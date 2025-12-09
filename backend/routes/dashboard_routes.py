@@ -25,4 +25,4 @@ def dashboard():
         })
 
     # Render the dashboard template with routes and language
-    return render_template("dashboard.html", voyages=voyages, lang=lang)
+    return render_template("maritime_split/dashboard_base.html", lang="en")

@@ -1,71 +1,111 @@
 // static/js/dashboard.js
+// Dashboard glue logic: updates widgets, uses endpoints defined in maritime_routes.py
 
 console.log("Dashboard JS loaded");
 
-// -------- WEATHER --------
-async function loadWeather() {
+async function loadWeatherCard() {
     try {
         const res = await fetch("/weather/api/maritime-weather");
-        const data = await res.json();
+        const payload = await res.json();
+        const container = document.getElementById("weather-data") || document.getElementById("weather-card");
+        if (!container) return;
 
-        document.getElementById("weather-card").innerHTML = `
-            <h3>Weather</h3>
-            <p>Temp: ${data.data.temperature}°C</p>
-            <p>Wind: ${data.data.wind_speed} m/s</p>
-            <p>Humidity: ${data.data.humidity}%</p>
-        `;
+        if (payload && payload.status === 'success') {
+            const d = payload.data;
+            container.innerHTML = `
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h6 class="card-title">${d.location || 'Location'}</h6>
+                        <div class="h3">${Math.round(d.temperature || 0)}°C</div>
+                        <div class="small text-muted">Wind: ${d.wind_speed || 0} m/s</div>
+                    </div>
+                </div>
+            `;
+        } else {
+            container.innerHTML = `<div class="alert alert-warning">Weather fallback used</div>`;
+        }
     } catch (err) {
-        document.getElementById("weather-card").innerHTML = "Weather unavailable";
+        const container = document.getElementById("weather-data") || document.getElementById("weather-card");
+        if (container) container.innerHTML = "Weather unavailable";
+        console.error("loadWeatherCard error:", err);
     }
 }
 
-// -------- LIVE SHIPS --------
-async function loadShips() {
+async function loadShipsCard() {
     try {
         const res = await fetch("/maritime/api/live-ships");
-        const ships = await res.json();
+        const payload = await res.json();
+        const container = document.getElementById("ships-card") || document.getElementById("ships-card-container");
+        if (!container) return;
 
-        document.getElementById("ships-card").innerHTML =
-            `<h3>Live Ships</h3><p>Ships loaded: ${ships.length}</p>`;
+        if (payload && payload.status === 'success') {
+            const count = payload.count || (payload.vessels && payload.vessels.length) || 0;
+            container.innerHTML = `
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h6 class="card-title">Live Ships</h6>
+                        <p class="h4 mb-0">${count}</p>
+                        <small class="text-muted">Updated: ${new Date().toLocaleTimeString()}</small>
+                    </div>
+                </div>
+            `;
+        } else {
+            container.innerHTML = `<div class="alert alert-secondary">Ships unavailable</div>`;
+        }
     } catch (err) {
-        document.getElementById("ships-card").innerHTML = "Ships unavailable";
+        console.error("loadShipsCard error:", err);
+        const container = document.getElementById("ships-card") || document.getElementById("ships-card-container");
+        if (container) container.innerHTML = "Ships unavailable";
     }
 }
 
-// -------- OPTIMIZER --------
-async function loadOptimizer() {
+async function loadOptimizerCard() {
     try {
         const res = await fetch("/maritime/api/optimizer");
-        const data = await res.json();
-        document.getElementById("optimizer-card").innerHTML =
-            `<h3>Fuel Optimization</h3><p>${data.message}</p>`;
+        const payload = await res.json();
+        const container = document.getElementById("optimizer-card") || document.getElementById("fuel-card-container");
+        if (!container) return;
+
+        if (payload && payload.status === 'success' || payload.recommended_speed) {
+            const msg = payload.message || `Recommended speed ${payload.recommended_speed || 'N/A'} kn`;
+            container.innerHTML = `<div class="card h-100"><div class="card-body"><h6>Fuel Optimizer</h6><p>${msg}</p></div></div>`;
+        } else {
+            container.innerHTML = `<div class="alert alert-secondary">Optimizer unavailable</div>`;
+        }
     } catch (err) {
-        document.getElementById("optimizer-card").innerHTML = "Optimizer unavailable";
+        console.error("loadOptimizerCard error:", err);
     }
 }
 
-// -------- ALERTS --------
-async function loadAlerts() {
+async function loadAlertsCard() {
     try {
         const res = await fetch("/maritime/api/alerts");
-        const alerts = await res.json();
-        document.getElementById("alerts-card").innerHTML =
-            `<h3>Alerts</h3><p>Total alerts: ${alerts.length}</p>`;
+        const payload = await res.json();
+        const container = document.getElementById("alerts-card") || document.getElementById("alerts-card-container");
+        if (!container) return;
+
+        if (payload && payload.status === 'success' && payload.alerts) {
+            container.innerHTML = `<div class="card h-100"><div class="card-body"><h6>Alerts</h6><p>Total: ${payload.alerts.length}</p></div></div>`;
+        } else {
+            container.innerHTML = `<div class="alert alert-secondary">No alerts</div>`;
+        }
     } catch (err) {
-        document.getElementById("alerts-card").innerHTML = "Alerts unavailable";
+        console.error("loadAlertsCard error:", err);
     }
 }
 
-// -------- START --------
-loadWeather();
-loadShips();
-loadOptimizer();
-loadAlerts();
+function startDashboardRefresh() {
+    loadWeatherCard();
+    loadShipsCard();
+    loadOptimizerCard();
+    loadAlertsCard();
 
-// Refresh every 30 sec
-setInterval(() => {
-    loadWeather();
-    loadShips();
-    loadOptimizer();
-    loadAlerts();
-}, 30000);
+    setInterval(() => {
+        loadWeatherCard();
+        loadShipsCard();
+        loadOptimizerCard();
+        loadAlertsCard();
+    }, 30000);
+}
+
+document.addEventListener("DOMContentLoaded", startDashboardRefresh);
