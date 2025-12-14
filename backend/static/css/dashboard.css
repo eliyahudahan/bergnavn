@@ -1,60 +1,367 @@
 /* backend/static/css/dashboard.css */
-/* English-only comments. Clean maritime theme, responsive. */
+/* Maritime Dashboard - Specific Styles */
 
-:root{
-  --primary-blue:#1a2980;
-  --accent:#ff6b6b;
-  --muted:#6c757d;
-  --card-radius:12px;
-  --shadow:0 8px 24px rgba(10,20,40,0.08);
+/* ===== Dashboard Header ===== */
+.dashboard-header {
+    background: linear-gradient(90deg, var(--primary-blue) 0%, var(--accent-teal) 100%);
+    color: white;
+    padding: 2rem 1rem;
+    border-radius: var(--card-radius);
+    margin-bottom: 2rem;
+    box-shadow: var(--card-shadow);
 }
 
-body{
-  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-  background: linear-gradient(180deg,#f6f8fb 0%,#eef3f8 100%);
-  color:#1f2937;
-  padding-top:76px;
+.dashboard-header h1 {
+    font-weight: 800;
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
 }
 
-/* container basics */
-.container-fluid.py-4{ padding-top:1.5rem; padding-bottom:1.5rem; }
-
-/* cards */
-.maritime-card{
-  background:#fff;
-  border-radius:var(--card-radius);
-  box-shadow:var(--shadow);
-  border:none;
-  overflow:hidden;
+.dashboard-header .lead {
+    opacity: 0.9;
+    font-weight: 300;
 }
 
-/* map container */
-.maritime-map{
-  width:100%;
-  height:520px;
-  border-radius:10px;
+/* ===== Card Styling ===== */
+.dashboard-card {
+    background: white;
+    border-radius: var(--card-radius);
+    box-shadow: var(--card-shadow);
+    border: none;
+    overflow: hidden;
+    transition: all var(--transition-speed);
+    height: 100%;
 }
 
-/* small widgets */
-.card-header.bg-info, .card-header.bg-primary, .card-header.bg-warning, .card-header.bg-success {
-  font-weight:700;
+.dashboard-card:hover {
+    box-shadow: var(--hover-shadow);
+    transform: translateY(-5px);
 }
 
-/* list & markers */
-.list-group-item{ border:none; padding:0.6rem 1rem; }
-.vessel-marker{
-  width:14px; height:14px; border-radius:50%; border:2px solid #fff;
-  box-shadow:0 2px 6px rgba(0,0,0,0.18);
+.card-header {
+    background: linear-gradient(90deg, var(--primary-blue) 0%, var(--primary-blue-light) 100%);
+    color: white;
+    font-weight: 600;
+    padding: 1rem 1.5rem;
+    border-bottom: 3px solid var(--accent-teal);
 }
 
-/* status bar */
-#statusAlert{ margin-bottom:1rem; border-radius:10px; }
+/* ===== Weather Card Specific ===== */
+#weather-box {
+    padding: 1.5rem;
+}
 
-/* loading */
-.spinner-border{ width:2rem; height:2rem; }
+.weather-metric {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
 
-/* small screens */
-@media (max-width:768px){
-  .maritime-map{ height:360px; }
-  body{ padding-top:70px; }
+.weather-metric:last-child {
+    border-bottom: none;
+}
+
+.metric-label {
+    font-weight: 600;
+    color: var(--medium-gray);
+}
+
+.metric-value {
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: var(--primary-blue);
+}
+
+.weather-footer {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+    font-size: 0.85rem;
+    color: var(--medium-gray);
+}
+
+/* ===== Map Card Specific ===== */
+#maritime-map {
+    width: 100%;
+    height: 100%;
+    min-height: 450px;
+    background: #e8f4f8;
+}
+
+/* Vessel Markers */
+.vessel-marker {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 3px solid white;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s;
+}
+
+.vessel-marker.cargo { background: #3498db; }
+.vessel-marker.passenger { background: #e74c3c; }
+.vessel-marker.tanker { background: #f39c12; }
+.vessel-marker.container { background: #2ecc71; }
+
+.vessel-marker:hover {
+    transform: scale(1.3);
+    z-index: 1000 !important;
+}
+
+/* ===== Stats Cards ===== */
+.stats-card {
+    text-align: center;
+    padding: 1.5rem;
+    border-radius: var(--card-radius);
+    background: white;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    transition: all var(--transition-speed);
+}
+
+.stats-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.stats-card h6 {
+    color: var(--medium-gray);
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.stats-card h3 {
+    font-weight: 800;
+    font-size: 2.5rem;
+    margin: 0.5rem 0;
+}
+
+/* Color-coded stats */
+.temp-stat h3 { color: #e74c3c; }
+.wind-stat h3 { color: #3498db; }
+.vessels-stat h3 { color: #2ecc71; }
+
+/* ===== Norwegian City Theme Elements ===== */
+.norwegian-fjord-bg {
+    background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+}
+
+.city-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin: 0.25rem;
+    border: 2px solid transparent;
+}
+
+.badge-bergen { background: #3498db; color: white; border-color: #2980b9; }
+.badge-oslo { background: #2ecc71; color: white; border-color: #27ae60; }
+.badge-stavanger { background: #9b59b6; color: white; border-color: #8e44ad; }
+.badge-trondheim { background: #e74c3c; color: white; border-color: #c0392b; }
+.badge-alesund { background: #f39c12; color: white; border-color: #d35400; }
+
+/* ===== Status Indicators ===== */
+.status-indicator {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 0.5rem;
+}
+
+.status-live { background: var(--success-green); animation: pulse 2s infinite; }
+.status-simulated { background: var(--warning-orange); }
+.status-error { background: #e74c3c; }
+
+/* ===== Dashboard Controls ===== */
+.dashboard-controls {
+    background: white;
+    padding: 1rem;
+    border-radius: var(--card-radius);
+    margin-bottom: 1rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.control-btn {
+    background: var(--light-gray);
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+    color: var(--primary-blue);
+    transition: all var(--transition-speed);
+    margin-right: 0.5rem;
+}
+
+.control-btn:hover {
+    background: var(--primary-blue);
+    color: white;
+    border-color: var(--primary-blue);
+}
+
+/* ===== Responsive Dashboard ===== */
+@media (max-width: 992px) {
+    .dashboard-header h1 {
+        font-size: 2rem;
+    }
+    
+    #maritime-map {
+        min-height: 350px;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-header {
+        padding: 1.5rem 1rem;
+    }
+    
+    .dashboard-header h1 {
+        font-size: 1.75rem;
+    }
+    
+    .stats-card h3 {
+        font-size: 2rem;
+    }
+    
+    #maritime-map {
+        min-height: 300px;
+    }
+}
+
+
+/* ===== Vessel Icon Styling ===== */
+.vessel-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    background: white;
+    border-radius: 50%;
+    border: 3px solid white;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.vessel-icon:hover {
+    transform: scale(1.3);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+}
+
+.vessel-icon i {
+    font-size: 18px;
+}
+
+/* ===== Vessel Popup ===== */
+.vessel-popup {
+    min-width: 200px;
+}
+
+.vessel-popup strong {
+    color: var(--primary-blue);
+    font-size: 1.1em;
+}
+
+/* ===== Map Improvements ===== */
+#maritime-map {
+    width: 100%;
+    height: 450px;
+    background: #e8f4f8;
+    border-radius: 8px;
+}
+
+.map-container {
+    position: relative;
+}
+
+/* ===== City Badges Improvement ===== */
+.city-badge {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    font-weight: 600;
+    margin: 0.25rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.city-badge:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.badge-bergen { 
+    background: linear-gradient(135deg, #3498db, #2980b9); 
+    color: white; 
+    border: 2px solid #2980b9; 
+}
+
+.badge-oslo { 
+    background: linear-gradient(135deg, #2ecc71, #27ae60); 
+    color: white; 
+    border: 2px solid #27ae60; 
+}
+
+.badge-stavanger { 
+    background: linear-gradient(135deg, #9b59b6, #8e44ad); 
+    color: white; 
+    border: 2px solid #8e44ad; 
+}
+
+.badge-trondheim { 
+    background: linear-gradient(135deg, #e74c3c, #c0392b); 
+    color: white; 
+    border: 2px solid #c0392b; 
+}
+
+.badge-alesund { 
+    background: linear-gradient(135deg, #f39c12, #d35400); 
+    color: white; 
+    border: 2px solid #d35400; 
+}
+
+/* ===== Weather Display ===== */
+.weather-report h4 {
+    margin-bottom: 1rem;
+    color: var(--primary-blue);
+}
+
+.metric {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.metric:last-child {
+    border-bottom: none;
+}
+
+.metric .label {
+    color: var(--medium-gray);
+    font-weight: 600;
+}
+
+.metric .value {
+    font-weight: 700;
+    font-size: 1.1em;
+    color: var(--dark-navy);
+}
+
+/* ===== Local Time Display ===== */
+.local-time {
+    font-family: 'Courier New', monospace;
+    background: var(--dark-navy);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    display: inline-block;
+    margin-left: 1rem;
 }

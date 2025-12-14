@@ -3,7 +3,8 @@
 
 import logging
 import os
-from flask import Flask, session, request
+import sys
+from flask import Flask, session, request, jsonify
 from flask_apscheduler import APScheduler
 from dotenv import load_dotenv
 
@@ -37,8 +38,7 @@ def _detect_migration_mode():
     Detect when Alembic is loading the app (env.py).
     This ensures the scheduler / AIS won't run during migrations.
     """
-    import sys
-    return "alembic" in sys.argv[0] or "flask" in sys.argv[0] and ("db" in sys.argv)
+    return "alembic" in sys.argv[0] or ("flask" in sys.argv[0] and len(sys.argv) > 1 and "db" in sys.argv[1])
 
 
 def create_app(config_name=None, testing=False, start_scheduler=True):
@@ -94,7 +94,7 @@ def create_app(config_name=None, testing=False, start_scheduler=True):
         logging.info("🔧 Scheduler disabled (testing/migration mode)")
 
     # Weekly cleanup job
-    if not migration_mode:
+    if not migration_mode and scheduler.running:
         if scheduler.get_job('weekly_cleanup') is None:
             scheduler.add_job(
                 id='weekly_cleanup',
@@ -130,10 +130,23 @@ def create_app(config_name=None, testing=False, start_scheduler=True):
             session['lang'] = lang_param
         session.setdefault('lang', 'en')
 
+    # API key validation endpoint
+    @app.route('/api/check-api-keys')
+    def check_api_keys():
+        """Check if API keys are configured"""
+        keys_status = {
+            'OPENWEATHER_API_KEY': bool(os.getenv('OPENWEATHER_API_KEY')),
+            'MET_USER_AGENT': bool(os.getenv('MET_USER_AGENT')),
+            'USE_KYSTVERKET_AIS': os.getenv('USE_KYSTVERKET_AIS') == 'true',
+            'USE_FREE_AIS': os.getenv('USE_FREE_AIS') == 'true',
+            'AIS_ENABLED': os.getenv('DISABLE_AIS_SERVICE') != '1'
+        }
+        return jsonify(keys_status)
+
     # CLI command
     @app.cli.command("list-routes")
     def list_routes():
-        import urllib
+        import urllib.parse
         output = []
         for rule in app.url_map.iter_rules():
             methods = ','.join(rule.methods)
@@ -152,7 +165,7 @@ app = create_app()
 # Manual cleanup CLI command
 @app.cli.command("run-cleanup")
 def run_cleanup():
-    deactivate_old_weather_status()
+    deactivate_old_weather_status(days=30)
     print("✅ Manual cleanup completed")
 
 

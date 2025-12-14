@@ -1,0 +1,131 @@
+<!-- backend/templates/dashboard/statistics.html -->
+{% extends "base.html" %}
+
+{% block title %}Statistics Dashboard | BergNavn{% endblock %}
+
+{% block content %}
+<div class="container mt-5 pt-4">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="text-gradient">📈 Statistics Dashboard</h1>
+            <p class="lead">System statistics and usage reports</p>
+            
+            <!-- Statistics Grid -->
+            <div class="row mt-4">
+                <div class="col-md-3 mb-3">
+                    <div class="stats-card">
+                        <h6><i class="bi bi-calendar me-2"></i>Daily Users</h6>
+                        <h3>247</h3>
+                        <small class="text-muted">+12% from yesterday</small>
+                    </div>
+                </div>
+                
+                <div class="col-md-3 mb-3">
+                    <div class="stats-card">
+                        <h6><i class="bi bi-database me-2"></i>Data Points</h6>
+                        <h3>12.5K</h3>
+                        <small class="text-muted">Collected today</small>
+                    </div>
+                </div>
+                
+                <div class="col-md-3 mb-3">
+                    <div class="stats-card">
+                        <h6><i class="bi bi-route me-2"></i>Routes Calculated</h6>
+                        <h3>89</h3>
+                        <small class="text-muted">This week</small>
+                    </div>
+                </div>
+                
+                <div class="col-md-3 mb-3">
+                    <div class="stats-card">
+                        <h6><i class="bi bi-clock me-2"></i>Avg Response</h6>
+                        <h3>185ms</h3>
+                        <small class="text-muted">API response time</small>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Usage Statistics -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="bi bi-graph-up me-2"></i>Usage Statistics</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Time Period</th>
+                                            <th>API Calls</th>
+                                            <th>Data Points</th>
+                                            <th>Users</th>
+                                            <th>Vessels Tracked</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Today</td>
+                                            <td>1,245</td>
+                                            <td>12,500</td>
+                                            <td>247</td>
+                                            <td>28</td>
+                                        </tr>
+                                        <tr>
+                                            <td>This Week</td>
+                                            <td>8,745</td>
+                                            <td>87,450</td>
+                                            <td>1,478</td>
+                                            <td>156</td>
+                                        </tr>
+                                        <tr>
+                                            <td>This Month</td>
+                                            <td>32,890</td>
+                                            <td>328,900</td>
+                                            <td>5,247</td>
+                                            <td>489</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Total</td>
+                                            <td>189,450</td>
+                                            <td>1.89M</td>
+                                            <td>24,789</td>
+                                            <td>2,478</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Export Options -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="bi bi-download me-2"></i>Export Data</h5>
+                        </div>
+                        <div class="card-body">
+                            <p>Export statistics and analytics data for further analysis:</p>
+                            <div class="d-grid gap-2 d-md-flex">
+                                <button class="btn btn-outline-primary me-2">
+                                    <i class="bi bi-file-earmark-text me-1"></i>Export as CSV
+                                </button>
+                                <button class="btn btn-outline-primary me-2">
+                                    <i class="bi bi-file-earmark-excel me-1"></i>Export as Excel
+                                </button>
+                                <button class="btn btn-outline-primary">
+                                    <i class="bi bi-file-earmark-pdf me-1"></i>Export as PDF
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

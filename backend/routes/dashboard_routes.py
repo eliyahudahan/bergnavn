@@ -1,28 +1,57 @@
-from flask import Blueprint, render_template
-from backend.models.route import Route
-from backend.services.route_evaluator import evaluate_route
-from backend.utils.helpers import get_current_language  # ✅ Import language helper
+# backend/routes/dashboard_routes.py
+from flask import Blueprint, render_template, session, jsonify
+from backend.utils.helpers import get_current_language
 
 dashboard_bp = Blueprint('dashboard_bp', __name__)
 
-@dashboard_bp.route("/")
+
+@dashboard_bp.route('/')
 def dashboard():
-    # Get current language from query/session
+    """
+    Dashboard home page (different from maritime dashboard).
+    """
     lang = get_current_language()
+    return render_template("dashboard/home.html", lang=lang)
 
-    # Fetch all routes from the database
-    routes = Route.query.all()
-    voyages = []
 
-    # Run evaluation for each route and prepare data for the dashboard
-    for r in routes:
-        eval_result = evaluate_route(r.id)
-        voyages.append({
-            "id": r.id,
-            "name": r.name,
-            "status": eval_result.get("status", "Unknown"),
-            "color": eval_result.get("color", "secondary")
-        })
+@dashboard_bp.route('/overview')
+def overview():
+    """
+    Dashboard overview page.
+    """
+    lang = get_current_language()
+    return render_template("dashboard/overview.html", lang=lang)
 
-    # Render the dashboard template with routes and language
-    return render_template("maritime_split/dashboard_base.html", lang="en")
+
+@dashboard_bp.route('/analytics')
+def analytics():
+    """
+    Analytics dashboard.
+    """
+    lang = get_current_language()
+    return render_template("dashboard/analytics.html", lang=lang)
+
+
+@dashboard_bp.route('/statistics')
+def statistics():
+    """
+    Statistics dashboard.
+    """
+    lang = get_current_language()
+    return render_template("dashboard/statistics.html", lang=lang)
+
+
+@dashboard_bp.route('/api/metrics')
+def dashboard_metrics():
+    """
+    API endpoint for dashboard metrics.
+    """
+    metrics = {
+        'total_routes': 42,
+        'active_routes': 28,
+        'completed_today': 15,
+        'avg_duration': 2.4,
+        'fuel_saved': 1250,
+        'co2_reduced': 3.2
+    }
+    return jsonify(metrics)

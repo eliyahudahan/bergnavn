@@ -1,19 +1,17 @@
+# backend/models/route.py
 from backend.extensions import db
 
 class Route(db.Model):
     __tablename__ = 'routes'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    description = db.Column(db.Text)
-    duration_days = db.Column(db.Float)
-    total_distance_nm = db.Column(db.Float)
-    origin = db.Column(db.String(100))  # ✅ ADDED: Route origin
-    destination = db.Column(db.String(100))  # ✅ ADDED: Route destination
-    is_active = db.Column(db.Boolean, default=True)
+    name = db.Column(db.String(120), nullable=False)
+    is_active = db.Column(db.Boolean, default=True, nullable=False)
 
-    # ✅ FIXED: String-based relationship - NO ABSOLUTE IMPORT!
-    legs = db.relationship("VoyageLeg", backref="route", cascade="all, delete-orphan")
-
-    def __repr__(self):
-        return f"<Route {self.name}>"
+    # FIX: back_populates במקום backref
+    legs = db.relationship(
+        "VoyageLeg",
+        back_populates="route",
+        cascade="all, delete-orphan",
+        lazy=True
+    )

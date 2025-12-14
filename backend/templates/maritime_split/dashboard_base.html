@@ -3,74 +3,252 @@
 {% block title %}Maritime Dashboard | BergNavn{% endblock %}
 
 {% block head %}
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<!-- Dashboard-specific CSS -->
 <link href="{{ url_for('static', filename='css/dashboard.css') }}" rel="stylesheet">
+<style>
+    .weather-location {
+        font-size: 0.9rem;
+        color: var(--medium-gray);
+        margin-bottom: 0.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid rgba(0,0,0,0.1);
+    }
+    
+    .city-indicator {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        margin-right: 0.5rem;
+    }
+    
+    .bergen-indicator { background: #3498db; }
+    .oslo-indicator { background: #2ecc71; }
+    .local-clock {
+        font-family: 'Courier New', monospace;
+        background: var(--dark-navy);
+        color: white;
+        padding: 0.25rem 0.5rem;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        display: inline-block;
+        margin-left: 0.5rem;
+    }
+</style>
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid py-4">
+<!-- Dashboard Header with Norwegian Theme -->
+<div class="dashboard-header text-center">
+    <h1 class="text-gradient">🌊 Maritime Dashboard</h1>
+    <p class="lead">Live AIS • MET Weather • Real-time Map</p>
+    
+    <!-- Norwegian Cities Badges -->
+    <div class="mt-3">
+        <span class="city-badge badge-bergen">Bergen</span>
+        <span class="city-badge badge-oslo">Oslo</span>
+        <span class="city-badge badge-stavanger">Stavanger</span>
+        <span class="city-badge badge-trondheim">Trondheim</span>
+        <span class="city-badge badge-alesund">Ålesund</span>
+    </div>
+</div>
 
-    <!-- Header -->
+<!-- Main Dashboard Content -->
+<div class="container-fluid">
+    <!-- Status Bar with Local Time -->
+    <div class="dashboard-controls d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <span class="status-indicator status-live"></span>
+            <small class="text-muted">Live Data: </small>
+            <span class="fw-semibold text-success" id="data-status">Active</span>
+            <span class="local-clock" id="local-time">--:--</span>
+        </div>
+        <div>
+            <button class="control-btn" onclick="refreshDashboard()">
+                <i class="bi bi-arrow-clockwise"></i> Refresh
+            </button>
+            <button class="control-btn" onclick="toggleDataView()">
+                <i class="bi bi-layers"></i> Toggle View
+            </button>
+        </div>
+    </div>
+
+    <!-- Weather + Map Row -->
     <div class="row mb-4">
-        <div class="col-12 text-center">
-            <h1 class="fw-bold">🌊 Maritime Dashboard (Real-time)</h1>
-            <p class="text-muted">Live AIS • MET Weather • Fuel Optimizer • Route Analytics</p>
-            <div id="api-status" class="badge bg-secondary">Initializing...</div>
+        <!-- Weather Card -->
+        <div class="col-lg-4 col-md-12 mb-4">
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-cloud-sun me-2"></i>Live Weather</h5>
+                </div>
+                <div class="card-body">
+                    <div id="weather-box">
+                        <!-- Weather content loaded by JavaScript -->
+                        <div class="text-center py-4">
+                            <div class="spinner-border text-primary" role="status"></div>
+                            <p class="mt-2 text-muted">Connecting to MET Norway...</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer weather-footer">
+                    <small>
+                        <i class="bi bi-info-circle me-1"></i>
+                        Source: <span id="weather-source">MET Norway API</span>
+                        • Updated: <span id="weather-timestamp">--:--</span>
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Map Card -->
+        <div class="col-lg-8 col-md-12 mb-4">
+            <div class="dashboard-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-geo-alt me-2"></i>Norwegian Waters</h5>
+                    <span class="badge bg-light text-dark">
+                        <i class="bi bi-ship me-1"></i>
+                        <span id="vessel-count-number">0</span> vessels
+                    </span>
+                </div>
+                <div class="card-body p-0 map-container">
+                    <!-- Map Container -->
+                    <div id="maritime-map"></div>
+                </div>
+                <div class="card-footer">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <small class="text-muted">
+                                <i class="bi bi-geo me-1"></i>
+                                Center: <span id="map-center">60.39°N, 5.32°E</span>
+                            </small>
+                        </div>
+                        <div class="col-md-6 text-md-end">
+                            <small class="text-muted">
+                                <i class="bi bi-clock me-1"></i>
+                                AIS Update: <span id="ais-timestamp">--:--</span>
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- First row widgets -->
-    <div class="row mb-3" id="widgets-row">
-        <div class="col-lg-3 col-md-6 mb-3" id="weather-card-container">
-            {% include "maritime_split/weather_block.html" %}
+    <!-- Quick Stats Row -->
+    <div class="row mb-4">
+        <!-- Temperature -->
+        <div class="col-md-4 mb-3">
+            <div class="stats-card temp-stat">
+                <h6><i class="bi bi-thermometer-half me-2"></i>Temperature</h6>
+                <h3 id="current-temp">--°C</h3>
+                <small class="text-muted" id="temp-location">Current • Bergen Area</small>
+            </div>
         </div>
-        <div class="col-lg-3 col-md-6 mb-3" id="ships-card-container">
-            {% include "maritime_split/ships_block.html" %}
+        
+        <!-- Wind Speed -->
+        <div class="col-md-4 mb-3">
+            <div class="stats-card wind-stat">
+                <h6><i class="bi bi-wind me-2"></i>Wind Speed</h6>
+                <h3 id="current-wind">-- m/s</h3>
+                <small class="text-muted" id="wind-location">Average • Coastal</small>
+            </div>
         </div>
-        <div class="col-lg-3 col-md-6 mb-3" id="fuel-card-container">
-            {% include "maritime_split/fuel_block.html" %}
-        </div>
-        <div class="col-lg-3 col-md-6 mb-3" id="alerts-card-container">
-            {% include "maritime_split/alerts_block.html" %}
+        
+        <!-- Active Vessels -->
+        <div class="col-md-4 mb-3">
+            <div class="stats-card vessels-stat">
+                <h6><i class="bi bi-ship me-2"></i>Active Vessels</h6>
+                <h3 id="active-vessels">--</h3>
+                <small class="text-muted">Norwegian Waters</small>
+            </div>
         </div>
     </div>
 
-    <!-- Map + ETA -->
-    <div class="row mb-3">
-        <div class="col-lg-8 mb-3">
-            {% include "maritime_split/map_block.html" %}
-        </div>
-        <div class="col-lg-4 mb-3">
-            {% include "maritime_split/eta_block.html" %}
+    <!-- Data Source Info -->
+    <div class="row">
+        <div class="col-12">
+            <div class="alert alert-info">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-database me-3 fs-4"></i>
+                    <div>
+                        <small class="fw-bold">Data Sources:</small>
+                        <small class="d-block">
+                            • Weather: MET Norway API • AIS: Kystverket Stream • 
+                            Routes: Norwegian Coastal Database • Bathymetry: EMODnet
+                        </small>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-
 </div>
 {% endblock %}
 
 {% block scripts %}
-<!-- Core libraries -->
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-<!-- Core maritime JS -->
-<script src="{{ url_for('static', filename='js/maritime.js') }}"></script>
-
-<!-- Split modules -->
-<script src="{{ url_for('static', filename='js/split/maritime_core.js') }}"></script>
+<!-- Dashboard JavaScript -->
 <script src="{{ url_for('static', filename='js/split/maritime_map.js') }}"></script>
 <script src="{{ url_for('static', filename='js/split/maritime_weather.js') }}"></script>
-<script src="{{ url_for('static', filename='js/split/maritime_analytics.js') }}"></script>
 
-<!-- Dashboard logic -->
-<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
-
+<!-- Dashboard Control Functions -->
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        if (window.initMap) {
-            window.initMap();
-        } else {
-            console.error("initMap() missing — check static/js/maritime.js");
-        }
+   
+function updateLocalTime() {
+    const now = new Date();
+    
+    // Convert to Norway time (UTC+1 or UTC+2 for DST)
+    const options = {
+        timeZone: 'Europe/Oslo',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+        weekday: 'short',
+        month: 'short',
+        day: 'numeric'
+    };
+    
+    const formatter = new Intl.DateTimeFormat('en-GB', options);
+    const parts = formatter.formatToParts(now);
+    
+    let dateString = '', timeString = '';
+    
+    parts.forEach(part => {
+        if (part.type === 'weekday') dateString = part.value;
+        if (part.type === 'month') dateString += ` ${part.value}`;
+        if (part.type === 'day') dateString += ` ${part.value}`;
+        if (part.type === 'hour') timeString = part.value;
+        if (part.type === 'minute') timeString += `:${part.value}`;
+    });
+    
+    const localTimeElement = document.getElementById('local-time');
+    if (localTimeElement) {
+        localTimeElement.textContent = `${dateString} ${timeString}`;
+        localTimeElement.title = 'Norway Time (Europe/Oslo)';
+    }
+}
+    
+    function refreshDashboard() {
+        console.log('Refreshing dashboard data...');
+        // Trigger refresh of both modules
+        if (typeof loadWeather === 'function') loadWeather();
+        if (typeof loadAIS === 'function') loadAIS();
+        
+        // Update local time
+        updateLocalTime();
+    }
+    
+    function toggleDataView() {
+        alert('View toggle would switch between map layers in production');
+    }
+    
+    // Initialize dashboard when DOM loads
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('BergNavn Dashboard initialized');
+        
+        // Set initial timestamps
+        updateLocalTime();
+        
+        // Update local time every minute
+        setInterval(updateLocalTime, 60000);
     });
 </script>
 {% endblock %}

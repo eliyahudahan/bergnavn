@@ -1,0 +1,105 @@
+<!-- backend/templates/dashboard/analytics.html -->
+{% extends "base.html" %}
+
+{% block title %}Analytics Dashboard | BergNavn{% endblock %}
+
+{% block content %}
+<div class="container mt-5 pt-4">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="text-gradient">📊 Analytics Dashboard</h1>
+            <p class="lead">Detailed analytics and performance metrics</p>
+            
+            <!-- Analytics Cards -->
+            <div class="row mt-4">
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="bi bi-ship me-2"></i>Vessel Analytics</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="text-center">
+                                <h3>28</h3>
+                                <p class="text-muted">Active Vessels Tracked</p>
+                                <div class="progress">
+                                    <div class="progress-bar bg-success" style="width: 75%"></div>
+                                </div>
+                                <small class="text-muted">75% of total capacity</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="bi bi-cloud-sun me-2"></i>Weather Data</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="text-center">
+                                <h3>156</h3>
+                                <p class="text-muted">Weather Updates Today</p>
+                                <div class="progress">
+                                    <div class="progress-bar bg-info" style="width: 90%"></div>
+                                </div>
+                                <small class="text-muted">90% success rate</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- API Performance -->
+            <div class="row mt-2">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="bi bi-lightning-charge me-2"></i>API Performance</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Service</th>
+                                            <th>Status</th>
+                                            <th>Response Time</th>
+                                            <th>Success Rate</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>MET Norway API</td>
+                                            <td><span class="badge bg-success">Active</span></td>
+                                            <td>320ms</td>
+                                            <td>98%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>AIS Service</td>
+                                            <td><span class="badge bg-success">Active</span></td>
+                                            <td>150ms</td>
+                                            <td>99%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Database</td>
+                                            <td><span class="badge bg-success">Connected</span></td>
+                                            <td>45ms</td>
+                                            <td>100%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Map Service</td>
+                                            <td><span class="badge bg-success">Active</span></td>
+                                            <td>210ms</td>
+                                            <td>99%</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

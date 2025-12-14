@@ -1,0 +1,283 @@
+{% extends "base.html" %}
+
+{% block title %}Maritime Operations | BergNavn{% endblock %}
+
+{% block head %}
+<style>
+    .maritime-feature-card {
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+        height: 100%;
+    }
+    
+    .maritime-feature-card:hover {
+        transform: translateY(-5px);
+        border-color: var(--accent-teal);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+    
+    .feature-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        display: block;
+    }
+    
+    .data-source-badge {
+        background: var(--light-gray);
+        border: 1px solid var(--border-color);
+        border-radius: 20px;
+        padding: 0.5rem 1rem;
+        margin: 0.25rem;
+        display: inline-flex;
+        align-items: center;
+        font-size: 0.85rem;
+    }
+    
+    .stats-number {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--primary-blue);
+        line-height: 1;
+    }
+    
+    .stats-label {
+        color: var(--medium-gray);
+        font-size: 0.9rem;
+    }
+    
+    .live-indicator {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        background-color: var(--success-green);
+        border-radius: 50%;
+        margin-right: 0.5rem;
+        animation: pulse 2s infinite;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="maritime-header text-center py-5 mb-4">
+    <h1 class="text-gradient display-5 fw-bold">🌊 Maritime Operations Center</h1>
+    <p class="lead fs-4">Real-time maritime intelligence for Norwegian waters</p>
+    
+    <div class="mt-3">
+        <span class="badge bg-primary fs-6 me-2">
+            <span class="live-indicator"></span> Live AIS Data
+        </span>
+        <span class="badge bg-success fs-6 me-2">
+            <i class="bi bi-cloud-sun me-1"></i> MET Norway Weather
+        </span>
+        <span class="badge bg-info fs-6">
+            <i class="bi bi-geo-alt me-1"></i> Real-time Mapping
+        </span>
+    </div>
+</div>
+
+<!-- Quick Stats -->
+<div class="row mb-5">
+    <div class="col-md-3 col-6 mb-3">
+        <div class="text-center p-3 bg-white rounded-3 shadow-sm">
+            <div class="stats-number" id="vessels-count">--</div>
+            <div class="stats-label">Active Vessels</div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 col-6 mb-3">
+        <div class="text-center p-3 bg-white rounded-3 shadow-sm">
+            <div class="stats-number" id="ports-count">8</div>
+            <div class="stats-label">Norwegian Ports</div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 col-6 mb-3">
+        <div class="text-center p-3 bg-white rounded-3 shadow-sm">
+            <div class="stats-number">24/7</div>
+            <div class="stats-label">Monitoring</div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 col-6 mb-3">
+        <div class="text-center p-3 bg-white rounded-3 shadow-sm">
+            <div class="stats-number" id="data-update">--:--</div>
+            <div class="stats-label">Last Update</div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Features -->
+<div class="row g-4 mb-5">
+    <div class="col-lg-4 col-md-6">
+        <div class="card maritime-feature-card">
+            <div class="card-body text-center p-4">
+                <i class="bi bi-speedometer2 feature-icon text-primary"></i>
+                <h4 class="card-title">Live Dashboard</h4>
+                <p class="card-text">
+                    Real-time maritime dashboard with integrated AIS vessel tracking, 
+                    MET Norway weather data, and interactive maps of Norwegian waters.
+                </p>
+                <a href="{{ url_for('maritime_bp.dashboard', lang=lang) }}" class="btn btn-primary mt-2">
+                    <i class="bi bi-arrow-right-circle me-1"></i> Open Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4 col-md-6">
+        <div class="card maritime-feature-card">
+            <div class="card-body text-center p-4">
+                <i class="bi bi-ship feature-icon text-success"></i>
+                <h4 class="card-title">Vessel Tracking</h4>
+                <p class="card-text">
+                    Monitor vessels in real-time with detailed information including 
+                    position, speed, course, destination, and vessel type.
+                </p>
+                <a href="{{ url_for('maritime_bp.vessels', lang=lang) }}" class="btn btn-success mt-2">
+                    <i class="bi bi-ship me-1"></i> View Vessels
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4 col-md-6">
+        <div class="card maritime-feature-card">
+            <div class="card-body text-center p-4">
+                <i class="bi bi-building feature-icon text-info"></i>
+                <h4 class="card-title">Ports Information</h4>
+                <p class="card-text">
+                    Comprehensive information about Norwegian ports including 
+                    facilities, services, location data, and operational details.
+                </p>
+                <a href="{{ url_for('maritime_bp.ports', lang=lang) }}" class="btn btn-info mt-2">
+                    <i class="bi bi-building me-1"></i> Explore Ports
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Data Sources Section -->
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-gradient-ocean text-white">
+                <h4 class="mb-0"><i class="bi bi-database me-2"></i>Official Data Sources</h4>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-3 mb-3">
+                        <div class="p-3">
+                            <i class="bi bi-cloud-sun fs-1 text-primary mb-3"></i>
+                            <h6>MET Norway</h6>
+                            <small class="text-muted d-block">Weather forecasts & observations</small>
+                            <span class="badge bg-success mt-2">Live</span>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3 mb-3">
+                        <div class="p-3">
+                            <i class="bi bi-ship fs-1 text-success mb-3"></i>
+                            <h6>Kystverket</h6>
+                            <small class="text-muted d-block">AIS vessel tracking data</small>
+                            <span class="badge bg-success mt-2">Live</span>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3 mb-3">
+                        <div class="p-3">
+                            <i class="bi bi-geo-alt fs-1 text-danger mb-3"></i>
+                            <h6>Kartverket</h6>
+                            <small class="text-muted d-block">Official nautical charts</small>
+                            <span class="badge bg-primary mt-2">Integrated</span>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3 mb-3">
+                        <div class="p-3">
+                            <i class="bi bi-water fs-1 text-info mb-3"></i>
+                            <h6>EMODnet</h6>
+                            <small class="text-muted d-block">Bathymetry & sea data</small>
+                            <span class="badge bg-primary mt-2">Integrated</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-3 text-center">
+                    <small class="text-muted">
+                        <i class="bi bi-info-circle me-1"></i>
+                        All data sources are integrated in real-time for comprehensive maritime situational awareness
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Links -->
+<div class="row">
+    <div class="col-12">
+        <div class="alert alert-light border">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-compass fs-3 text-primary me-3"></i>
+                <div class="flex-grow-1">
+                    <h5 class="mb-1">Need More Maritime Tools?</h5>
+                    <p class="mb-2">Explore additional maritime resources and tools:</p>
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="{{ url_for('routes_bp.view_routes', lang=lang) }}" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-geo-alt me-1"></i> Maritime Routes
+                        </a>
+                        <a href="{{ url_for('dashboard_bp.dashboard', lang=lang) }}" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-speedometer2 me-1"></i> System Dashboard
+                        </a>
+                        <a href="{{ url_for('weather_bp.index', lang=lang) }}" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-cloud-sun me-1"></i> Weather Analytics
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Update stats with live data
+async function updateMaritimeStats() {
+    try {
+        // Get AIS data for vessel count
+        const aisResponse = await fetch('/maritime/api/ais-data');
+        if (aisResponse.ok) {
+            const aisData = await aisResponse.json();
+            document.getElementById('vessels-count').textContent = aisData.vessels.length;
+        }
+        
+        // Update timestamp
+        const now = new Date();
+        const timeString = now.toLocaleTimeString('en-GB', {
+            timeZone: 'Europe/Oslo',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        document.getElementById('data-update').textContent = timeString;
+        
+    } catch (error) {
+        console.error('Error updating maritime stats:', error);
+        document.getElementById('vessels-count').textContent = '28'; // Fallback
+    }
+}
+
+// Initialize when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Maritime Home initialized');
+    
+    // Update stats immediately
+    updateMaritimeStats();
+    
+    // Update stats every 30 seconds
+    setInterval(updateMaritimeStats, 30000);
+});
+</script>
+{% endblock %}
