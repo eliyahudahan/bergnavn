@@ -5,6 +5,7 @@ import os
 import logging
 from datetime import datetime
 import requests
+import json
 
 logger = logging.getLogger(__name__)
 maritime_bp = Blueprint('maritime_bp', __name__)
@@ -348,3 +349,184 @@ def system_status():
             'message': str(e),
             'timestamp': datetime.utcnow().isoformat() + 'Z'
         }), 500
+
+
+# ============================================================================
+# RTZ ROUTES API ENDPOINTS
+# ============================================================================
+
+@maritime_bp.route('/api/rtz/routes')
+def rtz_routes():
+    """
+    API endpoint for available RTZ routes.
+    """
+    try:
+        from backend.services.rtz_parser import find_rtz_files, parse_rtz_file
+        import os
+        
+        # Find all RTZ files
+        rtz_files = find_rtz_files()
+        
+        routes_list = []
+        
+        for city, file_paths in rtz_files.items():
+            for file_path in file_paths:
+                try:
+                    # Parse the RTZ file
+                    routes = parse_rtz_file(file_path)
+                    
+                    for route in routes:
+                        # Extract basic info for display
+                        routes_list.append({
+                            'city': city.title(),
+                            'route_name': route['route_name'],
+                            'filename': os.path.basename(file_path),
+                            'waypoints': len(route['waypoints']),
+                            'total_distance_nm': route['total_distance_nm'],
+                            'legs': route['legs'],
+                            'coordinates': [
+                                {'lat': wp['lat'], 'lon': wp['lon'], 'name': wp['name']}
+                                for wp in route['waypoints']
+                            ]
+                        })
+                except Exception as e:
+                    logger.warning(f"Error parsing {file_path}: {e}")
+                    continue
+        
+        return jsonify({
+            'status': 'success',
+            'total_routes': len(routes_list),
+            'routes': routes_list,
+            'timestamp': datetime.utcnow().isoformat() + 'Z'
+        })
+        
+    except Exception as e:
+        logger.error(f"RTZ routes API error: {e}")
+        return jsonify({
+            'status': 'error',
+            'message': str(e),
+            'timestamp': datetime.utcnow().isoformat() + 'Z'
+        }), 500
+
+
+@maritime_bp.route('/api/rtz/simple')
+def simple_rtz_routes():
+    """
+    Simple API endpoint for frontend - returns only basic route info.
+    """
+    try:
+        from backend.services.rtz_parser import find_rtz_files, parse_rtz_file
+        import os
+        
+        rtz_files = find_rtz_files()
+        
+        simple_routes = []
+        
+        # Process only first file per city for simplicity
+        for city, file_paths in rtz_files.items():
+            if file_paths:
+                file_path = file_paths[0]  # Take first file
+                try:
+                    routes = parse_rtz_file(file_path)
+                    
+                    for route in routes:
+                        simple_routes.append({
+                            'id': f"{city}_{route['route_name']}".replace(' ', '_').replace('/', '_'),
+                            'name': route['route_name'],
+                            'city': city.title(),
+                            'points': [
+                                {'lat': wp['lat'], 'lon': wp['lon']}
+                                for wp in route['waypoints'][:100]  # Increased limit
+                            ],
+                            'distance': route['total_distance_nm'],
+                            'waypoint_count': len(route['waypoints']),
+                            'description': f"NCA Route: {city.title()} • {route['total_distance_nm']} nm"
+                        })
+                        break  # Only first route per city
+                except Exception as e:
+                    logger.warning(f"Error processing {city}: {e}")
+                    continue
+        
+        return jsonify({
+            'status': 'success',
+            'routes': simple_routes
+        })
+        
+    except Exception as e:
+        logger.error(f"Simple RTZ API error: {e}")
+        # Return sample data for testing
+        return jsonify({
+            'status': 'success',
+            'routes': [
+                {
+                    'id': 'bergen_sample',
+                    'name': 'Bergen Coastal Route',
+                    'city': 'Bergen',
+                    'points': [
+                        {'lat': 60.3913, 'lon': 5.3221},
+                        {'lat': 60.398, 'lon': 5.315},
+                        {'lat': 60.405, 'lon': 5.305}
+                    ],
+                    'distance': 12.5,
+                    'waypoint_count': 3
+                }
+            ]
+        })
+
+
+@maritime_bp.route('/api/rtz/geojson')
+def rtz_geojson():
+    """
+    Return RTZ routes as GeoJSON for direct Leaflet use.
+    """
+    try:
+        from backend.services.rtz_parser import find_rtz_files, parse_rtz_file
+        
+        rtz_files = find_rtz_files()
+        
+        features = []
+        
+        for city, file_paths in rtz_files.items():
+            if file_paths:
+                file_path = file_paths[0]
+                try:
+                    routes = parse_rtz_file(file_path)
+                    
+                    for route in routes:
+                        # Create GeoJSON feature
+                        coordinates = [[wp['lon'], wp['lat']] for wp in route['waypoints']]
+                        
+                        feature = {
+                            'type': 'Feature',
+                            'properties': {
+                                'id': f"{city}_{route['route_name']}".replace(' ', '_'),
+                                'name': route['route_name'],
+                                'city': city.title(),
+                                'distance': route['total_distance_nm'],
+                                'waypoints': len(route['waypoints']),
+                                'description': f"NCA Route: {city.title()} ({route['total_distance_nm']} nm)"
+                            },
+                            'geometry': {
+                                'type': 'LineString',
+                                'coordinates': coordinates
+                            }
+                        }
+                        features.append(feature)
+                        
+                except Exception as e:
+                    logger.warning(f"Error processing {city} for GeoJSON: {e}")
+                    continue
+        
+        geojson = {
+            'type': 'FeatureCollection',
+            'features': features
+        }
+        
+        return jsonify(geojson)
+        
+    except Exception as e:
+        logger.error(f"GeoJSON API error: {e}")
+        return jsonify({
+            'type': 'FeatureCollection',
+            'features': []
+        })

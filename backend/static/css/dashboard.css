@@ -365,3 +365,42 @@
     display: inline-block;
     margin-left: 1rem;
 }
+
+/* ===== RTZ Routes Styling ===== */
+.rtz-route-line {
+    animation: rtz-pulse 2s infinite;
+}
+
+@keyframes rtz-pulse {
+    0% { opacity: 0.8; stroke-dashoffset: 0; }
+    50% { opacity: 0.4; }
+    100% { opacity: 0.8; stroke-dashoffset: -20; }
+}
+
+/* RTZ Panel Enhancements */
+.rtz-panel select:focus {
+    border-color: #26d0ce;
+    box-shadow: 0 0 0 0.2rem rgba(38, 208, 206, 0.25);
+}
+
+.rtz-info-card {
+    transition: all 0.3s ease;
+}
+
+.rtz-info-card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+/* Responsive RTZ Panel */
+@media (max-width: 768px) {
+    .rtz-panel {
+        width: 280px !important;
+        right: 10px !important;
+        top: 120px !important;
+    }
+    
+    .rtz-panel-header h6 {
+        font-size: 13px !important;
+    }
+}

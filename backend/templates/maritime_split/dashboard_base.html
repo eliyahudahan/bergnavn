@@ -5,43 +5,15 @@
 {% block head %}
 <!-- Dashboard-specific CSS -->
 <link href="{{ url_for('static', filename='css/dashboard.css') }}" rel="stylesheet">
-<style>
-    .weather-location {
-        font-size: 0.9rem;
-        color: var(--medium-gray);
-        margin-bottom: 0.5rem;
-        padding-bottom: 0.5rem;
-        border-bottom: 1px solid rgba(0,0,0,0.1);
-    }
-    
-    .city-indicator {
-        display: inline-block;
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        margin-right: 0.5rem;
-    }
-    
-    .bergen-indicator { background: #3498db; }
-    .oslo-indicator { background: #2ecc71; }
-    .local-clock {
-        font-family: 'Courier New', monospace;
-        background: var(--dark-navy);
-        color: white;
-        padding: 0.25rem 0.5rem;
-        border-radius: 6px;
-        font-size: 0.85rem;
-        display: inline-block;
-        margin-left: 0.5rem;
-    }
-</style>
+<!-- Font Awesome for RTZ routes icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 {% endblock %}
 
 {% block content %}
 <!-- Dashboard Header with Norwegian Theme -->
 <div class="dashboard-header text-center">
     <h1 class="text-gradient">🌊 Maritime Dashboard</h1>
-    <p class="lead">Live AIS • MET Weather • Real-time Map</p>
+    <p class="lead">Live AIS • MET Weather • RTZ Routes • Real-time Map</p> <!-- Updated: Added RTZ Routes -->
     
     <!-- Norwegian Cities Badges -->
     <div class="mt-3">
@@ -69,6 +41,10 @@
             </button>
             <button class="control-btn" onclick="toggleDataView()">
                 <i class="bi bi-layers"></i> Toggle View
+            </button>
+            <!-- NEW: RTZ Routes Toggle Button -->
+            <button class="control-btn" onclick="window.rtzManager.toggle()">
+                <i class="fas fa-route"></i> RTZ Routes
             </button>
         </div>
     </div>
@@ -174,7 +150,7 @@
                         <small class="fw-bold">Data Sources:</small>
                         <small class="d-block">
                             • Weather: MET Norway API • AIS: Kystverket Stream • 
-                            Routes: Norwegian Coastal Database • Bathymetry: EMODnet
+                            Routes: Norwegian Coastal Database (RTZ) • Bathymetry: EMODnet
                         </small>
                     </div>
                 </div>
@@ -188,6 +164,8 @@
 <!-- Dashboard JavaScript -->
 <script src="{{ url_for('static', filename='js/split/maritime_map.js') }}"></script>
 <script src="{{ url_for('static', filename='js/split/maritime_weather.js') }}"></script>
+<!-- NEW: RTZ Routes JavaScript -->
+<script src="{{ url_for('static', filename='js/split/rtz_routes.js') }}"></script>
 
 <!-- Dashboard Control Functions -->
 <script>
@@ -249,6 +227,17 @@ function updateLocalTime() {
         
         // Update local time every minute
         setInterval(updateLocalTime, 60000);
+        
+        // Initialize RTZ routes when map is ready
+        function initRTZWhenReady() {
+            if (typeof map !== 'undefined' && typeof initRTZRoutes === 'function') {
+                initRTZRoutes(map);
+            } else {
+                setTimeout(initRTZWhenReady, 500);
+            }
+        }
+        
+        initRTZWhenReady();
     });
 </script>
 {% endblock %}

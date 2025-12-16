@@ -193,3 +193,40 @@ document.addEventListener('DOMContentLoaded', function() {
 // Export functions for global use
 window.loadAIS = loadAIS;
 window.initMap = initMap;
+
+// ============================================================================
+// RTZ Routes Integration
+// ============================================================================
+
+/**
+ * Initialize RTZ routes when map is fully loaded
+ */
+function initializeRTZRoutes() {
+    // Wait a moment for map to be ready, then initialize RTZ
+    setTimeout(() => {
+        if (typeof map !== 'undefined' && typeof initRTZRoutes === 'function') {
+            const rtzManager = initRTZRoutes(map);
+            if (rtzManager) {
+                console.log('RTZ routes integration complete');
+                
+                // Optional: Auto-show panel on first load
+                // setTimeout(() => rtzManager.togglePanel(), 3000);
+            }
+        } else {
+            console.warn('RTZ routes not initialized - map or initRTZRoutes not available');
+        }
+    }, 2000);
+}
+
+// Initialize when map is loaded
+if (typeof map !== 'undefined') {
+    map.on('load', initializeRTZRoutes);
+} else {
+    // Fallback: check periodically if map becomes available
+    const checkMapInterval = setInterval(() => {
+        if (typeof map !== 'undefined') {
+            clearInterval(checkMapInterval);
+            initializeRTZRoutes();
+        }
+    }, 500);
+}
