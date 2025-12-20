@@ -7,13 +7,16 @@
 <link href="{{ url_for('static', filename='css/dashboard.css') }}" rel="stylesheet">
 <!-- Font Awesome for RTZ routes icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<!-- Leaflet MarkerCluster CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
 {% endblock %}
 
 {% block content %}
 <!-- Dashboard Header with Norwegian Theme -->
 <div class="dashboard-header text-center">
     <h1 class="text-gradient">🌊 Maritime Dashboard</h1>
-    <p class="lead">Live AIS • MET Weather • RTZ Routes • Real-time Map</p> <!-- Updated: Added RTZ Routes -->
+    <p class="lead">Live AIS • MET Weather • RTZ Routes • Hazard Monitoring</p>
     
     <!-- Norwegian Cities Badges -->
     <div class="mt-3">
@@ -22,6 +25,7 @@
         <span class="city-badge badge-stavanger">Stavanger</span>
         <span class="city-badge badge-trondheim">Trondheim</span>
         <span class="city-badge badge-alesund">Ålesund</span>
+        <span class="city-badge badge-tromso">Tromsø</span>
     </div>
 </div>
 
@@ -34,6 +38,12 @@
             <small class="text-muted">Live Data: </small>
             <span class="fw-semibold text-success" id="data-status">Active</span>
             <span class="local-clock" id="local-time">--:--</span>
+            
+            <!-- Hazard Status Badge -->
+            <span class="badge bg-warning ms-3" id="hazard-badge" style="display: none;">
+                <i class="bi bi-exclamation-triangle me-1"></i>
+                <span id="hazard-count">0</span> hazards detected
+            </span>
         </div>
         <div>
             <button class="control-btn" onclick="refreshDashboard()">
@@ -42,9 +52,13 @@
             <button class="control-btn" onclick="toggleDataView()">
                 <i class="bi bi-layers"></i> Toggle View
             </button>
-            <!-- NEW: RTZ Routes Toggle Button -->
+            <!-- RTZ Routes Toggle Button -->
             <button class="control-btn" onclick="window.rtzManager.toggle()">
                 <i class="fas fa-route"></i> RTZ Routes
+            </button>
+            <!-- Hazard Data Toggle Button -->
+            <button class="control-btn" onclick="toggleHazards()" id="hazard-toggle">
+                <i class="bi bi-exclamation-triangle"></i> Show Hazards
             </button>
         </div>
     </div>
@@ -81,10 +95,16 @@
             <div class="dashboard-card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0"><i class="bi bi-geo-alt me-2"></i>Norwegian Waters</h5>
-                    <span class="badge bg-light text-dark">
-                        <i class="bi bi-ship me-1"></i>
-                        <span id="vessel-count-number">0</span> vessels
-                    </span>
+                    <div>
+                        <span class="badge bg-light text-dark me-2">
+                            <i class="bi bi-ship me-1"></i>
+                            <span id="vessel-count-number">0</span> vessels
+                        </span>
+                        <span class="badge bg-warning text-dark" id="map-hazard-badge" style="display: none;">
+                            <i class="bi bi-exclamation-triangle me-1"></i>
+                            <span id="map-hazard-count">0</span> hazards
+                        </span>
+                    </div>
                 </div>
                 <div class="card-body p-0 map-container">
                     <!-- Map Container -->
@@ -110,10 +130,10 @@
         </div>
     </div>
 
-    <!-- Quick Stats Row -->
+    <!-- Quick Stats + Hazard Row -->
     <div class="row mb-4">
         <!-- Temperature -->
-        <div class="col-md-4 mb-3">
+        <div class="col-md-3 mb-3">
             <div class="stats-card temp-stat">
                 <h6><i class="bi bi-thermometer-half me-2"></i>Temperature</h6>
                 <h3 id="current-temp">--°C</h3>
@@ -122,7 +142,7 @@
         </div>
         
         <!-- Wind Speed -->
-        <div class="col-md-4 mb-3">
+        <div class="col-md-3 mb-3">
             <div class="stats-card wind-stat">
                 <h6><i class="bi bi-wind me-2"></i>Wind Speed</h6>
                 <h3 id="current-wind">-- m/s</h3>
@@ -131,27 +151,52 @@
         </div>
         
         <!-- Active Vessels -->
-        <div class="col-md-4 mb-3">
+        <div class="col-md-3 mb-3">
             <div class="stats-card vessels-stat">
                 <h6><i class="bi bi-ship me-2"></i>Active Vessels</h6>
                 <h3 id="active-vessels">--</h3>
                 <small class="text-muted">Norwegian Waters</small>
             </div>
         </div>
+        
+        <!-- Hazard Summary -->
+        <div class="col-md-3 mb-3">
+            <div class="stats-card hazard-stat">
+                <h6><i class="bi bi-exclamation-triangle me-2"></i>Hazards</h6>
+                <h3 id="hazard-summary">--</h3>
+                <small class="text-muted" id="hazard-types">Loading...</small>
+            </div>
+        </div>
     </div>
 
-    <!-- Data Source Info -->
+    <!-- Data Source Info & Risk Alerts -->
     <div class="row">
-        <div class="col-12">
+        <div class="col-md-8">
             <div class="alert alert-info">
                 <div class="d-flex align-items-center">
                     <i class="bi bi-database me-3 fs-4"></i>
                     <div>
                         <small class="fw-bold">Data Sources:</small>
                         <small class="d-block">
-                            • Weather: MET Norway API • AIS: Kystverket Stream • 
-                            Routes: Norwegian Coastal Database (RTZ) • Bathymetry: EMODnet
+                            • AIS: BarentsWatch API • Weather: MET Norway API • 
+                            Hazards: BarentsWatch Facilities • Routes: Norwegian Coastal Database
                         </small>
+                        <small class="d-block mt-1">
+                            <span id="hazard-source-status" class="text-warning">
+                                <i class="bi bi-circle-fill me-1"></i>Hazard data: Loading...
+                            </span>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="alert alert-warning" id="risk-alert" style="display: none;">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-exclamation-triangle me-2 fs-5"></i>
+                    <div>
+                        <small class="fw-bold" id="risk-title">Risk Alert</small>
+                        <small class="d-block" id="risk-details">No high-risk vessels detected</small>
                     </div>
                 </div>
             </div>
@@ -161,19 +206,24 @@
 {% endblock %}
 
 {% block scripts %}
+<!-- External Libraries -->
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+
 <!-- Dashboard JavaScript -->
 <script src="{{ url_for('static', filename='js/split/maritime_map.js') }}"></script>
 <script src="{{ url_for('static', filename='js/split/maritime_weather.js') }}"></script>
-<!-- NEW: RTZ Routes JavaScript -->
 <script src="{{ url_for('static', filename='js/split/rtz_routes.js') }}"></script>
+<script src="{{ url_for('static', filename='js/split/hazard_data.js') }}"></script>
 
 <!-- Dashboard Control Functions -->
 <script>
-   
+let hazardsVisible = false;
+let hazardData = null;
+let lastRefreshTime = null;
+let riskData = null;
+
 function updateLocalTime() {
     const now = new Date();
-    
-    // Convert to Norway time (UTC+1 or UTC+2 for DST)
     const options = {
         timeZone: 'Europe/Oslo',
         hour: '2-digit',
@@ -202,42 +252,113 @@ function updateLocalTime() {
         localTimeElement.textContent = `${dateString} ${timeString}`;
         localTimeElement.title = 'Norway Time (Europe/Oslo)';
     }
+    
+    // Update last refresh time
+    if (lastRefreshTime) {
+        const diff = Math.floor((now - lastRefreshTime) / 1000);
+        if (diff < 60) {
+            document.getElementById('data-status').textContent = `Active (${diff}s ago)`;
+        } else if (diff < 3600) {
+            document.getElementById('data-status').textContent = `Active (${Math.floor(diff/60)}m ago)`;
+        }
+    }
 }
     
-    function refreshDashboard() {
-        console.log('Refreshing dashboard data...');
-        // Trigger refresh of both modules
-        if (typeof loadWeather === 'function') loadWeather();
-        if (typeof loadAIS === 'function') loadAIS();
-        
-        // Update local time
-        updateLocalTime();
-    }
+function refreshDashboard() {
+    console.log('Refreshing dashboard data...');
+    lastRefreshTime = new Date();
     
-    function toggleDataView() {
-        alert('View toggle would switch between map layers in production');
-    }
+    // Trigger refresh of all modules
+    if (typeof loadWeather === 'function') loadWeather();
+    if (typeof loadAIS === 'function') loadAIS();
+    if (typeof loadHazardData === 'function') loadHazardData();
+    if (typeof loadRiskAssessment === 'function') loadRiskAssessment();
     
-    // Initialize dashboard when DOM loads
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('BergNavn Dashboard initialized');
-        
-        // Set initial timestamps
-        updateLocalTime();
-        
-        // Update local time every minute
-        setInterval(updateLocalTime, 60000);
-        
-        // Initialize RTZ routes when map is ready
-        function initRTZWhenReady() {
-            if (typeof map !== 'undefined' && typeof initRTZRoutes === 'function') {
-                initRTZRoutes(map);
-            } else {
-                setTimeout(initRTZWhenReady, 500);
-            }
+    // Update local time
+    updateLocalTime();
+    document.getElementById('data-status').textContent = 'Refreshing...';
+    document.getElementById('data-status').className = 'fw-semibold text-warning';
+    
+    // Restore status color after 3 seconds
+    setTimeout(() => {
+        document.getElementById('data-status').className = 'fw-semibold text-success';
+    }, 3000);
+}
+    
+function toggleDataView() {
+    // Toggle between different map layers
+    if (typeof window.toggleMapLayers === 'function') {
+        window.toggleMapLayers();
+    }
+}
+    
+function toggleHazards() {
+    hazardsVisible = !hazardsVisible;
+    const button = document.getElementById('hazard-toggle');
+    
+    if (hazardsVisible) {
+        button.innerHTML = '<i class="bi bi-eye-slash"></i> Hide Hazards';
+        button.classList.add('active');
+        // Load and display hazards on map
+        if (typeof window.showHazardsOnMap === 'function' && hazardData) {
+            window.showHazardsOnMap(hazardData);
         }
-        
-        initRTZWhenReady();
-    });
+    } else {
+        button.innerHTML = '<i class="bi bi-exclamation-triangle"></i> Show Hazards';
+        button.classList.remove('active');
+        // Hide hazards from map
+        if (typeof window.hideHazardsFromMap === 'function') {
+            window.hideHazardsFromMap();
+        }
+    }
+}
+
+function updateRiskAlert(riskData) {
+    const alertElement = document.getElementById('risk-alert');
+    const titleElement = document.getElementById('risk-title');
+    const detailsElement = document.getElementById('risk-details');
+    
+    if (!riskData || !riskData.high_risk_vessels || riskData.high_risk_vessels.length === 0) {
+        alertElement.style.display = 'none';
+        return;
+    }
+    
+    const highRiskCount = riskData.high_risk_vessels.length;
+    const vesselNames = riskData.high_risk_vessels.map(v => v.name || `MMSI:${v.mmsi}`).slice(0, 2);
+    
+    titleElement.textContent = `${highRiskCount} High-Risk Vessel${highRiskCount > 1 ? 's' : ''}`;
+    detailsElement.textContent = `${vesselNames.join(', ')}${highRiskCount > 2 ? ' and more...' : ''}`;
+    
+    alertElement.style.display = 'flex';
+}
+
+// Initialize dashboard when DOM loads
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('BergNavn Maritime Dashboard initialized');
+    
+    // Set initial timestamps
+    updateLocalTime();
+    lastRefreshTime = new Date();
+    
+    // Update local time every minute
+    setInterval(updateLocalTime, 60000);
+    
+    // Auto-refresh data every 2 minutes
+    setInterval(refreshDashboard, 120000);
+    
+    // Load initial data
+    refreshDashboard();
+    
+    // Initialize RTZ routes when map is ready
+    function initRTZWhenReady() {
+        if (typeof map !== 'undefined' && typeof initRTZRoutes === 'function') {
+            initRTZRoutes(map);
+        } else {
+            setTimeout(initRTZWhenReady, 500);
+        }
+    }
+    
+    initRTZWhenReady();
+});
 </script>
 {% endblock %}

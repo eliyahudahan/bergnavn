@@ -1,19 +1,76 @@
 <!-- backend/templates/home.html -->
 {% extends "base.html" %}
 
-{% block title %}{{ translate('home_welcome', lang, 'global') }}{% endblock %}
+{% block title %}BergNavn Maritime - Home{% endblock %}
 
 {% block content %}
 <div class="text-center my-5 py-5">
-  ...
-  <div class="d-grid gap-3 d-md-flex justify-content-md-center">
-    <a href="{{ url_for('dashboard_bp.dashboard', lang=lang) }}" class="btn btn-primary btn-lg px-4 me-md-2">
-      <i class="bi bi-speedometer2"></i> {{ translate('maritime_dashboard', lang, 'global') }}
-    </a>
-    <a href="{{ url_for('routes_bp.view_routes', lang=lang) }}" class="btn btn-outline-primary btn-lg px-4">
-      <i class="bi bi-geo-alt"></i> {{ translate('routes', lang, 'global') }}
-    </a>
-  </div>
-  ...
+    <div class="maritime-hero">
+        <h1 class="display-4 fw-bold text-gradient mb-4">🌊 BergNavn Maritime</h1>
+        <p class="lead fs-4 mb-5">
+            Intelligent Maritime Route Optimization & Safety Monitoring
+        </p>
+        
+        <div class="row justify-content-center mb-5">
+            <div class="col-md-8">
+                <div class="card shadow-lg border-0">
+                    <div class="card-body p-5">
+                        <h3 class="mb-4">Real-time Maritime Intelligence</h3>
+                        <div class="row text-start">
+                            <div class="col-md-6 mb-3">
+                                <p><i class="bi bi-check-circle-fill text-success me-2"></i> Live AIS vessel tracking</p>
+                                <p><i class="bi bi-check-circle-fill text-success me-2"></i> Weather integration (MET Norway)</p>
+                                <p><i class="bi bi-check-circle-fill text-success me-2"></i> Hazard detection & avoidance</p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <p><i class="bi bi-check-circle-fill text-success me-2"></i> RTZ route planning</p>
+                                <p><i class="bi bi-check-circle-fill text-success me-2"></i> Risk assessment engine</p>
+                                <p><i class="bi bi-check-circle-fill text-success me-2"></i> Fuel optimization</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="d-grid gap-3 d-md-flex justify-content-md-center">
+            <a href="{{ url_for('maritime_bp.dashboard', lang=lang) }}" class="btn btn-primary btn-lg px-4 me-md-2">
+                <i class="bi bi-speedometer2"></i> Maritime Dashboard
+            </a>
+            <a href="{{ url_for('routes_bp.view_routes', lang=lang) }}" class="btn btn-outline-primary btn-lg px-4">
+                <i class="bi bi-geo-alt"></i> View Routes
+            </a>
+        </div>
+        
+        <div class="mt-5 pt-5">
+            <h4 class="mb-4">Trusted by Norwegian Maritime Operators</h4>
+            <div class="row justify-content-center">
+                <div class="col-md-2 col-4 mb-3">
+                    <div class="text-center p-3 bg-light rounded">
+                        <i class="bi bi-ship fs-1 text-primary"></i>
+                        <small class="d-block mt-2">Vessel Operators</small>
+                    </div>
+                </div>
+                <div class="col-md-2 col-4 mb-3">
+                    <div class="text-center p-3 bg-light rounded">
+                        <i class="bi bi-building fs-1 text-primary"></i>
+                        <small class="d-block mt-2">Port Authorities</small>
+                    </div>
+                </div>
+                <div class="col-md-2 col-4 mb-3">
+                    <div class="text-center p-3 bg-light rounded">
+                        <i class="bi bi-shield-check fs-1 text-primary"></i>
+                        <small class="d-block mt-2">Safety Agencies</small>
+                    </div>
+                </div>
+                <div class="col-md-2 col-4 mb-3">
+                    <div class="text-center p-3 bg-light rounded">
+                        <i class="bi bi-fuel-pump fs-1 text-primary"></i>
+                        <small class="d-block mt-2">Fuel Companies</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

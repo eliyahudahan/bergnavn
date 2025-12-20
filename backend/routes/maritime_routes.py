@@ -293,6 +293,217 @@ def maritime_statistics():
         })
 
 
+# ============================================================================
+# BARENTSWATCH HAZARD DATA API ENDPOINTS
+# ============================================================================
+
+@maritime_bp.route('/api/barentswatch/aquaculture')
+def barentswatch_aquaculture():
+    """API endpoint for aquaculture hazard data from BarentsWatch."""
+    try:
+        from backend.services.barentswatch_service import barentswatch_service
+        
+        # You can optionally accept bounding box parameters
+        bbox = request.args.get('bbox')
+        aquaculture_data = barentswatch_service.get_aquaculture_facilities(bbox)
+        
+        return jsonify({
+            'status': 'success',
+            'data': aquaculture_data,
+            'count': len(aquaculture_data),
+            'timestamp': datetime.utcnow().isoformat() + 'Z',
+            'source': 'BarentsWatch API'
+        })
+        
+    except Exception as e:
+        logger.error(f"BarentsWatch aquaculture API error: {e}")
+        return jsonify({
+            'status': 'error',
+            'message': str(e),
+            'timestamp': datetime.utcnow().isoformat() + 'Z'
+        }), 500
+
+
+@maritime_bp.route('/api/barentswatch/hazards')
+def barentswatch_hazards():
+    """API endpoint for all hazard data from BarentsWatch."""
+    try:
+        from backend.services.barentswatch_service import barentswatch_service
+        from backend.services.risk_engine import risk_engine
+        
+        # Fetch all hazard data
+        aquaculture = barentswatch_service.get_aquaculture_facilities()
+        cables = barentswatch_service.get_subsea_cables()
+        installations = barentswatch_service.get_offshore_installations()
+        
+        # Load into risk engine
+        risk_engine.load_hazard_data(aquaculture, cables, installations)
+        
+        return jsonify({
+            'status': 'success',
+            'hazards': {
+                'aquaculture': aquaculture,
+                'cables': cables,
+                'installations': installations
+            },
+            'counts': {
+                'aquaculture': len(aquaculture),
+                'cables': len(cables),
+                'installations': len(installations)
+            },
+            'timestamp': datetime.utcnow().isoformat() + 'Z',
+            'source': 'BarentsWatch API'
+        })
+        
+    except Exception as e:
+        logger.error(f"BarentsWatch hazards API error: {e}")
+        return jsonify({
+            'status': 'error',
+            'message': str(e),
+            'timestamp': datetime.utcnow().isoformat() + 'Z'
+        }), 500
+
+
+@maritime_bp.route('/api/barentswatch/service-status')
+def barentswatch_service_status():
+    """API endpoint for BarentsWatch service status."""
+    try:
+        from backend.services.barentswatch_service import barentswatch_service
+        
+        status = barentswatch_service.get_service_status()
+        
+        return jsonify({
+            'status': 'success',
+            'barentswatch_service': status,
+            'timestamp': datetime.utcnow().isoformat() + 'Z'
+        })
+        
+    except Exception as e:
+        logger.error(f"BarentsWatch service status error: {e}")
+        return jsonify({
+            'status': 'error',
+            'message': str(e),
+            'timestamp': datetime.utcnow().isoformat() + 'Z'
+        }), 500
+
+
+# ============================================================================
+# RISK ASSESSMENT API ENDPOINTS
+# ============================================================================
+
+@maritime_bp.route('/api/risk-assessment')
+def risk_assessment():
+    """API endpoint for comprehensive risk assessment of all vessels."""
+    try:
+        from backend.services.ais_service import ais_service
+        from backend.services.risk_engine import risk_engine
+        
+        # Get current vessels
+        vessels = ais_service.get_latest_positions()
+        
+        # For each vessel, perform risk assessment
+        assessments = []
+        for vessel in vessels:
+            # Get weather for vessel location (simplified - using default location)
+            weather_response = requests.get(f"{request.host_url}maritime/api/weather", timeout=2)
+            weather_data = {}
+            if weather_response.status_code == 200:
+                weather_json = weather_response.json()
+                if weather_json['status'] == 'success':
+                    weather_data = weather_json['weather']
+            
+            # Assess risks for this vessel
+            risks = risk_engine.assess_vessel(vessel, weather_data)
+            summary = risk_engine.get_risk_summary(risks)
+            
+            assessments.append({
+                'vessel': {
+                    'mmsi': vessel.get('mmsi'),
+                    'name': vessel.get('name'),
+                    'position': {
+                        'lat': vessel.get('lat'),
+                        'lon': vessel.get('lon')
+                    }
+                },
+                'risks': risks,
+                'summary': summary,
+                'timestamp': datetime.utcnow().isoformat() + 'Z'
+            })
+        
+        return jsonify({
+            'status': 'success',
+            'assessments': assessments,
+            'total_vessels': len(assessments),
+            'timestamp': datetime.utcnow().isoformat() + 'Z'
+        })
+        
+    except Exception as e:
+        logger.error(f"Risk assessment API error: {e}")
+        return jsonify({
+            'status': 'error',
+            'message': str(e),
+            'timestamp': datetime.utcnow().isoformat() + 'Z'
+        }), 500
+
+
+@maritime_bp.route('/api/risk-assessment/single')
+def risk_assessment_single():
+    """API endpoint for risk assessment of a specific vessel."""
+    try:
+        from backend.services.risk_engine import risk_engine
+        
+        # Get parameters
+        mmsi = request.args.get('mmsi')
+        lat = request.args.get('lat', type=float)
+        lon = request.args.get('lon', type=float)
+        
+        if not mmsi or lat is None or lon is None:
+            return jsonify({
+                'status': 'error',
+                'message': 'Missing required parameters: mmsi, lat, lon',
+                'timestamp': datetime.utcnow().isoformat() + 'Z'
+            }), 400
+        
+        # Create vessel data object
+        vessel_data = {
+            'mmsi': mmsi,
+            'name': request.args.get('name', f'Vessel {mmsi}'),
+            'lat': lat,
+            'lon': lon,
+            'speed': request.args.get('speed', 0.0, type=float),
+            'course': request.args.get('course', 0.0, type=float),
+            'type': request.args.get('type', 'Unknown')
+        }
+        
+        # Get weather data
+        weather_response = requests.get(f"{request.host_url}maritime/api/weather", timeout=2)
+        weather_data = {}
+        if weather_response.status_code == 200:
+            weather_json = weather_response.json()
+            if weather_json['status'] == 'success':
+                weather_data = weather_json['weather']
+        
+        # Assess risks
+        risks = risk_engine.assess_vessel(vessel_data, weather_data)
+        summary = risk_engine.get_risk_summary(risks)
+        
+        return jsonify({
+            'status': 'success',
+            'vessel': vessel_data,
+            'risks': risks,
+            'summary': summary,
+            'timestamp': datetime.utcnow().isoformat() + 'Z'
+        })
+        
+    except Exception as e:
+        logger.error(f"Single risk assessment API error: {e}")
+        return jsonify({
+            'status': 'error',
+            'message': str(e),
+            'timestamp': datetime.utcnow().isoformat() + 'Z'
+        }), 500
+
+
 @maritime_bp.route('/api/system-status')
 def system_status():
     """
@@ -317,8 +528,19 @@ def system_status():
         except:
             pass
         
+        # Check BarentsWatch status
+        barentswatch_ok = False
+        barentswatch_status_info = {}
+        try:
+            from backend.services.barentswatch_service import barentswatch_service
+            barentswatch_status_info = barentswatch_service.get_service_status()
+            barentswatch_ok = barentswatch_status_info.get('configured', False)
+        except:
+            pass
+        
         # Overall status
-        overall_status = 'healthy' if ais_ok and weather_ok else 'degraded'
+        all_services_ok = ais_ok and weather_ok
+        overall_status = 'healthy' if all_services_ok else 'degraded'
         
         return jsonify({
             'status': 'success',
@@ -335,6 +557,10 @@ def system_status():
                 },
                 'weather': {
                     'status': 'connected' if weather_ok else 'disconnected'
+                },
+                'barentswatch': {
+                    'status': 'configured' if barentswatch_ok else 'not_configured',
+                    'details': barentswatch_status_info
                 },
                 'database': {
                     'status': 'connected'  # Assuming database is connected
