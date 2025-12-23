@@ -8,6 +8,7 @@ backend
       cache
   assets
     ais_data
+    barentswatch_cache
     fuel_models
     route_data
     routeinfo_routes

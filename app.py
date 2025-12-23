@@ -18,6 +18,8 @@ from backend.routes.system_routes import health_bp
 from backend.routes.cruise_routes import cruise_blueprint
 from backend.routes.weather_routes import weather_bp
 from backend.routes.maritime_routes import maritime_bp
+from backend.routes.recommendation_routes import recommendation_bp
+
 
 # Extensions
 from backend.extensions import db, mail, migrate
@@ -119,6 +121,8 @@ def create_app(config_name=None, testing=False, start_scheduler=True):
     app.register_blueprint(health_bp)
     app.register_blueprint(dashboard_bp, url_prefix='/dashboard')
     app.register_blueprint(maritime_bp, url_prefix='/maritime')
+    app.register_blueprint(recommendation_bp)
+
 
     logging.info("✅ All blueprints registered successfully")
 
