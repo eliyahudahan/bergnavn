@@ -16,7 +16,7 @@
 <!-- Dashboard Header with Norwegian Theme -->
 <div class="dashboard-header text-center">
     <h1 class="text-gradient">🌊 Maritime Dashboard</h1>
-    <p class="lead">Live AIS • MET Weather • RTZ Routes • Hazard Monitoring</p>
+    <p class="lead">Live AIS • MET Weather • RTZ Routes • Hazard Monitoring • System Health</p>
     
     <!-- Norwegian Ports Badges - All 10 active ports -->
     <div class="mt-3 ports-badges-container">
@@ -52,6 +52,12 @@
                 <i class="bi bi-exclamation-triangle me-1"></i>
                 <span id="hazard-count">0</span> hazards detected
             </span>
+            
+            <!-- System Status Badge -->
+            <span class="badge bg-info ms-2" id="system-status-badge">
+                <i class="bi bi-cpu me-1"></i>
+                <span id="system-health-summary">System: Loading...</span>
+            </span>
         </div>
         <div>
             <button class="control-btn" onclick="refreshDashboard()">
@@ -61,12 +67,16 @@
                 <i class="bi bi-layers"></i> Toggle View
             </button>
             <!-- RTZ Routes Toggle Button -->
-            <button class="control-btn" onclick="window.rtzManager.toggle()">
+            <button class="control-btn" onclick="window.rtzManager?.toggle()">
                 <i class="fas fa-route"></i> RTZ Routes
             </button>
             <!-- Hazard Data Toggle Button -->
             <button class="control-btn" onclick="toggleHazards()" id="hazard-toggle">
                 <i class="bi bi-exclamation-triangle"></i> Show Hazards
+            </button>
+            <!-- System Health Refresh Button -->
+            <button class="control-btn" id="system-refresh-btn" title="Refresh System Health">
+                <i class="bi bi-cpu"></i> System Health
             </button>
             <!-- Port Filter Button -->
             <button class="control-btn" onclick="showPortsFilter()">
@@ -181,6 +191,43 @@
         </div>
     </div>
 
+    <!-- SYSTEM HEALTH WIDGET - ADDED HERE -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="dashboard-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-cpu me-2"></i>System Health & Performance</h5>
+                    <div>
+                        <span class="badge bg-light text-dark me-2">
+                            <i class="bi bi-database me-1"></i>
+                            <span id="system-routes-count">--</span> routes
+                        </span>
+                        <span class="badge bg-light text-dark">
+                            <i class="bi bi-clock me-1"></i>
+                            <span id="system-uptime">--</span> uptime
+                        </span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row" id="system-health-widget">
+                        <!-- Will be filled by system_health.js -->
+                        <div class="col-12 text-center py-3">
+                            <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                            <p class="mt-2 text-muted small">Loading system health...</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <small class="text-muted d-flex justify-content-between">
+                        <span id="system-version">BergNavn v1.0.0</span>
+                        <span id="system-last-update">Last update: --:--</span>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END SYSTEM HEALTH WIDGET -->
+
     <!-- Data Source Info & Risk Alerts -->
     <div class="row">
         <div class="col-md-8">
@@ -230,6 +277,9 @@
 <script src="{{ url_for('static', filename='js/split/maritime_weather.js') }}"></script>
 <script src="{{ url_for('static', filename='js/split/rtz_routes.js') }}"></script>
 <script src="{{ url_for('static', filename='js/split/hazard_data.js') }}"></script>
+
+<!-- NEW: System Health JavaScript -->
+<script src="{{ url_for('static', filename='js/split/system_health.js') }}"></script>
 
 <!-- Dashboard Control Functions -->
 <script>
@@ -290,6 +340,11 @@ function refreshDashboard() {
     if (typeof loadAIS === 'function') loadAIS();
     if (typeof loadHazardData === 'function') loadHazardData();
     if (typeof loadRiskAssessment === 'function') loadRiskAssessment();
+    
+    // NEW: Refresh system health
+    if (typeof window.systemHealthWidget !== 'undefined') {
+        window.systemHealthWidget.refresh();
+    }
     
     // Update local time
     updateLocalTime();
@@ -366,6 +421,30 @@ function updateRiskAlert(riskData) {
     alertElement.style.display = 'flex';
 }
 
+function updateSystemStatusBadge(status) {
+    const badge = document.getElementById('system-status-badge');
+    const summary = document.getElementById('system-health-summary');
+    
+    if (!badge || !summary) return;
+    
+    let badgeClass = 'bg-secondary';
+    let statusText = 'Unknown';
+    
+    if (status === 'healthy') {
+        badgeClass = 'bg-success';
+        statusText = 'All Systems OK';
+    } else if (status === 'degraded') {
+        badgeClass = 'bg-warning';
+        statusText = 'Degraded Performance';
+    } else if (status === 'unhealthy') {
+        badgeClass = 'bg-danger';
+        statusText = 'System Issues';
+    }
+    
+    badge.className = `badge ${badgeClass} ms-2`;
+    summary.textContent = `System: ${statusText}`;
+}
+
 // Initialize dashboard when DOM loads
 document.addEventListener('DOMContentLoaded', function() {
     console.log('BergNavn Maritime Dashboard initialized');
@@ -399,6 +478,32 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.city-badge').forEach(badge => {
         badge.style.cursor = 'pointer';
         badge.title = 'Click to filter for ' + badge.textContent + ' port';
+    });
+    
+    // Initialize System Health button
+    const systemBtn = document.getElementById('system-refresh-btn');
+    if (systemBtn) {
+        systemBtn.onclick = function() {
+            if (typeof window.systemHealthWidget !== 'undefined') {
+                window.systemHealthWidget.refresh();
+                // Visual feedback
+                const originalHTML = systemBtn.innerHTML;
+                systemBtn.innerHTML = '<i class="bi bi-arrow-clockwise"></i> Refreshing...';
+                systemBtn.disabled = true;
+                
+                setTimeout(() => {
+                    systemBtn.innerHTML = originalHTML;
+                    systemBtn.disabled = false;
+                }, 1000);
+            }
+        };
+    }
+    
+    // Listen for system health updates to update badge
+    document.addEventListener('systemHealthUpdate', function(event) {
+        if (event.detail && event.detail.status) {
+            updateSystemStatusBadge(event.detail.status);
+        }
     });
 });
 </script>

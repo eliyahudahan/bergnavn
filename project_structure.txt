@@ -49,6 +49,7 @@ backend
     no
       LC_MESSAGES
   utils
+backups
 data
 database
   seeders
