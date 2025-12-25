@@ -54,6 +54,42 @@ def include_object(object, name, type_, reflected, compare_to):
     return True
 
 
+# CRITICAL FIX: Filter to prevent creating new tables
+def filter_tables(context, revision, directives):
+    """
+    Filter out table creation operations for tables other than 'routes'.
+    This prevents Alembic from trying to create all missing tables.
+    """
+    if directives:
+        script = directives[0]
+        
+        # Filter out create_table operations for tables other than 'routes'
+        filtered_ops = []
+        for op in script.upgrade_ops.ops:
+            # Check if this is a CreateTable operation
+            if hasattr(op, 'table_name'):
+                # Allow only 'routes' table operations
+                if op.table_name == 'routes':
+                    filtered_ops.append(op)
+                elif hasattr(op, 'ops') and any(hasattr(subop, 'table_name') and subop.table_name == 'routes' for subop in op.ops if hasattr(subop, 'table_name')):
+                    # Allow operations that include 'routes'
+                    filtered_ops.append(op)
+                else:
+                    # Skip operations for other tables
+                    continue
+            else:
+                # Allow other operations (add_column, etc.)
+                filtered_ops.append(op)
+        
+        # Update the operations
+        script.upgrade_ops.ops = filtered_ops
+        
+        # If no operations left, cancel the migration
+        if not filtered_ops:
+            directives[:] = []
+            logger.info('⚠️  No relevant schema changes detected. Migration cancelled.')
+
+
 with app.app_context():
     # Override URL from alembic.ini
     config.set_main_option('sqlalchemy.url', get_engine_url())
@@ -68,6 +104,7 @@ with app.app_context():
             target_metadata=get_metadata(),
             literal_binds=True,
             include_object=include_object,  # prevent PostGIS deletion
+            process_revision_directives=filter_tables,  # ADDED: filter table creation
         )
         with context.begin_transaction():
             context.run_migrations()
@@ -76,18 +113,12 @@ with app.app_context():
         """
         Run migrations in 'online' mode.
         """
-        def process_revision_directives(context, revision, directives):
-            if getattr(config.cmd_opts, 'autogenerate', False):
-                script = directives[0]
-                if script.upgrade_ops.is_empty():
-                    directives[:] = []
-                    logger.info('No schema changes detected.')
-
         db_ext = current_app.extensions['migrate']
         connectable = db_ext.db.engine
         conf_args = db_ext.configure_args
-        if conf_args.get('process_revision_directives') is None:
-            conf_args['process_revision_directives'] = process_revision_directives
+        
+        # Add our filter function
+        conf_args['process_revision_directives'] = filter_tables
 
         with connectable.connect() as connection:
             context.configure(

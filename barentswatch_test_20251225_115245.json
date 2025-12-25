@@ -1,0 +1,51 @@
+{
+  "timestamp": "2025-12-25T11:52:45.622267",
+  "working_endpoints": [],
+  "all_results": {
+    "v1/ais/openpositions": {
+      "status": 404,
+      "success": false,
+      "size": 139
+    },
+    "v1/ais/latest": {
+      "status": 404,
+      "success": false,
+      "size": 139
+    },
+    "v1/ais/history": {
+      "status": 404,
+      "success": false,
+      "size": 139
+    },
+    "v1/geodata/download/aquaculture": {
+      "status": 401,
+      "success": false,
+      "size": 142
+    },
+    "v1/geodata/download/cables": {
+      "status": 401,
+      "success": false,
+      "size": 142
+    },
+    "v1/geodata/download/installations": {
+      "status": 401,
+      "success": false,
+      "size": 142
+    },
+    "v1/metoc/weather": {
+      "status": 404,
+      "success": false,
+      "size": 139
+    },
+    "v1/metoc/forecast": {
+      "status": 404,
+      "success": false,
+      "size": 139
+    },
+    "v1/vesseltraffic/portcalls": {
+      "status": 404,
+      "success": false,
+      "size": 139
+    }
+  }
+}
