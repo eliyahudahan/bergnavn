@@ -12,7 +12,7 @@ import time
 
 from backend.models.route import Route
 from backend.extensions import db
-from sqlalchemy import func
+from sqlalchemy import func, text
 
 # Initialize blueprint
 system_bp = Blueprint('system_bp', __name__)
@@ -101,7 +101,7 @@ def system_summary():
             "services": services_status,
             
             "performance": {
-                "database_response_ms": 0,  # Could be measured with time.perf_counter()
+                "database_response_ms": _measure_database_query_time(),
                 "memory_usage_mb": _get_memory_usage(),
                 "active_threads": _get_active_threads()
             },
@@ -140,7 +140,7 @@ def health_detailed():
     # Database connectivity test
     db_start = datetime.utcnow()
     try:
-        result = db.session.execute("SELECT 1, version(), now()").fetchone()
+        result = db.session.execute(text("SELECT 1, version(), now()")).fetchone()
         db_duration = (datetime.utcnow() - db_start).total_seconds() * 1000
         
         checks.append({
@@ -232,9 +232,9 @@ def system_metrics():
         like Prometheus or monitoring dashboards.
     """
     try:
-        # Get current metrics - FIXED: removed 'status' column reference
+        # Get current metrics
         total_routes = Route.query.filter_by(is_active=True).count()
-        active_routes = Route.query.filter_by(is_active=True).count()  # FIXED: using is_active instead of status
+        active_routes = Route.query.filter_by(is_active=True).count()
         
         # Get temporal statistics if available
         routes_last_hour = 0
@@ -247,7 +247,7 @@ def system_metrics():
             "counters": {
                 "routes_total": total_routes,
                 "routes_active": active_routes,
-                "routes_inactive": 0,  # If you want inactive routes, you might need another field
+                "routes_inactive": 0,
                 "routes_created_last_hour": routes_last_hour
             },
             "gauges": {
@@ -318,7 +318,9 @@ def _check_database_status():
     """Check PostgreSQL database connectivity and performance."""
     try:
         start_time = datetime.utcnow()
-        result = db.session.execute("SELECT 1, version(), pg_database_size(current_database())").fetchone()
+        result = db.session.execute(
+            text("SELECT 1, version(), pg_database_size(current_database())")
+        ).fetchone()
         duration_ms = (datetime.utcnow() - start_time).total_seconds() * 1000
         
         return {
