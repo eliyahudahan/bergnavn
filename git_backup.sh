@@ -4,8 +4,27 @@
 echo "📦 Checking git status..."
 git status
 
-# Check if there are changes to commit
+# Save current changes to stash if any
 if [[ -n $(git status --porcelain) ]]; then
+    echo "💾 Stashing local changes..."
+    git stash
+    
+    # Pull latest changes
+    echo "🔄 Pulling latest changes from remote..."
+    git pull origin master
+    
+    # Apply stashed changes back
+    echo "📤 Applying local changes back..."
+    git stash pop
+    
+    # Check for conflicts
+    if [[ -n $(git diff --name-only --diff-filter=U) ]]; then
+        echo "⚠️  Conflicts detected! Please resolve manually."
+        echo "Conflicting files:"
+        git diff --name-only --diff-filter=U
+        exit 1
+    fi
+    
     # Add all changes
     echo "➕ Adding all changes..."
     git add .
@@ -24,5 +43,7 @@ if [[ -n $(git status --porcelain) ]]; then
 
     echo "✅ Backup completed successfully!"
 else
-    echo "✨ No changes detected. Nothing to commit."
+    echo "✨ No changes detected. Pulling latest anyway..."
+    git pull origin master
+    echo "✅ Repository is up to date!"
 fi
