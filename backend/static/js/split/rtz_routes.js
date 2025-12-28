@@ -1,6 +1,7 @@
 /**
  * RTZ Route Loader for BergNavn Maritime Dashboard
  * Loads and displays Norwegian Coastal Administration RTZ routes on the map
+ * FIXED: Adjusted to work with current dashboard structure
  */
 
 // Global RTZ manager instance
@@ -41,6 +42,11 @@ class RTZRouteManager {
      * Initialize the RTZ control panel UI
      */
     initUI() {
+        // Check if panel already exists
+        if (document.getElementById('rtz-control-panel')) {
+            return;
+        }
+        
         // Create control panel container
         this.panelContainer = document.createElement('div');
         this.panelContainer.className = 'rtz-panel';
@@ -72,7 +78,7 @@ class RTZRouteManager {
                 <h6 style="margin: 0; font-size: 14px; font-weight: 600;">
                     <i class="fas fa-route"></i> NCA RTZ Routes
                 </h6>
-                <button class="rtz-close-btn" onclick="window.rtzManager.togglePanel()" 
+                <button class="rtz-close-btn" 
                     style="background: none; border: none; color: white; font-size: 20px; cursor: pointer; padding: 0; line-height: 1;">
                     &times;
                 </button>
@@ -82,8 +88,7 @@ class RTZRouteManager {
                     <label class="small text-muted" style="display: block; margin-bottom: 5px;">
                         <i class="fas fa-map-signs"></i> Select Route:
                     </label>
-                    <select class="form-control form-control-sm" id="rtz-route-select" 
-                        onchange="window.rtzManager.onRouteSelect(this.value)"
+                    <select class="form-control form-control-sm" id="rtz-route-select"
                         style="width: 100%; padding: 6px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
                         <option value="">-- Choose a route --</option>
                     </select>
@@ -106,11 +111,11 @@ class RTZRouteManager {
                             <i class="fas fa-map-marker-alt"></i> <span id="rtz-waypoint-count">-</span> waypoints
                         </div>
                         <div class="rtz-actions d-flex gap-2" style="margin-top: 10px;">
-                            <button class="btn btn-sm btn-outline-primary" onclick="window.rtzManager.zoomToRoute()"
+                            <button class="btn btn-sm btn-outline-primary" id="rtz-zoom-btn"
                                 style="flex: 1; font-size: 12px; padding: 4px 8px;">
                                 <i class="fas fa-search-plus"></i> Zoom
                             </button>
-                            <button class="btn btn-sm btn-outline-danger" onclick="window.rtzManager.clearRoute()"
+                            <button class="btn btn-sm btn-outline-danger" id="rtz-clear-btn"
                                 style="flex: 1; font-size: 12px; padding: 4px 8px;">
                                 <i class="fas fa-times"></i> Clear
                             </button>
@@ -137,6 +142,28 @@ class RTZRouteManager {
         
         // Add to page
         document.body.appendChild(this.panelContainer);
+        
+        // Add event listeners
+        const closeBtn = this.panelContainer.querySelector('.rtz-close-btn');
+        const selectEl = document.getElementById('rtz-route-select');
+        const zoomBtn = document.getElementById('rtz-zoom-btn');
+        const clearBtn = document.getElementById('rtz-clear-btn');
+        
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => this.togglePanel());
+        }
+        
+        if (selectEl) {
+            selectEl.addEventListener('change', (e) => this.onRouteSelect(e.target.value));
+        }
+        
+        if (zoomBtn) {
+            zoomBtn.addEventListener('click', () => this.zoomToRoute());
+        }
+        
+        if (clearBtn) {
+            clearBtn.addEventListener('click', () => this.clearRoute());
+        }
     }
     
     /**
@@ -148,24 +175,35 @@ class RTZRouteManager {
         const selectEl = document.getElementById('rtz-route-select');
         
         try {
-            const response = await fetch('/maritime/api/rtz/simple');
+            // Try multiple endpoint variations
+            let endpoint = '/maritime/api/rtz/routes';
+            let response = await fetch(endpoint);
+            
+            if (!response.ok) {
+                // Try alternative endpoint
+                endpoint = '/api/rtz/routes';
+                response = await fetch(endpoint);
+            }
+            
             const data = await response.json();
             
-            if (data.status === 'success' && data.routes.length > 0) {
+            if (data.status === 'success' && data.routes && data.routes.length > 0) {
                 this.routeData = data.routes;
                 
                 // Clear existing options except the first one
-                while (selectEl.options.length > 1) {
-                    selectEl.remove(1);
+                if (selectEl) {
+                    while (selectEl.options.length > 1) {
+                        selectEl.remove(1);
+                    }
+                    
+                    // Add routes to select dropdown
+                    data.routes.forEach((route, index) => {
+                        const option = document.createElement('option');
+                        option.value = index; // Use index as ID
+                        option.textContent = `${route.city || route.origin || 'Unknown'} - ${this.formatRouteName(route.name)} (${route.total_distance_nm || 0} nm)`;
+                        selectEl.appendChild(option);
+                    });
                 }
-                
-                // Add routes to select dropdown
-                data.routes.forEach(route => {
-                    const option = document.createElement('option');
-                    option.value = route.id;
-                    option.textContent = `${route.city} - ${this.formatRouteName(route.name)} (${route.distance} nm)`;
-                    selectEl.appendChild(option);
-                });
                 
                 // Hide loading, show success
                 if (loadingEl) loadingEl.style.display = 'none';
@@ -181,11 +219,12 @@ class RTZRouteManager {
             if (errorEl) errorEl.style.display = 'block';
             
             // Add sample option for testing
-            const selectEl = document.getElementById('rtz-route-select');
-            const option = document.createElement('option');
-            option.value = 'sample';
-            option.textContent = 'Sample Route (API Error)';
-            selectEl.appendChild(option);
+            if (selectEl) {
+                const option = document.createElement('option');
+                option.value = 'sample';
+                option.textContent = 'Sample Route (API Error)';
+                selectEl.appendChild(option);
+            }
         }
     }
     
@@ -193,6 +232,7 @@ class RTZRouteManager {
      * Format route name for display (remove NCA_ prefix and underscores)
      */
     formatRouteName(name) {
+        if (!name) return 'Unknown Route';
         return name.replace('NCA_', '').replace(/_/g, ' ').substring(0, 30) + (name.length > 30 ? '...' : '');
     }
     
@@ -211,8 +251,10 @@ class RTZRouteManager {
             return;
         }
         
-        const route = this.routeData.find(r => r.id === routeId);
-        if (!route || !route.points || route.points.length === 0) {
+        const routeIndex = parseInt(routeId);
+        const route = this.routeData[routeIndex];
+        
+        if (!route || !route.waypoints) {
             console.error('Invalid route selected:', routeId);
             return;
         }
@@ -226,7 +268,7 @@ class RTZRouteManager {
         this.clearRoute();
         
         // Create polyline from route points
-        const latlngs = route.points.map(p => [p.lat, p.lon]);
+        const latlngs = route.waypoints.map(p => [p.lat, p.lon]);
         const polyline = L.polyline(latlngs, {
             color: '#1a2980',
             weight: 4,
@@ -244,7 +286,7 @@ class RTZRouteManager {
             radius: 7,
             weight: 2
         }).addTo(this.map)
-        .bindPopup(`<b>Start:</b> ${this.formatRouteName(route.name)}<br><i class="fas fa-city"></i> ${route.city}`);
+        .bindPopup(`<b>Start:</b> ${this.formatRouteName(route.name)}<br><i class="fas fa-city"></i> ${route.city || route.origin || 'Unknown'}`);
         
         // Add end marker
         const endMarker = L.circleMarker(latlngs[latlngs.length - 1], {
@@ -254,7 +296,7 @@ class RTZRouteManager {
             radius: 7,
             weight: 2
         }).addTo(this.map)
-        .bindPopup(`<b>End:</b> ${this.formatRouteName(route.name)}<br>${route.distance} nm • ${route.city}`);
+        .bindPopup(`<b>End:</b> ${this.formatRouteName(route.name)}<br>${route.total_distance_nm || 0} nm • ${route.city || route.origin || 'Unknown'}`);
         
         // Store reference to active route
         this.activeRoutes.set(routeId, { polyline, startMarker, endMarker });
@@ -265,7 +307,7 @@ class RTZRouteManager {
         // Zoom to show the entire route
         this.map.fitBounds(polyline.getBounds());
         
-        console.log(`Route loaded: ${route.city} - ${route.name}`);
+        console.log(`Route loaded: ${route.city || route.origin} - ${route.name}`);
     }
     
     /**
@@ -280,9 +322,9 @@ class RTZRouteManager {
         
         if (infoContainer && routeNameEl && routeCityEl && routeDistanceEl && waypointCountEl) {
             routeNameEl.textContent = this.formatRouteName(route.name);
-            routeCityEl.textContent = route.city;
-            routeDistanceEl.textContent = `${route.distance} nm`;
-            waypointCountEl.textContent = route.waypoint_count;
+            routeCityEl.textContent = route.city || route.origin || 'Unknown';
+            routeDistanceEl.textContent = `${route.total_distance_nm || 0} nm`;
+            waypointCountEl.textContent = route.waypoint_count || (route.waypoints ? route.waypoints.length : 0);
             infoContainer.style.display = 'block';
         }
     }
@@ -334,7 +376,7 @@ class RTZRouteManager {
      */
     zoomToRoute() {
         const selectEl = document.getElementById('rtz-route-select');
-        const routeId = selectEl.value;
+        const routeId = selectEl ? selectEl.value : null;
         
         if (routeId && this.activeRoutes.has(routeId)) {
             const route = this.activeRoutes.get(routeId);
@@ -348,9 +390,9 @@ class RTZRouteManager {
     clearRoute() {
         // Remove all active route layers from map
         this.activeRoutes.forEach(layers => {
-            if (layers.polyline) this.map.removeLayer(layers.polyline);
-            if (layers.startMarker) this.map.removeLayer(layers.startMarker);
-            if (layers.endMarker) this.map.removeLayer(layers.endMarker);
+            if (layers.polyline && this.map) this.map.removeLayer(layers.polyline);
+            if (layers.startMarker && this.map) this.map.removeLayer(layers.startMarker);
+            if (layers.endMarker && this.map) this.map.removeLayer(layers.endMarker);
         });
         
         // Clear references
@@ -369,6 +411,8 @@ class RTZRouteManager {
      */
     togglePanel() {
         const panel = document.getElementById('rtz-control-panel');
+        
+        if (!panel) return;
         
         if (!this.isPanelVisible) {
             // Show panel
@@ -394,3 +438,6 @@ class RTZRouteManager {
         this.togglePanel();
     }
 }
+
+// Export function
+window.initRTZRoutes = initRTZRoutes;

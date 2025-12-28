@@ -3,320 +3,193 @@
 {% block title %}Maritime Dashboard | BergNavn{% endblock %}
 
 {% block head %}
+<!-- Dashboard CSS -->
 <link href="{{ url_for('static', filename='css/dashboard.css') }}" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
-<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<!-- Leaflet MarkerCluster -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
 {% endblock %}
 
 {% block content %}
 <!-- Dashboard Header -->
 <div class="dashboard-header text-center">
     <h1 class="text-gradient">🌊 Maritime Dashboard</h1>
-    <p class="lead">Live AIS • MET Weather • RTZ Routes • Hazard Monitoring • System Health</p>
+    <p class="lead">Live AIS • MET Weather • RTZ Routes</p>
     
-    <!-- Norwegian Ports Badges -->
+    <!-- Port Status -->
     <div class="mt-3 ports-badges-container">
-        {% set ports = ['Bergen', 'Oslo', 'Stavanger', 'Trondheim', 'Ålesund', 'Andalsnes', 'Drammen', 'Kristiansand', 'Sandefjord', 'Flekkefjord'] %}
-        {% for port in ports %}
-            <span class="city-badge badge-{{ port|lower|replace('å', 'a')|replace('ø', 'o') }}" 
-                  title="{{ port }} Port"
-                  onclick="filterByPort('{{ port|lower }}')">
+        {% for port in ['Bergen', 'Oslo', 'Stavanger', 'Trondheim', 'Ålesund', 'Andalsnes', 'Drammen', 'Kristiansand', 'Sandefjord', 'Flekkefjord'] %}
+            <span class="city-badge badge-{{ port|lower|replace('å', 'a') }}" 
+                  data-port="{{ port|lower }}">
                 {{ port }}
             </span>
         {% endfor %}
     </div>
-    <small class="text-muted mt-2 d-block">
-        <i class="bi bi-info-circle me-1"></i>
-        Active Norwegian ports with RTZ route coverage
-        {% if cities_with_routes and cities_with_routes|length > 0 %}
-            ({{ cities_with_routes|length }}/10 active)
-        {% endif %}
-    </small>
 </div>
 
-<!-- Main Dashboard Content -->
-<div class="container-fluid">
-    <!-- Status Bar -->
-    <div class="dashboard-controls d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <span class="status-indicator status-live"></span>
-            <small class="text-muted">Live Data: </small>
-            <span class="fw-semibold text-success" id="data-status">Active</span>
-            <span class="local-clock" id="local-time">--:--</span>
-            
-            <!-- Hazard Status -->
-            <span class="badge bg-warning ms-3" id="hazard-badge" style="display: none;">
-                <i class="bi bi-exclamation-triangle me-1"></i>
-                <span id="hazard-count">0</span> hazards
-            </span>
-            
-            <!-- System Status -->
-            <span class="badge bg-info ms-2" id="system-status-badge">
-                <i class="bi bi-cpu me-1"></i>
-                <span id="system-health-summary">System: Loading...</span>
-            </span>
-            
-            <!-- RTZ Routes Badge - FIXED with proper checks -->
-            <span class="badge bg-success ms-2" id="rtz-routes-badge">
-                <i class="fas fa-route me-1"></i>
-                <span id="rtz-routes-count">
-                    {% if routes and routes|length > 0 %}
-                        {{ routes|length }}
-                    {% else %}
-                        0
-                    {% endif %}
-                </span> routes
-            </span>
-        </div>
-        <div>
-            <button class="control-btn" onclick="refreshDashboard()">
-                <i class="bi bi-arrow-clockwise"></i> Refresh
-            </button>
-            <button class="control-btn" onclick="toggleDataView()">
-                <i class="bi bi-layers"></i> Layers
-            </button>
-            <button class="control-btn" onclick="toggleRTZRoutes()">
-                <i class="fas fa-route"></i> RTZ Routes
-            </button>
-            <button class="control-btn" onclick="toggleHazards()" id="hazard-toggle">
-                <i class="bi bi-exclamation-triangle"></i> Hazards
-            </button>
-        </div>
-    </div>
-
-    <!-- Weather + Map Row -->
+<!-- Main Dashboard -->
+<div class="container-fluid mt-4">
+    
+    <!-- Control Bar -->
     <div class="row mb-4">
-        <!-- Weather Card -->
-        <div class="col-lg-4 col-md-12 mb-4">
-            <div class="dashboard-card">
-                <div class="card-header">
-                    <h5 class="mb-0"><i class="bi bi-cloud-sun me-2"></i>Live Weather</h5>
-                </div>
-                <div class="card-body">
-                    <div id="weather-box">
-                        <div class="text-center py-4">
-                            <div class="spinner-border text-primary" role="status"></div>
-                            <p class="mt-2 text-muted">Connecting to MET Norway...</p>
-                        </div>
+        <div class="col-12">
+            <div class="dashboard-controls">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="status-indicator status-live"></span>
+                        <span class="fw-semibold text-success" id="data-status">Live</span>
+                        <span class="ms-3" id="local-time">--:--</span>
                     </div>
-                </div>
-                <div class="card-footer">
-                    <small>
-                        <i class="bi bi-info-circle me-1"></i>
-                        Source: <span id="weather-source">MET Norway API</span>
-                        • Updated: <span id="weather-timestamp">--:--</span>
-                    </small>
+                    <div class="btn-group btn-group-sm">
+                        <button class="control-btn" id="refresh-btn">
+                            <i class="bi bi-arrow-clockwise"></i>
+                        </button>
+                        <button class="control-btn" id="rtz-btn">
+                            <i class="fas fa-route"></i>
+                        </button>
+                        <button class="control-btn" id="weather-btn">
+                            <i class="bi bi-cloud-sun"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Map Card -->
-        <div class="col-lg-8 col-md-12 mb-4">
+    <!-- Map Section -->
+    <div class="row mb-4">
+        <div class="col-12">
             <div class="dashboard-card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0"><i class="bi bi-geo-alt me-2"></i>Norwegian Waters</h5>
                     <div>
                         <span class="badge bg-light text-dark me-2">
                             <i class="bi bi-ship me-1"></i>
-                            <span id="vessel-count-number">0</span> vessels
+                            <span id="vessel-count">0</span>
                         </span>
-                        <span class="badge bg-success text-dark" id="map-rtz-badge">
+                        <span class="badge bg-success text-dark">
                             <i class="fas fa-route me-1"></i>
-                            <span id="map-rtz-count">
+                            <span id="route-count">
                                 {% if routes and routes|length > 0 %}
                                     {{ routes|length }}
                                 {% else %}
                                     0
                                 {% endif %}
-                            </span> routes
+                            </span>
                         </span>
                     </div>
                 </div>
-                <div class="card-body p-0 map-container">
-                    <div id="maritime-map"></div>
-                </div>
-                <div class="card-footer">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <small class="text-muted">
-                                <i class="bi bi-geo me-1"></i>
-                                Center: <span id="map-center">60.39°N, 5.32°E</span>
-                            </small>
-                        </div>
-                        <div class="col-md-6 text-md-end">
-                            <small class="text-muted">
-                                <i class="bi bi-clock me-1"></i>
-                                AIS: <span id="ais-timestamp">--:--</span>
-                                <span class="ms-2">•</span>
-                                <i class="fas fa-route me-1"></i>
-                                Routes: <span id="footer-rtz-count">
-                                    {% if routes and routes|length > 0 %}
-                                        {{ routes|length }}
-                                    {% else %}
-                                        0
-                                    {% endif %}
-                                </span>
-                            </small>
-                        </div>
-                    </div>
+                <div class="card-body p-0">
+                    <div id="maritime-map" style="height: 500px;"></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Quick Stats -->
+    <!-- Stats Cards -->
     <div class="row mb-4">
-        <!-- Temperature -->
+        <!-- Weather -->
         <div class="col-md-3 mb-3">
             <div class="stats-card temp-stat">
-                <h6><i class="bi bi-thermometer-half me-2"></i>Temperature</h6>
-                <h3 id="current-temp">--°C</h3>
-                <small class="text-muted" id="temp-location">Bergen Area</small>
+                <h6><i class="bi bi-cloud-sun me-2"></i>Weather</h6>
+                <h3 id="weather-temp">--°C</h3>
+                <small class="text-muted" id="weather-location">Bergen</small>
             </div>
         </div>
         
-        <!-- Wind Speed -->
+        <!-- Wind -->
         <div class="col-md-3 mb-3">
             <div class="stats-card wind-stat">
-                <h6><i class="bi bi-wind me-2"></i>Wind Speed</h6>
-                <h3 id="current-wind">-- m/s</h3>
-                <small class="text-muted">Coastal Average</small>
+                <h6><i class="bi bi-wind me-2"></i>Wind</h6>
+                <h3 id="wind-speed">-- m/s</h3>
+                <small class="text-muted">Coastal</small>
             </div>
         </div>
         
-        <!-- Active Vessels -->
+        <!-- Vessels -->
         <div class="col-md-3 mb-3">
             <div class="stats-card vessels-stat">
-                <h6><i class="bi bi-ship me-2"></i>Active Vessels</h6>
+                <h6><i class="bi bi-ship me-2"></i>Vessels</h6>
                 <h3 id="active-vessels">--</h3>
                 <small class="text-muted">Norwegian Waters</small>
             </div>
         </div>
         
-        <!-- RTZ Routes Summary - FIXED -->
+        <!-- RTZ Routes -->
         <div class="col-md-3 mb-3">
             <div class="stats-card rtz-stat">
                 <h6><i class="fas fa-route me-2"></i>RTZ Routes</h6>
-                <h3 id="rtz-summary">
+                <h3>
                     {% if routes and routes|length > 0 %}
                         {{ routes|length }}
                     {% else %}
                         0
                     {% endif %}
                 </h3>
-                <small class="text-muted" id="rtz-cities">
+                <small class="text-muted">
                     {% if cities_with_routes and cities_with_routes|length > 0 %}
                         {{ cities_with_routes|length }}/10 ports
                     {% else %}
-                        No data
+                        0/10 ports
                     {% endif %}
                 </small>
             </div>
         </div>
     </div>
 
-    <!-- RTZ Routes Table (Optional - hidden by default) -->
-    <div class="row mb-4" id="rtz-table-container" style="display: none;">
+    <!-- Routes Table -->
+    <div class="row">
         <div class="col-12">
             <div class="dashboard-card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0"><i class="fas fa-route me-2"></i>RTZ Routes Details</h5>
-                    <button class="btn btn-sm btn-outline-secondary" onclick="toggleRTZTable()">
-                        <i class="bi bi-x"></i> Close
-                    </button>
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-route me-2"></i>
+                        NCA Maritime Routes
+                    </h5>
                 </div>
                 <div class="card-body">
                     {% if routes and routes|length > 0 %}
-                    <div class="table-responsive">
-                        <table class="table table-hover table-sm">
-                            <thead>
-                                <tr>
-                                    <th>Route Name</th>
-                                    <th>Origin</th>
-                                    <th>Destination</th>
-                                    <th>Distance (NM)</th>
-                                    <th>Waypoints</th>
-                                    <th>Source</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for route in routes %}
-                                <tr>
-                                    <td>{{ route.name|default('NCA Route') }}</td>
-                                    <td>{{ route.origin|default('Unknown') }}</td>
-                                    <td>{{ route.destination|default('Unknown') }}</td>
-                                    <td>{{ "%.1f"|format(route.total_distance_nm|default(0)) }}</td>
-                                    <td>{{ route.waypoint_count|default(0) }}</td>
-                                    <td>
-                                        {% if route.source == 'NCA' %}
-                                            <span class="badge bg-success">Database</span>
-                                        {% else %}
-                                            <span class="badge bg-info">RTZ File</span>
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Route Name</th>
+                                        <th>Origin</th>
+                                        <th>Destination</th>
+                                        <th>Distance</th>
+                                        <th>Waypoints</th>
+                                        <th>Source</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for route in routes %}
+                                    <tr>
+                                        <td>{{ route.name or 'NCA Route' }}</td>
+                                        <td>{{ route.origin or 'Unknown' }}</td>
+                                        <td>{{ route.destination or 'Unknown' }}</td>
+                                        <td>{{ (route.total_distance_nm or 0)|round(1) }} NM</td>
+                                        <td>{{ route.waypoint_count or 0 }}</td>
+                                        <td>
+                                            {% if route.source == 'NCA' %}
+                                                <span class="badge bg-success">Database</span>
+                                            {% else %}
+                                                <span class="badge bg-info">RTZ File</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
                     {% else %}
-                    <div class="text-center py-4">
-                        <i class="fas fa-route text-muted fs-1 mb-3"></i>
-                        <p class="text-muted">No RTZ routes available</p>
-                    </div>
+                        <div class="text-center py-4">
+                            <i class="fas fa-route text-muted fs-1"></i>
+                            <p class="mt-2 text-muted">No RTZ routes found</p>
+                        </div>
                     {% endif %}
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- System Info -->
-    <div class="row">
-        <div class="col-md-8">
-            <div class="alert alert-info">
-                <div class="d-flex align-items-center">
-                    <i class="bi bi-database me-3 fs-4"></i>
-                    <div>
-                        <small class="fw-bold">Data Sources:</small>
-                        <small class="d-block">
-                            • AIS: BarentsWatch API • Weather: MET Norway API • 
-                            Routes: Norwegian Coastal Database (Kystverket)
-                        </small>
-                        <small class="d-block mt-1">
-                            <i class="fas fa-route me-1"></i>
-                            RTZ Routes: 
-                            {% if routes and routes|length > 0 %}
-                                <span class="text-success">{{ routes|length }} routes loaded</span>
-                                from {{ cities_with_routes|length if cities_with_routes else 0 }}/10 ports
-                            {% else %}
-                                <span class="text-warning">No RTZ data available</span>
-                            {% endif %}
-                        </small>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="alert alert-light">
-                <small class="fw-bold d-block mb-1">Last Update</small>
-                <small class="d-block">
-                    <i class="bi bi-clock me-1"></i>
-                    {% if timestamp %}
-                        {{ timestamp }}
-                    {% else %}
-                        --
-                    {% endif %}
-                </small>
-                <small class="d-block mt-1">
-                    <i class="bi bi-geo-alt me-1"></i>
-                    Ports with data: 
-                    {% if cities_with_routes and cities_with_routes|length > 0 %}
-                        {{ cities_with_routes|join(', ') }}
-                    {% else %}
-                        None
-                    {% endif %}
-                </small>
             </div>
         </div>
     </div>
@@ -324,73 +197,18 @@
 {% endblock %}
 
 {% block scripts %}
+<!-- Leaflet MarkerCluster -->
 <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+
+<!-- Dashboard JavaScript -->
 <script src="{{ url_for('static', filename='js/split/maritime_map.js') }}"></script>
 <script src="{{ url_for('static', filename='js/split/maritime_weather.js') }}"></script>
 <script src="{{ url_for('static', filename='js/split/rtz_routes.js') }}"></script>
-<script src="{{ url_for('static', filename='js/split/system_health.js') }}"></script>
 
 <script>
-// Initialize server data
-window.serverRTZData = {
-    routes: [
-        {% if routes %}
-            {% for route in routes %}
-                {
-                    name: "{{ route.name|default('NCA Route')|escapejs }}",
-                    origin: "{{ route.origin|default('Unknown')|escapejs }}",
-                    destination: "{{ route.destination|default('Unknown')|escapejs }}",
-                    total_distance_nm: {{ route.total_distance_nm|default(0) }},
-                    waypoint_count: {{ route.waypoint_count|default(0) }},
-                    source: "{{ route.source|default('NCA')|escapejs }}"
-                }{% if not loop.last %},{% endif %}
-            {% endfor %}
-        {% endif %}
-    ],
-    cities: [
-        {% if cities_with_routes %}
-            {% for city in cities_with_routes %}
-                "{{ city|escapejs }}"{% if not loop.last %},{% endif %}
-            {% endfor %}
-        {% endif %}
-    ],
-    stats: {
-        total_routes: {{ routes|length if routes else 0 }},
-        total_distance: {{ total_distance|default(0) }},
-        waypoint_count: {{ waypoint_count|default(0) }},
-        active_ports: {{ cities_with_routes|length if cities_with_routes else 0 }}
-    },
-    timestamp: "{{ timestamp|default('')|escapejs }}"
-};
-
-// Dashboard functions
-function refreshDashboard() {
-    console.log('Refreshing dashboard...');
-    location.reload();
-}
-
-function toggleRTZRoutes() {
-    const tableContainer = document.getElementById('rtz-table-container');
-    if (tableContainer.style.display === 'none') {
-        tableContainer.style.display = 'block';
-    } else {
-        tableContainer.style.display = 'none';
-    }
-}
-
-function filterByPort(portName) {
-    console.log('Filtering for port:', portName);
-    alert(`Filtering data for ${portName} port`);
-}
-
-function toggleRTZTable() {
-    document.getElementById('rtz-table-container').style.display = 'none';
-}
-
-// Initialize dashboard
+// Dashboard initialization
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Dashboard initialized');
-    console.log('Server RTZ data:', window.serverRTZData);
     
     // Update local time
     function updateTime() {
@@ -400,17 +218,35 @@ document.addEventListener('DOMContentLoaded', function() {
             hour: '2-digit', 
             minute: '2-digit' 
         });
-        const dateStr = now.toLocaleDateString('en-GB', { 
+        const dateStr = now.toLocaleDateString('en-GB', {
             timeZone: 'Europe/Oslo',
-            weekday: 'short',
-            day: 'numeric',
-            month: 'short'
+            weekday: 'short'
         });
-        document.getElementById('local-time').textContent = `${dateStr} ${timeStr}`;
+        document.getElementById('local-time').textContent = dateStr + ' ' + timeStr;
     }
     
     updateTime();
     setInterval(updateTime, 60000);
+    
+    // Button handlers
+    document.getElementById('refresh-btn').addEventListener('click', function() {
+        location.reload();
+    });
+    
+    document.getElementById('rtz-btn').addEventListener('click', function() {
+        if (window.rtzManager) {
+            window.rtzManager.toggle();
+        }
+    });
+    
+    // Port badges
+    document.querySelectorAll('.city-badge').forEach(badge => {
+        badge.style.cursor = 'pointer';
+        badge.addEventListener('click', function() {
+            const port = this.dataset.port;
+            console.log('Port selected:', port);
+        });
+    });
 });
 </script>
 {% endblock %}
