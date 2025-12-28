@@ -9,9 +9,9 @@ if [[ -n $(git status --porcelain) ]]; then
     echo "💾 Stashing local changes..."
     git stash
     
-    # Pull latest changes
-    echo "🔄 Pulling latest changes from remote..."
-    git pull origin master
+    # Always use rebase to avoid merge commits and handle divergent branches
+    echo "🔄 Pulling latest changes with rebase..."
+    git pull --rebase origin master
     
     # Apply stashed changes back
     echo "📤 Applying local changes back..."
@@ -44,6 +44,6 @@ if [[ -n $(git status --porcelain) ]]; then
     echo "✅ Backup completed successfully!"
 else
     echo "✨ No changes detected. Pulling latest anyway..."
-    git pull origin master
+    git pull --rebase origin master
     echo "✅ Repository is up to date!"
 fi
