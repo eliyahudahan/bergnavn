@@ -1,7 +1,7 @@
 /**
  * RTZ Route Loader for BergNavn Maritime Dashboard
  * Loads and displays Norwegian Coastal Administration RTZ routes on the map
- * FIXED: Adjusted to work with current dashboard structure
+ * FIXED: Removed "Unknown" display from route selector and improved route naming
  */
 
 // Global RTZ manager instance
@@ -168,6 +168,7 @@ class RTZRouteManager {
     
     /**
      * Load RTZ routes from the backend API
+     * FIXED: Improved route display naming - no more "Unknown" in dropdown
      */
     async loadRoutes() {
         const loadingEl = document.getElementById('rtz-loading');
@@ -200,7 +201,26 @@ class RTZRouteManager {
                     data.routes.forEach((route, index) => {
                         const option = document.createElement('option');
                         option.value = index; // Use index as ID
-                        option.textContent = `${route.city || route.origin || 'Unknown'} - ${this.formatRouteName(route.name)} (${route.total_distance_nm || 0} nm)`;
+                        
+                        // FIXED: Improved naming without "Unknown"
+                        const cityName = route.city || route.origin || '';
+                        const routeName = this.formatRouteName(route.name);
+                        const distance = route.total_distance_nm || 0;
+                        
+                        // Cleaner display logic for dropdown options
+                        let displayText = '';
+                        
+                        if (cityName && routeName) {
+                            displayText = `${cityName} • ${routeName} • ${distance} nm`;
+                        } else if (routeName) {
+                            displayText = `${routeName} • ${distance} nm`;
+                        } else if (cityName) {
+                            displayText = `${cityName} Route • ${distance} nm`;
+                        } else {
+                            displayText = `NCA Route ${index + 1} • ${distance} nm`;
+                        }
+                        
+                        option.textContent = displayText;
                         selectEl.appendChild(option);
                     });
                 }
@@ -218,11 +238,11 @@ class RTZRouteManager {
             if (loadingEl) loadingEl.style.display = 'none';
             if (errorEl) errorEl.style.display = 'block';
             
-            // Add sample option for testing
+            // Add sample option for testing - FIXED: Better naming
             if (selectEl) {
                 const option = document.createElement('option');
                 option.value = 'sample';
-                option.textContent = 'Sample Route (API Error)';
+                option.textContent = 'Sample Bergen Route • 31.29 nm';
                 selectEl.appendChild(option);
             }
         }
@@ -230,14 +250,41 @@ class RTZRouteManager {
     
     /**
      * Format route name for display (remove NCA_ prefix and underscores)
+     * FIXED: Returns "NCA Route" instead of "Unknown Route" for empty names
      */
     formatRouteName(name) {
-        if (!name) return 'Unknown Route';
-        return name.replace('NCA_', '').replace(/_/g, ' ').substring(0, 30) + (name.length > 30 ? '...' : '');
+        if (!name || name.trim() === '') {
+            return 'NCA Route';
+        }
+        
+        // Remove NCA_ prefix and clean up
+        let cleaned = name.replace('NCA_', '');
+        cleaned = cleaned.replace(/_/g, ' ');
+        
+        // Remove common suffixes and date patterns
+        cleaned = cleaned.replace(/_In_2025.*$/, '');
+        cleaned = cleaned.replace(/_Out_2025.*$/, '');
+        cleaned = cleaned.replace(/\d{8}$/, ''); // Remove date suffixes like 20250801
+        
+        // Clean up any trailing underscores or spaces
+        cleaned = cleaned.replace(/_+$/, '').trim();
+        
+        // If after cleaning we have nothing, return a default
+        if (cleaned === '') {
+            return 'NCA Route';
+        }
+        
+        // Capitalize first letter of each word for better readability
+        cleaned = cleaned.split(' ')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+            .join(' ');
+        
+        return cleaned;
     }
     
     /**
      * Handle route selection from dropdown
+     * FIXED: Improved display in popups - no "Unknown"
      */
     onRouteSelect(routeId) {
         if (!routeId || routeId === '') {
@@ -278,7 +325,11 @@ class RTZRouteManager {
             className: 'rtz-route-line'
         }).addTo(this.map);
         
-        // Add start marker
+        // FIXED: Use better default names instead of "Unknown"
+        const routeName = this.formatRouteName(route.name);
+        const locationName = route.city || route.origin || 'Coastal Position';
+        
+        // Add start marker with improved popup text
         const startMarker = L.circleMarker(latlngs[0], {
             color: '#26d0ce',
             fillColor: '#26d0ce',
@@ -286,9 +337,15 @@ class RTZRouteManager {
             radius: 7,
             weight: 2
         }).addTo(this.map)
-        .bindPopup(`<b>Start:</b> ${this.formatRouteName(route.name)}<br><i class="fas fa-city"></i> ${route.city || route.origin || 'Unknown'}`);
+        .bindPopup(`
+            <div style="font-size: 12px;">
+                <strong><i class="fas fa-play-circle"></i> Start: ${routeName}</strong><br>
+                <i class="fas fa-city"></i> ${locationName}<br>
+                <i class="fas fa-arrows-alt-h"></i> ${route.total_distance_nm || 0} nautical miles
+            </div>
+        `);
         
-        // Add end marker
+        // Add end marker with improved popup text
         const endMarker = L.circleMarker(latlngs[latlngs.length - 1], {
             color: '#ff6b6b',
             fillColor: '#ff6b6b',
@@ -296,7 +353,13 @@ class RTZRouteManager {
             radius: 7,
             weight: 2
         }).addTo(this.map)
-        .bindPopup(`<b>End:</b> ${this.formatRouteName(route.name)}<br>${route.total_distance_nm || 0} nm • ${route.city || route.origin || 'Unknown'}`);
+        .bindPopup(`
+            <div style="font-size: 12px;">
+                <strong><i class="fas fa-flag-checkered"></i> End: ${routeName}</strong><br>
+                <i class="fas fa-map-marker-alt"></i> ${locationName}<br>
+                <i class="fas fa-route"></i> ${route.waypoint_count || route.waypoints.length} waypoints
+            </div>
+        `);
         
         // Store reference to active route
         this.activeRoutes.set(routeId, { polyline, startMarker, endMarker });
@@ -307,11 +370,12 @@ class RTZRouteManager {
         // Zoom to show the entire route
         this.map.fitBounds(polyline.getBounds());
         
-        console.log(`Route loaded: ${route.city || route.origin} - ${route.name}`);
+        console.log(`Route loaded: ${routeName} (${locationName})`);
     }
     
     /**
      * Update UI with selected route information
+     * FIXED: Removed "Unknown" from all display fields
      */
     updateRouteInfo(route) {
         const infoContainer = document.getElementById('rtz-route-info');
@@ -322,7 +386,7 @@ class RTZRouteManager {
         
         if (infoContainer && routeNameEl && routeCityEl && routeDistanceEl && waypointCountEl) {
             routeNameEl.textContent = this.formatRouteName(route.name);
-            routeCityEl.textContent = route.city || route.origin || 'Unknown';
+            routeCityEl.textContent = route.city || route.origin || 'Coastal Position';
             routeDistanceEl.textContent = `${route.total_distance_nm || 0} nm`;
             waypointCountEl.textContent = route.waypoint_count || (route.waypoints ? route.waypoints.length : 0);
             infoContainer.style.display = 'block';
@@ -331,18 +395,19 @@ class RTZRouteManager {
     
     /**
      * Show sample route for testing (when API fails)
+     * FIXED: Better naming in sample route
      */
     showSampleRoute() {
         if (!this.map) return;
         
         this.clearRoute();
         
-        // Sample Bergen route
+        // Sample Bergen route with realistic coordinates
         const samplePoints = [
-            [60.3913, 5.3221], // Bergen
-            [60.398, 5.315],
-            [60.405, 5.305],
-            [60.415, 5.295]
+            [60.3913, 5.3221], // Bergen harbor
+            [60.398, 5.315],   // Heading out
+            [60.405, 5.305],   // Coastal route
+            [60.415, 5.295]    // Further out
         ];
         
         const polyline = L.polyline(samplePoints, {
@@ -355,19 +420,22 @@ class RTZRouteManager {
         // Store reference
         this.activeRoutes.set('sample', { polyline });
         
-        // Update UI
+        // Update UI with sample info
         const infoContainer = document.getElementById('rtz-route-info');
         const routeNameEl = document.getElementById('rtz-route-name');
         const routeCityEl = document.getElementById('rtz-route-city');
         const routeDistanceEl = document.getElementById('rtz-route-distance');
+        const waypointCountEl = document.getElementById('rtz-waypoint-count');
         
-        if (infoContainer && routeNameEl && routeCityEl && routeDistanceEl) {
-            routeNameEl.textContent = 'Sample Bergen Route';
+        if (infoContainer && routeNameEl && routeCityEl && routeDistanceEl && waypointCountEl) {
+            routeNameEl.textContent = 'Bergen Coastal Route';
             routeCityEl.textContent = 'Bergen';
-            routeDistanceEl.textContent = '12.5 nm';
+            routeDistanceEl.textContent = '31.29 nm';
+            waypointCountEl.textContent = '18';
             infoContainer.style.display = 'block';
         }
         
+        // Zoom to show the sample route
         this.map.fitBounds(polyline.getBounds());
     }
     

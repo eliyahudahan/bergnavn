@@ -2,6 +2,7 @@
 """
 Maritime Routes - Main maritime dashboard and API endpoints.
 FIXED: Dashboard endpoint now properly passes RTZ data to template.
+ADDED: convert_route_position function to fix "Position" display issues.
 """
 
 from flask import Blueprint, render_template, jsonify, request
@@ -18,7 +19,7 @@ logger = logging.getLogger(__name__)
 maritime_bp = Blueprint('maritime_bp', __name__)
 
 # ============================================================================
-# HELPER FUNCTIONS
+# HELPER FUNCTIONS - ADDED CRITICAL CONVERSION FUNCTION
 # ============================================================================
 
 def haversine_nm(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
@@ -75,6 +76,98 @@ def get_primary_focus_port() -> dict:
         logger.error(f"Error determining focus port: {e}")
         return {'name': 'Bergen', 'lat': 60.3913, 'lon': 5.3221, 'vessel_count': 0}
 
+def convert_route_position(position_str: str) -> str:
+    """
+    Convert 'Position lat, lon' strings to meaningful location names.
+    This is the function that the template expects.
+    """
+    if not position_str:
+        return "Norwegian Coast"
+    
+    # If it's already a city name, return as-is
+    known_cities = [
+        'Bergen', 'Oslo', 'Stavanger', 'Trondheim', 'Ålesund', 'Andalsnes',
+        'Drammen', 'Kristiansand', 'Sandefjord', 'Flekkefjord',
+        'Unknown', 'Coastal Waters', 'Norwegian Coast'
+    ]
+    
+    for city in known_cities:
+        if city.lower() in position_str.lower():
+            return city
+    
+    # Try to extract coordinates and map to nearest city
+    if "Position" in position_str:
+        try:
+            # Extract coordinates from "Position 64.26, 9.75"
+            coord_part = position_str.replace("Position", "").strip()
+            parts = coord_part.split(",")
+            if len(parts) == 2:
+                lat = float(parts[0].strip())
+                lon = float(parts[1].strip())
+                
+                # Map coordinates to nearest Norwegian city
+                norwegian_cities = {
+                    'Bergen': (60.3913, 5.3221),
+                    'Oslo': (59.9139, 10.7522),
+                    'Stavanger': (58.9700, 5.7331),
+                    'Trondheim': (63.4305, 10.3951),
+                    'Ålesund': (62.4722, 6.1497),
+                    'Andalsnes': (62.5675, 7.6870),
+                    'Drammen': (59.7441, 10.2045),
+                    'Kristiansand': (58.1467, 7.9958),
+                    'Sandefjord': (59.1312, 10.2167),
+                    'Flekkefjord': (58.2970, 6.6605)
+                }
+                
+                # Find nearest city
+                min_distance = float('inf')
+                nearest_city = "Norwegian Coast"
+                
+                for city_name, (city_lat, city_lon) in norwegian_cities.items():
+                    distance = haversine_nm(lat, lon, city_lat, city_lon)
+                    if distance < min_distance and distance < 50:  # Within 50 NM
+                        min_distance = distance
+                        nearest_city = city_name
+                
+                return nearest_city
+        except (ValueError, IndexError):
+            pass
+    
+    # If no match found, return a cleaned version
+    if "Position" in position_str:
+        return "Coastal Position"
+    
+    return position_str
+
+def convert_route_position_by_coordinates(lat: float, lon: float) -> str:
+    """Convert latitude/longitude to nearest city name."""
+    if not lat or not lon:
+        return "Norwegian Coast"
+    
+    norwegian_cities = {
+        'Bergen': (60.3913, 5.3221),
+        'Oslo': (59.9139, 10.7522),
+        'Stavanger': (58.9700, 5.7331),
+        'Trondheim': (63.4305, 10.3951),
+        'Ålesund': (62.4722, 6.1497),
+        'Andalsnes': (62.5675, 7.6870),
+        'Drammen': (59.7441, 10.2045),
+        'Kristiansand': (58.1467, 7.9958),
+        'Sandefjord': (59.1312, 10.2167),
+        'Flekkefjord': (58.2970, 6.6605)
+    }
+    
+    min_distance = float('inf')
+    nearest_city = "Norwegian Coast"
+    
+    for city_name, (city_lat, city_lon) in norwegian_cities.items():
+        distance = haversine_nm(lat, lon, city_lat, city_lon)
+        if distance < min_distance:
+            min_distance = distance
+            nearest_city = city_name
+    
+    return nearest_city
+
 # ============================================================================
 # CRITICAL FIX: Dashboard endpoint with RTZ data
 # ============================================================================
@@ -117,6 +210,7 @@ def dashboard():
     """
     Maritime dashboard page - FIXED: Now properly passes RTZ data.
     This matches the structure of routes.html template.
+    ADDED: convert_route_position function to fix "Position" display.
     """
     try:
         # Try to get routes from database first
@@ -139,23 +233,40 @@ def dashboard():
                 routes = session.query(Route).filter(Route.is_active == True).all()
                 
                 for route in routes:
+                    # Clean up origin and destination before adding to data
+                    origin_clean = route.origin or ''
+                    destination_clean = route.destination or ''
+                    
+                    # Apply conversion to clean up "Position" strings
+                    if origin_clean and "Position" in origin_clean:
+                        origin_display = convert_route_position(origin_clean)
+                    else:
+                        origin_display = origin_clean or "Norwegian Coast"
+                    
+                    if destination_clean and "Position" in destination_clean:
+                        destination_display = convert_route_position(destination_clean)
+                    else:
+                        destination_display = destination_clean or "Norwegian Coast"
+                    
                     routes_data.append({
-                        'name': route.name,
-                        'origin': route.origin or 'Unknown',
-                        'destination': route.destination or 'Unknown',
+                        'name': route.name or f"NCA Route",
+                        'origin': origin_display,
+                        'destination': destination_display,
                         'total_distance_nm': route.total_distance_nm or 0,
                         'waypoint_count': route.waypoint_count or 0,
                         'source': 'NCA',
                         'is_active': True,
-                        'description': route.description or 'Official NCA route'
+                        'description': route.description or 'Official NCA route',
+                        'raw_origin': origin_clean,  # Keep original for reference
+                        'raw_destination': destination_clean
                     })
                     total_distance += route.total_distance_nm or 0
                     waypoint_count += route.waypoint_count or 0
                     
-                    if route.origin:
-                        cities_with_routes.add(route.origin)
-                    if route.destination:
-                        cities_with_routes.add(route.destination)
+                    if origin_display != "Norwegian Coast":
+                        cities_with_routes.add(origin_display)
+                    if destination_display != "Norwegian Coast":
+                        cities_with_routes.add(destination_display)
         
         # If no database routes, try to get from RTZ files
         if not routes_data:
@@ -172,20 +283,23 @@ def dashboard():
                                     parsed_routes = parse_rtz_file(file_path)
                                     if parsed_routes:
                                         for route in parsed_routes:
+                                            city_display = city.capitalize() if city else "Norwegian Coast"
                                             routes_data.append({
-                                                'name': route.get('route_name', f'{city.capitalize()} Route'),
-                                                'origin': city.capitalize(),
+                                                'name': route.get('route_name', f'{city_display} Route'),
+                                                'origin': city_display,
                                                 'destination': 'Coastal Waters',
                                                 'total_distance_nm': route.get('total_distance_nm', 0),
                                                 'waypoint_count': len(route.get('waypoints', [])),
                                                 'source': 'RTZ File',
                                                 'is_active': True,
-                                                'description': f'NCA coastal route near {city.capitalize()}'
+                                                'description': f'NCA coastal route near {city_display}',
+                                                'raw_origin': city_display,
+                                                'raw_destination': 'Coastal Waters'
                                             })
                                             total_distance += route.get('total_distance_nm', 0)
                                             waypoint_count += len(route.get('waypoints', []))
                                             
-                                            cities_with_routes.add(city.capitalize())
+                                            cities_with_routes.add(city_display)
                             except Exception as e:
                                 logger.warning(f"Could not parse RTZ file for {city}: {e}")
                                 continue
@@ -203,7 +317,7 @@ def dashboard():
         # Convert set to list for template
         cities_list = list(cities_with_routes)
         
-        # CRITICAL: Pass all required data to template
+        # CRITICAL: Pass all required data to template INCLUDING the conversion function
         return render_template(
             "maritime_split/dashboard_base.html",
             lang=get_current_language(),
@@ -216,7 +330,10 @@ def dashboard():
             active_vessels=active_vessels,
             timestamp=datetime.utcnow().isoformat() + 'Z',
             dashboard_version='1.0.0',
-            ports_supported=10
+            ports_supported=10,
+            # CRITICAL ADDITION: Pass the conversion function to template
+            convert_route_position=convert_route_position,
+            convert_route_position_by_coordinates=convert_route_position_by_coordinates
         )
         
     except Exception as e:
@@ -233,7 +350,9 @@ def dashboard():
             active_vessels=0,
             timestamp=datetime.utcnow().isoformat() + 'Z',
             dashboard_version='1.0.0',
-            ports_supported=10
+            ports_supported=10,
+            convert_route_position=convert_route_position,
+            convert_route_position_by_coordinates=convert_route_position_by_coordinates
         )
 
 @maritime_bp.route('/vessels')
@@ -598,8 +717,6 @@ def rtz_routes():
             'routes': [],
             'timestamp': datetime.utcnow().isoformat() + 'Z'
         }), 503
-
-# ... (rest of the file remains the same - system status, hazard data, etc.)
 
 # ============================================================================
 # SYSTEM STATUS

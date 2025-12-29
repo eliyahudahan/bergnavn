@@ -55,6 +55,12 @@
                         <button class="control-btn" id="ais-btn" title="Show real vessels">
                             <i class="bi bi-ship"></i>
                         </button>
+                        <button class="control-btn" id="turbine-btn" title="Show wind turbines">
+                            <i class="bi bi-fan"></i>
+                        </button>
+                        <button class="control-btn" id="tanker-btn" title="Show tankers">
+                            <i class="bi bi-droplet"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -173,28 +179,56 @@
                                 <tbody>
                                     {% for route in routes %}
                                     <tr>
-                                        <td>{{ route.name or 'NCA Route' }}</td>
                                         <td>
-                                            {% if route.origin and route.origin != 'Position' %}
-                                                {{ route.origin }}
+                                            {% if route.name %}
+                                                {{ route.name }}
+                                            {% elif route.description %}
+                                                {{ route.description|truncate(50) }}
                                             {% else %}
-                                                {{ route.origin_port_name or 'Unknown' }}
+                                                NCA Route {{ loop.index }}
                                             {% endif %}
                                         </td>
                                         <td>
-                                            {% if route.destination and route.destination != 'Position' %}
+                                            {% if route.origin and "Position" in route.origin %}
+                                                {% set origin_name = convert_route_position(route.origin) %}
+                                                {% if origin_name != route.origin %}
+                                                    {{ origin_name }}
+                                                    <br><small class="text-muted">{{ route.origin }}</small>
+                                                {% else %}
+                                                    {{ route.origin }}
+                                                {% endif %}
+                                            {% elif route.origin %}
+                                                {{ route.origin }}
+                                            {% else %}
+                                                {% set origin_name = convert_route_position_by_coordinates(route.start_lat, route.start_lon) if route.start_lat and route.start_lon else 'Norwegian Coast' %}
+                                                {{ origin_name }}
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if route.destination and "Position" in route.destination %}
+                                                {% set dest_name = convert_route_position(route.destination) %}
+                                                {% if dest_name != route.destination %}
+                                                    {{ dest_name }}
+                                                    <br><small class="text-muted">{{ route.destination }}</small>
+                                                {% else %}
+                                                    {{ route.destination }}
+                                                {% endif %}
+                                            {% elif route.destination %}
                                                 {{ route.destination }}
                                             {% else %}
-                                                {{ route.destination_port_name or 'Unknown' }}
+                                                {% set dest_name = convert_route_position_by_coordinates(route.end_lat, route.end_lon) if route.end_lat and route.end_lon else 'Norwegian Coast' %}
+                                                {{ dest_name }}
                                             {% endif %}
                                         </td>
                                         <td>{{ (route.total_distance_nm or 0)|round(1) }} NM</td>
-                                        <td>{{ route.waypoint_count or 0 }}</td>
+                                        <td>{{ route.waypoint_count or 'N/A' }}</td>
                                         <td>
                                             {% if route.source == 'NCA' %}
                                                 <span class="badge bg-success">Database</span>
-                                            {% else %}
+                                            {% elif route.source == 'RTZ File' %}
                                                 <span class="badge bg-info">RTZ File</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">Unknown</span>
                                             {% endif %}
                                         </td>
                                     </tr>
@@ -250,11 +284,34 @@
 <script src="{{ url_for('static', filename='js/split/maritime_weather.js') }}"></script>
 <script src="{{ url_for('static', filename='js/split/rtz_routes.js') }}"></script>
 <script src="{{ url_for('static', filename='js/split/ais_realtime.js') }}"></script>
+<script src="{{ url_for('static', filename='js/split/wind_turbines_realtime.js') }}"></script>
+<script src="{{ url_for('static', filename='js/split/tanker_monitoring.js') }}"></script>
 
 <script>
 // Dashboard initialization
 document.addEventListener('DOMContentLoaded', function() {
     console.log('BergNavn Maritime Dashboard initialized');
+    
+    // Wind turbine button handler
+    document.getElementById('turbine-btn').addEventListener('click', function() {
+        if (window.windTurbineManager) {
+            window.windTurbineManager.showTurbines();
+            this.classList.toggle('active');
+        }
+    });
+
+    // Tanker button handler
+    document.getElementById('tanker-btn').addEventListener('click', function() {
+        if (window.tankerMonitor) {
+            window.tankerMonitor.showTankers();
+            this.classList.toggle('active');
+            
+            // Start monitoring if not already
+            if (!window.tankerMonitor.updateInterval) {
+                window.tankerMonitor.startMonitoring();
+            }
+        }
+    });
     
     // Update local time and data timestamp
     function updateTime() {
@@ -309,15 +366,30 @@ document.addEventListener('DOMContentLoaded', function() {
         badge.style.cursor = 'pointer';
         badge.addEventListener('click', function() {
             const port = this.dataset.port;
-            console.log('Port selected:', port);
+            const portName = this.textContent.trim();
+            console.log('Port selected:', port, portName);
             
             // Filter routes table for this port
             const rows = document.querySelectorAll('tbody tr');
             let visibleCount = 0;
             
             rows.forEach(row => {
-                const origin = row.cells[1].textContent.toLowerCase();
-                const destination = row.cells[2].textContent.toLowerCase();
+                const originCell = row.cells[1];
+                const destinationCell = row.cells[2];
+                
+                // Extract the main location name (before <br> if exists)
+                let originText = originCell.textContent;
+                if (originCell.querySelector('small')) {
+                    originText = originCell.querySelector('small').previousSibling.textContent.trim();
+                }
+                
+                let destinationText = destinationCell.textContent;
+                if (destinationCell.querySelector('small')) {
+                    destinationText = destinationCell.querySelector('small').previousSibling.textContent.trim();
+                }
+                
+                const origin = originText.toLowerCase();
+                const destination = destinationText.toLowerCase();
                 
                 if (origin.includes(port) || destination.includes(port)) {
                     row.style.display = '';
@@ -330,7 +402,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Update route count display
             document.getElementById('route-display-count').textContent = visibleCount;
             document.getElementById('route-coverage').textContent = 
-                `${visibleCount} routes for ${this.textContent}`;
+                `${visibleCount} routes for ${portName}`;
         });
     });
     
@@ -352,6 +424,14 @@ document.addEventListener('DOMContentLoaded', function() {
             aisStatus.classList.add('text-success');
         }
     }, 3000);
+    
+    // Initialize turbine count from data if available
+    if (window.windTurbineManager && window.windTurbineManager.turbines) {
+        setTimeout(() => {
+            const turbineCount = window.windTurbineManager.turbines.length || 0;
+            document.getElementById('turbine-count').textContent = turbineCount;
+        }, 1000);
+    }
 });
 </script>
 {% endblock %}
