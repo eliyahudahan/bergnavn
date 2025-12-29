@@ -1,0 +1,80 @@
+2025-04-14 | Updated requirements.txt
+2025-04-16 | Updated README.md and project structure
+2025-04-20 | Update README and restructure project layout
+2025-04-28 | עדכון: הוספתי שדה updated_at ועודכנו שדות נוספים
+2025-04-28 | Add git backup script
+2025-05-01 | "Add backup script for automatic git commit and push"
+2025-05-01 | Add git_backup.sh script for version control backup
+2025-05-04 | Add backup script for automatic git commit and push
+2025-05-19 | "Add git backup script"
+2025-05-22 | "Add git backup script"
+2025-05-24 | "Add git backup script"
+2025-05-27 | "Preparing for adding basic smoke tests and setting up testing environment"
+2025-05-28 | "Add git backup script"
+2025-06-05 | "Add backup script for automatic git commit and push"
+2025-06-12 | "Add git backup script"
+2025-06-12 | "Add voyage_legs table and model with migration"
+2025-06-18 | "Add git_backup.sh script for automated commit and push"
+2025-07-01 | git commit -m "Add nullable port IDs to voyage_legs and update related models"
+2025-07-03 | "🐚 Add distance_nm to voyage_legs and fix create_route logic"
+2025-07-07 | "Add weather monitoring dashboard, cleanup service, and new routes"
+2025-07-09 | Add route evaluation feature with dashboard and API endpoint
+2025-07-15 | Add is_active field to voyage_legs and ports; update route evaluator and seeders
+2025-07-17 | - Added get_status_color function
+2025-07-22 | Initial architecture structure
+2025-07-27 | ix route conflict for '/' path and clean up user_routes.py
+2025-07-29 | Added 5 demo users to config with scenario 'demo_scenario'
+2025-07-31 | Add support for dummy users with flag limits and basic documentation
+2025-08-03 | dummy user management routes + Postman tests
+2025-08-04 | feat(dummy-users): add activate/deactivate user functionality, prepare for personalization - 2025-08-04
+2025-08-06 | Implemented full dummy user management with validation and soft delete.
+2025-08-12 | implement full CRUD and toggle active/inactive for dummy users
+2025-08-12 | starting new support in en/no
+2025-08-13 | Refactor base template, add main routes and legal page, update footer and navigation links
+2025-08-18 | Update dummy user templates with translation support
+2025-09-03 | Update routes, templates, and translations utilities
+2025-09-08 | Update dummy_user, port models, templates, tests, and translations
+2025-09-11 | Cleanup test data, remove old test script, and add SQLite test fixture
+2025-09-14 | Update dummy user management: routes, service, template, and translations.
+2025-09-17 | Update BergNavn project: enhance templates (home, legal, dashboards), cruise and route controllers/services, CSS, translations, and add new route/hazard models and migration
+2025-09-18 | fix html pages
+2025-09-25 | Update RTZ routes: add Bergen, Drammen, Stavanger, Kristiansand, Oslo; add rtz_parser service and tests
+2025-09-30 | erged and patched all waypoints and RTZ JSON files, ready for DB integration
+2025-10-08 | Update RTZ conversion tools and refresh extracted route JSON
+2025-10-15 | Update templates and translations, remove unused user/payment models, and adjust app structure for stability
+2025-10-19 | Update templates and translations for English/Norwegian support
+2025-10-20 | 🚢 Add Maritime Dashboard with real-time weather integration & route optimization
+2025-10-22 | "feat: Enhanced maritime data science platform
+2025-10-26 | feat: Add ships and fuel_efficiency models and migrations
+2025-10-28 | feat: Add enhanced fuel optimizer with methanol analytics and ship coefficients
+2025-11-10 | Add async executor service and initial middleware structure for ML optimization
+2025-11-11 | Integrated async executor, fuel optimizer service, updated ML routes, API key middleware, and added request ID tracking; prepared project structure for next testing phase
+2025-11-13 | EMPIRICAL: EEM optimizer with proven 50.8% ROI and 2-year payback
+2025-11-13 | EMPIRICAL: Add validation engine and EEM ROI analyzer
+2025-11-13 | EMPIRICAL: Complete route recommender with 8 routes and 90% confidence
+2025-11-13 | EMPIRICAL: Complete route recommender with 11 routes, 0 warnings, 90% confidence
+2025-11-16 | Fix ML service imports - match existing Empirical classes
+2025-11-20 | Fixed test infrastructure and translations - 19/23 tests now pass
+2025-11-23 | Production Release: Complete maritime intelligence platform with real-time data integration, interactive maps, and AI-powered route optimization
+2025-11-23 | RTZ parser now successfully processes Norwegian Coastal Administration route files with ZIP extraction and correct XML namespace handling
+2025-11-29 | Add validation scripts, fix migration flow, and stabilize AIS model loading
+2025-11-30 | Add initial AIS, schedule, weather, RTZ, hazard services (untracked)
+2025-12-06 | Add export scripts, split maritime modules, and update project assets
+2025-12-06 | Add system_check for endpoint and route validation
+2025-12-07 | Maritime Dashboard re‑structure prep: cleaned files, added new blocks, prep for MET Norway live integration"
+2025-12-08 | Refactor weather service, add SeaDepthService, update maritime routes and dashboard blocks
+2025-12-08 | Update maritime dashboard: fix template includes, add realtime JS, sync blocks
+2025-12-09 | Refactor maritime dashboards, integrate real env-based data sources, and clean obsolete templates
+2025-12-14 | "feat: Real-time maritime dashboard with live MET Norway weather and Kystverket AIS integration. Complete system operational with Norway time display, real vessel tracking, and status monitoring."
+2025-12-16 | Add RTZ routes integration with Norwegian Coastal Administration API, map visualization, and interactive route loader panel
+2025-12-21 | Add BarentsWatch API integration, hazard monitoring, and dashboard enhancements with working authentication
+2025-12-23 | feat: integrate MET Norway live weather API into recommendation engine
+2025-12-24 | Implemented BarentsWatch API integration with proper token management, caching, and endpoint discovery. Added comprehensive error handling and retry logic for reliable maritime hazard data fetching.
+2025-12-25 | Complete day 2025-12-25: Migration fix, health endpoint, safety tools
+2025-12-25 | feat: Add system dashboard foundation with health monitoring
+2025-12-28 | fix: correct weather blueprint name and fix database queries in system dashboard
+2025-12-28 | Update dashboard_base.html
+2025-12-28 | Update maritime dashboard with real-time AIS, MET weather, and RTZ routes
+2025-12-28 | Fix git_backup script to handle divergent branches
+2025-12-28 | test
+2025-12-29 | Add progress tracking system

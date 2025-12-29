@@ -52,6 +52,9 @@
                         <button class="control-btn" id="weather-btn">
                             <i class="bi bi-cloud-sun"></i>
                         </button>
+                        <button class="control-btn" id="ais-btn" title="Show real vessels">
+                            <i class="bi bi-ship"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -79,6 +82,10 @@
                                 {% endif %}
                             </span>
                         </span>
+                        <span class="badge bg-warning text-dark ms-2">
+                            <i class="bi bi-wind me-1"></i>
+                            <span id="turbine-count">0</span>
+                        </span>
                     </div>
                 </div>
                 <div class="card-body p-0">
@@ -104,7 +111,7 @@
             <div class="stats-card wind-stat">
                 <h6><i class="bi bi-wind me-2"></i>Wind</h6>
                 <h3 id="wind-speed">-- m/s</h3>
-                <small class="text-muted">Coastal</small>
+                <small class="text-muted" id="wind-direction">--°</small>
             </div>
         </div>
         
@@ -113,7 +120,7 @@
             <div class="stats-card vessels-stat">
                 <h6><i class="bi bi-ship me-2"></i>Vessels</h6>
                 <h3 id="active-vessels">--</h3>
-                <small class="text-muted">Norwegian Waters</small>
+                <small class="text-muted" id="vessel-type">Loading...</small>
             </div>
         </div>
         
@@ -121,14 +128,14 @@
         <div class="col-md-3 mb-3">
             <div class="stats-card rtz-stat">
                 <h6><i class="fas fa-route me-2"></i>RTZ Routes</h6>
-                <h3>
+                <h3 id="route-display-count">
                     {% if routes and routes|length > 0 %}
                         {{ routes|length }}
                     {% else %}
                         0
                     {% endif %}
                 </h3>
-                <small class="text-muted">
+                <small class="text-muted" id="route-coverage">
                     {% if cities_with_routes and cities_with_routes|length > 0 %}
                         {{ cities_with_routes|length }}/10 ports
                     {% else %}
@@ -167,8 +174,20 @@
                                     {% for route in routes %}
                                     <tr>
                                         <td>{{ route.name or 'NCA Route' }}</td>
-                                        <td>{{ route.origin or 'Unknown' }}</td>
-                                        <td>{{ route.destination or 'Unknown' }}</td>
+                                        <td>
+                                            {% if route.origin and route.origin != 'Position' %}
+                                                {{ route.origin }}
+                                            {% else %}
+                                                {{ route.origin_port_name or 'Unknown' }}
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if route.destination and route.destination != 'Position' %}
+                                                {{ route.destination }}
+                                            {% else %}
+                                                {{ route.destination_port_name or 'Unknown' }}
+                                            {% endif %}
+                                        </td>
                                         <td>{{ (route.total_distance_nm or 0)|round(1) }} NM</td>
                                         <td>{{ route.waypoint_count or 0 }}</td>
                                         <td>
@@ -187,8 +206,34 @@
                         <div class="text-center py-4">
                             <i class="fas fa-route text-muted fs-1"></i>
                             <p class="mt-2 text-muted">No RTZ routes found</p>
+                            <a href="{{ url_for('routes_bp.scan_rtz_files') }}" 
+                               class="btn btn-sm btn-outline-primary mt-2">
+                                <i class="bi bi-search me-1"></i>Scan RTZ Files
+                            </a>
                         </div>
                     {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Real-time Data Status -->
+    <div class="row mt-3">
+        <div class="col-12">
+            <div class="alert alert-secondary small">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span>
+                        <i class="bi bi-activity me-1"></i>
+                        <span id="data-update-time">Data updated: --:--</span>
+                    </span>
+                    <span>
+                        <span class="badge bg-light text-dark me-2">
+                            AIS: <span id="ais-status">Connecting...</span>
+                        </span>
+                        <span class="badge bg-light text-dark">
+                            Weather: <span id="weather-status">Connected</span>
+                        </span>
+                    </span>
                 </div>
             </div>
         </div>
@@ -204,13 +249,14 @@
 <script src="{{ url_for('static', filename='js/split/maritime_map.js') }}"></script>
 <script src="{{ url_for('static', filename='js/split/maritime_weather.js') }}"></script>
 <script src="{{ url_for('static', filename='js/split/rtz_routes.js') }}"></script>
+<script src="{{ url_for('static', filename='js/split/ais_realtime.js') }}"></script>
 
 <script>
 // Dashboard initialization
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Dashboard initialized');
+    console.log('BergNavn Maritime Dashboard initialized');
     
-    // Update local time
+    // Update local time and data timestamp
     function updateTime() {
         const now = new Date();
         const timeStr = now.toLocaleTimeString('en-GB', { 
@@ -220,9 +266,17 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         const dateStr = now.toLocaleDateString('en-GB', {
             timeZone: 'Europe/Oslo',
-            weekday: 'short'
+            weekday: 'short',
+            day: 'numeric',
+            month: 'short'
         });
+        
+        // Update local time display
         document.getElementById('local-time').textContent = dateStr + ' ' + timeStr;
+        
+        // Update data timestamp
+        document.getElementById('data-update-time').textContent = 
+            `Data updated: ${dateStr} ${timeStr}`;
     }
     
     updateTime();
@@ -230,6 +284,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Button handlers
     document.getElementById('refresh-btn').addEventListener('click', function() {
+        console.log('Manual refresh requested');
         location.reload();
     });
     
@@ -239,14 +294,64 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Port badges
+    document.getElementById('ais-btn').addEventListener('click', function() {
+        if (window.aisManager && typeof window.aisManager.showRealtimeVessels === 'function') {
+            window.aisManager.showRealtimeVessels();
+            this.classList.toggle('active');
+        } else {
+            console.warn('AIS manager not available');
+            alert('Real-time AIS data is currently loading...');
+        }
+    });
+    
+    // Port badges - show routes for selected port
     document.querySelectorAll('.city-badge').forEach(badge => {
         badge.style.cursor = 'pointer';
         badge.addEventListener('click', function() {
             const port = this.dataset.port;
             console.log('Port selected:', port);
+            
+            // Filter routes table for this port
+            const rows = document.querySelectorAll('tbody tr');
+            let visibleCount = 0;
+            
+            rows.forEach(row => {
+                const origin = row.cells[1].textContent.toLowerCase();
+                const destination = row.cells[2].textContent.toLowerCase();
+                
+                if (origin.includes(port) || destination.includes(port)) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            
+            // Update route count display
+            document.getElementById('route-display-count').textContent = visibleCount;
+            document.getElementById('route-coverage').textContent = 
+                `${visibleCount} routes for ${this.textContent}`;
         });
     });
+    
+    // Initialize AIS real-time data if available
+    if (typeof window.aisManager !== 'undefined') {
+        console.log('AIS manager found, starting real-time updates');
+        setTimeout(() => {
+            if (window.aisManager.startRealTimeUpdates) {
+                window.aisManager.startRealTimeUpdates();
+            }
+        }, 2000);
+    }
+    
+    // Show loading status
+    setTimeout(() => {
+        const aisStatus = document.getElementById('ais-status');
+        if (aisStatus.textContent === 'Connecting...') {
+            aisStatus.textContent = 'Connected';
+            aisStatus.classList.add('text-success');
+        }
+    }, 3000);
 });
 </script>
 {% endblock %}
