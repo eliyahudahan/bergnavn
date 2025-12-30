@@ -20,6 +20,8 @@ try:
     PYAIS_AVAILABLE = True
 except ImportError:
     PYAIS_AVAILABLE = False
+    logger = logging.getLogger(__name__)
+    logger.warning("pyais not available. Install with: pip install pyais")
 
 logger = logging.getLogger(__name__)
 
@@ -80,6 +82,11 @@ class EmpiricalAISService:
         self.bergen_commercial_vessel = None
         self.bergen_vessel_last_found = None
         
+        # Connection management
+        self.connection_attempts = 0
+        self.max_connection_attempts = 3
+        self.reconnection_delay = 5  # seconds
+        
         logger.info("🔬 Empirical AIS Service initialized - Bergen Commercial Focus")
         logger.info(f"📡 Mode: {'Real AIS Stream' if self.use_real_ais else 'Enhanced Empirical Data'}")
         logger.info(f"🎯 Target: 10 Norwegian cities, Bergen commercial vessels prioritized")
@@ -103,7 +110,7 @@ class EmpiricalAISService:
     def _initialize_data_source(self):
         """
         Initialize data source based on .env configuration.
-        Prioritizes real AIS stream, falls back to empirical mock data.
+        Prioritizes real AIS stream, falls back to empirical mock data ONLY if real connection fails.
         """
         if self.use_real_ais and self.ais_host:
             try:
@@ -111,11 +118,43 @@ class EmpiricalAISService:
                 logger.info("✅ Real AIS stream initialized from .env configuration")
             except Exception as e:
                 logger.error(f"❌ Failed to start real AIS: {e}")
-                logger.info("🔄 Falling back to enhanced empirical data")
-                self._initialize_empirical_mock_data()
+                logger.info("🔄 Attempting to reconnect to real AIS stream...")
+                self._attempt_reconnection()
         else:
             self._initialize_empirical_mock_data()
             logger.info("✅ Enhanced empirical data loaded for Norwegian waters")
+    
+    def _attempt_reconnection(self):
+        """Attempt to reconnect to AIS stream with exponential backoff."""
+        while self.connection_attempts < self.max_connection_attempts and self.running:
+            try:
+                self.connection_attempts += 1
+                delay = self.reconnection_delay * (2 ** (self.connection_attempts - 1))
+                logger.info(f"🔄 Reconnection attempt {self.connection_attempts}/{self.max_connection_attempts} in {delay}s")
+                time.sleep(delay)
+                
+                self._start_real_ais_stream()
+                logger.info("✅ Reconnected to real AIS stream successfully")
+                self.connection_attempts = 0
+                return
+            except Exception as e:
+                logger.error(f"❌ Reconnection attempt {self.connection_attempts} failed: {e}")
+        
+        # If all reconnection attempts failed
+        if self.connection_attempts >= self.max_connection_attempts:
+            logger.error(f"❌ All {self.max_connection_attempts} reconnection attempts failed")
+            logger.info("⚠️ Switching to empirical data mode temporarily")
+            self._initialize_empirical_mock_data()
+            
+            # Schedule another reconnection attempt in 30 seconds
+            threading.Timer(30, self._schedule_reconnection).start()
+    
+    def _schedule_reconnection(self):
+        """Schedule a reconnection attempt."""
+        if self.running:
+            logger.info("🔄 Scheduling reconnection to real AIS stream")
+            self.connection_attempts = 0
+            threading.Thread(target=self._attempt_reconnection, daemon=True).start()
     
     def _initialize_empirical_mock_data(self):
         """
@@ -413,137 +452,259 @@ class EmpiricalAISService:
     def _start_real_ais_stream(self):
         """
         Start real AIS data stream from Kystverket.
-        Implementation depends on actual AIS socket connection availability.
+        Connects to real AIS socket for live data.
         """
         if not self.ais_host:
             raise ValueError("AIS host not configured in .env file")
         
-        logger.info(f"Connecting to AIS stream at {self.ais_host}:{self.ais_port}")
+        logger.info(f"🔌 Connecting to AIS stream at {self.ais_host}:{self.ais_port}")
         
-        # Real implementation would connect to AIS socket
-        # This is a placeholder for the actual implementation
-        self.running = True
+        # Create socket connection
+        self.ais_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.ais_socket.settimeout(10.0)  # 10 second timeout
         
-        # Simulate real AIS data reception
-        self.read_thread = threading.Thread(target=self._simulate_ais_data, daemon=True)
-        self.read_thread.start()
-        
-        logger.info("✅ Real AIS stream simulation started")
+        try:
+            # Connect to AIS server
+            self.ais_socket.connect((self.ais_host, self.ais_port))
+            logger.info(f"✅ Connected successfully to {self.ais_host}:{self.ais_port}")
+            
+            # Start reading thread
+            self.running = True
+            self.read_thread = threading.Thread(target=self._read_ais_data, daemon=True)
+            self.read_thread.start()
+            
+        except socket.error as e:
+            self.ais_socket.close()
+            self.ais_socket = None
+            raise ConnectionError(f"Failed to connect to AIS server: {e}")
     
-    def _simulate_ais_data(self):
+    def _read_ais_data(self):
         """
-        Simulate real AIS data reception for development.
-        In production, this would read actual AIS NMEA messages.
+        Read and process real AIS data from socket.
+        Parses NMEA messages and updates vessel data.
         """
-        while self.running:
+        buffer = ""
+        
+        while self.running and self.ais_socket:
             try:
-                # Simulate periodic AIS updates
-                time.sleep(5)
+                # Read data from socket
+                data = self.ais_socket.recv(4096)
+                if not data:
+                    logger.warning("📭 No data received from AIS socket")
+                    time.sleep(1)
+                    continue
                 
-                # Update vessel positions slightly
-                for vessel in self.ships_data:
-                    if vessel.get('is_fallback', False):
-                        continue
+                # Decode and process
+                buffer += data.decode('utf-8', errors='ignore')
+                
+                # Process complete lines
+                while '\n' in buffer:
+                    line, buffer = buffer.split('\n', 1)
+                    line = line.strip()
                     
-                    # Small position changes
-                    vessel['lat'] += random.uniform(-0.001, 0.001)
-                    vessel['lon'] += random.uniform(-0.001, 0.001)
-                    vessel['speed'] = max(0, vessel['speed'] + random.uniform(-0.5, 0.5))
-                    vessel['timestamp'] = datetime.utcnow().isoformat() + "Z"
+                    if line and line.startswith('!'):  # AIS NMEA message
+                        self._process_ais_message(line)
                 
                 self.last_update = datetime.now()
                 
+            except socket.timeout:
+                logger.debug("Socket timeout, continuing...")
+                continue
+            except socket.error as e:
+                logger.error(f"Socket error: {e}")
+                break
             except Exception as e:
-                logger.debug(f"AIS simulation error: {e}")
-                time.sleep(1)
+                logger.error(f"Error processing AIS data: {e}")
+                continue
+        
+        # If we get here, connection was lost
+        if self.running:
+            logger.warning("🔌 AIS connection lost, attempting reconnection...")
+            self._attempt_reconnection()
+    
+    def _process_ais_message(self, nmea_message: str):
+        """
+        Process individual AIS NMEA message.
+        
+        Args:
+            nmea_message: Raw NMEA AIS message string
+        """
+        try:
+            if not PYAIS_AVAILABLE:
+                logger.warning("pyais not installed, cannot parse AIS messages")
+                return
+            
+            # Decode AIS message
+            decoded = decode(nmea_message)
+            
+            # Extract vessel data
+            vessel_data = self._extract_vessel_from_ais(decoded)
+            if vessel_data:
+                self._update_vessel_data(vessel_data)
+                
+        except Exception as e:
+            logger.debug(f"Error processing AIS message: {e}")
+    
+    def _extract_vessel_from_ais(self, ais_data) -> Optional[Dict[str, Any]]:
+        """
+        Extract vessel information from decoded AIS data.
+        
+        Args:
+            ais_data: Decoded AIS data from pyais
+            
+        Returns:
+            Dictionary with vessel information or None if invalid
+        """
+        try:
+            # Basic validation
+            if not hasattr(ais_data, 'mmsi'):
+                return None
+            
+            mmsi = str(ais_data.mmsi)
+            
+            # Skip if outside Norwegian waters
+            lat = getattr(ais_data, 'lat', None)
+            lon = getattr(ais_data, 'lon', None)
+            
+            if lat is None or lon is None:
+                return None
+            
+            if not self._is_in_norwegian_waters(lat, lon):
+                return None
+            
+            # Extract vessel information
+            vessel = {
+                'mmsi': mmsi,
+                'name': getattr(ais_data, 'shipname', f'VESSEL_{mmsi[-6:]}').strip(),
+                'type': self._get_vessel_type(getattr(ais_data, 'shiptype', 0)),
+                'lat': lat,
+                'lon': lon,
+                'speed': getattr(ais_data, 'speed', 0.0),
+                'course': getattr(ais_data, 'course', 0.0),
+                'heading': getattr(ais_data, 'heading', 0.0),
+                'status': self._get_navigation_status(getattr(ais_data, 'nav_status', 0)),
+                'destination': getattr(ais_data, 'destination', 'Unknown').strip(),
+                'timestamp': datetime.utcnow().isoformat() + "Z",
+                'data_source': 'real_ais_stream',
+                'is_commercial': self._is_commercial_vessel(getattr(ais_data, 'shiptype', 0)),
+                'is_real': True
+            }
+            
+            # Add additional metadata if available
+            if hasattr(ais_data, 'length'):
+                vessel['length'] = ais_data.length
+            if hasattr(ais_data, 'width'):
+                vessel['width'] = ais_data.width
+            if hasattr(ais_data, 'draught'):
+                vessel['draught'] = ais_data.draught
+            
+            return vessel
+            
+        except Exception as e:
+            logger.debug(f"Error extracting vessel from AIS: {e}")
+            return None
+    
+    def _update_vessel_data(self, vessel_data: Dict[str, Any]):
+        """
+        Update vessel data in memory cache.
+        
+        Args:
+            vessel_data: New vessel data to add/update
+        """
+        mmsi = vessel_data['mmsi']
+        
+        # Find existing vessel
+        for i, vessel in enumerate(self.ships_data):
+            if vessel.get('mmsi') == mmsi:
+                # Update existing vessel
+                self.ships_data[i] = {**vessel, **vessel_data}
+                return
+        
+        # Add new vessel (limit to reasonable number)
+        if len(self.ships_data) < 1000:  # Limit memory usage
+            self.ships_data.append(vessel_data)
+        
+        # Update Bergen vessel if applicable
+        if (vessel_data.get('is_commercial') and 
+            self._calculate_distance_km(
+                vessel_data['lat'], vessel_data['lon'],
+                60.3913, 5.3221  # Bergen coordinates
+            ) < 30):
+            
+            self.bergen_commercial_vessel = vessel_data
+            self.bergen_vessel_last_found = datetime.utcnow()
+            logger.debug(f"Updated Bergen commercial vessel: {vessel_data.get('name')}")
     
     def get_latest_positions(self) -> List[Dict[str, Any]]:
         """
         Get the latest vessel positions from all data sources.
         
         Returns:
-            List of current vessel positions with empirical metadata
+            List of current vessel positions with metadata
         """
-        # For real AIS mode, check if data is recent
-        if self.use_real_ais and (not self.ships_data or 
-                                  datetime.now() - self.last_update > timedelta(seconds=60)):
-            logger.debug("Refreshing empirical AIS data")
-            self._refresh_empirical_data()
+        # If using real AIS but no data yet, wait for data
+        if self.use_real_ais and not self.ships_data:
+            logger.debug("Waiting for real AIS data...")
+            time.sleep(0.1)  # Short wait for initial data
         
         return self.ships_data if self.ships_data else []
     
-    def _refresh_empirical_data(self):
+    def get_real_time_vessels(self, force_refresh: bool = False) -> List[Dict[str, Any]]:
         """
-        Refresh empirical vessel data with realistic patterns.
-        Simulates vessel movement between Norwegian cities.
+        Get real-time vessel positions with forced refresh.
+        Always returns the most current data available.
+        
+        Args:
+            force_refresh: Force data refresh even if recent
+            
+        Returns:
+            List of real-time vessel positions
         """
-        current_time = datetime.utcnow()
-        updated_vessels = []
+        # If using real AIS, get latest data
+        if self.use_real_ais and self.ais_socket:
+            # Check if we need to refresh
+            time_since_update = datetime.now() - self.last_update
+            if force_refresh or time_since_update.total_seconds() > 30:
+                # Trigger data refresh
+                self._refresh_empirical_data()
         
-        for vessel in self.ships_data:
-            # Skip if it's a fallback vessel
-            if vessel.get('is_fallback', False):
-                updated_vessels.append(vessel)
-                continue
-            
-            # Create updated vessel with realistic movement
-            updated_vessel = vessel.copy()
-            
-            # Simulate progress toward destination
-            destination = vessel.get('destination', 'Bergen').lower()
-            if destination in self.NORWEGIAN_CITIES:
-                dest_data = self.NORWEGIAN_CITIES[destination]
-                
-                # Move toward destination (simplified)
-                current_lat = vessel['lat']
-                current_lon = vessel['lon']
-                dest_lat = dest_data['lat']
-                dest_lon = dest_data['lon']
-                
-                # Calculate bearing and move slightly
-                distance = self._calculate_distance_km(current_lat, current_lon, dest_lat, dest_lon)
-                
-                if distance > 1:  # Not at destination yet
-                    # Move 1% of remaining distance
-                    move_factor = 0.01
-                    updated_vessel['lat'] = current_lat + (dest_lat - current_lat) * move_factor
-                    updated_vessel['lon'] = current_lon + (dest_lon - current_lon) * move_factor
-                else:
-                    # At destination, select new destination
-                    new_dest = random.choice([
-                        city for city in self.NORWEGIAN_CITIES.keys() 
-                        if city != destination
-                    ])
-                    updated_vessel['destination'] = new_dest.capitalize()
-            
-            updated_vessel['timestamp'] = current_time.isoformat() + "Z"
-            updated_vessels.append(updated_vessel)
+        return self.get_latest_positions()
+    
+    def _is_commercial_vessel(self, ship_type_code: int) -> bool:
+        """
+        Check if vessel type is commercial.
         
-        self.ships_data = updated_vessels
-        self.last_update = datetime.now()
+        Args:
+            ship_type_code: AIS ship type code
+            
+        Returns:
+            True if commercial vessel
+        """
+        commercial_types = [70, 71, 72, 73, 74, 75, 76, 77, 78, 79,  # Cargo
+                           80, 81, 82, 83, 84, 85, 86, 87, 88, 89]   # Tanker
+        
+        return ship_type_code in commercial_types
     
     # ===== COMPATIBILITY METHODS FOR OLDER CODE =====
     
     def start_ais_stream(self):
         """
         Start AIS stream (compatibility method).
-        Uses the internal method name.
         """
         logger.info("AIS stream start requested")
         try:
-            # Try to call the internal method
             self._start_real_ais_stream()
             logger.info("✅ AIS stream started successfully")
-        except AttributeError:
-            # If the internal method doesn't exist, just log
-            logger.info("ℹ️ AIS stream already running or using mock data")
+        except Exception as e:
+            logger.error(f"❌ Failed to start AIS stream: {e}")
+            raise
     
     def stop_ais_stream(self):
         """
         Stop AIS stream (compatibility method).
         """
         self.running = False
-        if hasattr(self, 'ais_socket') and self.ais_socket:
+        if self.ais_socket:
             self.ais_socket.close()
             self.ais_socket = None
         logger.info("AIS stream stopped")
@@ -553,8 +714,9 @@ class EmpiricalAISService:
         Manually refresh AIS data (compatibility method).
         """
         logger.info("Manual refresh requested")
-        self._refresh_empirical_data()
-        logger.info("✅ AIS data refreshed")
+        # For real AIS, just update timestamp
+        self.last_update = datetime.now()
+        logger.info("✅ AIS data timestamp updated")
     
     def get_vessels_near(self, lat: float, lon: float, radius_km: float = 50) -> List[Dict[str, Any]]:
         """
@@ -606,9 +768,19 @@ class EmpiricalAISService:
             Human readable vessel type
         """
         type_map = {
-            30: "Fishing", 36: "Sailing", 37: "Pleasure Craft",
-            50: "Pilot Vessel", 51: "Search and Rescue", 52: "Tug",
-            60: "Passenger", 70: "Cargo", 80: "Tanker", 90: "Other"
+            30: "Fishing", 31: "Towing", 32: "Towing Long/Large",
+            33: "Dredging", 34: "Diving", 35: "Military",
+            36: "Sailing", 37: "Pleasure Craft", 50: "Pilot Vessel",
+            51: "Search and Rescue", 52: "Tug", 53: "Port Tender",
+            54: "Anti-Pollution", 55: "Law Enforcement", 58: "Medical Transport",
+            60: "Passenger", 61: "Passenger Hazard A", 62: "Passenger Hazard B",
+            63: "Passenger Hazard C", 64: "Passenger Hazard D", 69: "Passenger No Additional Info",
+            70: "Cargo", 71: "Cargo Hazard A", 72: "Cargo Hazard B",
+            73: "Cargo Hazard C", 74: "Cargo Hazard D", 79: "Cargo No Additional Info",
+            80: "Tanker", 81: "Tanker Hazard A", 82: "Tanker Hazard B",
+            83: "Tanker Hazard C", 84: "Tanker Hazard D", 89: "Tanker No Additional Info",
+            90: "Other", 91: "Other Hazard A", 92: "Other Hazard B",
+            93: "Other Hazard C", 94: "Other Hazard D"
         }
         return type_map.get(ship_type_code, "Unknown")
     
@@ -623,10 +795,14 @@ class EmpiricalAISService:
             Human readable status
         """
         status_map = {
-            0: "Underway", 1: "At Anchor", 2: "Not Under Command",
-            3: "Restricted Maneuverability", 4: "Constrained by Draught",
-            5: "Moored", 6: "Aground", 7: "Fishing", 8: "Sailing",
-            15: "Not Defined"
+            0: "Underway using engine", 1: "At anchor",
+            2: "Not under command", 3: "Restricted maneuverability",
+            4: "Constrained by draught", 5: "Moored",
+            6: "Aground", 7: "Engaged in fishing",
+            8: "Underway sailing", 9: "Reserved for future amendment",
+            10: "Reserved for future amendment", 11: "Reserved for future amendment",
+            12: "Reserved for future amendment", 13: "Reserved for future amendment",
+            14: "AIS-SART (active)", 15: "Not defined"
         }
         return status_map.get(nav_status, "Unknown")
     
@@ -637,7 +813,7 @@ class EmpiricalAISService:
         Get comprehensive service status and statistics.
         
         Returns:
-            Service status with empirical data metrics
+            Service status with data metrics
         """
         return {
             "service": "EmpiricalAISService",
@@ -653,13 +829,14 @@ class EmpiricalAISService:
                 "last_update": self.last_update.isoformat(),
                 "bergen_commercial_vessel": bool(self.bergen_commercial_vessel),
                 "norwegian_cities_covered": len(self.NORWEGIAN_CITIES),
-                "vessel_cache_size": len(self.vessel_cache)
+                "vessel_cache_size": len(self.vessel_cache),
+                "connection_status": "connected" if self.ais_socket else "disconnected",
+                "connection_attempts": self.connection_attempts
             },
-            "empirical_focus": {
-                "primary_city": "Bergen",
-                "commercial_vessel_priority": True,
-                "norwegian_coverage": True,
-                "data_quality": "empirical_with_fallbacks"
+            "operational_status": {
+                "running": self.running,
+                "mode": "real_ais" if self.use_real_ais else "empirical",
+                "data_quality": "real_time" if self.use_real_ais else "empirical_simulation"
             }
         }
     
@@ -684,8 +861,8 @@ class EmpiricalAISService:
             'analysis_timestamp': datetime.utcnow().isoformat(),
             'vessel': vessel,
             'route_analysis': estimated_route,
-            'empirical_confidence': 'high' if not vessel.get('is_fallback') else 'medium',
-            'data_sources': ['Norwegian AIS patterns', 'Empirical vessel registry'],
+            'empirical_confidence': 'high' if vessel.get('is_real') else 'medium',
+            'data_sources': ['Real-time AIS' if vessel.get('is_real') else 'Norwegian AIS patterns'],
             'recommendations': [
                 'Monitor weather conditions along route',
                 'Verify hazard proximity in high-risk areas',
@@ -742,8 +919,8 @@ class EmpiricalAISService:
                 self._calculate_distance_km(*current_pos, *dest_coords) / 
                 max(vessel.get('speed', 10) * 1.852, 5), 1
             ),
-            'route_confidence': 'medium',
-            'methodology': 'Geospatial analysis based on current position and destination'
+            'route_confidence': 'high' if vessel.get('is_real') else 'medium',
+            'methodology': 'Real-time AIS analysis' if vessel.get('is_real') else 'Geospatial estimation'
         }
 
 

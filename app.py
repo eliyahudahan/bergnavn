@@ -51,6 +51,72 @@ def _detect_migration_mode():
     return "alembic" in sys.argv[0] or ("flask" in sys.argv[0] and len(sys.argv) > 1 and "db" in sys.argv[1])
 
 
+def _initialize_ais_service(app, testing=False, migration_mode=False):
+    """
+    Initialize the appropriate AIS service based on configuration.
+    Priority: Kystverket > Kystdatahuset > Empirical fallback
+    """
+    # Check if AIS is disabled
+    if os.getenv("DISABLE_AIS_SERVICE") == "1":
+        logging.info("🔧 AIS Service disabled by configuration")
+        return
+    
+    # Try Kystverket real-time AIS first
+    use_kystverket = os.getenv("USE_KYSTVERKET_AIS", "false").strip().lower() == "true"
+    kystverket_host = os.getenv("KYSTVERKET_AIS_HOST", "").strip()
+    
+    if use_kystverket and kystverket_host:
+        try:
+            from backend.services.ais_service import ais_service
+            # Force real-time mode
+            ais_service.use_real_ais = True
+            ais_service.ais_host = kystverket_host
+            ais_service.ais_port = int(os.getenv("KYSTVERKET_AIS_PORT", "5631").strip())
+            
+            ais_service.start_ais_stream()
+            app.ais_service = ais_service
+            logging.info("✅ Kystverket Real-Time AIS Service initialized")
+            logging.info(f"📡 Connected to: {kystverket_host}")
+            return
+        except Exception as e:
+            logging.error(f"❌ Kystverket AIS failed: {e}")
+    
+    # Try Kystdatahuset as fallback
+    use_kystdatahuset = os.getenv("USE_KYSTDATAHUSET_AIS", "false").strip().lower() == "true"
+    if use_kystdatahuset:
+        try:
+            from backend.services.kystdatahuset_adapter import kystdatahuset_adapter
+            app.ais_service = kystdatahuset_adapter
+            logging.info("✅ Kystdatahuset AIS Adapter initialized")
+            logging.info(f"📡 Serving {len(kystdatahuset_adapter.NORWEGIAN_CITIES)} Norwegian cities")
+            return
+        except Exception as e:
+            logging.error(f"❌ Kystdatahuset Adapter failed: {e}")
+    
+    # Fallback to empirical service with real-time simulation
+    try:
+        from backend.services.ais_service import ais_service
+        # Configure for empirical mode but with real-time updates
+        ais_service.use_real_ais = False
+        ais_service.running = True
+        
+        # Start real-time simulation thread
+        import threading
+        def real_time_simulation():
+            while ais_service.running:
+                ais_service.manual_refresh()
+                import time
+                time.sleep(30)  # Update every 30 seconds
+        
+        thread = threading.Thread(target=real_time_simulation, daemon=True)
+        thread.start()
+        
+        app.ais_service = ais_service
+        logging.info("✅ Empirical AIS Service with real-time simulation")
+    except Exception as e:
+        logging.warning(f"⚠️ AIS Service initialization failed: {e}")
+
+
 def create_app(config_name=None, testing=False, start_scheduler=True):
     """
     Factory method to create and configure Flask application.
@@ -100,29 +166,11 @@ def create_app(config_name=None, testing=False, start_scheduler=True):
     migrate.init_app(app, db)
     logging.info("✅ Database and extensions initialized")
 
-    # Initialize AIS Service (if not in migration/testing mode)
-    if not (testing or migration_mode) and os.getenv("DISABLE_AIS_SERVICE") != "1":
-        try:
-            from backend.services.ais_service import ais_service
-            ais_service.start_ais_stream()
-            app.ais_service = ais_service
-            logging.info("✅ AIS Live Service initialized successfully")
-        except Exception as e:
-            logging.warning(f"⚠️ AIS Service initialization failed: {e}")
+    # Initialize AIS Service - SINGLE SOURCE OF TRUTH
+    if not (testing or migration_mode):
+        _initialize_ais_service(app, testing, migration_mode)
     else:
         logging.info("🔧 AIS Service disabled (testing/migration mode)")
-
-    # Initialize Kystdatahuset Adapter for real Norwegian AIS data
-    if os.getenv("USE_KYSTDATAHUSET_AIS") == "true" and not (testing or migration_mode):
-        try:
-            from backend.services.kystdatahuset_adapter import kystdatahuset_adapter
-            app.kystdatahuset_adapter = kystdatahuset_adapter
-            logging.info("✅ Kystdatahuset Adapter initialized for Norwegian AIS data")
-            logging.info(f"📡 Serving {len(kystdatahuset_adapter.NORWEGIAN_CITIES)} Norwegian cities")
-        except Exception as e:
-            logging.warning(f"⚠️ Kystdatahuset Adapter initialization failed: {e}")
-    else:
-        logging.info("🔧 Kystdatahuset Adapter disabled")
 
     # Initialize scheduler for background tasks
     if start_scheduler and not testing and not migration_mode and os.getenv("FLASK_SKIP_SCHEDULER") != "1":
@@ -193,7 +241,8 @@ def create_app(config_name=None, testing=False, start_scheduler=True):
             'USE_KYSTDATAHUSET_AIS': os.getenv('USE_KYSTDATAHUSET_AIS') == 'true',
             'AIS_ENABLED': os.getenv('DISABLE_AIS_SERVICE') != '1',
             'BARENTSWATCH_CLIENT_ID': bool(os.getenv('BARENTSWATCH_CLIENT_ID')),
-            'FLASK_ENV': os.getenv('FLASK_ENV', 'development')
+            'FLASK_ENV': os.getenv('FLASK_ENV', 'development'),
+            'ACTIVE_AIS_SERVICE': getattr(app, 'ais_service', None).__class__.__name__ if hasattr(app, 'ais_service') else 'None'
         }
         return jsonify(keys_status)
 

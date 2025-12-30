@@ -1,0 +1,550 @@
+{% extends "base.html" %}					{% extends "base.html" %}
+
+{% block title %}Maritime Dashboard | BergNavn{% endblock %}  |	{% block title %}NCA Maritime Routes | BergNavn{% endblock %}
+							      <
+{% block head %}					      <
+<!-- Dashboard CSS -->					      <
+<link href="{{ url_for('static', filename='css/dashboard.css' <
+<!-- Font Awesome -->					      <
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/aja <
+<!-- Leaflet MarkerCluster -->				      <
+<link rel="stylesheet" href="https://unpkg.com/leaflet.marker <
+<link rel="stylesheet" href="https://unpkg.com/leaflet.marker <
+{% endblock %}						      <
+
+{% block content %}						{% block content %}
+<!-- Dashboard Header -->				      |	<div class="container-fluid py-4">
+<div class="dashboard-header text-center">		      |	    <!-- Header -->
+    <h1 class="text-gradient">🌊 Maritime Dashboard</h1>      <
+    <p class="lead">Live AIS • MET Weather • RTZ Routes</p>   <
+    							      <
+    <!-- Port Status -->				      <
+    <div class="mt-3 ports-badges-container">		      <
+        {% for port in ['Bergen', 'Oslo', 'Stavanger', 'Trond <
+            <span class="city-badge badge-{{ port|lower|repla <
+                  data-port="{{ port|lower }}">		      <
+                {{ port }}				      <
+            </span>					      <
+        {% endfor %}					      <
+    </div>						      <
+</div>							      <
+							      <
+<!-- Main Dashboard -->					      <
+<div class="container-fluid mt-4">			      <
+    							      <
+    <!-- Control Bar -->				      <
+    <div class="row mb-4">					    <div class="row mb-4">
+        <div class="col-12">				      |	        <div class="col-12 text-center">
+            <div class="dashboard-controls">		      |	            <h1 class="text-gradient">🗺️ NCA Official Maritime
+                <div class="d-flex justify-content-between al |	            <p class="lead">
+                    <div>				      |	                Verified route corridors from the Norwegian C
+                        <span class="status-indicator status- |	            </p>
+                        <span class="fw-semibold text-success |	            <div class="alert alert-primary d-inline-block">
+                        <span class="ms-3" id="local-time">-- |	                <small class="d-flex align-items-center">
+                    </div>				      |	                    <i class="bi bi-shield-check me-2 fs-5"><
+                    <div class="btn-group btn-group-sm">      |	                    <span>
+                        <button class="control-btn" id="refre |	                        <strong>Source:</strong> RTZ route fi
+                            <i class="bi bi-arrow-clockwise"> |	                        <span class="mx-2">•</span>
+                        </button>			      |	                        <strong>Coverage:</strong> {{ cities_
+                        <button class="control-btn" id="rtz-b |	                    </span>
+                            <i class="fas fa-route"></i>      |	                </small>
+                        </button>			      <
+                        <button class="control-btn" id="weath <
+                            <i class="bi bi-cloud-sun"></i>   <
+                        </button>			      <
+                        <button class="control-btn" id="ais-b <
+                            <i class="bi bi-ship"></i>	      <
+                        </button>			      <
+                        <button class="control-btn" id="turbi <
+                            <i class="bi bi-fan"></i>	      <
+                        </button>			      <
+                        <button class="control-btn" id="tanke <
+                            <i class="bi bi-droplet"></i>     <
+                        </button>			      <
+                    </div>				      <
+                </div>					      <
+            </div>						            </div>
+        </div>							        </div>
+    </div>							    </div>
+
+    <!-- Map Section -->				      |	    <!-- Real-Time Statistics -->
+    <div class="row mb-4">					    <div class="row mb-4">
+        <div class="col-12">				      |	        <div class="col-md-3 mb-3">
+            <div class="dashboard-card">		      |	            <div class="card maritime-card text-center h-100"
+                <div class="card-header d-flex justify-conten |	                <div class="card-body">
+                    <h5 class="mb-0"><i class="bi bi-geo-alt  |	                    <h3 class="text-primary mb-1">{{ routes|l
+                    <div>				      |	                    <p class="mb-0 fw-semibold">Total Routes<
+                        <span class="badge bg-light text-dark |	                    <small class="text-muted">Database + RTZ 
+                            <i class="bi bi-ship me-1"></i>   <
+                            <span id="vessel-count">0</span>  <
+                        </span>				      <
+                        <span class="badge bg-success text-da <
+                            <i class="fas fa-route me-1"></i> <
+                            <span id="route-count">	      <
+                                {% if routes and routes|lengt <
+                                    {{ routes|length }}	      <
+                                {% else %}		      <
+                                    0			      <
+                                {% endif %}		      <
+                            </span>			      <
+                        </span>				      <
+                        <span class="badge bg-warning text-da <
+                            <i class="bi bi-wind me-1"></i>   <
+                            <span id="turbine-count">0</span> <
+                        </span>				      <
+                    </div>				      <
+                </div>						                </div>
+                <div class="card-body p-0">		      |	                <div class="card-footer py-2">
+                    <div id="maritime-map" style="height: 500 |	                    <small><i class="bi bi-database me-1"></i
+                </div>						                </div>
+            </div>						            </div>
+        </div>							        </div>
+    </div>						      <
+							      <
+    <!-- Stats Cards -->				      <
+    <div class="row mb-4">				      <
+        <!-- Weather -->				      <
+        <div class="col-md-3 mb-3">				        <div class="col-md-3 mb-3">
+            <div class="stats-card temp-stat">		      |	            <div class="card maritime-card text-center h-100"
+                <h6><i class="bi bi-cloud-sun me-2"></i>Weath |	                <div class="card-body">
+                <h3 id="weather-temp">--°C</h3>		      |	                    <h3 class="text-success mb-1">{{ "%.1f"|f
+                <small class="text-muted" id="weather-locatio |	                    <p class="mb-0 fw-semibold">Total Distanc
+							      >	                    <small class="text-muted">Nautical Miles 
+							      >	                </div>
+							      >	                <div class="card-footer py-2">
+							      >	                    <small><i class="bi bi-rulers me-1"></i>E
+							      >	                </div>
+            </div>						            </div>
+        </div>							        </div>
+        						      <
+        <!-- Wind -->					      <
+        <div class="col-md-3 mb-3">				        <div class="col-md-3 mb-3">
+            <div class="stats-card wind-stat">		      |	            <div class="card maritime-card text-center h-100"
+                <h6><i class="bi bi-wind me-2"></i>Wind</h6>  |	                <div class="card-body">
+                <h3 id="wind-speed">-- m/s</h3>		      |	                    <h3 class="text-warning mb-1">{{ waypoint
+                <small class="text-muted" id="wind-direction" |	                    <p class="mb-0 fw-semibold">Waypoints</p>
+							      >	                    <small class="text-muted">Navigation Poin
+							      >	                </div>
+							      >	                <div class="card-footer py-2">
+							      >	                    <small><i class="bi bi-signpost me-1"></i
+							      >	                </div>
+            </div>						            </div>
+        </div>							        </div>
+        						      <
+        <!-- Vessels -->				      <
+        <div class="col-md-3 mb-3">				        <div class="col-md-3 mb-3">
+            <div class="stats-card vessels-stat">	      |	            <div class="card maritime-card text-center h-100"
+                <h6><i class="bi bi-ship me-2"></i>Vessels</h |	                <div class="card-body">
+                <h3 id="active-vessels">--</h3>		      |	                    <h3 class="text-info mb-1">{{ active_port
+                <small class="text-muted" id="vessel-type">Lo |	                    <p class="mb-0 fw-semibold">Active Ports<
+							      >	                    <small class="text-muted">With Route Data
+							      >	                </div>
+							      >	                <div class="card-footer py-2">
+							      >	                    <small>
+							      >	                        <i class="bi bi-pin-map me-1"></i>
+							      >	                        {{ cities_with_routes|length }}/10
+							      >	                    </small>
+							      >	                </div>
+            </div>						            </div>
+        </div>							        </div>
+        						      |	    </div>
+        <!-- RTZ Routes -->				      |
+        <div class="col-md-3 mb-3">			      |	    <!-- Port Status Grid -->
+            <div class="stats-card rtz-stat">		      |	    <div class="row mb-4">
+                <h6><i class="fas fa-route me-2"></i>RTZ Rout |	        <div class="col-12">
+                <h3 id="route-display-count">		      |	            <div class="card maritime-card">
+                    {% if routes and routes|length > 0 %}     |	                <div class="card-header">
+                        {{ routes|length }}		      |	                    <h5 class="mb-0 d-flex align-items-center
+                    {% else %}				      |	                        <i class="bi bi-pin-map-fill me-2 tex
+                        0				      |	                        Norwegian Port Coverage
+                    {% endif %}				      |	                    </h5>
+                </h3>					      |	                    <p class="mb-0 text-muted small">RTZ rout
+                <small class="text-muted" id="route-coverage" |	                </div>
+                    {% if cities_with_routes and cities_with_ |	                <div class="card-body">
+                        {{ cities_with_routes|length }}/10 po |	                    <div class="row g-3">
+                    {% else %}				      |	                        {% set port_list = ['Ålesund', 'Andal
+                        0/10 ports			      |	                        {% for port in port_list %}
+                    {% endif %}				      |	                        <div class="col-md-4 col-lg-2 col-6">
+                </small>				      |	                            <div class="port-status-card text
+							      >	                                {% if port in cities_with_rou
+							      >	                                    border-success border-2
+							      >	                                {% else %}
+							      >	                                    border-light border
+							      >	                                {% endif %}">
+							      >	                                <div class="mb-2">
+							      >	                                    <i class="bi bi-geo fs-4 
+							      >	                                        {% if port in cities_
+							      >	                                            text-success
+							      >	                                        {% else %}
+							      >	                                            text-secondary
+							      >	                                        {% endif %}"></i>
+							      >	                                </div>
+							      >	                                <h6 class="mb-1">{{ port }}</
+							      >	                                <small class="d-block">
+							      >	                                    {% if port in cities_with
+							      >	                                        <span class="badge bg
+							      >	                                    {% else %}
+							      >	                                        <span class="badge bg
+							      >	                                    {% endif %}
+							      >	                                </small>
+							      >	                                {% if port in cities_with_rou
+							      >	                                    <small class="text-muted 
+							      >	                                        <i class="bi bi-file-
+							      >	                                        {% set port_routes = 
+							      >	                                        {% for route in route
+							      >	                                            {% set _ = port_r
+							      >	                                        {% endfor %}
+							      >	                                        {{ port_routes|length
+							      >	                                    </small>
+							      >	                                {% endif %}
+							      >	                            </div>
+							      >	                        </div>
+							      >	                        {% endfor %}
+							      >	                    </div>
+							      >	                </div>
+            </div>						            </div>
+        </div>							        </div>
+    </div>							    </div>
+
+    <!-- Routes Table -->					    <!-- Routes Table -->
+    <div class="row">						    <div class="row">
+        <div class="col-12">					        <div class="col-12">
+            <div class="dashboard-card">		      |	            <div class="card maritime-card">
+                <div class="card-header">		      |	                <div class="card-header d-flex justify-conten
+                    <h5 class="mb-0">				                    <h5 class="mb-0">
+                        <i class="fas fa-route me-2"></i>     |	                        <i class="bi bi-signpost-split me-2">
+                        NCA Maritime Routes		      |	                        NCA Verified Maritime Routes
+                    </h5>					                    </h5>
+							      >	                    <div>
+							      >	                        <a href="{{ url_for('routes_bp.scan_r
+							      >	                           class="btn btn-sm btn-outline-succ
+							      >	                           target="_blank">
+							      >	                            <i class="bi bi-search me-1"></i>
+							      >	                        </a>
+							      >	                        <span class="badge bg-primary">
+							      >	                            <i class="bi bi-database me-1"></
+							      >	                            {{ routes|length }} Routes
+							      >	                        </span>
+							      >	                    </div>
+                </div>						                </div>
+                <div class="card-body">				                <div class="card-body">
+                    {% if routes and routes|length > 0 %}	                    {% if routes and routes|length > 0 %}
+                        <div class="table-responsive">	      |	                    <div class="table-responsive">
+                            <table class="table table-sm tabl |	                        <table class="table table-hover">
+                                <thead>			      |	                            <thead>
+                                    <tr>		      |	                                <tr>
+                                        <th>Route Name</th>   |	                                    <th>Route</th>
+                                        <th>Origin</th>	      |	                                    <th>Origin</th>
+                                        <th>Destination</th>  |	                                    <th>Destination</th>
+                                        <th>Distance</th>     |	                                    <th>Distance (NM)</th>
+                                        <th>Waypoints</th>    |	                                    <th>Waypoints</th>
+                                        <th>Source</th>	      |	                                    <th>Source</th>
+                                    </tr>		      |	                                    <th>Status</th>
+                                </thead>		      |	                                </tr>
+                                <tbody>			      |	                            </thead>
+                                    {% for route in routes %} |	                            <tbody>
+                                    <tr>		      |	                                {% for route in routes %}
+                                        <!-- FIX 1: Use pre-f |	                                <tr>
+                                        <td>		      |	                                    <td>
+                                            {% if route.displ |	                                        <strong class="d-bloc
+                                                {{ route.disp |	                                        <small class="text-mu
+                                            {% elif route.nam |	                                    </td>
+                                                {{ route.name |	                                    <td>
+                                            {% else %}	      |	                                        <span class="badge bg
+                                                NCA Route {{  |	                                            <i class="bi bi-g
+                                            {% endif %}	      |	                                        </span>
+                                        </td>		      |	                                    </td>
+                                        <!-- FIX 2 & 3: Direc |	                                    <td>
+                                        <td>		      |	                                        <span class="badge bg
+                                            {% if route.origi |	                                            <i class="bi bi-g
+                                                {{ route.orig |	                                        </span>
+                                            {% else %}	      |	                                    </td>
+                                                Norwegian Coa |	                                    <td>
+                                            {% endif %}	      |	                                        <strong class="d-bloc
+                                        </td>		      |	                                        <small class="text-mu
+                                        <td>		      |	                                    </td>
+                                            {% if route.desti |	                                    <td>
+                                                {{ route.dest |	                                        <span class="badge bg
+                                            {% else %}	      |	                                            {{ route.waypoint
+                                                Norwegian Coa |	                                        </span>
+                                            {% endif %}	      |	                                    </td>
+                                        </td>		      |	                                    <td>
+                                        <td>{{ (route.total_d |	                                        <small class="d-flex 
+                                        <!-- FIX 4: Show actu <
+                                        <td>{{ route.waypoint <
+                                        <td>		      <
+                                            {% if route.sourc	                                            {% if route.sourc
+                                                <span class=" |	                                            <i class="bi bi-s
+                                            {% elif route.sou |	                                            Kystverket RTZ
+                                                <span class=" <
+                                            {% else %}		                                            {% else %}
+                                                <span class=" |	                                            <i class="bi bi-f
+							      >	                                            RTZ File
+                                            {% endif %}		                                            {% endif %}
+                                        </td>		      |	                                        </small>
+                                    </tr>		      |	                                    </td>
+                                    {% endfor %}	      |	                                    <td>
+                                </tbody>		      |	                                        {% if route.is_active
+                            </table>			      |	                                        <span class="badge bg
+                        </div>				      |	                                        {% elif route.source 
+							      >	                                        <span class="badge bg
+							      >	                                        {% else %}
+							      >	                                        <span class="badge bg
+							      >	                                        {% endif %}
+							      >	                                    </td>
+							      >	                                </tr>
+							      >	                                {% endfor %}
+							      >	                            </tbody>
+							      >	                        </table>
+							      >	                    </div>
+                    {% else %}					                    {% else %}
+                        <div class="text-center py-4">	      |	                    <div class="text-center py-5">
+                            <i class="fas fa-route text-muted |	                        <div class="mb-3">
+                            <p class="mt-2 text-muted">No RTZ |	                            <i class="bi bi-file-earmark-zip 
+                            <a href="{{ url_for('routes_bp.sc <
+                               class="btn btn-sm btn-outline- <
+                                <i class="bi bi-search me-1"> <
+                            </a>			      <
+                        </div>					                        </div>
+							      >	                        <h5 class="text-muted">No RTZ Routes 
+							      >	                        <p class="text-muted mb-3">
+							      >	                            No RTZ route data is currently av
+							      >	                        </p>
+							      >	                        <div class="alert alert-warning text-
+							      >	                            <small>
+							      >	                                <i class="bi bi-exclamation-t
+							      >	                                <strong>Action Required:</str
+							      >	                                <ul class="mb-0 mt-2">
+							      >	                                    <li>Verify RTZ files exis
+							      >	                                    <li>Run database migratio
+							      >	                                    <li>Click "Scan RTZ Files
+							      >	                                </ul>
+							      >	                            </small>
+							      >	                        </div>
+							      >	                    </div>
+                    {% endif %}					                    {% endif %}
+                </div>						                </div>
+							      >	                <div class="card-footer">
+							      >	                    <div class="row align-items-center">
+							      >	                        <div class="col-md-6">
+							      >	                            <small class="text-muted">
+							      >	                                <i class="bi bi-info-circle m
+							      >	                                <strong>Data Sources:</strong
+							      >	                                <strong>Last Scan:</strong> <
+							      >	                            </small>
+							      >	                        </div>
+							      >	                        <div class="col-md-6 text-md-end">
+							      >	                            <small class="text-muted">
+							      >	                                <i class="bi bi-check-circle 
+							      >	                                {{ cities_with_routes|length 
+							      >	                                <span class="ms-2">•</span>
+							      >	                                <i class="bi bi-hdd me-1"></i
+							      >	                                {{ routes|length }} total rou
+							      >	                            </small>
+							      >	                        </div>
+							      >	                    </div>
+							      >	                </div>
+            </div>						            </div>
+        </div>							        </div>
+    </div>							    </div>
+    							      |
+    <!-- Real-time Data Status -->			      |	    <!-- System Integration Info -->
+    <div class="row mt-3">				      |	    <div class="row mt-4">
+        <div class="col-12">				      |	        <div class="col-md-8">
+            <div class="alert alert-secondary small">	      |	            <div class="alert alert-secondary">
+                <div class="d-flex justify-content-between al |	                <h6 class="alert-heading d-flex align-items-c
+                    <span>				      |	                    <i class="bi bi-diagram-3 me-2"></i>
+                        <i class="bi bi-activity me-1"></i>   |	                    System Integration
+                        <span id="data-update-time">Data upda |	                </h6>
+                    </span>				      |	                <small class="d-block mb-1">
+                    <span>				      |	                    This system combines <strong>PostgreSQL d
+                        <span class="badge bg-light text-dark |	                    <strong>direct RTZ file discovery</strong
+                            AIS: <span id="ais-status">Connec |	                </small>
+                        </span>				      |	                <small class="d-block">
+                        <span class="badge bg-light text-dark |	                    Routes are loaded from database if availa
+                            Weather: <span id="weather-status |	                    <code>backend/assets/routeinfo_routes/</c
+                        </span>				      |	                </small>
+                    </span>				      |	            </div>
+                </div>					      |	        </div>
+							      >	        <div class="col-md-4">
+							      >	            <div class="alert alert-info">
+							      >	                <h6 class="alert-heading d-flex align-items-c
+							      >	                    <i class="bi bi-lightbulb me-2"></i>
+							      >	                    Quick Actions
+							      >	                </h6>
+							      >	                <small class="d-block mb-1">To add more route
+							      >	                <ol class="small mb-0 ps-3">
+							      >	                    <li>Add RTZ files to assets directory</li
+							      >	                    <li>Click "Scan RTZ Files" button</li>
+							      >	                    <li>Run RTZ parser to save to DB</li>
+							      >	                </ol>
+            </div>						            </div>
+        </div>							        </div>
+    </div>							    </div>
+</div>								</div>
+{% endblock %}							{% endblock %}
+
+{% block scripts %}						{% block scripts %}
+<!-- Leaflet MarkerCluster -->				      <
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/di <
+							      <
+<!-- Dashboard JavaScript -->				      <
+<script src="{{ url_for('static', filename='js/split/maritime <
+<script src="{{ url_for('static', filename='js/split/maritime <
+<script src="{{ url_for('static', filename='js/split/rtz_rout <
+<script src="{{ url_for('static', filename='js/split/ais_real <
+<script src="{{ url_for('static', filename='js/split/wind_tur <
+<script src="{{ url_for('static', filename='js/split/tanker_m <
+							      <
+<script>							<script>
+// Dashboard initialization				      |	// Update timestamp display
+document.addEventListener('DOMContentLoaded', function() {    |	function updateDataTimestamp() {
+    console.log('BergNavn Maritime Dashboard initialized');   |	    const now = new Date();
+    							      |	    const options = {
+    // Wind turbine button handler			      |	        timeZone: 'Europe/Oslo',
+    document.getElementById('turbine-btn').addEventListener(' |	        hour: '2-digit',
+        if (window.windTurbineManager) {		      |	        minute: '2-digit',
+            window.windTurbineManager.showTurbines();	      |	        day: 'numeric',
+            this.classList.toggle('active');		      |	        month: 'short'
+        }						      |	    };
+    });							      |	    const formatter = new Intl.DateTimeFormat('en-GB', option
+							      |	    const timestampElement = document.getElementById('data-ti
+    // Tanker button handler				      |	    if (timestampElement) {
+    document.getElementById('tanker-btn').addEventListener('c |	        timestampElement.textContent = formatter.format(now);
+        if (window.tankerMonitor) {			      <
+            window.tankerMonitor.showTankers();		      <
+            this.classList.toggle('active');		      <
+            						      <
+            // Start monitoring if not already		      <
+            if (!window.tankerMonitor.updateInterval) {	      <
+                window.tankerMonitor.startMonitoring();	      <
+            }						      <
+        }						      <
+    });							      <
+    							      <
+    // Update local time and data timestamp		      <
+    function updateTime() {				      <
+        const now = new Date();				      <
+        const timeStr = now.toLocaleTimeString('en-GB', {     <
+            timeZone: 'Europe/Oslo',			      <
+            hour: '2-digit', 				      <
+            minute: '2-digit' 				      <
+        });						      <
+        const dateStr = now.toLocaleDateString('en-GB', {     <
+            timeZone: 'Europe/Oslo',			      <
+            weekday: 'short',				      <
+            day: 'numeric',				      <
+            month: 'short'				      <
+        });						      <
+        						      <
+        // Update local time display			      <
+        document.getElementById('local-time').textContent = d <
+        						      <
+        // Update data timestamp			      <
+        document.getElementById('data-update-time').textConte <
+            `Data updated: ${dateStr} ${timeStr}`;	      <
+    }								    }
+							      >	}
+							      >
+							      >	document.addEventListener('DOMContentLoaded', function() {
+							      >	    updateDataTimestamp();
+    								    
+    updateTime();					      |	    // Update timestamp every minute
+    setInterval(updateTime, 60000);			      |	    setInterval(updateDataTimestamp, 60000);
+    							      <
+    // Button handlers					      <
+    document.getElementById('refresh-btn').addEventListener(' <
+        console.log('Manual refresh requested');	      <
+        location.reload();				      <
+    });							      <
+    							      <
+    document.getElementById('rtz-btn').addEventListener('clic <
+        if (window.rtzManager) {			      <
+            window.rtzManager.toggle();			      <
+        }						      <
+    });							      <
+    							      <
+    document.getElementById('ais-btn').addEventListener('clic <
+        if (window.aisManager && typeof window.aisManager.sho <
+            window.aisManager.showRealtimeVessels();	      <
+            this.classList.toggle('active');		      <
+        } else {					      <
+            console.warn('AIS manager not available');	      <
+            alert('Real-time AIS data is currently loading... <
+        }						      <
+    });							      <
+    								    
+    // Port badges - show routes for selected port	      |	    // Add click handlers for port status cards
+    document.querySelectorAll('.city-badge').forEach(badge => |	    document.querySelectorAll('.port-status-card').forEach(ca
+        badge.style.cursor = 'pointer';			      |	        card.addEventListener('click', function() {
+        badge.addEventListener('click', function() {	      |	            const portName = this.querySelector('h6').textCon
+            const port = this.dataset.port;		      |	            console.log('Port selected:', portName);
+            const portName = this.textContent.trim();	      <
+            console.log('Port selected:', port, portName);    <
+            							            
+            // Filter routes table for this port	      |	            // Filter table by this port
+            const rows = document.querySelectorAll('tbody tr'	            const rows = document.querySelectorAll('tbody tr'
+            let visibleCount = 0;			      <
+            						      <
+            rows.forEach(row => {				            rows.forEach(row => {
+                const originCell = row.cells[1];	      |	                const origin = row.querySelector('td:nth-chil
+                const destinationCell = row.cells[2];	      |	                const destination = row.querySelector('td:nth
+                					      <
+                // Use direct text content as data is now cle <
+                const originText = originCell.textContent.toL <
+                const destinationText = destinationCell.textC <
+                						                
+                if (originText.includes(port) || destinationT |	                if (origin.includes(portName) || destination.
+                    row.style.display = '';			                    row.style.display = '';
+                    visibleCount++;			      <
+                } else {					                } else {
+                    row.style.display = 'none';			                    row.style.display = 'none';
+                }						                }
+            });							            });
+            						      <
+            // Update route count display		      <
+            document.getElementById('route-display-count').te <
+            document.getElementById('route-coverage').textCon <
+                `${visibleCount} routes for ${portName}`;     <
+        });							        });
+    });								    });
+    								    
+    // Initialize AIS real-time data if available	      |	    // Add scan button functionality
+    if (typeof window.aisManager !== 'undefined') {	      |	    const scanButton = document.querySelector('a[href*="scan-
+        console.log('AIS manager found, starting real-time up |	    if (scanButton) {
+        setTimeout(() => {				      |	        scanButton.addEventListener('click', function(e) {
+            if (window.aisManager.startRealTimeUpdates) {     |	            if (!e.ctrlKey && !e.metaKey) {
+                window.aisManager.startRealTimeUpdates();     |	                e.preventDefault();
+							      >	                fetch(this.href)
+							      >	                    .then(response => response.json())
+							      >	                    .then(data => {
+							      >	                        alert(`Scanned ${data.cities_found} c
+							      >	                        location.reload();
+							      >	                    })
+							      >	                    .catch(err => {
+							      >	                        console.error('Scan failed:', err);
+							      >	                        alert('Scan failed: ' + err.message);
+							      >	                    });
+            }							            }
+        }, 2000);					      |	        });
+    }							      <
+    							      <
+    // Show loading status				      <
+    setTimeout(() => {					      <
+        const aisStatus = document.getElementById('ais-status <
+        if (aisStatus.textContent === 'Connecting...') {      <
+            aisStatus.textContent = 'Connected';	      <
+            aisStatus.classList.add('text-success');	      <
+        }						      <
+    }, 3000);						      <
+    							      <
+    // Initialize turbine count from data if available	      <
+    if (window.windTurbineManager && window.windTurbineManage <
+        setTimeout(() => {				      <
+            const turbineCount = window.windTurbineManager.tu <
+            document.getElementById('turbine-count').textCont <
+        }, 1000);					      <
+    }								    }
+});								});
+</script>							</script>
+{% endblock %}							{% endblock %}
