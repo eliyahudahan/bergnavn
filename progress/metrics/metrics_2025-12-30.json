@@ -1,0 +1,207 @@
+{
+  "total_commits": 22,
+  "commits": [
+    {
+      "date": "2025-12-30",
+      "author": "eliyahu",
+      "message": "Updated AIS service with real-time enhancements and RTZ route parsing improvements",
+      "hash": "9ae55cb929c0ae60e39345eca0f545f1cb6e5895",
+      "is_meaningful": true
+    },
+    {
+      "date": "2025-12-29",
+      "author": "eliyahu",
+      "message": "Fix RTZ route display naming",
+      "hash": "a697f378ee449a94c68ec2485bbe603684413a9f",
+      "is_meaningful": true
+    },
+    {
+      "date": "2025-12-29",
+      "author": "eliyahu",
+      "message": "Add real-time AIS layer and prepare industry data integration",
+      "hash": "6efdd0e7d9e83fecdbbd36cb5b4a03e145d6d9a3",
+      "is_meaningful": true
+    },
+    {
+      "date": "2025-12-29",
+      "author": "eliyahu",
+      "message": "Add progress tracking system",
+      "hash": "cf2b0903770d77207f63bd3b176431468596c3c8",
+      "is_meaningful": true
+    },
+    {
+      "date": "2025-12-28",
+      "author": "eliyahu",
+      "message": "test",
+      "hash": "6384328892b0f7d95e1dd4ccb5f7707cb14a6b57",
+      "is_meaningful": false
+    },
+    {
+      "date": "2025-12-28",
+      "author": "eliyahu",
+      "message": "Fix git_backup script to handle divergent branches",
+      "hash": "bcd169b8b4097cf2e7c87eccde632958eea54b41",
+      "is_meaningful": true
+    },
+    {
+      "date": "2025-12-28",
+      "author": "eliyahu",
+      "message": "Update maritime dashboard with real-time AIS, MET weather, and RTZ routes",
+      "hash": "7469bfbfd0e0c454553d23a2c3866c71ab556b20",
+      "is_meaningful": true
+    },
+    {
+      "date": "2025-12-28",
+      "author": "Eliyahu Dahan",
+      "message": "Update dashboard_base.html",
+      "hash": "e0446e2b5a71a4a1a35dd2fbd5206ec3955ebd86",
+      "is_meaningful": false
+    },
+    {
+      "date": "2025-12-28",
+      "author": "eliyahu",
+      "message": "fix: correct weather blueprint name and fix database queries in system dashboard",
+      "hash": "8b7c7526dab4b31820fe6b9e6e3d006f799d62fc",
+      "is_meaningful": true
+    },
+    {
+      "date": "2025-12-25",
+      "author": "eliyahu",
+      "message": "feat: Add system dashboard foundation with health monitoring",
+      "hash": "956873eb0ef1bc169767f7811b763214aaf5219f",
+      "is_meaningful": true
+    },
+    {
+      "date": "2025-12-25",
+      "author": "eliyahu",
+      "message": "Complete day 2025-12-25: Migration fix, health endpoint, safety tools",
+      "hash": "edadd71bbb05c4f612df90454df28f7926c8342b",
+      "is_meaningful": true
+    },
+    {
+      "date": "2025-12-24",
+      "author": "eliyahu",
+      "message": "Implemented BarentsWatch API integration with proper token management, caching, and endpoint discovery. Added comprehensive error handling and retry logic for reliable maritime hazard data fetching.",
+      "hash": "8b4208cd9fa9475e9c94dfa36082330b3a475b2c",
+      "is_meaningful": true
+    },
+    {
+      "date": "2025-12-23",
+      "author": "eliyahu",
+      "message": "feat: integrate MET Norway live weather API into recommendation engine",
+      "hash": "b5df251ba257fa256635370df3cfb0790e28b374",
+      "is_meaningful": true
+    },
+    {
+      "date": "2025-12-21",
+      "author": "eliyahu",
+      "message": "Add BarentsWatch API integration, hazard monitoring, and dashboard enhancements with working authentication",
+      "hash": "f3b6951d58a938312c6835ec47e5fb93809e4fd5",
+      "is_meaningful": true
+    },
+    {
+      "date": "2025-12-16",
+      "author": "eliyahu",
+      "message": "Add RTZ routes integration with Norwegian Coastal Administration API, map visualization, and interactive route loader panel",
+      "hash": "74e54a80e4c79bb26dfd13ba169aa86bc1896a63",
+      "is_meaningful": true
+    },
+    {
+      "date": "2025-12-14",
+      "author": "eliyahu",
+      "message": "\"feat: Real-time maritime dashboard with live MET Norway weather and Kystverket AIS integration. Complete system operational with Norway time display, real vessel tracking, and status monitoring.\"",
+      "hash": "6d1a9cb31b6457f95b944213da21852b48da6cba",
+      "is_meaningful": true
+    },
+    {
+      "date": "2025-12-09",
+      "author": "eliyahu",
+      "message": "Refactor maritime dashboards, integrate real env-based data sources, and clean obsolete templates",
+      "hash": "2b0959cb92817af6f10fa2f7a7626f7cf6e3535e",
+      "is_meaningful": true
+    },
+    {
+      "date": "2025-12-08",
+      "author": "eliyahu",
+      "message": "Update maritime dashboard: fix template includes, add realtime JS, sync blocks",
+      "hash": "6357dbe43f0d5ebcf860a6817439867a7bccf62b",
+      "is_meaningful": true
+    },
+    {
+      "date": "2025-12-08",
+      "author": "eliyahu",
+      "message": "Refactor weather service, add SeaDepthService, update maritime routes and dashboard blocks",
+      "hash": "93fca01240df24d4291db41219318d23d72ea557",
+      "is_meaningful": true
+    },
+    {
+      "date": "2025-12-07",
+      "author": "eliyahu",
+      "message": "Maritime Dashboard re‑structure prep: cleaned files, added new blocks, prep for MET Norway live integration\"",
+      "hash": "4beb8622a00918061c6fe885faec29dc1b67f87b",
+      "is_meaningful": true
+    },
+    {
+      "date": "2025-12-06",
+      "author": "eliyahu",
+      "message": "Add system_check for endpoint and route validation",
+      "hash": "320d86446e79fcbc697a2514a934d5f539f11763",
+      "is_meaningful": true
+    },
+    {
+      "date": "2025-12-06",
+      "author": "eliyahu",
+      "message": "Add export scripts, split maritime modules, and update project assets",
+      "hash": "2ecac151f0c1da65d0df22681046e424551ba28c",
+      "is_meaningful": true
+    }
+  ],
+  "commit_analysis": {
+    "keyword_counts": {
+      "fix": 5,
+      "add": 11,
+      "update": 6,
+      "implement": 1,
+      "improve": 1,
+      "refactor": 2,
+      "integrate": 2,
+      "fetch": 1,
+      "display": 2,
+      "map": 1,
+      "test": 1,
+      "check": 1,
+      "prepare": 1
+    },
+    "commit_types": {
+      "feature": 11,
+      "fix": 6,
+      "improvement": 3,
+      "other": -13
+    },
+    "avg_message_length": 10.636363636363637
+  },
+  "activity_metrics": {
+    "active_days": 13,
+    "commits_by_day": {
+      "2025-12-30": 1,
+      "2025-12-29": 3,
+      "2025-12-28": 5,
+      "2025-12-25": 2,
+      "2025-12-24": 1,
+      "2025-12-23": 1,
+      "2025-12-21": 1,
+      "2025-12-16": 1,
+      "2025-12-14": 1,
+      "2025-12-09": 1,
+      "2025-12-08": 2,
+      "2025-12-07": 1,
+      "2025-12-06": 2
+    },
+    "most_active_day": "2025-12-28",
+    "current_streak_days": 3,
+    "avg_commits_per_day": 1.6923076923076923,
+    "last_commit_date": "2025-12-30"
+  },
+  "analysis_date": "2025-12-30T22:52:42.685015",
+  "days_analyzed": 30
+}

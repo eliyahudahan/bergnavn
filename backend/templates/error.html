@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}System Error - BergNavn Maritime{% endblock %}</title>
+    
+    <!-- Bootstrap for consistent styling -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Project Styles -->
+    <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+    
+    <style>
+        .error-container {
+            min-height: 70vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        .error-card {
+            max-width: 600px;
+            width: 100%;
+            border: 1px solid rgba(0,0,0,.125);
+            border-radius: 0.5rem;
+            overflow: hidden;
+            box-shadow: 0 0.5rem 1rem rgba(0,0,0,.15);
+        }
+        .error-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        .error-body {
+            padding: 2rem;
+            background-color: #f8f9fa;
+        }
+        .error-details {
+            background-color: white;
+            border: 1px solid #dee2e6;
+            border-radius: 0.25rem;
+            padding: 1rem;
+            margin-top: 1rem;
+            font-family: monospace;
+            font-size: 0.875rem;
+            overflow-x: auto;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+        @media (max-width: 576px) {
+            .nav-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar (reuse from base.html) -->
+    <nav class="navbar navbar-expand-lg navbar-dark maritime-nav fixed-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="{{ url_for('main_bp.home', lang=lang) }}">
+                <span class="fs-3 me-2">🌊</span>
+                <div>
+                    <span class="fw-bold">BergNavn</span>
+                    <small class="d-block text-muted opacity-75" style="font-size: 0.7rem; line-height: 1">
+                        Maritime Intelligence
+                    </small>
+                </div>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container-fluid px-4 mt-5 pt-5">
+        <div class="error-container">
+            <div class="error-card">
+                <!-- Error Header -->
+                <div class="error-header">
+                    <h1 class="mb-2">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        System Error
+                    </h1>
+                    <p class="mb-0 opacity-75">
+                        An unexpected error occurred in the maritime system
+                    </p>
+                </div>
+
+                <!-- Error Body -->
+                <div class="error-body">
+                    <!-- Main Error Message -->
+                    <div class="alert alert-danger" role="alert">
+                        <h4 class="alert-heading">
+                            <i class="fas fa-bug me-2"></i>
+                            Error Details
+                        </h4>
+                        <hr>
+                        <p class="mb-2">
+                            <strong>Error Type:</strong> {{ error_message if error_message else "Unknown Error" }}
+                        </p>
+                        {% if error_details %}
+                        <p class="mb-0">
+                            <strong>Technical Details:</strong> {{ error_details }}
+                        </p>
+                        {% endif %}
+                    </div>
+
+                    <!-- What Happened -->
+                    <div class="mb-4">
+                        <h5><i class="fas fa-info-circle me-2 text-primary"></i>What happened?</h5>
+                        <p class="mb-0">
+                            The maritime dashboard encountered an issue while processing your request. 
+                            This could be due to temporary service unavailability, data processing errors, 
+                            or configuration issues.
+                        </p>
+                    </div>
+
+                    <!-- What Can You Do -->
+                    <div class="mb-4">
+                        <h5><i class="fas fa-lightbulb me-2 text-warning"></i>What can you do?</h5>
+                        <ul>
+                            <li>Try refreshing the page to see if the issue resolves itself</li>
+                            <li>Check if other parts of the system are working</li>
+                            <li>Wait a few minutes and try again if it's a temporary issue</li>
+                            <li>Contact support if the problem persists</li>
+                        </ul>
+                    </div>
+
+                    <!-- Technical Details (collapsible) -->
+                    {% if error_details %}
+                    <div class="mb-4">
+                        <h5>
+                            <i class="fas fa-code me-2 text-secondary"></i>
+                            Technical Details
+                            <small class="text-muted">(For debugging purposes)</small>
+                        </h5>
+                        <div class="error-details">
+                            {{ error_details }}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Navigation Buttons -->
+                    <div class="nav-buttons">
+                        <a href="{{ url_for('main_bp.home', lang=lang) }}" 
+                           class="btn btn-primary flex-fill">
+                            <i class="fas fa-home me-2"></i>
+                            Return to Home
+                        </a>
+                        
+                        <a href="{{ url_for('maritime.maritime_dashboard', lang=lang) }}" 
+                           class="btn btn-outline-primary flex-fill">
+                            <i class="fas fa-redo me-2"></i>
+                            Retry Dashboard
+                        </a>
+                        
+                        <a href="javascript:window.location.reload()" 
+                           class="btn btn-outline-secondary flex-fill">
+                            <i class="fas fa-sync-alt me-2"></i>
+                            Refresh Page
+                        </a>
+                        
+                        <a href="{{ url_for('main_bp.contact', lang=lang) }}" 
+                           class="btn btn-outline-danger flex-fill">
+                            <i class="fas fa-envelope me-2"></i>
+                            Contact Support
+                        </a>
+                    </div>
+
+                    <!-- System Status -->
+                    <div class="mt-4 text-center">
+                        <small class="text-muted">
+                            <i class="fas fa-server me-1"></i>
+                            System Status: 
+                            <span id="system-status-indicator" class="badge bg-warning">Error Detected</span>
+                            • 
+                            <i class="fas fa-clock me-1"></i>
+                            {{ timestamp if timestamp else "Timestamp unavailable" }}
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer (simplified) -->
+    <footer class="maritime-footer py-3 mt-5">
+        <div class="container text-center">
+            <small class="opacity-75">
+                © 2025 BergNavn Maritime | Intelligent Route Optimization System
+            </small>
+            <br>
+            <small class="opacity-75">
+                <i class="fas fa-shield-alt me-1"></i>
+                Data sources: BarentsWatch AIS • MET Norway • Norwegian Coastal Admin
+            </small>
+        </div>
+    </footer>
+
+    <!-- JavaScript for dynamic updates -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Update system status indicator
+        document.addEventListener('DOMContentLoaded', function() {
+            const indicator = document.getElementById('system-status-indicator');
+            
+            // Check if system is recovering
+            setTimeout(() => {
+                // Simulate system check - in real implementation, would make an API call
+                fetch('/maritime/api/health')
+                    .then(response => {
+                        if (response.ok) {
+                            indicator.className = 'badge bg-success';
+                            indicator.textContent = 'System Recovered';
+                        }
+                    })
+                    .catch(() => {
+                        // Keep as error
+                    });
+            }, 5000);
+            
+            // Update timestamp if not present
+            if (!document.body.innerHTML.includes('Timestamp unavailable')) {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('en-GB', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    timeZone: 'Europe/Oslo'
+                });
+                const dateString = now.toLocaleDateString('en-GB', { 
+                    day: 'numeric', 
+                    month: 'short',
+                    timeZone: 'Europe/Oslo'
+                });
+                
+                // Find and update timestamp element
+                document.querySelectorAll('small.text-muted').forEach(el => {
+                    if (el.textContent.includes('Timestamp unavailable')) {
+                        el.innerHTML = el.innerHTML.replace(
+                            'Timestamp unavailable', 
+                            `${dateString} ${timeString}`
+                        );
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

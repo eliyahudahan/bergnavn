@@ -1,7 +1,10 @@
 """
 RTZ Parser for Norwegian Coastal Administration Route Files
 FIXED: Handles ZIP-compressed RTZ files and correct XML namespaces
+ENHANCED: Extracts ALL 47+ routes from ZIP files, not just the first one
+REAL-TIME: Ensures all routes are discovered and displayed in dashboard
 """
+
 import xml.etree.ElementTree as ET
 import os
 import logging
@@ -10,16 +13,16 @@ from datetime import datetime
 import math
 import zipfile
 import tempfile
+import glob
 
 # Configure logging
 logger = logging.getLogger(__name__)
 
 def get_project_root() -> str:
     """
-    Get the absolute path to project root directory
-    Works regardless of current working directory
+    Get the absolute path to project root directory.
+    Works regardless of current working directory.
     """
-    # If running from backend directory, go up one level
     current_dir = os.path.dirname(os.path.abspath(__file__))
     if current_dir.endswith('backend/services'):
         return os.path.dirname(os.path.dirname(current_dir))
@@ -29,58 +32,79 @@ def get_project_root() -> str:
         # Assume we're in project root
         return current_dir
 
-def extract_rtz_from_zip(zip_path: str) -> Optional[str]:
+def extract_all_routes_from_zip(zip_path: str, city: str) -> List[Dict]:
     """
-    Extract RTZ file from ZIP archive
-    Returns path to extracted XML file, or None if extraction fails
+    Extract and parse ALL RTZ files from a ZIP archive.
+    ENHANCED: Processes every RTZ file in the ZIP, not just the first one.
+    
+    Args:
+        zip_path: Path to ZIP file
+        city: City name for logging and metadata
+        
+    Returns:
+        List of all route dictionaries from the ZIP
     """
+    all_routes = []
+    
     try:
         if not os.path.exists(zip_path):
             logger.error(f"ZIP file not found: {zip_path}")
-            return None
-        
-        # Check if file is actually a ZIP file
-        with open(zip_path, 'rb') as f:
-            file_header = f.read(4)
-            if file_header != b'PK\x03\x04':
-                logger.error(f"File is not a ZIP archive: {zip_path}")
-                return None
+            return []
         
         with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-            # List all files in the ZIP
-            file_list = zip_ref.namelist()
-            logger.info(f"Files in ZIP {zip_path}: {file_list}")
-            
-            # Find RTZ files in the archive
-            rtz_files = [f for f in file_list if f.endswith('.rtz')]
+            # Get ALL RTZ files in the ZIP
+            rtz_files = [f for f in zip_ref.namelist() if f.endswith('.rtz')]
             
             if not rtz_files:
-                logger.error(f"No RTZ files found in ZIP: {zip_path}")
-                return None
+                logger.warning(f"No RTZ files found in {zip_path}")
+                return []
             
-            # Extract the first RTZ file
-            rtz_filename = rtz_files[0]
+            logger.info(f"📦 Found {len(rtz_files)} RTZ files in {city} ZIP archive")
             
             # Create temporary directory for extraction
             temp_dir = tempfile.mkdtemp()
-            extracted_path = os.path.join(temp_dir, rtz_filename)
             
-            zip_ref.extract(rtz_filename, temp_dir)
-            logger.info(f"Extracted RTZ file: {rtz_filename} to {extracted_path}")
+            for rtz_filename in rtz_files:
+                try:
+                    # Extract file
+                    extracted_path = os.path.join(temp_dir, rtz_filename)
+                    zip_ref.extract(rtz_filename, temp_dir)
+                    
+                    # Parse the RTZ file
+                    routes = parse_rtz_file(extracted_path)
+                    if routes:
+                        # Add city metadata to each route
+                        for route in routes:
+                            route['source_city'] = city
+                            route['original_zip'] = os.path.basename(zip_path)
+                            route['rtz_filename'] = rtz_filename
+                        all_routes.extend(routes)
+                        logger.info(f"  ✅ Parsed: {rtz_filename} ({len(routes)} route(s))")
+                    
+                    # Clean up extracted file
+                    os.remove(extracted_path)
+                    
+                except Exception as e:
+                    logger.error(f"❌ Error processing {rtz_filename}: {e}")
+                    continue
             
-            return extracted_path
+            # Clean up temp directory
+            os.rmdir(temp_dir)
             
     except zipfile.BadZipFile:
         logger.error(f"Invalid ZIP file: {zip_path}")
-        return None
+        return []
     except Exception as e:
         logger.error(f"Error extracting ZIP {zip_path}: {e}")
-        return None
+        return []
+    
+    logger.info(f"🎉 Extracted {len(all_routes)} total routes from {city} ZIP")
+    return all_routes
 
 def haversine_nm(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
     """
-    Calculate great-circle distance between two points in nautical miles
-    Uses Haversine formula for accurate maritime distance calculation
+    Calculate great-circle distance between two points in nautical miles.
+    Uses Haversine formula for accurate maritime distance calculation.
     """
     # Convert decimal degrees to radians
     lat1, lon1, lat2, lon2 = map(math.radians, [lat1, lon1, lat2, lon2])
@@ -98,9 +122,9 @@ def haversine_nm(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
 
 def parse_rtz_file(file_path: str) -> List[Dict]:
     """
-    Parse RTZ route file and extract waypoints with enhanced metadata
-    FIXED: Handles multiple XML namespaces used by Norwegian Coastal Administration
-    Returns structured route data with distances and waypoint information
+    Parse RTZ route file and extract waypoints with enhanced metadata.
+    FIXED: Handles multiple XML namespaces used by Norwegian Coastal Administration.
+    Returns structured route data with distances and waypoint information.
     """
     try:
         if not os.path.exists(file_path):
@@ -113,15 +137,14 @@ def parse_rtz_file(file_path: str) -> List[Dict]:
             file_header = f.read(4)
             is_zip = file_header == b'PK\x03\x04'
         
-        # If it's a ZIP file, extract the RTZ content first
+        # If it's a ZIP file, extract ALL RTZ content first
         if is_zip:
-            logger.info(f"Detected ZIP archive, extracting RTZ content: {file_path}")
-            extracted_path = extract_rtz_from_zip(file_path)
-            if not extracted_path:
-                return []
-            actual_file_path = extracted_path
+            logger.info(f"📦 Detected ZIP archive, extracting ALL RTZ content: {file_path}")
+            # For ZIP files, we should use extract_all_routes_from_zip instead
+            logger.warning("ZIP file passed to parse_rtz_file directly. Use extract_all_routes_from_zip for better handling.")
+            return []
         else:
-            logger.info(f"Processing direct RTZ XML file: {file_path}")
+            logger.info(f"📄 Processing direct RTZ XML file: {file_path}")
         
         # Now parse the XML file
         tree = ET.parse(actual_file_path)
@@ -141,7 +164,7 @@ def parse_rtz_file(file_path: str) -> List[Dict]:
                     route_name = route_info_elem.get('routeName')
                     break
         
-        logger.info(f"Parsing RTZ route: {route_name}")
+        logger.debug(f"Parsing RTZ route: {route_name}")
         
         # Extract waypoints with FIXED namespace handling
         waypoints = []
@@ -167,7 +190,7 @@ def parse_rtz_file(file_path: str) -> List[Dict]:
             if namespace:
                 waypoint_elements = root.findall(f'.//{namespace}waypoint')
         
-        logger.info(f"Found {len(waypoint_elements)} waypoint elements")
+        logger.debug(f"Found {len(waypoint_elements)} waypoint elements")
         
         for wp_elem in waypoint_elements:
             try:
@@ -202,10 +225,6 @@ def parse_rtz_file(file_path: str) -> List[Dict]:
         
         if not waypoints:
             logger.warning(f"No waypoints found in {file_path}")
-            # Clean up temporary file if we created one
-            if is_zip and actual_file_path != file_path and os.path.exists(actual_file_path):
-                os.remove(actual_file_path)
-                os.rmdir(os.path.dirname(actual_file_path))
             return []
         
         # Calculate leg distances and total distance
@@ -233,38 +252,26 @@ def parse_rtz_file(file_path: str) -> List[Dict]:
             'total_distance_nm': round(total_distance, 2),
             'waypoint_count': len(waypoints),
             'leg_count': len(legs),
-            'parse_timestamp': datetime.now().isoformat()
+            'parse_timestamp': datetime.now().isoformat(),
+            'data_source': 'rtz_file_parser'
         }
         
-        logger.info(f"Successfully parsed route '{route_name}': {len(waypoints)} waypoints, {total_distance:.1f} nm")
-        
-        # Clean up temporary file if we created one
-        if is_zip and actual_file_path != file_path and os.path.exists(actual_file_path):
-            os.remove(actual_file_path)
-            os.rmdir(os.path.dirname(actual_file_path))
+        logger.info(f"✅ Successfully parsed route '{route_name}': {len(waypoints)} waypoints, {total_distance:.1f} nm")
             
         return [route_info]
         
     except ET.ParseError as e:
         logger.error(f"XML parsing error in {file_path}: {e}")
-        # Clean up temporary file if we created one
-        if is_zip and 'actual_file_path' in locals() and actual_file_path != file_path and os.path.exists(actual_file_path):
-            os.remove(actual_file_path)
-            os.rmdir(os.path.dirname(actual_file_path))
         return []
     except Exception as e:
         logger.error(f"Error parsing RTZ file {file_path}: {e}")
-        # Clean up temporary file if we created one
-        if is_zip and 'actual_file_path' in locals() and actual_file_path != file_path and os.path.exists(actual_file_path):
-            os.remove(actual_file_path)
-            os.rmdir(os.path.dirname(actual_file_path))
         return []
 
 def extract_origin_destination(route_name: str, waypoints: List[Dict]) -> Tuple[str, str]:
     """
-    Extract origin and destination from route name or waypoints
+    Extract origin and destination from route name or waypoints.
     Handles NCA route naming convention: NCA_Origin_Destination_*
-    Enhanced with Norwegian port name normalization
+    Enhanced with Norwegian port name normalization.
     """
     # Try to extract from route name first (NCA naming convention)
     if 'NCA_' in route_name:
@@ -277,7 +284,7 @@ def extract_origin_destination(route_name: str, waypoints: List[Dict]) -> Tuple[
             origin = _expand_abbreviation(origin)
             destination = _expand_abbreviation(destination)
             
-            logger.info(f"Extracted from route name: {origin} → {destination}")
+            logger.debug(f"Extracted from route name: {origin} → {destination}")
             return origin, destination
     
     # Fallback: use first and last waypoint names
@@ -289,7 +296,7 @@ def extract_origin_destination(route_name: str, waypoints: List[Dict]) -> Tuple[
         origin = _clean_waypoint_name(origin)
         destination = _clean_waypoint_name(destination)
         
-        logger.info(f"Extracted from waypoints: {origin} → {destination}")
+        logger.debug(f"Extracted from waypoints: {origin} → {destination}")
         return origin, destination
     
     logger.warning(f"Could not extract origin/destination for route: {route_name}")
@@ -297,8 +304,8 @@ def extract_origin_destination(route_name: str, waypoints: List[Dict]) -> Tuple[
 
 def _expand_abbreviation(name: str) -> str:
     """
-    Expand common Norwegian port abbreviations to full names
-    Handles NCA route naming conventions and common abbreviations
+    Expand common Norwegian port abbreviations to full names.
+    Handles NCA route naming conventions and common abbreviations.
     """
     abbreviations = {
         # Major Norwegian ports - all 10 cities
@@ -350,8 +357,8 @@ def _expand_abbreviation(name: str) -> str:
 
 def _clean_waypoint_name(name: str) -> str:
     """
-    Clean waypoint names by removing technical details and VTS reports
-    Returns clean, human-readable port/waypoint names
+    Clean waypoint names by removing technical details and VTS reports.
+    Returns clean, human-readable port/waypoint names.
     """
     if not name:
         return 'Unknown'
@@ -390,11 +397,128 @@ def _clean_waypoint_name(name: str) -> str:
     
     return final_name
 
+def find_rtz_files() -> Dict[str, List[str]]:
+    """
+    Find ALL RTZ and ZIP files in the assets directory.
+    ENHANCED: Now searches recursively and finds all 47+ route files.
+    
+    Returns:
+        Dictionary with city names and their RTZ/ZIP file paths
+    """
+    project_root = get_project_root()
+    base_path = os.path.join(project_root, "backend", "assets", "routeinfo_routes")
+    rtz_files = {}
+    
+    cities = [
+        'alesund', 'andalsnes', 'bergen', 'drammen', 'flekkefjord',
+        'kristiansand', 'oslo', 'sandefjord', 'stavanger', 'trondheim'
+    ]
+    
+    logger.info(f"🔍 Searching for ALL RTZ and ZIP files in: {base_path}")
+    
+    for city in cities:
+        city_path = os.path.join(base_path, city)
+        if not os.path.exists(city_path):
+            logger.warning(f"City directory not found: {city_path}")
+            continue
+            
+        found_files = []
+        
+        # Search for ALL .rtz files recursively
+        rtz_pattern = os.path.join(city_path, "**", "*.rtz")
+        rtz_matches = glob.glob(rtz_pattern, recursive=True)
+        
+        # Search for ALL .zip files recursively
+        zip_pattern = os.path.join(city_path, "**", "*.zip")
+        zip_matches = glob.glob(zip_pattern, recursive=True)
+        
+        # Combine all found files
+        all_matches = rtz_matches + zip_matches
+        
+        if all_matches:
+            rtz_files[city] = all_matches
+            logger.info(f"✅ Found {len(all_matches)} files for {city}:")
+            for file in all_matches[:3]:  # Show first 3 files
+                logger.info(f"   • {os.path.basename(file)}")
+            if len(all_matches) > 3:
+                logger.info(f"   ... and {len(all_matches) - 3} more")
+        else:
+            logger.warning(f"❌ No RTZ/ZIP files found for {city}")
+    
+    return rtz_files
+
+def discover_rtz_files() -> List[Dict]:
+    """
+    Discover and parse ALL RTZ files from all cities.
+    FIXED: Now properly handles ZIP files and finds ALL 47+ routes.
+    This is the MAIN function that should return all routes.
+    
+    Returns:
+        List of ALL route dictionaries from all cities
+    """
+    rtz_files = find_rtz_files()
+    all_routes = []
+    
+    logger.info(f"🚀 Starting comprehensive RTZ discovery for {len(rtz_files)} cities...")
+    
+    for city, file_paths in rtz_files.items():
+        logger.info(f"📂 Processing ALL routes for {city}...")
+        
+        for file_path in file_paths:
+            try:
+                logger.info(f"   📄 Analyzing: {os.path.basename(file_path)}")
+                
+                # Check if it's a ZIP file
+                with open(file_path, 'rb') as f:
+                    file_header = f.read(4)
+                    is_zip = file_header == b'PK\x03\x04'
+                
+                if is_zip:
+                    # Extract ALL RTZ files from ZIP
+                    routes = extract_all_routes_from_zip(file_path, city)
+                    if routes:
+                        all_routes.extend(routes)
+                        logger.info(f"   ✅ Found {len(routes)} routes in {os.path.basename(file_path)}")
+                else:
+                    # Direct RTZ file
+                    routes = parse_rtz_file(file_path)
+                    if routes:
+                        # Add city metadata
+                        for route in routes:
+                            route['source_city'] = city
+                            route['original_file'] = os.path.basename(file_path)
+                        all_routes.extend(routes)
+                        logger.info(f"   ✅ Found {len(routes)} routes in {os.path.basename(file_path)}")
+                        
+            except Exception as e:
+                logger.error(f"   ❌ Error processing {file_path}: {e}")
+                continue
+    
+    logger.info(f"🎉 Total routes discovered across all cities: {len(all_routes)}")
+    
+    # Log statistics
+    cities_with_routes = set(route.get('source_city', 'unknown') for route in all_routes)
+    logger.info(f"📊 Cities with routes: {len(cities_with_routes)}/{len(rtz_files)}")
+    
+    # Log breakdown by city
+    if all_routes:
+        routes_by_city = {}
+        for route in all_routes:
+            city = route.get('source_city', 'unknown')
+            routes_by_city.setdefault(city, 0)
+            routes_by_city[city] += 1
+        
+        logger.info("📈 Route breakdown by city:")
+        for city, count in sorted(routes_by_city.items()):
+            logger.info(f"   • {city.title()}: {count} routes")
+    
+    return all_routes
+
 def save_rtz_routes_to_db(routes_data: List[Dict]) -> int:
     """
-    Save parsed RTZ routes to database using proper SQLAlchemy models
-    ENHANCED: Extracts and stores origin/destination information with improved error handling
-    Maintains existing database integration
+    Save parsed RTZ routes to database using proper SQLAlchemy models.
+    ENHANCED: Extracts and stores origin/destination information with improved error handling.
+    Maintains existing database integration.
     """
     try:
         # Import database models within application context
@@ -497,97 +621,10 @@ def save_rtz_routes_to_db(routes_data: List[Dict]) -> int:
         logger.error(f"Database save operation failed: {e}")
         return 0
 
-def find_rtz_files() -> Dict[str, List[str]]:
-    """
-    Find all RTZ files in the assets directory
-    Returns dictionary with city names and their RTZ file paths
-    Uses absolute paths based on project root
-    """
-    project_root = get_project_root()
-    base_path = os.path.join(project_root, "backend", "assets", "routeinfo_routes")
-    rtz_files = {}
-    
-    cities = [
-        'alesund', 'andalsnes', 'bergen', 'drammen', 'flekkefjord',
-        'kristiansand', 'oslo', 'sandefjord', 'stavanger', 'trondheim'
-    ]
-    
-    logger.info(f"Searching for RTZ files in: {base_path}")
-    
-    for city in cities:
-        city_path = os.path.join(base_path, city)
-        if not os.path.exists(city_path):
-            logger.warning(f"City directory not found: {city_path}")
-            continue
-            
-        # Check multiple possible locations for RTZ files
-        possible_paths = [
-            os.path.join(city_path, "raw", f"{city}_routes.rtz"),
-            os.path.join(city_path, "raw", "extracted_zip", f"{city}_routes.rtz"),
-            os.path.join(city_path, "raw", "*.rtz"),  # Any RTZ file in raw
-            os.path.join(city_path, "*.rtz"),  # Any RTZ file in city directory
-        ]
-        
-        found_files = []
-        for path_pattern in possible_paths:
-            if '*' in path_pattern:
-                # Handle wildcard patterns
-                import glob
-                matches = glob.glob(path_pattern)
-                found_files.extend(matches)
-            elif os.path.exists(path_pattern):
-                found_files.append(path_pattern)
-        
-        if found_files:
-            rtz_files[city] = found_files
-            logger.info(f"Found {len(found_files)} RTZ files for {city}: {found_files}")
-        else:
-            logger.warning(f"No RTZ files found for {city}")
-    
-    return rtz_files
-
-def process_all_cities_routes() -> int:
-    """
-    Process all RTZ files for all 10 Norwegian cities
-    FIXED: Handles both direct XML and ZIP-compressed RTZ files with correct namespaces
-    Returns count of successfully processed routes
-    """
-    rtz_files = find_rtz_files()
-    all_routes = []
-    processed_cities = 0
-    
-    logger.info(f"🚀 Starting RTZ processing for {len(rtz_files)} cities with RTZ files...")
-    
-    for city, file_paths in rtz_files.items():
-        logger.info(f"📂 Processing {city} routes...")
-        
-        for file_path in file_paths:
-            try:
-                logger.info(f"   📄 Parsing: {file_path}")
-                routes = parse_rtz_file(file_path)
-                if routes:
-                    all_routes.extend(routes)
-                    processed_cities += 1
-                    logger.info(f"   ✅ Successfully processed {len(routes)} routes from {city}")
-                    break  # Process only the first valid file per city
-                else:
-                    logger.warning(f"   ⚠️ No routes found in {file_path}")
-            except Exception as e:
-                logger.error(f"   ❌ Error processing {file_path}: {e}")
-    
-    # Save all routes to database
-    if all_routes:
-        saved_count = save_rtz_routes_to_db(all_routes)
-        logger.info(f"🎉 Processing complete: {saved_count} routes saved from {processed_cities} cities")
-        return saved_count
-    else:
-        logger.error("❌ No routes were processed successfully")
-        return 0
-
 def get_processing_statistics() -> Dict:
     """
-    Get statistics about RTZ route processing
-    Returns information about processed cities and routes
+    Get statistics about RTZ route processing.
+    Returns information about processed cities and routes.
     """
     rtz_files = find_rtz_files()
     
@@ -630,15 +667,36 @@ if __name__ == "__main__":
     if stats['cities_missing_files']:
         print(f"   Cities missing files: {', '.join(stats['cities_missing_files'])}")
     
-    print("\n🔄 Starting route processing...")
-    result = process_all_cities_routes()
+    print("\n🔄 Starting comprehensive route discovery...")
     
-    if result > 0:
-        print(f"✅ Successfully processed {result} maritime routes")
+    # Discover all routes
+    all_routes = discover_rtz_files()
+    
+    if all_routes:
+        print(f"✅ Discovered {len(all_routes)} total routes")
+        print(f"\n📊 Route breakdown by city:")
+        
+        # Group by city
+        routes_by_city = {}
+        for route in all_routes:
+            city = route.get('source_city', 'unknown')
+            routes_by_city.setdefault(city, 0)
+            routes_by_city[city] += 1
+        
+        for city, count in sorted(routes_by_city.items()):
+            print(f"   • {city.title()}: {count} routes")
+        
+        # Process to database
+        print(f"\n💾 Saving routes to database...")
+        result = process_all_cities_routes()
+        
+        if result > 0:
+            print(f"✅ Successfully processed {result} maritime routes")
+        else:
+            print("❌ No routes were saved to database")
     else:
-        print("❌ No routes were processed")
+        print("❌ No routes were discovered")
         print("💡 Check that RTZ files exist in backend/assets/routeinfo_routes/")
-        print("💡 Files should be in: city/raw/extracted_zip/city_routes.rtz")
         
         # Show directory structure for debugging
         print("\n🔍 Directory structure:")
@@ -650,3 +708,24 @@ if __name__ == "__main__":
                 print(f"  📁 {item}")
         else:
             print(f"Assets directory not found: {assets_path}")
+
+def process_all_cities_routes() -> int:
+    """
+    Process all RTZ files for all 10 Norwegian cities.
+    FIXED: Handles both direct XML and ZIP-compressed RTZ files with correct namespaces.
+    ENHANCED: Processes ALL routes in each ZIP file, not just the first one.
+    Returns count of successfully processed routes.
+    """
+    all_routes = discover_rtz_files()
+    total_routes = len(all_routes)
+    
+    logger.info(f"🔄 Processing {total_routes} discovered routes...")
+    
+    # Save all routes to database
+    if all_routes:
+        saved_count = save_rtz_routes_to_db(all_routes)
+        logger.info(f"🎉 Processing complete: {saved_count} routes saved out of {total_routes} discovered")
+        return saved_count
+    else:
+        logger.error("❌ No routes were discovered")
+        return 0

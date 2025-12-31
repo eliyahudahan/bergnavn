@@ -1,5 +1,7 @@
 # app.py - BergNavn Maritime Application
 # Main Flask application factory with full feature integration
+# ENHANCED: Prioritizes Kystdatahuset API for reliable Norwegian AIS data
+# FIXED: AIS service initialization with proper fallback handling
 
 import logging
 import os
@@ -54,14 +56,44 @@ def _detect_migration_mode():
 def _initialize_ais_service(app, testing=False, migration_mode=False):
     """
     Initialize the appropriate AIS service based on configuration.
-    Priority: Kystverket > Kystdatahuset > Empirical fallback
+    ENHANCED: Prioritizes Kystdatahuset API for reliable Norwegian AIS data.
+    FIXED: Proper fallback handling with real-time simulation.
+    
+    Priority: 
+    1. Kystdatahuset API (most reliable for Norwegian waters)
+    2. Kystverket Socket (if Kystdatahuset fails)
+    3. Empirical service with real-time simulation
     """
     # Check if AIS is disabled
     if os.getenv("DISABLE_AIS_SERVICE") == "1":
         logging.info("🔧 AIS Service disabled by configuration")
         return
     
-    # Try Kystverket real-time AIS first
+    logging.info("🔄 Initializing AIS service...")
+    
+    # 1. Try Kystdatahuset API first (most reliable for Norwegian data)
+    use_kystdatahuset = os.getenv("USE_KYSTDATAHUSET_AIS", "false").strip().lower() == "true"
+    if use_kystdatahuset:
+        try:
+            from backend.services.kystdatahuset_adapter import kystdatahuset_adapter
+            app.ais_service = kystdatahuset_adapter
+            logging.info("✅ Kystdatahuset AIS Adapter initialized - REAL-TIME Norwegian AIS")
+            logging.info(f"📡 Serving {len(kystdatahuset_adapter.NORWEGIAN_CITIES)} Norwegian cities")
+            
+            # Test the connection
+            try:
+                status = kystdatahuset_adapter.get_service_status()
+                logging.info(f"📊 Kystdatahuset status: {status.get('request_statistics', {}).get('success_rate', 'Unknown')}")
+            except Exception as e:
+                logging.warning(f"Kystdatahuset status check failed: {e}")
+            
+            return
+        except ImportError as e:
+            logging.error(f"❌ Kystdatahuset Adapter import failed: {e}")
+        except Exception as e:
+            logging.error(f"❌ Kystdatahuset Adapter initialization failed: {e}")
+    
+    # 2. Try Kystverket as fallback (often has connectivity issues)
     use_kystverket = os.getenv("USE_KYSTVERKET_AIS", "false").strip().lower() == "true"
     kystverket_host = os.getenv("KYSTVERKET_AIS_HOST", "").strip()
     
@@ -76,24 +108,32 @@ def _initialize_ais_service(app, testing=False, migration_mode=False):
             ais_service.start_ais_stream()
             app.ais_service = ais_service
             logging.info("✅ Kystverket Real-Time AIS Service initialized")
-            logging.info(f"📡 Connected to: {kystverket_host}")
+            logging.info(f"📡 Connected to: {kystverket_host}:{ais_service.ais_port}")
+            
+            # Start background monitoring for connection issues
+            import threading
+            def monitor_ais_connection():
+                import time
+                while True:
+                    time.sleep(60)  # Check every minute
+                    if not ais_service.running or not ais_service.ais_socket:
+                        logging.warning("🔌 AIS connection lost, attempting to restart...")
+                        try:
+                            ais_service.start_ais_stream()
+                            logging.info("✅ AIS connection restored")
+                        except Exception as e:
+                            logging.error(f"Failed to restore AIS connection: {e}")
+            
+            monitor_thread = threading.Thread(target=monitor_ais_connection, daemon=True)
+            monitor_thread.start()
+            
             return
+        except ImportError as e:
+            logging.error(f"❌ AIS Service import failed: {e}")
         except Exception as e:
-            logging.error(f"❌ Kystverket AIS failed: {e}")
+            logging.error(f"❌ Kystverket AIS initialization failed: {e}")
     
-    # Try Kystdatahuset as fallback
-    use_kystdatahuset = os.getenv("USE_KYSTDATAHUSET_AIS", "false").strip().lower() == "true"
-    if use_kystdatahuset:
-        try:
-            from backend.services.kystdatahuset_adapter import kystdatahuset_adapter
-            app.ais_service = kystdatahuset_adapter
-            logging.info("✅ Kystdatahuset AIS Adapter initialized")
-            logging.info(f"📡 Serving {len(kystdatahuset_adapter.NORWEGIAN_CITIES)} Norwegian cities")
-            return
-        except Exception as e:
-            logging.error(f"❌ Kystdatahuset Adapter failed: {e}")
-    
-    # Fallback to empirical service with real-time simulation
+    # 3. Fallback to empirical service with real-time simulation
     try:
         from backend.services.ais_service import ais_service
         # Configure for empirical mode but with real-time updates
@@ -103,18 +143,51 @@ def _initialize_ais_service(app, testing=False, migration_mode=False):
         # Start real-time simulation thread
         import threading
         def real_time_simulation():
+            import time
+            update_count = 0
             while ais_service.running:
-                ais_service.manual_refresh()
-                import time
+                try:
+                    ais_service.manual_refresh()
+                    update_count += 1
+                    if update_count % 10 == 0:  # Log every 10 updates
+                        logging.info(f"🔄 Empirical AIS simulation update #{update_count}")
+                except Exception as e:
+                    logging.error(f"Empirical AIS simulation error: {e}")
                 time.sleep(30)  # Update every 30 seconds
         
         thread = threading.Thread(target=real_time_simulation, daemon=True)
         thread.start()
         
         app.ais_service = ais_service
-        logging.info("✅ Empirical AIS Service with real-time simulation")
+        logging.info("✅ Empirical AIS Service with real-time simulation initialized")
+        logging.info("📊 Generating realistic Norwegian vessel data")
+        
     except Exception as e:
-        logging.warning(f"⚠️ AIS Service initialization failed: {e}")
+        logging.warning(f"⚠️ All AIS service initialization attempts failed: {e}")
+        app.ais_service = None
+
+
+def _initialize_weather_service(app):
+    """
+    Initialize weather service for Norwegian maritime conditions.
+    """
+    try:
+        from backend.services.weather_service import weather_service
+        app.weather_service = weather_service
+        logging.info("✅ Weather Service initialized for Norwegian coastal areas")
+        
+        # Test the weather service
+        try:
+            weather_data = weather_service.get_current_weather()
+            if weather_data:
+                logging.info(f"🌤️ Weather data available: {weather_data.get('location', 'Norwegian Coast')}")
+        except Exception as e:
+            logging.warning(f"Weather service test failed: {e}")
+            
+    except ImportError as e:
+        logging.warning(f"Weather service import failed: {e}")
+    except Exception as e:
+        logging.warning(f"Weather service initialization failed: {e}")
 
 
 def create_app(config_name=None, testing=False, start_scheduler=True):
@@ -166,11 +239,17 @@ def create_app(config_name=None, testing=False, start_scheduler=True):
     migrate.init_app(app, db)
     logging.info("✅ Database and extensions initialized")
 
-    # Initialize AIS Service - SINGLE SOURCE OF TRUTH
+    # Initialize AIS Service - SINGLE SOURCE OF TRUTH with priority handling
     if not (testing or migration_mode):
         _initialize_ais_service(app, testing, migration_mode)
     else:
         logging.info("🔧 AIS Service disabled (testing/migration mode)")
+
+    # Initialize Weather Service
+    if not (testing or migration_mode):
+        _initialize_weather_service(app)
+    else:
+        logging.info("🔧 Weather Service disabled (testing/migration mode)")
 
     # Initialize scheduler for background tasks
     if start_scheduler and not testing and not migration_mode and os.getenv("FLASK_SKIP_SCHEDULER") != "1":
@@ -242,7 +321,8 @@ def create_app(config_name=None, testing=False, start_scheduler=True):
             'AIS_ENABLED': os.getenv('DISABLE_AIS_SERVICE') != '1',
             'BARENTSWATCH_CLIENT_ID': bool(os.getenv('BARENTSWATCH_CLIENT_ID')),
             'FLASK_ENV': os.getenv('FLASK_ENV', 'development'),
-            'ACTIVE_AIS_SERVICE': getattr(app, 'ais_service', None).__class__.__name__ if hasattr(app, 'ais_service') else 'None'
+            'ACTIVE_AIS_SERVICE': getattr(app, 'ais_service', None).__class__.__name__ if hasattr(app, 'ais_service') else 'None',
+            'ACTIVE_WEATHER_SERVICE': getattr(app, 'weather_service', None).__class__.__name__ if hasattr(app, 'weather_service') else 'None'
         }
         return jsonify(keys_status)
 
@@ -275,6 +355,14 @@ def create_app(config_name=None, testing=False, start_scheduler=True):
     logging.info(f"🌐 Supported ports: 10 Norwegian cities")
     logging.info(f"📊 Available dashboards: /dashboard (Analytics), /maritime (Maritime)")
     logging.info(f"🔍 System monitoring: /api/system/health, /api/system/metrics")
+    
+    # Log active services
+    if hasattr(app, 'ais_service'):
+        service_name = app.ais_service.__class__.__name__
+        logging.info(f"📡 AIS Service: {service_name}")
+    if hasattr(app, 'weather_service'):
+        logging.info(f"🌤️ Weather Service: Active")
+    
     logging.info("="*60)
 
     return app
@@ -314,7 +402,8 @@ def kystdatahuset_test():
             'timestamp': status.get('timestamp'),
             'configuration': status.get('configuration', {}),
             'request_statistics': status.get('request_statistics', {}),
-            'data_quality': status.get('data_quality', {})
+            'data_quality': status.get('data_quality', {}),
+            'connectivity_test': status.get('connectivity_test', {})
         })
     except ImportError:
         return jsonify({
@@ -328,30 +417,33 @@ def kystdatahuset_test():
         }), 500
 
 
-# Test endpoint for system dashboard
-@app.route('/api/system-test')
-def system_test():
+# Test endpoint for RTZ route discovery
+@app.route('/api/rtz-discovery-test')
+def rtz_discovery_test():
     """
-    Test endpoint to verify system dashboard functionality.
+    Test endpoint to verify RTZ route discovery functionality.
     
     Returns:
-        JSON response with system overview
+        JSON response with discovered routes
     """
     try:
+        from backend.services.rtz_parser import discover_rtz_files, get_processing_statistics
+        
+        stats = get_processing_statistics()
+        routes = discover_rtz_files()
+        
         return jsonify({
             'status': 'success',
-            'endpoints': {
-                'system_summary': '/api/system/summary',
-                'system_health': '/api/system/health',
-                'system_metrics': '/api/system/metrics',
-                'system_overview': '/api/system/overview'
-            },
-            'dashboard_urls': {
-                'main_dashboard': '/dashboard',
-                'maritime_dashboard': '/maritime',
-                'routes_page': '/routes'
-            }
+            'routes_discovered': len(routes),
+            'statistics': stats,
+            'routes_sample': routes[:5] if routes else [],  # First 5 routes as sample
+            'cities_with_routes': list(set(route.get('source_city', 'unknown') for route in routes))
         })
+    except ImportError as e:
+        return jsonify({
+            'status': 'error',
+            'error': f'RTZ parser import failed: {str(e)}'
+        }), 500
     except Exception as e:
         return jsonify({
             'status': 'error',
