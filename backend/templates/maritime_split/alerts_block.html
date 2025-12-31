@@ -1,43 +1,417 @@
-<!-- templates/blocks/alerts_block.html -->
-<!-- English-only comments: Alerts block - uses /maritime/api/alerts and shows top priority alerts -->
-<div id="alerts_block" class="card maritime-card shadow-sm">
-  <div class="card-header bg-danger text-white">
-    <i class="bi bi-exclamation-triangle"></i> Alerts
-  </div>
-  <div class="card-body">
-    <div id="alerts_block_list" class="small">
-      <div class="text-center">
-        <div class="spinner-border text-danger" role="status"></div>
-        <div class="mt-2">Checking alerts...</div>
-      </div>
+<!-- Maritime Alerts Block - Real-time Alerting System -->
+<div class="card maritime-card shadow-sm" id="alerts-card">
+    <div class="card-header d-flex justify-content-between align-items-center" id="alerts-header">
+        <div>
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            <span id="alerts-title">Maritime Alerts</span>
+            <span class="badge ms-2" id="alerts-badge">0</span>
+        </div>
+        <div class="btn-group btn-group-sm">
+            <button class="btn btn-sm btn-outline-light" onclick="refreshAlerts()" title="Refresh alerts">
+                <i class="bi bi-arrow-clockwise"></i>
+            </button>
+            <button class="btn btn-sm btn-outline-light" onclick="toggleAlertsAutoRefresh()" title="Toggle auto-refresh">
+                <i class="bi bi-play-fill" id="auto-refresh-icon"></i>
+            </button>
+        </div>
     </div>
-  </div>
+    
+    <div class="card-body p-0">
+        <!-- Critical Alerts Section -->
+        <div class="alert alert-danger m-3 border-danger" id="critical-alerts-section" style="display: none;">
+            <h6 class="alert-heading d-flex align-items-center">
+                <i class="bi bi-exclamation-octagon me-2"></i>
+                <span id="critical-count">0</span> Critical Alert(s)
+                <span class="badge bg-light text-danger ms-2" id="critical-badge">CRITICAL</span>
+            </h6>
+            <div id="critical-alerts-list" class="mt-2">
+                <!-- Critical alerts will appear here -->
+            </div>
+        </div>
+        
+        <!-- High Priority Alerts Section -->
+        <div class="alert alert-warning m-3 border-warning" id="high-alerts-section" style="display: none;">
+            <h6 class="alert-heading d-flex align-items-center">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                <span id="high-count">0</span> High Priority Alert(s)
+                <span class="badge bg-light text-warning ms-2">HIGH</span>
+            </h6>
+            <div id="high-alerts-list" class="mt-2">
+                <!-- High alerts will appear here -->
+            </div>
+        </div>
+        
+        <!-- No Alerts / All Clear -->
+        <div class="text-center py-4" id="no-alerts-section">
+            <i class="bi bi-check-circle text-success fs-1"></i>
+            <p class="mt-2 mb-0 text-success fw-semibold">All Systems Operational</p>
+            <small class="text-muted">No active alerts detected</small>
+        </div>
+        
+        <!-- Loading State -->
+        <div class="text-center py-4" id="alerts-loading-section">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="mt-2 mb-0">Checking maritime alerts...</p>
+            <small class="text-muted">Connecting to AIS and weather services</small>
+        </div>
+        
+        <!-- Error State -->
+        <div class="text-center py-4" id="alerts-error-section" style="display: none;">
+            <i class="bi bi-exclamation-triangle text-warning fs-1"></i>
+            <p class="mt-2 mb-0 text-warning">Alert Service Unavailable</p>
+            <small class="text-muted" id="error-message">Unable to connect to alert service</small>
+            <button class="btn btn-sm btn-outline-warning mt-2" onclick="refreshAlerts()">
+                <i class="bi bi-arrow-clockwise me-1"></i>Retry
+            </button>
+        </div>
+    </div>
+    
+    <div class="card-footer bg-light">
+        <div class="d-flex justify-content-between align-items-center">
+            <small class="text-muted">
+                <i class="bi bi-clock me-1"></i>
+                Updated: <span id="alerts-updated">--:--</span>
+            </small>
+            <small>
+                <span class="badge bg-success bg-opacity-10 text-success" id="vessels-monitored">0 vessels</span>
+                <span class="badge bg-info bg-opacity-10 text-info ms-1" id="weather-status-badge">Weather OK</span>
+            </small>
+        </div>
+    </div>
 </div>
 
 <script>
-/* English-only comments:
-   Fetches /maritime/api/alerts. Expects data.alerts = [{type, priority, message, timestamp}, ...]
-*/
-(async function loadAlertsBlock() {
-  const container = document.getElementById('alerts_block_list');
-  const res = await fetchSafeJson('/maritime/api/alerts');
-  if (!res.ok) {
-    container.innerHTML = `<div class="text-warning">Alerts unavailable — ${res.message || 'fallback'}</div>`;
-    return;
-  }
-  const alerts = (res.data && res.data.alerts) || [];
-  if (!alerts.length) {
-    container.innerHTML = `<div class="text-success">No active alerts</div>`;
-    return;
-  }
-  // show up to 5 alerts, sorted by priority if present
-  const order = { high: 3, medium: 2, low: 1 };
-  alerts.sort((a,b) => (order[b.priority]||0) - (order[a.priority]||0));
-  container.innerHTML = alerts.slice(0,5).map(a => `
-    <div class="mb-2">
-      <strong>${a.type || 'Alert'}</strong> — ${a.message || ''}
-      <div class="text-muted small">${a.priority ? 'Priority: ' + a.priority : ''} ${a.timestamp ? ' • ' + new Date(a.timestamp).toLocaleString() : ''}</div>
-    </div>
-  `).join('');
-})();
+// Maritime Alerts Manager - Real-time alert monitoring
+class MaritimeAlertsManager {
+    constructor() {
+        this.autoRefresh = true;
+        this.refreshInterval = 15000; // 15 seconds for real-time
+        this.refreshTimer = null;
+        this.lastUpdate = null;
+        this.alertHistory = [];
+    }
+    
+    async loadAlerts() {
+        try {
+            this.showLoading();
+            
+            const response = await fetch('/maritime/api/alerts/summary');
+            const data = await response.json();
+            
+            if (data.status === 'error') {
+                this.showError(data.error || 'Alert service error');
+                return;
+            }
+            
+            this.updateAlertDisplay(data);
+            
+            // Store update time
+            this.lastUpdate = new Date();
+            this.updateTimestamp();
+            
+            // Store in history (last 10 updates)
+            this.alertHistory.unshift({
+                timestamp: this.lastUpdate,
+                data: data
+            });
+            if (this.alertHistory.length > 10) {
+                this.alertHistory.pop();
+            }
+            
+            // If there are critical alerts, also load full details
+            if (data.critical_alerts > 0) {
+                this.loadCriticalAlertsDetails();
+            }
+            
+        } catch (error) {
+            console.error('Error loading alerts:', error);
+            this.showError('Network error - check connection');
+        }
+    }
+    
+    async loadCriticalAlertsDetails() {
+        try {
+            const response = await fetch('/maritime/api/alerts');
+            const data = await response.json();
+            
+            if (data.alerts && data.alerts.length > 0) {
+                // Filter critical alerts
+                const criticalAlerts = data.alerts.filter(a => a.priority === 'CRITICAL');
+                const highAlerts = data.alerts.filter(a => a.priority === 'HIGH');
+                
+                this.displayCriticalAlerts(criticalAlerts);
+                this.displayHighAlerts(highAlerts);
+            }
+        } catch (error) {
+            console.error('Error loading alert details:', error);
+        }
+    }
+    
+    updateAlertDisplay(summaryData) {
+        const totalAlerts = summaryData.total_alerts || 0;
+        const criticalCount = summaryData.critical_alerts || 0;
+        const highCount = summaryData.high_alerts || 0;
+        
+        // Update counters
+        document.getElementById('critical-count').textContent = criticalCount;
+        document.getElementById('high-count').textContent = highCount;
+        
+        const totalBadge = document.getElementById('alerts-badge');
+        totalBadge.textContent = totalAlerts;
+        
+        // Update badge color based on severity
+        if (criticalCount > 0) {
+            totalBadge.className = 'badge bg-danger';
+            document.getElementById('alerts-header').className = 'card-header d-flex justify-content-between align-items-center bg-danger text-white';
+            document.getElementById('critical-badge').className = 'badge bg-light text-danger ms-2';
+        } else if (highCount > 0) {
+            totalBadge.className = 'badge bg-warning';
+            document.getElementById('alerts-header').className = 'card-header d-flex justify-content-between align-items-center bg-warning text-dark';
+            document.getElementById('critical-badge').className = 'badge bg-light text-warning ms-2';
+        } else if (totalAlerts > 0) {
+            totalBadge.className = 'badge bg-info';
+            document.getElementById('alerts-header').className = 'card-header d-flex justify-content-between align-items-center bg-info text-white';
+        } else {
+            totalBadge.className = 'badge bg-success';
+            document.getElementById('alerts-header').className = 'card-header d-flex justify-content-between align-items-center bg-success text-white';
+        }
+        
+        // Show/hide sections
+        if (totalAlerts === 0) {
+            // No alerts
+            document.getElementById('no-alerts-section').style.display = 'block';
+            document.getElementById('critical-alerts-section').style.display = 'none';
+            document.getElementById('high-alerts-section').style.display = 'none';
+            document.getElementById('alerts-loading-section').style.display = 'none';
+            document.getElementById('alerts-error-section').style.display = 'none';
+        } else {
+            // Has alerts
+            document.getElementById('no-alerts-section').style.display = 'none';
+            document.getElementById('alerts-loading-section').style.display = 'none';
+            document.getElementById('alerts-error-section').style.display = 'none';
+            
+            // Show critical alerts section if any
+            if (criticalCount > 0) {
+                document.getElementById('critical-alerts-section').style.display = 'block';
+            } else {
+                document.getElementById('critical-alerts-section').style.display = 'none';
+            }
+            
+            // Show high alerts section if any
+            if (highCount > 0) {
+                document.getElementById('high-alerts-section').style.display = 'block';
+            } else {
+                document.getElementById('high-alerts-section').style.display = 'none';
+            }
+        }
+        
+        // Update footer info
+        const vesselsElement = document.getElementById('vessels-monitored');
+        if (vesselsElement && summaryData.vessels_monitored) {
+            vesselsElement.textContent = `${summaryData.vessels_monitored} vessels`;
+        }
+        
+        const weatherElement = document.getElementById('weather-status-badge');
+        if (weatherElement) {
+            if (summaryData.weather_status === 'available') {
+                weatherElement.textContent = 'Weather OK';
+                weatherElement.className = 'badge bg-success bg-opacity-10 text-success ms-1';
+            } else {
+                weatherElement.textContent = 'Weather N/A';
+                weatherElement.className = 'badge bg-warning bg-opacity-10 text-warning ms-1';
+            }
+        }
+    }
+    
+    displayCriticalAlerts(alerts) {
+        const container = document.getElementById('critical-alerts-list');
+        if (!container) return;
+        
+        if (alerts.length === 0) {
+            container.innerHTML = '<div class="text-muted small">No critical alerts details available</div>';
+            return;
+        }
+        
+        const alertsHtml = alerts.slice(0, 3).map(alert => `
+            <div class="mb-2 p-2 bg-danger bg-opacity-10 rounded border-start border-3 border-danger">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="flex-grow-1">
+                        <strong class="d-block">${this.escapeHtml(alert.message || 'Critical Alert')}</strong>
+                        <small class="d-block text-muted mt-1">
+                            <i class="bi bi-ship me-1"></i>
+                            ${this.escapeHtml(alert.vessel_name || 'Unknown vessel')}
+                        </small>
+                        ${alert.details && alert.details.recommendation ? 
+                            `<small class="d-block text-danger mt-1">
+                                <i class="bi bi-lightning-charge me-1"></i>
+                                ${this.escapeHtml(alert.details.recommendation)}
+                            </small>` : ''
+                        }
+                    </div>
+                    <small class="text-muted ms-2">
+                        ${this.formatTime(alert.timestamp)}
+                    </small>
+                </div>
+            </div>
+        `).join('');
+        
+        container.innerHTML = alertsHtml;
+    }
+    
+    displayHighAlerts(alerts) {
+        const container = document.getElementById('high-alerts-list');
+        if (!container) return;
+        
+        if (alerts.length === 0) {
+            container.innerHTML = '<div class="text-muted small">No high priority alerts details</div>';
+            return;
+        }
+        
+        const alertsHtml = alerts.slice(0, 3).map(alert => `
+            <div class="mb-2 p-2 bg-warning bg-opacity-10 rounded border-start border-3 border-warning">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="flex-grow-1">
+                        <strong class="d-block">${this.escapeHtml(alert.message || 'High Priority Alert')}</strong>
+                        <small class="d-block text-muted mt-1">
+                            <i class="bi bi-ship me-1"></i>
+                            ${this.escapeHtml(alert.vessel_name || 'Unknown vessel')}
+                        </small>
+                    </div>
+                    <small class="text-muted ms-2">
+                        ${this.formatTime(alert.timestamp)}
+                    </small>
+                </div>
+            </div>
+        `).join('');
+        
+        container.innerHTML = alertsHtml;
+    }
+    
+    showLoading() {
+        document.getElementById('alerts-loading-section').style.display = 'block';
+        document.getElementById('no-alerts-section').style.display = 'none';
+        document.getElementById('critical-alerts-section').style.display = 'none';
+        document.getElementById('high-alerts-section').style.display = 'none';
+        document.getElementById('alerts-error-section').style.display = 'none';
+    }
+    
+    showError(message) {
+        document.getElementById('alerts-loading-section').style.display = 'none';
+        document.getElementById('no-alerts-section').style.display = 'none';
+        document.getElementById('critical-alerts-section').style.display = 'none';
+        document.getElementById('high-alerts-section').style.display = 'none';
+        document.getElementById('alerts-error-section').style.display = 'block';
+        
+        const errorMessage = document.getElementById('error-message');
+        if (errorMessage) {
+            errorMessage.textContent = message || 'Alert service unavailable';
+        }
+        
+        // Update header to show error state
+        document.getElementById('alerts-header').className = 'card-header d-flex justify-content-between align-items-center bg-secondary text-white';
+        document.getElementById('alerts-badge').className = 'badge bg-secondary';
+        document.getElementById('alerts-badge').textContent = '!';
+    }
+    
+    updateTimestamp() {
+        if (this.lastUpdate) {
+            const timeStr = this.lastUpdate.toLocaleTimeString('en-GB', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            document.getElementById('alerts-updated').textContent = timeStr;
+        }
+    }
+    
+    formatTime(isoString) {
+        if (!isoString) return '--:--';
+        try {
+            const date = new Date(isoString);
+            return date.toLocaleTimeString('en-GB', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        } catch (e) {
+            return '--:--';
+        }
+    }
+    
+    escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+    
+    startAutoRefresh() {
+        if (this.autoRefresh && !this.refreshTimer) {
+            this.refreshTimer = setInterval(() => this.loadAlerts(), this.refreshInterval);
+            document.getElementById('auto-refresh-icon').className = 'bi bi-pause-fill';
+            console.log('🔄 Alerts auto-refresh started (15s interval)');
+        }
+    }
+    
+    stopAutoRefresh() {
+        if (this.refreshTimer) {
+            clearInterval(this.refreshTimer);
+            this.refreshTimer = null;
+            document.getElementById('auto-refresh-icon').className = 'bi bi-play-fill';
+            console.log('⏸️ Alerts auto-refresh stopped');
+        }
+    }
+    
+    toggleAutoRefresh() {
+        this.autoRefresh = !this.autoRefresh;
+        if (this.autoRefresh) {
+            this.startAutoRefresh();
+        } else {
+            this.stopAutoRefresh();
+        }
+        return this.autoRefresh;
+    }
+}
+
+// Global instance
+const maritimeAlertsManager = new MaritimeAlertsManager();
+
+// Helper functions for HTML onclick events
+function refreshAlerts() {
+    maritimeAlertsManager.loadAlerts();
+}
+
+function toggleAlertsAutoRefresh() {
+    maritimeAlertsManager.toggleAutoRefresh();
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    // Start loading alerts after a short delay
+    setTimeout(() => {
+        maritimeAlertsManager.loadAlerts();
+        maritimeAlertsManager.startAutoRefresh();
+    }, 1000);
+    
+    // Add CSS for animations
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes pulse-critical {
+            0% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(220, 53, 69, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0); }
+        }
+        .critical-pulse {
+            animation: pulse-critical 2s infinite;
+        }
+        #critical-alerts-section {
+            animation: pulse-critical 3s infinite;
+        }
+    `;
+    document.head.appendChild(style);
+});
+
+// Cleanup on page unload
+window.addEventListener('beforeunload', function() {
+    maritimeAlertsManager.stopAutoRefresh();
+});
 </script>

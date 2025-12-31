@@ -21,6 +21,7 @@ from backend.routes.weather_routes import weather_bp
 from backend.routes.maritime_routes import maritime_bp
 from backend.routes.recommendation_routes import recommendation_bp
 from backend.routes.system_dashboard import system_bp  # System monitoring dashboard
+from backend.routes.analytics_routes import analytics_bp
 
 # Import extensions
 from backend.extensions import db, mail, migrate
@@ -288,6 +289,7 @@ def create_app(config_name=None, testing=False, start_scheduler=True):
     app.register_blueprint(maritime_bp, url_prefix='/maritime')  # Maritime dashboard
     app.register_blueprint(recommendation_bp)  # Recommendation engine
     app.register_blueprint(system_bp, url_prefix='/api/system')  # System monitoring API
+    app.register_blueprint(analytics_bp)
 
     logging.info("✅ All blueprints registered successfully")
 

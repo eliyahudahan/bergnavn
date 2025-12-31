@@ -3,6 +3,7 @@ RTZ Parser for Norwegian Coastal Administration Route Files
 FIXED: Handles ZIP-compressed RTZ files and correct XML namespaces
 ENHANCED: Extracts ALL 47+ routes from ZIP files, not just the first one
 REAL-TIME: Ensures all routes are discovered and displayed in dashboard
+VISUAL ENHANCEMENT: Added route colors and visual properties for better map differentiation
 """
 
 import xml.etree.ElementTree as ET
@@ -14,6 +15,8 @@ import math
 import zipfile
 import tempfile
 import glob
+import random
+import colorsys
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -31,6 +34,49 @@ def get_project_root() -> str:
     else:
         # Assume we're in project root
         return current_dir
+
+def generate_route_colors() -> Dict[str, str]:
+    """
+    Generate distinct colors for routes visualization.
+    Returns color palette and ensures each route has unique styling.
+    """
+    # Base colors for different cities/regions - visually distinct
+    city_colors = {
+        'bergen': '#FF6B6B',      # Vibrant Red
+        'oslo': '#4ECDC4',        # Teal
+        'stavanger': '#45B7D1',   # Sky Blue
+        'trondheim': '#96CEB4',   # Mint Green
+        'alesund': '#FFEAA7',     # Light Yellow
+        'andalsnes': '#DDA0DD',   # Lavender
+        'kristiansand': '#98D8C8',# Seafoam Green
+        'drammen': '#F7DC6F',     # Gold
+        'sandefjord': '#BB8FCE',  # Purple
+        'flekkefjord': '#85C1E9', # Light Blue
+    }
+    
+    return city_colors
+
+def generate_unique_color(route_name: str, route_index: int) -> str:
+    """
+    Generate a unique color based on route name and index.
+    Ensures consistent coloring across sessions.
+    """
+    # Use hash of route name for consistent coloring
+    name_hash = hash(route_name) % 360
+    route_hash = (hash(route_name) + route_index * 137) % 360
+    
+    # Generate HSL color with good saturation and lightness
+    hue = (name_hash + route_hash) % 360
+    saturation = 70 + (route_index % 20)  # 70-90% saturation
+    lightness = 45 + (route_index % 15)   # 45-60% lightness
+    
+    # Convert HSL to RGB hex
+    rgb = colorsys.hls_to_rgb(hue/360, lightness/100, saturation/100)
+    return '#{:02x}{:02x}{:02x}'.format(
+        int(rgb[0] * 255),
+        int(rgb[1] * 255),
+        int(rgb[2] * 255)
+    )
 
 def extract_all_routes_from_zip(zip_path: str, city: str) -> List[Dict]:
     """
@@ -243,6 +289,9 @@ def parse_rtz_file(file_path: str) -> List[Dict]:
             })
             total_distance += leg_distance
         
+        # Extract origin and destination
+        origin, destination = extract_origin_destination(route_name, waypoints)
+        
         # Enhanced route information
         route_info = {
             'route_name': route_name,
@@ -252,11 +301,13 @@ def parse_rtz_file(file_path: str) -> List[Dict]:
             'total_distance_nm': round(total_distance, 2),
             'waypoint_count': len(waypoints),
             'leg_count': len(legs),
+            'origin': origin,
+            'destination': destination,
             'parse_timestamp': datetime.now().isoformat(),
             'data_source': 'rtz_file_parser'
         }
         
-        logger.info(f"✅ Successfully parsed route '{route_name}': {len(waypoints)} waypoints, {total_distance:.1f} nm")
+        logger.info(f"✅ Successfully parsed route '{route_name}': {origin} → {destination} ({len(waypoints)} waypoints, {total_distance:.1f} nm)")
             
         return [route_info]
         
@@ -447,14 +498,82 @@ def find_rtz_files() -> Dict[str, List[str]]:
     
     return rtz_files
 
-def discover_rtz_files() -> List[Dict]:
+def enhance_route_data_with_visuals(routes_data: List[Dict]) -> List[Dict]:
+    """
+    Add visual properties to route data for better map display.
+    Each route gets a unique color, markers for start/end, and visual properties.
+    
+    Args:
+        routes_data: List of route dictionaries
+        
+    Returns:
+        Enhanced routes with visual properties
+    """
+    enhanced_routes = []
+    city_colors = generate_route_colors()
+    
+    for i, route in enumerate(routes_data):
+        enhanced = route.copy()
+        source_city = route.get('source_city', 'unknown').lower()
+        
+        # Assign color based on city or generate unique
+        color = city_colors.get(source_city, generate_unique_color(route.get('route_name', f'route_{i}'), i))
+        
+        # Add visual properties for map display
+        enhanced['visual_properties'] = {
+            'color': color,
+            'weight': 3,  # Line thickness
+            'opacity': 0.8,
+            'dashArray': 'none',
+            'line_cap': 'round',
+            'line_join': 'round',
+            'start_marker_color': '#00FF00',  # Green for start
+            'end_marker_color': '#FF0000',    # Red for destination
+            'start_marker_radius': 8,
+            'end_marker_radius': 10,
+            'zIndex': i + 100,  # Ensure proper layering
+            'highlight_weight': 6,  # Thicker when highlighted
+            'highlight_color': '#FFFF00',  # Yellow for highlighting
+        }
+        
+        # Add clear start/end points
+        if route.get('waypoints'):
+            waypoints = route['waypoints']
+            enhanced['start_point'] = {
+                'lat': waypoints[0]['lat'],
+                'lon': waypoints[0]['lon'],
+                'name': waypoints[0].get('name', 'Start')
+            }
+            enhanced['end_point'] = {
+                'lat': waypoints[-1]['lat'],
+                'lon': waypoints[-1]['lon'],
+                'name': waypoints[-1].get('name', 'End')
+            }
+            
+            # Calculate midpoint for label
+            if len(waypoints) > 1:
+                mid_idx = len(waypoints) // 2
+                enhanced['label_position'] = {
+                    'lat': waypoints[mid_idx]['lat'],
+                    'lon': waypoints[mid_idx]['lon']
+                }
+        
+        enhanced_routes.append(enhanced)
+    
+    logger.info(f"🎨 Enhanced {len(enhanced_routes)} routes with visual properties")
+    return enhanced_routes
+
+def discover_rtz_files(enhanced: bool = True) -> List[Dict]:
     """
     Discover and parse ALL RTZ files from all cities.
     FIXED: Now properly handles ZIP files and finds ALL 47+ routes.
-    This is the MAIN function that should return all routes.
+    ENHANCED: Can return routes with visual properties for map display.
     
+    Args:
+        enhanced: Whether to add visual properties to routes
+        
     Returns:
-        List of ALL route dictionaries from all cities
+        List of ALL route dictionaries from all cities (with or without visual properties)
     """
     rtz_files = find_rtz_files()
     all_routes = []
@@ -511,6 +630,10 @@ def discover_rtz_files() -> List[Dict]:
         logger.info("📈 Route breakdown by city:")
         for city, count in sorted(routes_by_city.items()):
             logger.info(f"   • {city.title()}: {count} routes")
+    
+    # Enhance routes with visual properties if requested
+    if enhanced and all_routes:
+        all_routes = enhance_route_data_with_visuals(all_routes)
     
     return all_routes
 
@@ -647,6 +770,27 @@ def get_processing_statistics() -> Dict:
     
     return stats
 
+def process_all_cities_routes() -> int:
+    """
+    Process all RTZ files for all 10 Norwegian cities.
+    FIXED: Handles both direct XML and ZIP-compressed RTZ files with correct namespaces.
+    ENHANCED: Processes ALL routes in each ZIP file, not just the first one.
+    Returns count of successfully processed routes.
+    """
+    all_routes = discover_rtz_files(enhanced=False)
+    total_routes = len(all_routes)
+    
+    logger.info(f"🔄 Processing {total_routes} discovered routes...")
+    
+    # Save all routes to database
+    if all_routes:
+        saved_count = save_rtz_routes_to_db(all_routes)
+        logger.info(f"🎉 Processing complete: {saved_count} routes saved out of {total_routes} discovered")
+        return saved_count
+    else:
+        logger.error("❌ No routes were discovered")
+        return 0
+
 # Command-line interface for manual processing
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
@@ -669,8 +813,8 @@ if __name__ == "__main__":
     
     print("\n🔄 Starting comprehensive route discovery...")
     
-    # Discover all routes
-    all_routes = discover_rtz_files()
+    # Discover all routes (with visual enhancement)
+    all_routes = discover_rtz_files(enhanced=True)
     
     if all_routes:
         print(f"✅ Discovered {len(all_routes)} total routes")
@@ -686,7 +830,14 @@ if __name__ == "__main__":
         for city, count in sorted(routes_by_city.items()):
             print(f"   • {city.title()}: {count} routes")
         
-        # Process to database
+        # Show visual properties
+        if all_routes[0].get('visual_properties'):
+            print(f"\n🎨 Visual properties added:")
+            print(f"   • Unique colors for each city")
+            print(f"   • Start/end markers")
+            print(f"   • Enhanced map display")
+        
+        # Process to database (without visual properties)
         print(f"\n💾 Saving routes to database...")
         result = process_all_cities_routes()
         
@@ -708,24 +859,3 @@ if __name__ == "__main__":
                 print(f"  📁 {item}")
         else:
             print(f"Assets directory not found: {assets_path}")
-
-def process_all_cities_routes() -> int:
-    """
-    Process all RTZ files for all 10 Norwegian cities.
-    FIXED: Handles both direct XML and ZIP-compressed RTZ files with correct namespaces.
-    ENHANCED: Processes ALL routes in each ZIP file, not just the first one.
-    Returns count of successfully processed routes.
-    """
-    all_routes = discover_rtz_files()
-    total_routes = len(all_routes)
-    
-    logger.info(f"🔄 Processing {total_routes} discovered routes...")
-    
-    # Save all routes to database
-    if all_routes:
-        saved_count = save_rtz_routes_to_db(all_routes)
-        logger.info(f"🎉 Processing complete: {saved_count} routes saved out of {total_routes} discovered")
-        return saved_count
-    else:
-        logger.error("❌ No routes were discovered")
-        return 0

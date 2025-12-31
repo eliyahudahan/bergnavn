@@ -1,0 +1,342 @@
+/* backend/static/css/split/map.css */
+/* Enhanced route styling for maritime dashboard */
+
+/* ===== Route Lines ===== */
+.route-line {
+    transition: all 0.3s ease;
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.2));
+}
+
+.route-line:hover {
+    filter: brightness(1.2) drop-shadow(0 3px 5px rgba(0, 0, 0, 0.3));
+    weight: 5 !important;
+    cursor: pointer;
+}
+
+.route-line.highlighted {
+    animation: route-pulse 1s infinite alternate;
+    weight: 6 !important;
+    z-index: 1000 !important;
+}
+
+@keyframes route-pulse {
+    0% { opacity: 0.8; }
+    100% { opacity: 1; }
+}
+
+/* ===== Route Markers ===== */
+.route-start-marker {
+    filter: drop-shadow(0 2px 3px rgba(0, 100, 0, 0.4));
+    animation: start-pulse 2s infinite;
+}
+
+.route-end-marker {
+    filter: drop-shadow(0 2px 3px rgba(255, 0, 0, 0.4));
+    animation: end-pulse 2s infinite;
+}
+
+@keyframes start-pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+@keyframes end-pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+/* ===== Route Control Panel ===== */
+.route-control-panel {
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
+    max-height: 70vh;
+    overflow-y: auto;
+    min-width: 320px;
+    border: 2px solid #e0e7ff;
+    font-family: 'Inter', system-ui, sans-serif;
+}
+
+.route-control-panel h4 {
+    color: #1a2980;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e0e7ff;
+    font-weight: 700;
+}
+
+/* ===== Route Items ===== */
+.route-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 12px;
+    margin: 6px 0;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    background: #f8f9fa;
+    border: 1px solid transparent;
+}
+
+.route-item:hover {
+    background: #e9ecef;
+    border-color: #1a2980;
+    transform: translateX(3px);
+}
+
+.route-item.active {
+    background: linear-gradient(90deg, rgba(26, 41, 128, 0.1) 0%, rgba(38, 208, 206, 0.1) 100%);
+    border-color: #26d0ce;
+    box-shadow: 0 2px 8px rgba(38, 208, 206, 0.2);
+}
+
+.color-dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    margin-right: 12px;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    flex-shrink: 0;
+}
+
+.route-name {
+    flex: 1;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #333;
+    font-size: 0.95rem;
+}
+
+.route-distance {
+    font-size: 0.85rem;
+    color: #666;
+    margin: 0 10px;
+    font-weight: 500;
+    background: #f1f3f5;
+    padding: 3px 8px;
+    border-radius: 12px;
+}
+
+/* ===== Route Buttons ===== */
+.btn-zoom, .btn-toggle {
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 6px 10px;
+    margin-left: 4px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s ease;
+    color: #495057;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+}
+
+.btn-zoom:hover {
+    background: #e3f2fd;
+    border-color: #3498db;
+    color: #2980b9;
+    transform: scale(1.1);
+}
+
+.btn-toggle:hover {
+    background: #f3e5f5;
+    border-color: #9b59b6;
+    color: #8e44ad;
+    transform: scale(1.1);
+}
+
+/* ===== Route Filter ===== */
+.route-filter input {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 15px;
+    border: 2px solid #e0e7ff;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+}
+
+.route-filter input:focus {
+    outline: none;
+    border-color: #26d0ce;
+    box-shadow: 0 0 0 3px rgba(38, 208, 206, 0.1);
+    background: white;
+}
+
+/* ===== Route Stats ===== */
+.route-stats {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 2px solid #e0e7ff;
+    font-size: 0.9rem;
+    color: #555;
+    background: #f8f9fa;
+    padding: 12px;
+    border-radius: 8px;
+}
+
+.route-stats p {
+    margin: 5px 0;
+    display: flex;
+    justify-content: space-between;
+}
+
+.route-stats strong {
+    color: #1a2980;
+}
+
+/* ===== Route Labels ===== */
+.route-label-container {
+    background: transparent !important;
+    border: none !important;
+}
+
+.route-label {
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    white-space: nowrap;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    transform: translateY(-2px);
+}
+
+/* ===== Route Popup ===== */
+.route-popup {
+    min-width: 250px;
+    font-family: 'Inter', system-ui, sans-serif;
+}
+
+.route-popup h4 {
+    color: #1a2980;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e0e7ff;
+    font-weight: 700;
+}
+
+.route-popup p {
+    margin: 8px 0;
+    font-size: 0.9rem;
+}
+
+.route-popup strong {
+    color: #333;
+    font-weight: 600;
+}
+
+.route-popup .color-indicator {
+    width: 100%;
+    height: 5px;
+    margin-top: 12px;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--route-color, #3498db) 0%, transparent 100%);
+}
+
+/* ===== Route Legend ===== */
+.leaflet-control-legend {
+    background: white;
+    padding: 12px;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+    border: 2px solid #e0e7ff;
+    min-width: 200px;
+}
+
+.legend-title {
+    font-weight: 700;
+    color: #1a2980;
+    margin-bottom: 12px;
+    font-size: 1rem;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    margin: 8px 0;
+    padding: 4px 0;
+}
+
+.legend-color {
+    width: 24px;
+    height: 4px;
+    margin-right: 10px;
+    border-radius: 2px;
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
+}
+
+.legend-label {
+    font-size: 0.9rem;
+    color: #555;
+    flex: 1;
+}
+
+.legend-count {
+    font-size: 0.8rem;
+    color: #888;
+    background: #f1f3f5;
+    padding: 2px 6px;
+    border-radius: 8px;
+    margin-left: 8px;
+}
+
+/* ===== Responsive Design ===== */
+@media (max-width: 768px) {
+    .route-control-panel {
+        min-width: 280px;
+        padding: 12px;
+        right: 10px !important;
+        top: 120px !important;
+    }
+    
+    .route-item {
+        padding: 8px 10px;
+        font-size: 0.9rem;
+    }
+    
+    .route-name {
+        font-size: 0.85rem;
+    }
+    
+    .route-distance {
+        font-size: 0.8rem;
+        padding: 2px 6px;
+    }
+    
+    .btn-zoom, .btn-toggle {
+        width: 32px;
+        height: 32px;
+        padding: 5px;
+    }
+    
+    .leaflet-control-legend {
+        min-width: 180px;
+        font-size: 0.85rem;
+    }
+}
+
+/* ===== Route Selection Animation ===== */
+@keyframes route-select {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.route-selected {
+    animation: route-select 0.3s ease;
+    box-shadow: 0 0 0 3px rgba(38, 208, 206, 0.5);
+}

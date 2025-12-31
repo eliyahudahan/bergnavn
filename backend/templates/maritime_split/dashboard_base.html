@@ -3,6 +3,8 @@
 {% block title %}Maritime Dashboard | BergNavn{% endblock %}
 
 {% block head %}
+<!--Map style-->
+<link href="{{ url_for('static', filename='css/split/map.css') }}" rel="stylesheet">
 <!-- Dashboard CSS -->
 <link href="{{ url_for('static', filename='css/dashboard.css') }}" rel="stylesheet">
 <!-- Font Awesome -->
@@ -92,7 +94,12 @@
             </div>
         </div>
     </div>
-
+    <!-- Alerts Block - Real-time Maritime Alerts -->
+<div class="row mb-4">
+    <div class="col-12">
+        {% include 'maritime_split/alerts_block.html' %}
+    </div>
+</div>
     <!-- Map Section -->
     <div class="row mb-4">
         <div class="col-12">
@@ -405,7 +412,7 @@
 <script src="{{ url_for('static', filename='js/split/ais_realtime.js') }}"></script>
 <script src="{{ url_for('static', filename='js/split/wind_turbines_realtime.js') }}"></script>
 <script src="{{ url_for('static', filename='js/split/tanker_monitoring.js') }}"></script>
-
+<script src="{{ url_for('static', filename='js/split/rtz_routes_enhanced.js') }}"></script>
 <script>
 // Dashboard initialization
 document.addEventListener('DOMContentLoaded', function() {
@@ -463,23 +470,78 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Initialize RTZ routes
-    function initializeRTZRoutes() {
-        console.log('🗺️ Initializing RTZ routes...');
-        
-        const routeCount = getRouteCount();
-        console.log(`📊 Found ${routeCount} RTZ routes`);
-        
-        if (typeof window.rtzManager !== 'undefined' && routeCount > 0) {
-            // Load routes on map
-            setTimeout(() => {
-                if (window.rtzManager && typeof window.rtzManager.loadRoutes === 'function') {
-                    window.rtzManager.loadRoutes();
-                    console.log(`✅ Loaded ${routeCount} routes on map`);
-                }
-            }, 1000);
+    // Initialize RTZ routes - ENHANCED VERSION
+function initializeRTZRoutes() {
+    console.log('🗺️ Initializing RTZ routes...');
+    
+    const routeCount = getRouteCount();
+    console.log(`📊 Found ${routeCount} RTZ routes in dashboard data`);
+    
+    // Wait for map to be ready
+    setTimeout(() => {
+        // Try to use enhanced RTZ manager first
+        if (typeof window.loadEnhancedRTZRoutes === 'function') {
+            console.log('🎨 Using enhanced RTZ route manager');
+            window.loadEnhancedRTZRoutes();
+        } 
+        // Fallback to old RTZ manager
+        else if (window.rtzManager && typeof window.rtzManager.loadRoutes === 'function') {
+            console.log('🔄 Using legacy RTZ route manager');
+            window.rtzManager.loadRoutes();
         }
+        // Last resort: direct load if we have route data
+        else if (window.routesData && window.routesData.length > 0) {
+            console.log('⚠️ Loading routes directly from dashboard data');
+            loadRoutesDirectly(window.routesData);
+        }
+    }, 1500); // Give map time to initialize
+}
+
+// Helper function for direct route loading (fallback)
+function loadRoutesDirectly(routesData) {
+    if (!window.map) {
+        console.error('Map not available for direct route loading');
+        return;
     }
+    
+    console.log(`🗺️ Loading ${routesData.length} routes directly to map`);
+    
+    // Simple route rendering as fallback
+    routesData.forEach((route, index) => {
+        const waypoints = route.waypoints || [];
+        if (waypoints.length < 2) return;
+        
+        const latlngs = waypoints.map(wp => [wp.lat, wp.lon]);
+        const color = route.visual_properties?.color || 
+                     ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4'][index % 4];
+        
+        // Create polyline
+        const polyline = L.polyline(latlngs, {
+            color: color,
+            weight: 3,
+            opacity: 0.8,
+            lineCap: 'round',
+            lineJoin: 'round'
+        }).addTo(window.map);
+        
+        // Add markers for start and end
+        if (waypoints.length > 0) {
+            L.circleMarker([waypoints[0].lat, waypoints[0].lon], {
+                color: '#00FF00',
+                radius: 8,
+                fillOpacity: 1
+            }).addTo(window.map)
+            .bindPopup(`Start: ${route.name || 'Route ' + (index+1)}`);
+            
+            L.circleMarker([waypoints[waypoints.length-1].lat, waypoints[waypoints.length-1].lon], {
+                color: '#FF0000',
+                radius: 10,
+                fillOpacity: 1
+            }).addTo(window.map)
+            .bindPopup(`End: ${route.name || 'Route ' + (index+1)}`);
+        }
+    });
+}
     
     // Update local time and data timestamp
     function updateTime() {
@@ -708,6 +770,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Start initialization after a short delay
     setTimeout(initializeDashboard, 500);
     
+     
+
     // Add spinner animation CSS
     const style = document.createElement('style');
     style.textContent = `
