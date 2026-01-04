@@ -31,8 +31,10 @@ backend
   models
   routes
   services
+  simulation
   static
     css
+      split
     images
     js
       split
@@ -2259,6 +2261,11 @@ migrations
 models
 myenv
   bin
+  etc
+    jupyter
+      jupyter_notebook_config.d
+      jupyter_server_config.d
+      nbconfig
   include
     python3.12
     site
@@ -2269,6 +2276,20 @@ myenv
   lib64
     python3.12
       site-packages
+  share
+    applications
+    icons
+      hicolor
+    jupyter
+      kernels
+      lab
+      labextensions
+      nbconvert
+      nbextensions
+    man
+      man1
+    xyzservices
+notebooks
 progress
   backups
     tracking_backup_2025-12-29

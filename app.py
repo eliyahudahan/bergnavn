@@ -2,6 +2,7 @@
 # Main Flask application factory with full feature integration
 # ENHANCED: Prioritizes Kystdatahuset API for reliable Norwegian AIS data
 # FIXED: AIS service initialization with proper fallback handling
+# UPDATED: Removed dashboard_routes.py import (deleted file)
 
 import logging
 import os
@@ -10,8 +11,7 @@ from flask import Flask, session, request, jsonify
 from flask_apscheduler import APScheduler
 from dotenv import load_dotenv
 
-# Import all blueprints
-from backend.routes.dashboard_routes import dashboard_bp
+# Import all blueprints - REMOVED: dashboard_routes.py (deleted)
 from backend.routes.main_routes import main_bp
 from backend.routes.route_routes import routes_bp
 from backend.routes.ml_routes import ml_bp
@@ -22,6 +22,7 @@ from backend.routes.maritime_routes import maritime_bp
 from backend.routes.recommendation_routes import recommendation_bp
 from backend.routes.system_dashboard import system_bp  # System monitoring dashboard
 from backend.routes.analytics_routes import analytics_bp
+from backend.routes.simulation_routes import simulation_bp
 
 # Import extensions
 from backend.extensions import db, mail, migrate
@@ -285,11 +286,11 @@ def create_app(config_name=None, testing=False, start_scheduler=True):
     app.register_blueprint(route_leg_bp, url_prefix='/api/route')  # Route legs API
     app.register_blueprint(ml_bp, url_prefix='/api/ml')  # Machine learning API
     app.register_blueprint(weather_bp)  # Weather API - NOTE: blueprint name is 'weather'
-    app.register_blueprint(dashboard_bp, url_prefix='/dashboard')  # Analytics dashboard
     app.register_blueprint(maritime_bp, url_prefix='/maritime')  # Maritime dashboard
     app.register_blueprint(recommendation_bp)  # Recommendation engine
     app.register_blueprint(system_bp, url_prefix='/api/system')  # System monitoring API
     app.register_blueprint(analytics_bp)
+    app.register_blueprint(simulation_bp, url_prefix='/api/simulation')
 
     logging.info("✅ All blueprints registered successfully")
 
@@ -355,7 +356,9 @@ def create_app(config_name=None, testing=False, start_scheduler=True):
     logging.info("🚀 BergNavn Maritime System Initialized")
     logging.info(f"🌍 Environment: {os.getenv('FLASK_ENV', 'development')}")
     logging.info(f"🌐 Supported ports: 10 Norwegian cities")
-    logging.info(f"📊 Available dashboards: /dashboard (Analytics), /maritime (Maritime)")
+    logging.info(f"📊 Available dashboards: /maritime (Maritime Dashboard)")
+    logging.info(f"🚢 Available simulations: /maritime/simulation (Bergen Simulator)")
+    logging.info(f"🗺️ Available routes: /routes (RTZ Routes)")
     logging.info(f"🔍 System monitoring: /api/system/health, /api/system/metrics")
     
     # Log active services

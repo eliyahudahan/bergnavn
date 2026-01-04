@@ -39,12 +39,21 @@
     <!-- Navigation Links -->
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto align-items-center">
-        <!-- Maritime Dashboard Link - FIXED: maritime.maritime_dashboard -->
+        <!-- Maritime Dashboard Link -->
         <li class="nav-item mx-1">
           <a class="nav-link d-flex align-items-center px-3 py-2"
              href="{{ url_for('maritime.maritime_dashboard', lang=lang) }}">
             <i class="bi bi-speedometer2 me-2 fs-6"></i>
             <span class="fw-semibold">Dashboard</span>
+          </a>
+        </li>
+
+        <!-- Simulation Dashboard Link -->
+        <li class="nav-item mx-1">
+          <a class="nav-link d-flex align-items-center px-3 py-2"
+             href="{{ url_for('maritime.simulation_dashboard', lang=lang) }}">
+            <i class="bi bi-rocket-takeoff me-2 fs-6"></i>
+            <span class="fw-semibold">Simulation</span>
           </a>
         </li>
 
@@ -54,15 +63,6 @@
              href="{{ url_for('routes_bp.view_routes', lang=lang) }}">
             <i class="fas fa-route me-2 fs-6"></i>
             <span class="fw-semibold">Routes</span>
-          </a>
-        </li>
-
-        <!-- Analytics Dashboard Link -->
-        <li class="nav-item mx-1">
-          <a class="nav-link d-flex align-items-center px-3 py-2" 
-             href="{{ url_for('dashboard_bp.dashboard', lang=lang) }}">
-            <i class="bi bi-bar-chart me-2 fs-6"></i>
-            <span class="fw-semibold">Analytics</span>
           </a>
         </li>
 
@@ -194,7 +194,7 @@ function updateSystemStatus() {
         timestampElement.textContent = `Data updated: ${dateString} ${timeString}`;
     }
     
-    // Check API status - FIXED: Use maritime.health_check endpoint
+    // Check API status - Use maritime.health_check endpoint
     fetch('/maritime/api/health')
         .then(response => {
             const apiStatusElement = document.getElementById('api-status');

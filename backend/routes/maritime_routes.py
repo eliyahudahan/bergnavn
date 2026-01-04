@@ -984,3 +984,143 @@ def _calculate_distance_km(lat1: float, lon1: float, lat2: float, lon2: float) -
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
     
     return R * c
+
+# ============================================================================
+# 🚢 SIMULATION ENDPOINTS - DAY 1-5 IMPLEMENTATION
+# ============================================================================
+
+from backend.simulation.bergen_simulator import bergen_simulator
+
+@maritime_bp.route('/api/simulation/status')
+def simulation_status():
+    """
+    Get current simulation status.
+    Day 1: Single ship simulation.
+    """
+    try:
+        # Update simulation
+        bergen_simulator.update()
+        
+        return jsonify({
+            'timestamp': datetime.now().isoformat(),
+            'simulation': bergen_simulator.to_dict(),
+            'route': {
+                'name': bergen_simulator.route_name,
+                'waypoints': bergen_simulator.waypoints
+            }
+        })
+    except Exception as e:
+        logger.error(f"Simulation status error: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@maritime_bp.route('/api/simulation/decision', methods=['POST'])
+def record_decision():
+    """
+    Record operator decision.
+    Day 2: Operator decision recording.
+    """
+    try:
+        data = request.json
+        
+        decision = bergen_simulator.record_operator_decision(
+            operator_id=data.get('operator_id', 'test_operator'),
+            decision_type=data.get('decision_type', 'speed_change'),
+            decision_data=data.get('decision_data', {}),
+            context=data.get('context', {}),
+            notes=data.get('notes', '')
+        )
+        
+        return jsonify({
+            'success': True,
+            'decision': decision,
+            'total_decisions': len(bergen_simulator.operator_decisions)
+        })
+    except Exception as e:
+        logger.error(f"Decision recording error: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@maritime_bp.route('/api/simulation/alerts')
+def simulation_alerts():
+    """
+    Get simulation alerts.
+    Day 4: Comprehensive alert system.
+    """
+    try:
+        # Check for alerts based on current position
+        bergen_simulator.check_alerts()
+        
+        return jsonify({
+            'timestamp': datetime.now().isoformat(),
+            'alerts': bergen_simulator.alerts,
+            'position': bergen_simulator.position,
+            'total_alerts': len(bergen_simulator.alerts)
+        })
+    except Exception as e:
+        logger.error(f"Alerts error: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@maritime_bp.route('/api/simulation/operator-panel')
+def operator_panel():
+    """
+    Day 3: Operator decision panel.
+    """
+    try:
+        # Get current simulation context
+        bergen_simulator.update()
+        
+        # Create decision context
+        context = {
+            'position': bergen_simulator.position,
+            'speed': bergen_simulator.speed_knots,
+            'heading': bergen_simulator.heading,
+            'alerts': bergen_simulator.alerts,
+            'next_waypoint': bergen_simulator.waypoints[bergen_simulator.current_waypoint_index + 1] 
+                if bergen_simulator.current_waypoint_index < len(bergen_simulator.waypoints) - 1 
+                else None,
+            'fuel_remaining': 1000 - bergen_simulator.fuel_rate * ((datetime.now() - bergen_simulator.start_time).seconds / 3600)
+        }
+        
+        return jsonify({
+            'timestamp': datetime.now().isoformat(),
+            'context': context,
+            'decision_options': [
+                {'type': 'speed_change', 'label': 'Reduce speed', 'value': -5},
+                {'type': 'speed_change', 'label': 'Increase speed', 'value': +5},
+                {'type': 'course_change', 'label': 'Change course 15° East', 'value': 15},
+                {'type': 'course_change', 'label': 'Change course 15° West', 'value': -15},
+                {'type': 'continue', 'label': 'Continue as planned', 'value': None}
+            ]
+        })
+    except Exception as e:
+        logger.error(f"Operator panel error: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@maritime_bp.route('/simulation')
+def simulation_dashboard():
+    """
+    Render the simulation dashboard.
+    Day 5: Visualization in existing map.
+    """
+    try:
+        # Get all necessary data
+        bergen_simulator.update()
+        
+        # Get RTZ routes for map
+        from backend.services.rtz_parser import discover_rtz_files
+        routes_data = discover_rtz_files(enhanced=True)
+        
+        # Get weather data
+        weather_data = {}
+        if hasattr(current_app, 'weather_service'):
+            weather_data = current_app.weather_service.get_current_weather()
+        
+        return render_template(
+            'maritime_split/dashboard_base.html',
+            simulation=bergen_simulator.to_dict(),
+            routes=routes_data,
+            weather=weather_data,
+            timestamp=datetime.now().isoformat()
+        )
+    except Exception as e:
+        logger.error(f"Simulation dashboard error: {e}")
+        return render_template('error.html', error_message="Could not load simulation dashboard"), 500
