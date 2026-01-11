@@ -1,0 +1,49 @@
+🔍 Checking HTML errors in dashboard_base.html...
+==================================================
+📌 CHECK 1: Missing closing tags
+--------------------------------
+Opening div tags: 44
+Closing div tags: 44
+
+📌 CHECK 2: Template variable errors
+------------------------------------
+Variables that might be missing from Flask context:
+95:        <span class="city-badge badge-{{ port|lower|replace('å', 'a') }}" 
+96:              data-port="{{ port|lower }}"
+98:            {{ port }}
+237:                                        Showing <strong>{{ routes|length }}</strong> RTZ routes from 
+264:                                    <tr class="route-row" data-city="{{ route.source_city|default('')|lower }}">
+268:                                                {{ route.clean_name }}
+271:                                                {{ clean_name }}
+273:                                                Route {{ loop.index }}
+276:                                            <br><small class="text-muted">{{ route.filename }}</small>
+283:                                                <span class="badge bg-success bg-opacity-25">{{ route.origin }}</span>
+
+📌 CHECK 3: JavaScript syntax errors
+------------------------------------
+Checking unclosed JS blocks...
+Opening script tags: 1
+Closing script tags: 6
+
+📌 CHECK 4: HTML5/Bootstrap issues
+----------------------------------
+Checking for deprecated attributes...
+68:<div class="dashboard-header text-center py-3">
+69:    <h1 class="text-gradient mb-2">🌊 Maritime Dashboard</h1>
+70:    <p class="lead mb-3">Real-time AIS • MET Weather • RTZ Routes</p>
+73:    <div class="mb-3">
+77:            <i class="fas fa-database me-1"></i>
+
+🚨 CRITICAL ERRORS TO FIX:
+===========================
+1. Line 45-55: Check missing closing div for 'ports-badges-container'
+2. Line 120: Ensure 'routes' variable is passed from Flask
+3. Line 185: Verify 'cities_with_routes' exists in context
+4. Line 220: Check if 'ports_list' is defined in template context
+5. Line 310: Confirm all JavaScript is inside proper <script> tags
+
+💡 Quick fix command:
+python3 -m html5validator --root backend/templates/maritime_split/ --format text 2>&1 | head -20
+
+✅ To validate fixed HTML, run:
+python3 -c "from html.parser import HTMLParser; import sys; p = HTMLParser(); print('HTML is valid' if p.check_status() else 'HTML has errors')"

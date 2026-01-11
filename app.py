@@ -3,6 +3,7 @@
 # ENHANCED: Prioritizes Kystdatahuset API for reliable Norwegian AIS data
 # FIXED: AIS service initialization with proper fallback handling
 # UPDATED: Removed dashboard_routes.py import (deleted file)
+# FIXED: Indentation error at line 292
 
 import logging
 import os
@@ -23,6 +24,7 @@ from backend.routes.recommendation_routes import recommendation_bp
 from backend.routes.system_dashboard import system_bp  # System monitoring dashboard
 from backend.routes.analytics_routes import analytics_bp
 from backend.routes.simulation_routes import simulation_bp
+from backend.routes.nca_routes import nca_bp
 
 # Import extensions
 from backend.extensions import db, mail, migrate
@@ -279,7 +281,7 @@ def create_app(config_name=None, testing=False, start_scheduler=True):
         from backend import models
         logging.info("✅ Database models imported successfully")
 
-    # Register all blueprints
+    # Register all blueprints - FIXED INDENTATION HERE
     app.register_blueprint(main_bp)  # Main pages (home, about, contact)
     app.register_blueprint(cruise_blueprint)  # Cruise routes
     app.register_blueprint(routes_bp, url_prefix="/routes")  # Route management
@@ -287,6 +289,7 @@ def create_app(config_name=None, testing=False, start_scheduler=True):
     app.register_blueprint(ml_bp, url_prefix='/api/ml')  # Machine learning API
     app.register_blueprint(weather_bp)  # Weather API - NOTE: blueprint name is 'weather'
     app.register_blueprint(maritime_bp, url_prefix='/maritime')  # Maritime dashboard
+    app.register_blueprint(nca_bp, url_prefix="/nca")  # Norwegian Coastal Administration routes
     app.register_blueprint(recommendation_bp)  # Recommendation engine
     app.register_blueprint(system_bp, url_prefix='/api/system')  # System monitoring API
     app.register_blueprint(analytics_bp)

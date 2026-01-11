@@ -705,19 +705,3 @@ window.rtzManager = {
     getRouteCount: () => activeRoutes.length,
     selectRoute: selectRouteOnMap
 };
-
-// ============================================================================
-// EXPORT FUNCTIONS FOR DASHBOARD INTEGRATION
-// ============================================================================
-
-// Export addRoutesToMap for dashboard (points to the real function)
-window.addRoutesToMap = displayRoutesOnMap;
-
-// Trigger map ready event for dashboard integration
-setTimeout(() => {
-    if (typeof window.triggerMapReady === 'function') {
-        window.triggerMapReady();
-    }
-}, 1500);
-
-console.log("✅ Maritime map module ready for dashboard integration");

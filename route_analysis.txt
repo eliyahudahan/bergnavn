@@ -1,0 +1,10 @@
+=== DATA SOURCE COMPARISON ===
+Database routes:
+ count 
+-------
+    37
+(1 row)
+
+
+Actual RTZ files:
+80

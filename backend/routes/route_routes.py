@@ -1,252 +1,223 @@
 # backend/routes/route_routes.py
 """
-Routes Blueprint - displays NCA RTZ routes from database and file system.
-Supports both database-stored routes and direct RTZ file parsing.
+Routes Blueprint - displays NCA RTZ routes from Norwegian Coastal Administration.
+Uses RouteService for empirical verification.
 """
+
 from flask import Blueprint, request, jsonify, render_template, session, current_app
 from backend.utils.helpers import get_current_language
+from backend.services.route_service import route_service
 from datetime import datetime
 import logging
-import os
-import hashlib
-
-# Import models
-from backend.models.route import Route
-from backend.extensions import db
 
 # Blueprint for managing routes
 routes_bp = Blueprint('routes_bp', __name__)
 logger = logging.getLogger(__name__)
 
-# Norwegian port mapping for display
-NORWEGIAN_PORTS = {
-    'alesund': 'Ålesund',
-    'andalsnes': 'Andalsnes', 
-    'bergen': 'Bergen',
-    'drammen': 'Drammen',
-    'flekkefjord': 'Flekkefjord',
-    'kristiansand': 'Kristiansand',
-    'oslo': 'Oslo',
-    'sandefjord': 'Sandefjord',
-    'stavanger': 'Stavanger',
-    'trondheim': 'Trondheim'
-}
-
-def get_rtz_directory():
-    """Get the RTZ files directory path."""
-    project_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-    return os.path.join(project_root, 'backend', 'assets', 'routeinfo_routes')
-
-def parse_rtz_file_simple(filepath, city_name):
-    """
-    Simple RTZ parser for display purposes only.
-    Extracts basic information without full XML parsing.
-    """
-    try:
-        filename = os.path.basename(filepath)
-        
-        # Create route data from filename patterns
-        route_data = {
-            'id': hashlib.md5(f"{city_name}_{filename}".encode()).hexdigest()[:8],
-            'name': filename.replace('.rtz', '').replace('_', ' '),
-            'filename': filename,
-            'source': 'RTZ File',
-            'origin': NORWEGIAN_PORTS.get(city_name.lower(), city_name.title()),
-            'description': f'NCA route file for {city_name}'
-        }
-        
-        # Try to extract destination from filename
-        filename_lower = filename.lower()
-        if 'stad' in filename_lower:
-            route_data['destination'] = 'Stad'
-            route_data['description'] = f'NCA route from {route_data["origin"]} to Stad'
-        elif 'halten' in filename_lower:
-            route_data['destination'] = 'Halten'
-            route_data['description'] = f'NCA route from {route_data["origin"]} to Halten'
-        elif 'grip' in filename_lower:
-            route_data['destination'] = 'Grip'
-            route_data['description'] = f'NCA route from {route_data["origin"]} to Grip'
-        elif 'oks' in filename_lower:
-            route_data['destination'] = 'Oksøy'
-            route_data['description'] = f'NCA route from {route_data["origin"]} to Oksøy'
-        else:
-            route_data['destination'] = 'Coastal Waters'
-            route_data['description'] = f'NCA coastal route near {route_data["origin"]}'
-        
-        # Estimate distance based on filename patterns
-        if '7_5m' in filename_lower or '9m' in filename_lower:
-            # These are typically longer routes
-            route_data['total_distance_nm'] = 45.0
-            route_data['waypoint_count'] = 25
-        else:
-            # Local harbor routes
-            route_data['total_distance_nm'] = 12.0
-            route_data['waypoint_count'] = 8
-            
-        return route_data
-        
-    except Exception as e:
-        logger.error(f"Error processing RTZ file {filepath}: {e}")
-        return None
 
 @routes_bp.route('/')
 def view_routes():
     """
-    UI Endpoint: Render the routes view template with REAL NCA RTZ data.
-    Combines database routes with direct RTZ file discovery.
+    UI Endpoint: Render the routes view template with empirically verified routes.
     """
     lang = get_current_language()
     
     try:
-        # Try to get routes from database first
-        db_routes = []
-        try:
-            db_routes_query = Route.query.filter_by(is_active=True).all()
-            db_routes = [route.to_dict() for route in db_routes_query]
-            logger.info(f"✅ Loaded {len(db_routes)} routes from database")
-        except Exception as db_error:
-            logger.warning(f"Database query failed: {db_error}")
-            db_routes = []
+        # Get empirically verified routes
+        empirical_data = route_service.get_empirical_count()
         
-        # Also discover RTZ files directly
-        file_routes = []
-        rtz_dir = get_rtz_directory()
+        routes = empirical_data.get('routes', [])
+        route_count = empirical_data.get('empirical_count', 0)
         
-        if os.path.exists(rtz_dir):
-            for city in os.listdir(rtz_dir):
-                if city.lower() in NORWEGIAN_PORTS:
-                    city_path = os.path.join(rtz_dir, city, 'raw')
-                    if os.path.exists(city_path):
-                        for file in os.listdir(city_path):
-                            if file.endswith('.rtz'):
-                                filepath = os.path.join(city_path, file)
-                                route_data = parse_rtz_file_simple(filepath, city)
-                                if route_data:
-                                    file_routes.append(route_data)
+        # Get statistics
+        stats = route_service.get_route_statistics()
         
-        # Combine routes (avoid duplicates)
-        all_routes = db_routes.copy()
+        # Extract unique cities for port status grid
+        cities_with_routes = set()
+        for route in routes:
+            if source_city := route.get('source_city'):
+                cities_with_routes.add(source_city.title())
         
-        # Add file routes that aren't already in database
-        for file_route in file_routes:
-            if not any(r.get('name') == file_route.get('name') for r in all_routes):
-                all_routes.append(file_route)
+        # Calculate display values
+        total_distance = stats.get('total_distance_nm', 0)
+        waypoint_count = stats.get('total_waypoints', 0)
+        active_ports_count = stats.get('ports_with_routes', 0)
         
-        # Calculate statistics
-        total_distance = sum(r.get('total_distance_nm', 0) for r in all_routes)
-        waypoint_count = sum(r.get('waypoint_count', 0) for r in all_routes)
-        
-        # Get unique ports
-        ports_set = set()
-        for route in all_routes:
-            if origin := route.get('origin'):
-                ports_set.add(origin)
-            if destination := route.get('destination'):
-                ports_set.add(destination)
-        
-        cities_with_routes = sorted(list(ports_set))
-        active_ports_count = len(cities_with_routes)
-        
-        logger.info(f"📊 Displaying {len(all_routes)} routes ({len(db_routes)} DB, {len(file_routes)} files)")
+        logger.info(f"📊 routes.html: Showing {route_count} empirically verified routes")
         
     except Exception as e:
-        logger.error(f"❌ Error in view_routes: {e}", exc_info=True)
+        logger.error(f"Error in view_routes: {e}", exc_info=True)
         # Fallback to empty data
-        all_routes = []
+        routes = []
+        route_count = 0
         total_distance = 0
         waypoint_count = 0
         cities_with_routes = []
         active_ports_count = 0
+        stats = {'message': 'Error loading routes'}
     
     return render_template('routes.html', 
-                         routes=all_routes, 
+                         routes=routes, 
                          lang=lang,
+                         route_count=route_count,
                          total_distance=total_distance,
                          waypoint_count=waypoint_count,
-                         cities_with_routes=cities_with_routes,
+                         cities_with_routes=sorted(list(cities_with_routes)),
                          active_ports_count=active_ports_count,
+                         stats=stats,
                          timestamp=datetime.now().strftime('%H:%M %d/%m/%Y'))
+
 
 @routes_bp.route('/api/routes')
 def get_routes():
     """
-    API Endpoint: Get all routes as JSON
+    API Endpoint: Get all routes as JSON with empirical verification.
     """
     try:
-        routes = Route.query.filter_by(is_active=True).all()
-        routes_data = [route.to_dict() for route in routes]
-        return jsonify(routes_data)
+        empirical_data = route_service.get_empirical_count()
+        
+        return jsonify({
+            'success': True,
+            'empirical_count': empirical_data.get('empirical_count', 0),
+            'routes': empirical_data.get('routes', []),
+            'message': f'Found {empirical_data.get("empirical_count", 0)} empirically verified routes'
+        })
     except Exception as e:
         logger.error(f"API error: {e}")
-        return jsonify([])
+        return jsonify({
+            'success': False,
+            'error': str(e),
+            'routes': [],
+            'count': 0
+        }), 500
 
-@routes_bp.route('/api/routes/<int:route_id>')
-def get_route(route_id):
+
+@routes_bp.route('/api/routes/empirical-data')
+def get_empirical_route_data():
     """
-    API Endpoint: Get specific route by ID
+    API Endpoint: Get empirical data about route counts.
     """
     try:
-        route = Route.query.get_or_404(route_id)
-        return jsonify(route.to_dict())
+        empirical = route_service.get_empirical_data()
+        duplicates = route_service.get_duplicates_report()
+        
+        return jsonify({
+            'success': True,
+            'empirical_data': empirical,
+            'duplicates_report': duplicates,
+            'message': 'Empirical route data'
+        })
+        
     except Exception as e:
-        logger.error(f"Route {route_id} error: {e}")
-        return jsonify({'error': 'Route not found'}), 404
+        logger.error(f"Error in empirical data API: {str(e)}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+
+@routes_bp.route('/api/routes/statistics')
+def get_route_statistics():
+    """
+    API Endpoint: Get route statistics.
+    """
+    try:
+        stats = route_service.get_route_statistics()
+        
+        return jsonify({
+            'success': True,
+            'statistics': stats,
+            'message': f'Route statistics for {stats.get("empirical_count", 0)} verified routes'
+        })
+        
+    except Exception as e:
+        logger.error(f"Statistics API error: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
 
 @routes_bp.route('/api/routes/scan-rtz')
 def scan_rtz_files():
     """
-    API Endpoint: Scan for RTZ files and return discovered routes
+    API Endpoint: Scan for RTZ files and return discovered routes.
     """
     try:
-        file_routes = []
-        rtz_dir = get_rtz_directory()
+        from backend.services.rtz_parser import discover_rtz_files
         
-        if not os.path.exists(rtz_dir):
-            return jsonify({'error': 'RTZ directory not found', 'path': rtz_dir})
-        
-        for city in os.listdir(rtz_dir):
-            if city.lower() in NORWEGIAN_PORTS:
-                city_path = os.path.join(rtz_dir, city, 'raw')
-                if os.path.exists(city_path):
-                    rtz_files = [f for f in os.listdir(city_path) if f.endswith('.rtz')]
-                    if rtz_files:
-                        file_routes.append({
-                            'city': NORWEGIAN_PORTS[city.lower()],
-                            'files': rtz_files,
-                            'count': len(rtz_files)
-                        })
+        raw_routes = discover_rtz_files(enhanced=False)
+        empirical_data = route_service.get_empirical_count()
         
         return jsonify({
             'scan_time': datetime.now().isoformat(),
-            'directory': rtz_dir,
-            'cities_found': len(file_routes),
-            'routes': file_routes
+            'raw_routes_found': len(raw_routes),
+            'empirical_count': empirical_data.get('empirical_count', 0),
+            'duplicates_removed': len(raw_routes) - empirical_data.get('empirical_count', 0),
+            'message': f'Empirical verification: {empirical_data.get("empirical_count", 0)} unique routes'
         })
         
     except Exception as e:
         logger.error(f"Scan error: {e}")
         return jsonify({'error': str(e)}), 500
 
+
+@routes_bp.route('/debug/empirical-test')
+def empirical_test():
+    """
+    Debug endpoint for empirical testing.
+    """
+    try:
+        from backend.services.rtz_parser import discover_rtz_files
+        
+        raw_routes = discover_rtz_files(enhanced=False)
+        empirical_data = route_service.get_empirical_count()
+        
+        # Count by city
+        raw_by_city = {}
+        empirical_by_city = {}
+        
+        for route in raw_routes:
+            city = route.get('source_city', 'unknown')
+            raw_by_city[city] = raw_by_city.get(city, 0) + 1
+        
+        for route in empirical_data.get('routes', []):
+            city = route.get('source_city', 'unknown')
+            empirical_by_city[city] = empirical_by_city.get(city, 0) + 1
+        
+        return jsonify({
+            'success': True,
+            'empirical_verification': {
+                'raw_routes': len(raw_routes),
+                'empirical_count': empirical_data.get('empirical_count', 0),
+                'duplicates_removed': len(raw_routes) - empirical_data.get('empirical_count', 0)
+            },
+            'raw_by_city': raw_by_city,
+            'empirical_by_city': empirical_by_city,
+            'message': 'Empirical verification test results'
+        })
+        
+    except Exception as e:
+        logger.error(f"Empirical test error: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+# שמור את שאר הפונקציות כפי שהיו
 @routes_bp.route('/create', methods=['GET'])
 def create_route_form():
-    """
-    Display form for creating new route
-    """
+    """Display form for creating new route."""
     lang = get_current_language()
     return render_template('create_route.html', lang=lang)
 
+
 @routes_bp.route('/create', methods=['POST'])
 def create_route():
-    """
-    API Endpoint: Create new route
-    """
+    """API Endpoint: Create new route."""
     data = request.get_json()
-    # In production, save to database
     return jsonify({'success': True, 'message': 'Route created', 'route_id': 999})
+
 
 @routes_bp.route('/list')
 def list_routes():
-    """
-    Alternative routes listing endpoint
-    """
+    """Alternative routes listing endpoint."""
     return view_routes()

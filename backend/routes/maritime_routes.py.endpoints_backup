@@ -283,9 +283,9 @@ def get_ais_data():
         vessels = []
         try:
             if hasattr(current_app.ais_service, 'get_real_time_vessels'):
-                vessels = current_app.ais_service.get_vessels_in_bergen_region()
+                vessels = current_app.ais_service.get_real_time_vessels()
             else:
-                vessels = current_app.ais_service.get_vessels_in_bergen_region()
+                vessels = current_app.ais_service.get_latest_positions()
         except Exception as e:
             current_app.logger.warning(f"Could not get AIS data: {e}")
             vessels = []
@@ -353,78 +353,3 @@ def health_check():
             'error': str(e),
             'timestamp': datetime.now().isoformat()
         }), 500
-
-
-# ============================================================================
-# MISSING ENDPOINTS - ADDED FOR COMPATIBILITY
-# ============================================================================
-
-@maritime_bp.route('/api/rtz/routes')
-def get_rtz_routes():
-    """
-    Get RTZ routes from database.
-    """
-    try:
-        from backend.models.route import Route
-        from flask import jsonify
-        
-        routes = Route.query.filter_by(is_active=True).all()
-        
-        formatted_routes = []
-        for route in routes:
-            formatted_routes.append({
-                'name': route.name,
-                'origin': route.origin,
-                'destination': route.destination,
-                'total_distance_nm': route.total_distance_nm,
-                'duration_days': route.duration_days,
-                'is_active': route.is_active
-            })
-        
-        return jsonify({
-            'success': True,
-            'timestamp': datetime.now().isoformat(),
-            'routes': formatted_routes,
-            'count': len(formatted_routes)
-        })
-        
-    except Exception as e:
-        current_app.logger.error(f"RTZ routes error: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
-
-
-@maritime_bp.route('/api/weather-dashboard')
-def get_dashboard_weather():
-    """
-    Weather data for dashboard display.
-    """
-    try:
-        if not hasattr(current_app, 'weather_service'):
-            return jsonify({
-                'temperature_c': 8.5,
-                'wind_speed_ms': 5.2,
-                'city': 'Bergen',
-                'source': 'fallback'
-            })
-        
-        weather = current_app.weather_service.get_current_weather()
-        
-        return jsonify({
-            'temperature_c': weather.get('temperature_c', 8.5),
-            'wind_speed_ms': weather.get('wind_speed_ms', 5.2),
-            'wind_direction': weather.get('wind_direction', 'NW'),
-            'city': weather.get('city', 'Bergen'),
-            'source': 'weather_service'
-        })
-        
-    except Exception as e:
-        current_app.logger.error(f"Weather dashboard error: {e}")
-        return jsonify({
-            'temperature_c': 8.5,
-            'wind_speed_ms': 5.2,
-            'city': 'Bergen',
-            'source': 'error_fallback'
-        })

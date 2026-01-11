@@ -1,0 +1,102 @@
+{
+  "database": {
+    "base_routes": {
+      "row_count": 0,
+      "columns": [],
+      "sample_available": false
+    },
+    "route_files": {
+      "row_count": 0,
+      "columns": [],
+      "sample_available": false
+    },
+    "route_legs": {
+      "row_count": 0,
+      "columns": [],
+      "sample_available": false
+    },
+    "routes": {
+      "row_count": 37,
+      "columns": [
+        "id",
+        "name",
+        "description",
+        "duration_days",
+        "total_distance_nm",
+        "is_active",
+        "origin",
+        "destination",
+        "source",
+        "rtz_filename",
+        "waypoint_count",
+        "rtz_file_hash",
+        "vessel_draft_min",
+        "vessel_draft_max",
+        "created_at",
+        "updated_at",
+        "parsed_at"
+      ],
+      "sample_available": true
+    }
+  },
+  "json_files": {
+    "NCA_7_5m_Trondheim_Grande_Rorvik_In_20250731.json": {
+      "path": "/home/framg/dev/bergnavn/backend/assets/routeinfo_routes/trondheim/raw/extracted/NCA_7_5m_Trondheim_Grande_Rorvik_In_20250731.json",
+      "route_count": 59
+    },
+    "NCA_Trondheim_Halten_In_20250731.json": {
+      "path": "/home/framg/dev/bergnavn/backend/assets/routeinfo_routes/trondheim/raw/extracted/NCA_Trondheim_Halten_In_20250731.json",
+      "route_count": 17
+    },
+    "NCA_Trondheim_Grip_In_20250731.json": {
+      "path": "/home/framg/dev/bergnavn/backend/assets/routeinfo_routes/trondheim/raw/extracted/NCA_Trondheim_Grip_In_20250731.json",
+      "route_count": 23
+    },
+    "NCA_Stavanger_Skudefjorden_In_20250731.json": {
+      "path": "/home/framg/dev/bergnavn/backend/assets/routeinfo_routes/stavanger/raw/extracted/NCA_Stavanger_Skudefjorden_In_20250731.json",
+      "route_count": 7
+    },
+    "NCA_Stavanger_Feistein_In_20250731.json": {
+      "path": "/home/framg/dev/bergnavn/backend/assets/routeinfo_routes/stavanger/raw/extracted/NCA_Stavanger_Feistein_In_20250731.json",
+      "route_count": 10
+    }
+  },
+  "rtz_files": {
+    "rtz_count": 48,
+    "zip_count": 0,
+    "city_counts": {
+      "trondheim": 4,
+      "stavanger": 3,
+      "bergen": 11,
+      "oslo": 3,
+      "andalsnes": 4,
+      "flekkefjord": 2,
+      "drammen": 2,
+      "kristiansand": 3,
+      "sandefjord": 3,
+      "alesund": 13
+    }
+  },
+  "dashboard_template": {
+    "variables_needed": [
+      "routes (list)",
+      "ports_list (list)"
+    ],
+    "shows_actual_routes": false
+  },
+  "summary": {
+    "json_routes": 116,
+    "real_count": 37,
+    "real_source": "Database 'routes' table"
+  },
+  "flask_routes": {
+    "imports": [
+      "route_service",
+      "rtz_parser"
+    ],
+    "data_sources": [
+      "RouteService (empirical)",
+      "RTZ Parser (discover)"
+    ]
+  }
+}

@@ -346,3 +346,49 @@
 .spinner-border.spin {
     animation: spinner-border 0.75s linear infinite;
 }
+
+/* Styles for route table container */
+.route-table-container {
+    max-height: 600px;
+    overflow-y: auto;
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+    margin: 1rem 0;
+}
+
+/* Ensure table headers stay visible during scroll */
+.route-table th {
+    background-color: #f8f9fa;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+/* Enhanced hover effects for route rows */
+.route-table tr:hover {
+    background-color: rgba(0, 123, 255, 0.05);
+}
+
+/* Make city badges more interactive */
+.city-badge.active {
+    border: 2px solid #ffffff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+/* Animation for spin icon */
+.spin {
+    animation: spin 1s linear infinite;
+    display: inline-block;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Control button active state */
+.control-btn.active {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}

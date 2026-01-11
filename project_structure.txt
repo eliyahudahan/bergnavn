@@ -39,7 +39,6 @@ backend
     js
       split
   templates
-    dashboard
     maritime
     maritime_split
   tests

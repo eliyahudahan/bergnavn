@@ -1,0 +1,93 @@
+
+/* NCA (Norwegian Coastal Administration) Route Styling */
+.nca-route-line {
+    cursor: pointer;
+    transition: stroke-width 0.3s;
+}
+
+.nca-route-line:hover {
+    stroke-width: 6;
+    opacity: 1;
+}
+
+.nca-start-marker, .nca-end-marker {
+    background: transparent;
+    border: none;
+}
+
+/* NCA Data Badge */
+.nca-badge {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+    border: none;
+    font-weight: bold;
+}
+
+/* NCA Route Popup */
+.nca-popup {
+    min-width: 280px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.nca-popup h6 {
+    color: #1a73e8;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #1a73e8;
+    padding-bottom: 8px;
+}
+
+/* NCA Verified Indicator */
+.nca-verified {
+    display: inline-block;
+    background: #28a745;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: bold;
+    margin-left: 8px;
+}
+
+/* NCA Route Table */
+.nca-route-table {
+    font-size: 13px;
+}
+
+.nca-route-table tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* NCA Map Controls */
+.nca-controls {
+    background: white;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 15px;
+}
+
+.nca-controls button {
+    background: #1a73e8;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.nca-controls button:hover {
+    background: #0d5bb5;
+}
+
+/* Responsive NCA */
+@media (max-width: 768px) {
+    .nca-popup {
+        min-width: 200px;
+    }
+    
+    .nca-verified {
+        font-size: 10px;
+        padding: 1px 6px;
+    }
+}

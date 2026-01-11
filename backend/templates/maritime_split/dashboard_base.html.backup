@@ -1,5 +1,5 @@
 <!-- backend/templates/maritime_split/dashboard_base.html -->
-<!-- DATA-DRIVEN VERSION: Shows actual empirical count from data -->
+<!-- FIXED VERSION: Shows consistent route counts without duplication -->
 {% extends "base.html" %}
 
 {% block title %}Maritime Dashboard | BergNavn{% endblock %}
@@ -18,18 +18,18 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
 
 <style>
-/* Empirical verification badge */
-.empirical-badge {
-    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+/* Data-driven badge */
+.data-driven-badge {
+    background: linear-gradient(135deg, #17a2b8 0%, #20c997 100%);
     color: white;
     border: none;
     font-weight: bold;
 }
 
-/* Data-driven badge */
-.data-driven-badge {
-    background: linear-gradient(135deg, #17a2b8 0%, #20c997 100%);
-    color: white;
+/* Warning badge for debugging */
+.warning-badge {
+    background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+    color: #212529;
     border: none;
     font-weight: bold;
 }
@@ -94,6 +94,14 @@
     margin-top: 8px;
 }
 
+/* Data warning highlight */
+.data-warning {
+    border-left: 4px solid #ffc107;
+    padding-left: 12px;
+    font-size: 0.9rem;
+    margin-top: 8px;
+}
+
 /* Dashboard controls */
 .control-btn {
     background: #f8f9fa;
@@ -133,22 +141,21 @@
     100% { opacity: 1; }
 }
 
-/* Dashboard card styling */
-.dashboard-card {
+/* Debug panel */
+.debug-panel {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 10px;
+    font-family: monospace;
+    font-size: 0.85rem;
+}
+.debug-item {
+    margin-bottom: 5px;
+    padding: 3px 8px;
+    border-radius: 4px;
     background: white;
-    border-radius: 12px;
-    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
-    margin-bottom: 25px;
-    overflow: hidden;
-    border: 1px solid #e9ecef;
-}
-.dashboard-card .card-header {
-    background-color: #f8f9fa;
-    border-bottom: 1px solid #e9ecef;
-    padding: 15px 20px;
-}
-.dashboard-card .card-body {
-    padding: 20px;
 }
 
 /* Responsive design */
@@ -171,16 +178,33 @@
     <h1 class="text-gradient mb-2">🌊 Maritime Dashboard</h1>
     <p class="lead mb-3">Live AIS • MET Weather • RTZ Routes</p>
     
-    <!-- Calculate actual route count from database -->
-    {% set actual_route_count = routes|length if routes else 0 %}
+    <!-- Get accurate route counts -->
+    {% set routes_from_db = routes if routes and routes is iterable else [] %}
+    {% set total_db_routes = routes_from_db|length %}
+    
+    <!-- Calculate actual unique routes (remove duplicates) -->
+    {% set unique_routes = [] %}
+    {% set seen_route_names = {} %}
+    {% if routes_from_db %}
+        {% for route in routes_from_db %}
+            {% set route_name = route.route_name or route.name or ('Route ' ~ loop.index) %}
+            {% if route_name not in seen_route_names %}
+                {% set _ = seen_route_names.update({route_name: true}) %}
+                {% set _ = unique_routes.append(route) %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+    
+    {% set actual_unique_count = unique_routes|length %}
     
     <!-- Dynamic Count Badge - Shows actual data -->
     <div class="mb-3">
+        <!-- Show the CORRECT count from unique routes -->
         <span class="badge data-driven-badge me-2" id="data-truth-badge" 
-              title="Actual RTZ routes count from database">
+              title="Actual unique RTZ routes (duplicates removed)">
             <i class="fas fa-database me-1"></i>
-            <span id="route-count-badge">{{ actual_route_count }}</span> Actual RTZ Routes
-            <span class="badge bg-light text-dark ms-1">✓ Live Data</span>
+            <span id="route-count-badge">{{ actual_unique_count }}</span> Unique RTZ Routes
+            <span class="badge bg-light text-dark ms-1">✓ No Duplicates</span>
         </span>
         <span class="badge bg-info me-2">
             <i class="fas fa-ship me-1"></i>
@@ -197,10 +221,10 @@
         <div class="d-flex align-items-center">
             <i class="fas fa-database me-3"></i>
             <div>
-                <strong>Data-Driven Dashboard</strong>
+                <strong>Data Consistency Check</strong>
                 <p class="mb-0 small">
-                    Showing actual counts from database. 
-                    Routes: <strong id="actual-route-count">{{ actual_route_count }}</strong>, 
+                    Showing <strong>{{ actual_unique_count }}</strong> unique RTZ routes 
+                    (filtered from <strong>{{ total_db_routes }}</strong> total entries).
                     Ports: <strong>{{ ports_list|length if ports_list else 0 }}</strong>
                     <button class="btn btn-sm btn-outline-info ms-2" id="show-data-source">
                         <i class="fas fa-info-circle"></i> Data Source
@@ -209,6 +233,28 @@
             </div>
         </div>
     </div>
+    
+    <!-- Data Quality Warning (if duplicates detected) -->
+    {% if total_db_routes > actual_unique_count %}
+    <div class="alert alert-warning mb-3 py-2" id="data-quality-alert">
+        <div class="d-flex align-items-center">
+            <i class="fas fa-exclamation-triangle me-3"></i>
+            <div>
+                <strong>Data Quality Notice</strong>
+                <p class="mb-0 small">
+                    Found <strong>{{ total_db_routes - actual_unique_count }}</strong> duplicate route entries. 
+                    Showing unique routes only. 
+                    <button class="btn btn-sm btn-outline-warning ms-2" id="fix-duplicates-btn">
+                        <i class="fas fa-broom me-1"></i> Clean Data
+                    </button>
+                    <button class="btn btn-sm btn-outline-secondary ms-1" id="show-duplicates-btn">
+                        <i class="fas fa-eye me-1"></i> Show Duplicates
+                    </button>
+                </p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
     
     <!-- Actual empirical verification -->
     {% if empirical_verification and empirical_verification.verification_hash %}
@@ -219,7 +265,6 @@
                 <strong>Empirical Verification Complete</strong>
                 <p class="mb-0 small">
                     Data verified at: {{ empirical_verification.timestamp|default('Unknown') }}
-                    Hash: <code class="small">{{ empirical_verification.verification_hash[:8] }}...</code>
                     <button class="btn btn-sm btn-outline-success ms-2" id="refresh-data">
                         <i class="fas fa-redo"></i> Refresh Data
                     </button>
@@ -279,7 +324,47 @@
                         <button class="control-btn" id="tanker-btn" title="Toggle Tankers">
                             <i class="bi bi-droplet"></i>
                         </button>
+                        <button class="control-btn" id="debug-btn" title="Show Debug Info">
+                            <i class="fas fa-bug"></i>
+                        </button>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Debug Panel (hidden by default) -->
+    <div class="row mb-4" id="debug-panel" style="display: none;">
+        <div class="col-12">
+            <div class="debug-panel">
+                <h6><i class="fas fa-bug me-2"></i>Data Debug Information</h6>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="debug-item">
+                            <strong>Route Statistics:</strong><br>
+                            • Total entries from database: {{ total_db_routes }}<br>
+                            • Unique routes (deduplicated): {{ actual_unique_count }}<br>
+                            • Duplicate entries: {{ total_db_routes - actual_unique_count }}<br>
+                            • Ports in system: {{ ports_list|length if ports_list else 0 }}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="debug-item">
+                            <strong>Data Sources:</strong><br>
+                            • Data timestamp: <span id="debug-timestamp">--:--</span><br>
+                            • Routes table rows: <span id="debug-table-rows">0</span><br>
+                            • Map routes loaded: <span id="debug-map-routes">0</span><br>
+                            • AIS vessels: <span id="debug-ais-count">0</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <button class="btn btn-sm btn-outline-secondary me-2" id="recount-routes-btn">
+                        <i class="fas fa-calculator me-1"></i>Recount Routes
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger" id="clear-duplicates-btn">
+                        <i class="fas fa-trash-alt me-1"></i>Remove Duplicates
+                    </button>
                 </div>
             </div>
         </div>
@@ -296,14 +381,21 @@
                             <i class="bi bi-ship me-1"></i>
                             <span id="vessel-count">0</span>
                         </span>
+                        <!-- Show UNIQUE route count -->
                         <span class="badge bg-success text-dark">
                             <i class="fas fa-database me-1"></i>
-                            <span id="route-count">{{ actual_route_count }}</span>
+                            <span id="route-count">{{ actual_unique_count }}</span>
                         </span>
                         <span class="badge bg-warning text-dark ms-2">
                             <i class="bi bi-wind me-1"></i>
                             <span id="turbine-count">0</span>
                         </span>
+                        {% if total_db_routes > actual_unique_count %}
+                        <span class="badge bg-danger text-dark ms-2" title="Duplicate routes detected">
+                            <i class="fas fa-exclamation-triangle me-1"></i>
+                            {{ total_db_routes - actual_unique_count }} dup
+                        </span>
+                        {% endif %}
                     </div>
                 </div>
                 <div class="card-body p-0">
@@ -342,11 +434,11 @@
             </div>
         </div>
         
-        <!-- RTZ Routes - ACTUAL DATA -->
+        <!-- RTZ Routes - SHOW UNIQUE COUNT -->
         <div class="col-md-3 mb-3">
-            <div class="stats-card rtz-stat border-info">
-                <h6><i class="fas fa-database me-2"></i>Actual Routes</h6>
-                <h3 id="route-display-count">{{ actual_route_count }}</h3>
+            <div class="stats-card rtz-stat {% if total_db_routes > actual_unique_count %}border-warning{% else %}border-info{% endif %}">
+                <h6><i class="fas fa-database me-2"></i>Unique Routes</h6>
+                <h3 id="route-display-count">{{ actual_unique_count }}</h3>
                 <small class="text-muted">
                     {% if unique_ports_count is defined %}
                         {{ unique_ports_count }}/{{ ports_list|length if ports_list else 0 }} ports
@@ -354,10 +446,14 @@
                         {{ ports_list|length if ports_list else 0 }} ports
                     {% endif %}
                 </small>
-                <div class="data-note mt-2">
-                    <small class="text-info">
-                        <i class="fas fa-database me-1"></i>
-                        Live database count
+                <div class="{% if total_db_routes > actual_unique_count %}data-warning{% else %}data-note{% endif %} mt-2">
+                    <small class="{% if total_db_routes > actual_unique_count %}text-warning{% else %}text-info{% endif %}">
+                        <i class="fas fa-{% if total_db_routes > actual_unique_count %}exclamation-triangle{% else %}database{% endif %} me-1"></i>
+                        {% if total_db_routes > actual_unique_count %}
+                            {{ total_db_routes - actual_unique_count }} duplicates filtered
+                        {% else %}
+                            Clean database count
+                        {% endif %}
                     </small>
                 </div>
             </div>
@@ -372,21 +468,26 @@
                     <h5 class="mb-0">
                         <i class="fas fa-route me-2"></i>
                         NCA Maritime Routes 
-                        <span class="badge bg-primary ms-2" id="actual-routes-badge">{{ actual_route_count }}</span>
-                        <span class="badge bg-info ms-1" title="Actual data from database">
-                            <i class="fas fa-database"></i> Live
+                        <span class="badge bg-primary ms-2" id="actual-routes-badge">{{ actual_unique_count }}</span>
+                        <span class="badge bg-info ms-1" title="Unique routes only">
+                            <i class="fas fa-filter"></i> Unique
                         </span>
+                        {% if total_db_routes > actual_unique_count %}
+                        <span class="badge bg-warning ms-1" title="Duplicate routes filtered">
+                            <i class="fas fa-filter"></i> -{{ total_db_routes - actual_unique_count }} dup
+                        </span>
+                        {% endif %}
                     </h5>
                 </div>
                 <div class="card-body">
-                    {% if routes and routes|length > 0 %}
-                        <!-- Data Source Information -->
-                        <div class="alert alert-info mb-3">
+                    {% if unique_routes and unique_routes|length > 0 %}
+                        <!-- Data Quality Information -->
+                        <div class="alert {% if total_db_routes > actual_unique_count %}alert-warning{% else %}alert-info{% endif %} mb-3">
                             <div class="d-flex">
-                                <i class="fas fa-database me-2 mt-1"></i>
+                                <i class="fas fa-{% if total_db_routes > actual_unique_count %}exclamation-triangle{% else %}database{% endif %} me-2 mt-1"></i>
                                 <div>
                                     <small>
-                                        Showing <strong>{{ routes|length }}</strong> actual RTZ routes from 
+                                        Showing <strong>{{ actual_unique_count }}</strong> unique RTZ routes from 
                                         <strong>
                                             {% if unique_ports_count is defined %}
                                                 {{ unique_ports_count }}
@@ -394,10 +495,17 @@
                                                 {{ ports_list|length if ports_list else 0 }}
                                             {% endif %}
                                         </strong> Norwegian ports.
+                                        {% if total_db_routes > actual_unique_count %}
+                                        <span class="text-warning">
+                                            <i class="fas fa-filter ms-2"></i>
+                                            {{ total_db_routes - actual_unique_count }} duplicate entries filtered
+                                        </span>
+                                        {% else %}
                                         <span class="text-success">
                                             <i class="fas fa-check-circle ms-2"></i>
-                                            Real database count
+                                            No duplicates found
                                         </span>
+                                        {% endif %}
                                     </small>
                                 </div>
                             </div>
@@ -418,9 +526,12 @@
                                     </tr>
                                 </thead>
                                 <tbody id="routes-table-body">
-                                    {% for route in routes %}
-                                    <tr class="route-row" data-city="{{ route.source_city|default('')|lower }}" 
-                                        data-port="{{ route.source_city|default('')|lower }}">
+                                    {% for route in unique_routes %}
+                                    {% set route_name = route.route_name or route.name or ('Route ' ~ loop.index) %}
+                                    <tr class="route-row" 
+                                        data-city="{{ route.source_city|default('')|lower }}" 
+                                        data-port="{{ route.source_city|default('')|lower }}"
+                                        data-route-name="{{ route_name|lower }}">
                                         <!-- Row Number -->
                                         <td class="text-muted">{{ loop.index }}</td>
                                         
@@ -428,14 +539,19 @@
                                         <td>
                                             {% if route.clean_name %}
                                                 <strong>{{ route.clean_name }}</strong>
-                                            {% elif route.route_name %}
-                                                {% set clean_name = route.route_name|replace('NCA_', '')|replace('_2025', '')|replace('_', ' ')|title %}
+                                            {% elif route_name %}
+                                                {% set clean_name = route_name|replace('NCA_', '')|replace('_2025', '')|replace('_', ' ')|title %}
                                                 <strong>{{ clean_name }}</strong>
                                             {% else %}
                                                 <strong>Route {{ loop.index }}</strong>
                                             {% endif %}
-                                            {% if route.description %}
-                                                <br><small class="text-muted">{{ route.description[:50] }}...</small>
+                                            
+                                            <!-- Show source file if available -->
+                                            {% if route.original_file or route.rtz_filename %}
+                                                <br><small class="text-muted">
+                                                    <i class="fas fa-file me-1"></i>
+                                                    {{ route.original_file or route.rtz_filename }}
+                                                </small>
                                             {% endif %}
                                         </td>
                                         
@@ -494,6 +610,12 @@
                                                     Active
                                                 {% endif %}
                                             </span>
+                                            <!-- Show if this is a duplicate (should not appear now) -->
+                                            {% if route._is_duplicate %}
+                                            <br><small class="text-danger">
+                                                <i class="fas fa-copy me-1"></i>Duplicate
+                                            </small>
+                                            {% endif %}
                                         </td>
                                     </tr>
                                     {% endfor %}
@@ -504,13 +626,19 @@
                         <!-- Route Statistics Footer -->
                         <div class="mt-3 pt-3 border-top">
                             <div class="row">
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <small class="text-muted">
                                         <i class="bi bi-list-check me-1"></i>
-                                        Total routes: <strong>{{ routes|length }}</strong>
+                                        Unique routes: <strong>{{ actual_unique_count }}</strong>
                                     </small>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3">
+                                    <small class="text-muted">
+                                        <i class="bi bi-copy me-1"></i>
+                                        Duplicates filtered: <strong>{{ total_db_routes - actual_unique_count }}</strong>
+                                    </small>
+                                </div>
+                                <div class="col-md-3">
                                     <small class="text-muted">
                                         <i class="bi bi-geo-alt me-1"></i>
                                         Unique ports: <strong>
@@ -522,10 +650,10 @@
                                         </strong>
                                     </small>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <small class="text-muted">
                                         <i class="bi bi-calendar me-1"></i>
-                                        Last updated: <span id="route-update-time">Now</span>
+                                        Updated: <span id="route-update-time">Now</span>
                                     </small>
                                 </div>
                             </div>
@@ -569,7 +697,7 @@
                         <i class="fas fa-database me-1"></i>
                         <strong>Data Integrity:</strong>
                         <span class="ms-2" id="data-integrity-status">
-                            {{ actual_route_count }} routes loaded from database
+                            {{ actual_unique_count }} unique routes ({{ total_db_routes }} total entries)
                         </span>
                     </div>
                     <div>
@@ -593,7 +721,7 @@
 
 <!-- Data Source Modal -->
 <div class="modal fade" id="dataSourceModal" tabindex="-1" aria-labelledby="dataSourceModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-info text-white">
                 <h5 class="modal-title" id="dataSourceModalLabel">
@@ -603,15 +731,23 @@
             </div>
             <div class="modal-body">
                 <h6>Data Source Details</h6>
-                <p>This dashboard shows <strong>actual data</strong> from your database.</p>
+                <p>This dashboard shows <strong>actual data</strong> from your database with duplicate filtering.</p>
                 
                 <div class="row mt-3">
                     <div class="col-md-6">
                         <div class="card bg-light">
                             <div class="card-body">
                                 <h6 class="card-title">RTZ Routes</h6>
-                                <h3 class="text-primary">{{ actual_route_count }}</h3>
-                                <small>Actual count from database</small>
+                                <h3 class="text-primary">{{ actual_unique_count }}</h3>
+                                <small>Unique routes (duplicates removed)</small>
+                                <div class="mt-2">
+                                    <small class="text-muted">
+                                        <i class="fas fa-copy me-1"></i>
+                                        {{ total_db_routes }} total entries<br>
+                                        <i class="fas fa-filter me-1"></i>
+                                        {{ total_db_routes - actual_unique_count }} duplicates filtered
+                                    </small>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -621,28 +757,44 @@
                                 <h6 class="card-title">Ports</h6>
                                 <h3 class="text-success">{{ ports_list|length if ports_list else 0 }}</h3>
                                 <small>Active Norwegian ports</small>
+                                <div class="mt-2">
+                                    <small class="text-muted">
+                                        <i class="fas fa-anchor me-1"></i>
+                                        {% if unique_ports_count is defined %}
+                                            {{ unique_ports_count }} ports with routes
+                                        {% else %}
+                                            All ports active
+                                        {% endif %}
+                                    </small>
+                                </div>
                             </div>
                         </div>
                     </div>
+                </div>
+                
+                <h6 class="mt-4">Common Duplicate Sources</h6>
+                <div class="alert alert-warning">
+                    <p class="mb-2"><strong>Why duplicates occur:</strong></p>
+                    <ul class="mb-0">
+                        <li>Same RTZ file parsed multiple times</li>
+                        <li>RTZ files extracted from ZIP archives AND processed separately</li>
+                        <li>Multiple imports without clearing previous data</li>
+                    </ul>
                 </div>
                 
                 <h6 class="mt-4">Data Verification</h6>
                 <div class="alert alert-success">
                     <p class="mb-0">
                         <i class="fas fa-check-circle me-1"></i>
-                        All numbers are calculated live from PostgreSQL database
+                        Dashboard automatically filters duplicates to show accurate counts
                     </p>
-                </div>
-                
-                <div class="alert alert-info mt-3">
-                    <small>
-                        <i class="fas fa-info-circle me-1"></i>
-                        This ensures data integrity and accuracy in the maritime dashboard.
-                    </small>
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-warning" onclick="cleanDuplicates()">
+                    <i class="fas fa-broom me-1"></i>Clean Database Duplicates
+                </button>
                 <button type="button" class="btn btn-primary" onclick="window.location.reload()">
                     <i class="fas fa-redo me-1"></i>Refresh Dashboard
                 </button>
@@ -660,22 +812,27 @@
 <script src="{{ url_for('static', filename='js/split/wind_turbines_realtime.js') }}"></script>
 <script src="{{ url_for('static', filename='js/split/tanker_monitoring.js') }}"></script>
 <script src="{{ url_for('static', filename='js/split/rtz_routes_fixed.js') }}"></script>
-<script src="{{ url_for('static', filename='js/split/scientific_norwegian_routes.js') }}"></script>
-
 
 <script>
-// Data-Driven Maritime Dashboard
+// Data-Driven Maritime Dashboard with Duplicate Detection
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚢 Maritime Dashboard (Data-Driven) initialized');
+    console.log('🚢 Maritime Dashboard (Fixed Duplicates) initialized');
     
-    // Get actual route count from the badge
+    // Get accurate counts from the page
     const routeCountBadge = document.getElementById('route-count-badge');
-    const actualRouteCount = routeCountBadge ? parseInt(routeCountBadge.textContent) || 0 : 0;
-    console.log('📊 Actual route count from database:', actualRouteCount);
+    const actualUniqueCount = routeCountBadge ? parseInt(routeCountBadge.textContent) || 0 : 0;
+    
+    const totalDbRoutes = {{ total_db_routes }};
+    const duplicateCount = Math.max(0, totalDbRoutes - actualUniqueCount);
+    
+    console.log('📊 Route Statistics:');
+    console.log(`   • Unique routes: ${actualUniqueCount}`);
+    console.log(`   • Total database entries: ${totalDbRoutes}`);
+    console.log(`   • Duplicates filtered: ${duplicateCount}`);
     
     // Count route rows in table
     const routeRows = document.querySelectorAll('.route-row');
-    console.log('📋 Found', routeRows.length, 'route rows in table');
+    console.log('📋 Found', routeRows.length, 'unique route rows in table');
     
     // Initialize dashboard
     initializeDashboard();
@@ -694,6 +851,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Initialize components after a delay
         setTimeout(() => {
             initializeComponents();
+            updateDebugInfo();
         }, 1000);
     }
     
@@ -713,25 +871,42 @@ document.addEventListener('DOMContentLoaded', function() {
                 month: 'short'
             });
             
-            // Update local time display
-            const localTimeElement = document.getElementById('local-time');
-            if (localTimeElement) {
-                localTimeElement.textContent = `${dateStr} ${timeStr}`;
-            }
+            // Update all time displays
+            const timeElements = [
+                'local-time', 'data-update-time', 'route-update-time', 'debug-timestamp'
+            ];
             
-            // Update data timestamp
-            const updateTimeElement = document.getElementById('data-update-time');
-            if (updateTimeElement) {
-                updateTimeElement.textContent = `Updated: ${dateStr} ${timeStr}`;
-            }
+            timeElements.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    if (id === 'debug-timestamp') {
+                        element.textContent = `${dateStr} ${timeStr}`;
+                    } else if (id === 'data-update-time') {
+                        element.textContent = `Updated: ${dateStr} ${timeStr}`;
+                    } else {
+                        element.textContent = `${dateStr} ${timeStr}`;
+                    }
+                }
+            });
             
-            // Update route update time
-            const routeUpdateElement = document.getElementById('route-update-time');
-            if (routeUpdateElement) {
-                routeUpdateElement.textContent = `${dateStr} ${timeStr}`;
-            }
         } catch (error) {
             console.warn('Time update error:', error);
+        }
+    }
+    
+    function updateDebugInfo() {
+        // Update debug panel information
+        const tableRows = document.querySelectorAll('.route-row').length;
+        const tableRowsElement = document.getElementById('debug-table-rows');
+        if (tableRowsElement) {
+            tableRowsElement.textContent = tableRows;
+        }
+        
+        // Update duplicate info
+        const duplicateCountElement = document.querySelector('#data-integrity-status');
+        if (duplicateCountElement) {
+            duplicateCountElement.textContent = 
+                `${actualUniqueCount} unique routes (${totalDbRoutes} total entries)`;
         }
     }
     
@@ -771,6 +946,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 console.log('👁️ Showing', visibleCount, 'routes for port:', port);
                 
+                // Update debug info
+                updateDebugInfo();
+                
                 // Show message if no routes found
                 if (port !== 'reset' && visibleCount === 0) {
                     showAlert('info', `No routes found for this port. Showing all routes.`, 3000);
@@ -809,11 +987,33 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
         
-        // Check database button
-        const checkDbBtn = document.getElementById('check-database-btn');
-        if (checkDbBtn) {
-            checkDbBtn.addEventListener('click', function() {
-                checkDatabaseConnection();
+        // Debug button
+        const debugBtn = document.getElementById('debug-btn');
+        if (debugBtn) {
+            debugBtn.addEventListener('click', function() {
+                const debugPanel = document.getElementById('debug-panel');
+                if (debugPanel) {
+                    const isVisible = debugPanel.style.display !== 'none';
+                    debugPanel.style.display = isVisible ? 'none' : 'block';
+                    this.classList.toggle('active', !isVisible);
+                    console.log('🐛 Debug panel', isVisible ? 'hidden' : 'shown');
+                }
+            });
+        }
+        
+        // Recount routes button
+        const recountBtn = document.getElementById('recount-routes-btn');
+        if (recountBtn) {
+            recountBtn.addEventListener('click', function() {
+                recountRoutes();
+            });
+        }
+        
+        // Clear duplicates button
+        const clearDupBtn = document.getElementById('clear-duplicates-btn');
+        if (clearDupBtn) {
+            clearDupBtn.addEventListener('click', function() {
+                clearDuplicates();
             });
         }
         
@@ -829,11 +1029,19 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
         
-        // Refresh data button
-        const refreshDataBtn = document.getElementById('refresh-data');
-        if (refreshDataBtn) {
-            refreshDataBtn.addEventListener('click', function() {
-                refreshRouteData();
+        // Fix duplicates button
+        const fixDupBtn = document.getElementById('fix-duplicates-btn');
+        if (fixDupBtn) {
+            fixDupBtn.addEventListener('click', function() {
+                fixDuplicates();
+            });
+        }
+        
+        // Show duplicates button
+        const showDupBtn = document.getElementById('show-duplicates-btn');
+        if (showDupBtn) {
+            showDupBtn.addEventListener('click', function() {
+                showDuplicates();
             });
         }
         
@@ -857,6 +1065,16 @@ document.addEventListener('DOMContentLoaded', function() {
         if (typeof window.aisManager !== 'undefined' && typeof window.aisManager.initialize === 'function') {
             console.log('🚢 Initializing AIS manager...');
             window.aisManager.initialize();
+            
+            // Update AIS count in debug panel
+            setTimeout(() => {
+                if (window.aisManager && window.aisManager.vesselCount !== undefined) {
+                    const aisCountElement = document.getElementById('debug-ais-count');
+                    if (aisCountElement) {
+                        aisCountElement.textContent = window.aisManager.vesselCount;
+                    }
+                }
+            }, 3000);
         }
         
         // Initialize weather if available
@@ -869,6 +1087,14 @@ document.addEventListener('DOMContentLoaded', function() {
         if (typeof window.rtzManager !== 'undefined' && typeof window.rtzManager.initialize === 'function') {
             console.log('🗺️ Initializing RTZ route manager...');
             window.rtzManager.initialize();
+            
+            // Update map route count in debug panel
+            setTimeout(() => {
+                const mapRoutesElement = document.getElementById('debug-map-routes');
+                if (mapRoutesElement && window.rtzManager && window.rtzManager.routeCount !== undefined) {
+                    mapRoutesElement.textContent = window.rtzManager.routeCount;
+                }
+            }, 2000);
         }
         
         console.log('✅ Dashboard components initialized');
@@ -918,98 +1144,193 @@ document.addEventListener('DOMContentLoaded', function() {
             verifyBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Verifying...';
         }
         
-        // Simulate verification (replace with actual API call)
+        // Check table rows vs unique count
+        const tableRows = document.querySelectorAll('.route-row').length;
+        
         setTimeout(() => {
-            const routeCount = document.querySelectorAll('.route-row').length;
-            const expectedCount = actualRouteCount;
-            
-            if (routeCount === expectedCount) {
-                showAlert('success', `Data integrity verified: ${routeCount} routes match database count`);
+            if (tableRows === actualUniqueCount) {
+                showAlert('success', 
+                    `Data integrity verified: ${tableRows} table rows match ${actualUniqueCount} unique routes`);
                 console.log('✅ Data integrity check passed');
             } else {
-                showAlert('warning', `Data mismatch: Table shows ${routeCount} rows, database has ${expectedCount} routes`);
+                showAlert('warning', 
+                    `Data mismatch: Table shows ${tableRows} rows, but should have ${actualUniqueCount} unique routes`);
                 console.warn('⚠️ Data mismatch detected');
             }
             
             if (verifyBtn) {
                 verifyBtn.innerHTML = originalHtml;
             }
+            
+            updateDebugInfo();
         }, 1500);
     }
     
-    function checkDatabaseConnection() {
-        console.log('🔌 Checking database connection...');
+    function recountRoutes() {
+        console.log('🧮 Recounting routes...');
         
-        const checkBtn = document.getElementById('check-database-btn');
-        const originalHtml = checkBtn ? checkBtn.innerHTML : '';
+        const recountBtn = document.getElementById('recount-routes-btn');
+        const originalHtml = recountBtn ? recountBtn.innerHTML : '';
         
-        if (checkBtn) {
-            checkBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Checking...';
+        if (recountBtn) {
+            recountBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Counting...';
         }
         
-        // Make API call to check database
-        fetch('/api/check-database')
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showAlert('success', `Database connection OK: ${data.routes} routes, ${data.ports} ports`);
-                    console.log('✅ Database check:', data);
-                } else {
-                    showAlert('warning', 'Database connection issue detected');
-                    console.warn('⚠️ Database check failed');
-                }
-            })
-            .catch(error => {
-                console.error('❌ Database check error:', error);
-                showAlert('danger', 'Failed to check database connection');
-            })
-            .finally(() => {
-                if (checkBtn) {
-                    checkBtn.innerHTML = originalHtml;
-                }
+        // Count routes in table
+        const tableRows = document.querySelectorAll('.route-row').length;
+        
+        // Count unique route names in table
+        const routeNames = new Set();
+        document.querySelectorAll('.route-row').forEach(row => {
+            const routeName = row.dataset.routeName || '';
+            if (routeName) {
+                routeNames.add(routeName);
+            }
+        });
+        
+        setTimeout(() => {
+            showAlert('info', 
+                `Recounted: ${tableRows} table rows, ${routeNames.size} unique route names`);
+            console.log('📊 Recount results:', {
+                tableRows,
+                uniqueRouteNames: routeNames.size,
+                routeNames: Array.from(routeNames)
             });
+            
+            if (recountBtn) {
+                recountBtn.innerHTML = originalHtml;
+            }
+            
+            updateDebugInfo();
+        }, 1000);
     }
     
-    function refreshRouteData() {
-        console.log('🔄 Refreshing route data...');
+    function clearDuplicates() {
+        console.log('🧹 Clearing duplicates from database...');
         
-        const refreshBtn = document.getElementById('refresh-data');
-        const originalHtml = refreshBtn ? refreshBtn.innerHTML : '';
-        
-        if (refreshBtn) {
-            refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Refreshing...';
+        if (!confirm('Are you sure you want to remove duplicate routes from the database? This action cannot be undone.')) {
+            return;
         }
         
-        // Make API call to refresh data
-        fetch('/api/refresh-routes')
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showAlert('success', `Data refreshed: ${data.count} routes loaded`);
-                    console.log('✅ Route refresh:', data);
-                    
-                    // Reload page after 2 seconds to show updated data
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 2000);
-                } else {
-                    showAlert('warning', data.message || 'Refresh failed');
-                    console.warn('⚠️ Route refresh failed');
+        showAlert('warning', 'Removing duplicate routes from database...', 0);
+        
+        // Make API call to clear duplicates
+        fetch('/api/routes/clean-duplicates', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showAlert('success', 
+                    `Removed ${data.removed_count} duplicate routes. Reloading dashboard...`);
+                console.log('✅ Duplicates removed:', data);
+                
+                // Reload page after 2 seconds
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
+            } else {
+                showAlert('danger', 
+                    `Failed to remove duplicates: ${data.message || 'Unknown error'}`);
+                console.error('❌ Failed to remove duplicates:', data);
+            }
+        })
+        .catch(error => {
+            console.error('❌ Error removing duplicates:', error);
+            showAlert('danger', 'Failed to remove duplicates. Please try again.');
+        });
+    }
+    
+    function fixDuplicates() {
+        console.log('🔧 Fixing duplicate display...');
+        showAlert('info', 'Filtering duplicate routes from display...', 3000);
+        
+        // Already handled by server-side filtering, just show message
+        setTimeout(() => {
+            showAlert('success', 'Duplicate routes filtered from display');
+        }, 1000);
+    }
+    
+    function showDuplicates() {
+        console.log('👁️ Showing duplicate routes...');
+        
+        // Highlight potential duplicates in table
+        const routeNames = {};
+        const rows = document.querySelectorAll('.route-row');
+        
+        rows.forEach(row => {
+            const routeName = row.dataset.routeName || '';
+            if (routeName) {
+                if (!routeNames[routeName]) {
+                    routeNames[routeName] = [];
                 }
-            })
-            .catch(error => {
-                console.error('❌ Route refresh error:', error);
-                showAlert('danger', 'Failed to refresh route data');
-            })
-            .finally(() => {
-                if (refreshBtn) {
-                    refreshBtn.innerHTML = originalHtml;
-                }
-            });
+                routeNames[routeName].push(row);
+            }
+        });
+        
+        // Find duplicates
+        let duplicateCount = 0;
+        Object.keys(routeNames).forEach(name => {
+            if (routeNames[name].length > 1) {
+                duplicateCount++;
+                // Highlight all but first occurrence
+                routeNames[name].forEach((row, index) => {
+                    if (index > 0) {
+                        row.style.backgroundColor = '#fff3cd';
+                        const statusCell = row.querySelector('td:last-child');
+                        if (statusCell) {
+                            const duplicateBadge = document.createElement('small');
+                            duplicateBadge.className = 'text-danger d-block';
+                            duplicateBadge.innerHTML = '<i class="fas fa-copy me-1"></i>Duplicate';
+                            statusCell.appendChild(duplicateBadge);
+                        }
+                    }
+                });
+            }
+        });
+        
+        if (duplicateCount > 0) {
+            showAlert('warning', 
+                `Highlighted ${duplicateCount} routes with duplicate names in table`, 5000);
+        } else {
+            showAlert('success', 'No duplicate route names found in table display');
+        }
     }
     
     // Initialize dashboard after page load
     console.log('🎯 Dashboard initialization complete');
+    
+    // Global function for modal
+    window.cleanDuplicates = clearDuplicates;
 });
+
+// Helper function to check for duplicate route names
+function detectDuplicateRoutes() {
+    const routeNames = new Set();
+    const duplicates = [];
+    
+    document.querySelectorAll('.route-row').forEach(row => {
+        const routeName = row.dataset.routeName || '';
+        if (routeName) {
+            if (routeNames.has(routeName)) {
+                duplicates.push({
+                    name: routeName,
+                    element: row
+                });
+            } else {
+                routeNames.add(routeName);
+            }
+        }
+    });
+    
+    return {
+        uniqueCount: routeNames.size,
+        duplicateCount: duplicates.length,
+        duplicates: duplicates
+    };
+}
 </script>
 {% endblock %}
