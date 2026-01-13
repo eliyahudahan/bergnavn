@@ -264,20 +264,20 @@
                         <button class="control-btn" id="refresh-btn" title="Refresh Dashboard">
                             <i class="bi bi-arrow-clockwise"></i>
                         </button>
-                        <button class="control-btn active" id="rtz-btn" title="Toggle RTZ Routes">
+                        <button class="control-btn active" id="rtz-btn" title="Highlight Routes">
                             <i class="fas fa-route"></i>
                         </button>
                         <button class="control-btn active" id="weather-btn" title="Toggle Weather">
                             <i class="bi bi-cloud-sun"></i>
                         </button>
-                        <button class="control-btn active" id="ais-btn" title="Toggle Real Vessels">
-                            <i class="bi bi-ship"></i>
+                        <button class="control-btn active" id="ais-btn" title="Refresh Data">
+                            <i class="bi bi-arrow-repeat"></i>
                         </button>
-                        <button class="control-btn" id="turbine-btn" title="Toggle Wind Turbines">
-                            <i class="bi bi-fan"></i>
+                        <button class="control-btn" id="turbine-btn" title="Turbine Status">
+                            <i class="bi bi-lightning-charge"></i>
                         </button>
-                        <button class="control-btn" id="tanker-btn" title="Toggle Tankers">
-                            <i class="bi bi-droplet"></i>
+                        <button class="control-btn" id="tanker-btn" title="Fuel Prices">
+                            <i class="bi bi-fuel-pump"></i>
                         </button>
                     </div>
                 </div>
@@ -660,7 +660,8 @@
 <script src="{{ url_for('static', filename='js/split/wind_turbines_realtime.js') }}"></script>
 <script src="{{ url_for('static', filename='js/split/tanker_monitoring.js') }}"></script>
 <script src="{{ url_for('static', filename='js/split/rtz_routes_fixed.js') }}"></script>
-<script src="{{ url_for('static', filename='js/split/scientific_norwegian_routes.js') }}"></script>
+<script src="{{ url_for('static', filename='js/split/enhanced_dashboard_buttons.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/split/scientific_norwegian_routes.js') }}"></script>
 
 
 <script>
