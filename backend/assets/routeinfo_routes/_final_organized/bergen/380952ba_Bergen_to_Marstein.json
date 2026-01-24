@@ -1,0 +1,200 @@
+{
+  "route_name": "NCA_Bergen_Marstein_Kobbaleia_In_20250801",
+  "file_path": "/home/framg/dev/bergnavn/backend/assets/routeinfo_routes/bergen/raw/extracted/NCA_Bergen_Marstein_Kobbaleia_In_20250731.rtz",
+  "waypoints": [
+    {
+      "name": "Marstein - report to Fedje VTS on channel 71",
+      "lat": 60.13368985,
+      "lon": 4.94190865,
+      "radius": 0.1
+    },
+    {
+      "name": "Korsfjorden pilot boarding",
+      "lat": 60.14298606,
+      "lon": 5.01516263,
+      "radius": 0.1
+    },
+    {
+      "name": "Ytstaskjeret",
+      "lat": 60.15898491,
+      "lon": 5.11750864,
+      "radius": 0.1
+    },
+    {
+      "name": "Kleppevik",
+      "lat": 60.18462202,
+      "lon": 5.18044637,
+      "radius": 0.1
+    },
+    {
+      "name": "Bornestangen",
+      "lat": 60.20167374,
+      "lon": 5.18760405,
+      "radius": 0.1
+    },
+    {
+      "name": "Leroyna",
+      "lat": 60.22567043,
+      "lon": 5.16787688,
+      "radius": 0.1
+    },
+    {
+      "name": "Tangaflu",
+      "lat": 60.24105802,
+      "lon": 5.1581574,
+      "radius": 0.1
+    },
+    {
+      "name": "Kobbaleia lt",
+      "lat": 60.30183333,
+      "lon": 5.14056667,
+      "radius": 0.1
+    },
+    {
+      "name": "Steinsundet",
+      "lat": 60.32631265,
+      "lon": 5.1470072,
+      "radius": 0.1
+    },
+    {
+      "name": "Vonflua",
+      "lat": 60.33377347,
+      "lon": 5.16577003,
+      "radius": 0.1
+    },
+    {
+      "name": "Hakonshella",
+      "lat": 60.34389968,
+      "lon": 5.17235867,
+      "radius": 0.1
+    },
+    {
+      "name": "Stongi lt",
+      "lat": 60.36334047,
+      "lon": 5.17028245,
+      "radius": 0.1
+    },
+    {
+      "name": "Sotra bridge",
+      "lat": 60.37389122,
+      "lon": 5.16562847,
+      "radius": 0.1
+    },
+    {
+      "name": "Tollneset",
+      "lat": 60.38081667,
+      "lon": 5.17373333,
+      "radius": 0.1
+    },
+    {
+      "name": "Askoy bridge",
+      "lat": 60.39461667,
+      "lon": 5.21598333,
+      "radius": 0.1
+    },
+    {
+      "name": "Kvarven",
+      "lat": 60.40115,
+      "lon": 5.23995,
+      "radius": 0.1
+    },
+    {
+      "name": "Bergen",
+      "lat": 60.40105,
+      "lon": 5.27515,
+      "radius": 0.1
+    }
+  ],
+  "legs": [
+    {
+      "from_waypoint": "Marstein - report to Fedje VTS on channel 71",
+      "to_waypoint": "Korsfjorden pilot boarding",
+      "distance_nm": 2.26
+    },
+    {
+      "from_waypoint": "Korsfjorden pilot boarding",
+      "to_waypoint": "Ytstaskjeret",
+      "distance_nm": 3.21
+    },
+    {
+      "from_waypoint": "Ytstaskjeret",
+      "to_waypoint": "Kleppevik",
+      "distance_nm": 2.43
+    },
+    {
+      "from_waypoint": "Kleppevik",
+      "to_waypoint": "Bornestangen",
+      "distance_nm": 1.05
+    },
+    {
+      "from_waypoint": "Bornestangen",
+      "to_waypoint": "Leroyna",
+      "distance_nm": 1.56
+    },
+    {
+      "from_waypoint": "Leroyna",
+      "to_waypoint": "Tangaflu",
+      "distance_nm": 0.97
+    },
+    {
+      "from_waypoint": "Tangaflu",
+      "to_waypoint": "Kobbaleia lt",
+      "distance_nm": 3.69
+    },
+    {
+      "from_waypoint": "Kobbaleia lt",
+      "to_waypoint": "Steinsundet",
+      "distance_nm": 1.48
+    },
+    {
+      "from_waypoint": "Steinsundet",
+      "to_waypoint": "Vonflua",
+      "distance_nm": 0.72
+    },
+    {
+      "from_waypoint": "Vonflua",
+      "to_waypoint": "Hakonshella",
+      "distance_nm": 0.64
+    },
+    {
+      "from_waypoint": "Hakonshella",
+      "to_waypoint": "Stongi lt",
+      "distance_nm": 1.17
+    },
+    {
+      "from_waypoint": "Stongi lt",
+      "to_waypoint": "Sotra bridge",
+      "distance_nm": 0.65
+    },
+    {
+      "from_waypoint": "Sotra bridge",
+      "to_waypoint": "Tollneset",
+      "distance_nm": 0.48
+    },
+    {
+      "from_waypoint": "Tollneset",
+      "to_waypoint": "Askoy bridge",
+      "distance_nm": 1.5
+    },
+    {
+      "from_waypoint": "Askoy bridge",
+      "to_waypoint": "Kvarven",
+      "distance_nm": 0.81
+    },
+    {
+      "from_waypoint": "Kvarven",
+      "to_waypoint": "Bergen",
+      "distance_nm": 1.04
+    }
+  ],
+  "total_distance_nm": 23.64,
+  "waypoint_count": 17,
+  "leg_count": 16,
+  "origin": "Bergen",
+  "destination": "Marstein",
+  "parse_timestamp": "2026-01-20T15:17:44.248537",
+  "data_source": "rtz_file_parser",
+  "source_city": "bergen",
+  "original_file": "NCA_Bergen_Marstein_Kobbaleia_In_20250731.rtz",
+  "route_id": "380952ba"
+}

@@ -1,0 +1,1016 @@
+<!-- backend/templates/maritime_split/dashboard_base.html -->
+<!-- DATA-DRIVEN VERSION: Shows actual empirical count from data -->
+{% extends "base.html" %}
+
+{% block title %}Maritime Dashboard | BergNavn{% endblock %}
+
+{% block head %}
+<!-- Map style -->
+<link href="{{ url_for('static', filename='css/split/map.css') }}" rel="stylesheet">
+<!-- Dashboard CSS -->
+<link href="{{ url_for('static', filename='css/dashboard.css') }}" rel="stylesheet">
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<!-- Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<!-- Leaflet MarkerCluster -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
+
+<style>
+/* Empirical verification badge */
+.empirical-badge {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+    border: none;
+    font-weight: bold;
+}
+
+/* Data-driven badge */
+.data-driven-badge {
+    background: linear-gradient(135deg, #17a2b8 0%, #20c997 100%);
+    color: white;
+    border: none;
+    font-weight: bold;
+}
+
+/* Custom styles for enhanced dashboard */
+.route-table-container {
+    max-height: 600px;
+    overflow-y: auto;
+}
+.city-badge {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.85rem;
+    margin: 3px;
+    padding: 4px 10px;
+    border-radius: 15px;
+    display: inline-block;
+}
+.city-badge:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+.status-badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 10px;
+}
+.stats-card {
+    transition: transform 0.3s ease;
+    border-radius: 10px;
+    padding: 20px;
+    background: white;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    height: 100%;
+}
+.stats-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.12);
+}
+
+/* Spinner animation */
+.spin {
+    animation: spin 1s linear infinite;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Active port badge */
+.city-badge.active {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(0,123,255,0.4);
+    border: 2px solid #007bff !important;
+}
+
+/* Data-driven highlight */
+.data-note {
+    border-left: 4px solid #17a2b8;
+    padding-left: 12px;
+    font-size: 0.9rem;
+    margin-top: 8px;
+}
+
+/* Dashboard controls */
+.control-btn {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    padding: 8px 15px;
+    margin: 0 3px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.control-btn.active {
+    background: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+.control-btn:hover {
+    background: #e9ecef;
+}
+.control-btn.active:hover {
+    background: #0056b3;
+}
+
+.status-indicator {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+.status-live {
+    background-color: #28a745;
+    animation: pulse 2s infinite;
+}
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.6; }
+    100% { opacity: 1; }
+}
+
+/* Dashboard card styling */
+.dashboard-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+    margin-bottom: 25px;
+    overflow: hidden;
+    border: 1px solid #e9ecef;
+}
+.dashboard-card .card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    padding: 15px 20px;
+}
+.dashboard-card .card-body {
+    padding: 20px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .stats-card {
+        margin-bottom: 15px;
+    }
+    .city-badge {
+        font-size: 0.8rem;
+        padding: 3px 8px;
+        margin: 2px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Dashboard Header -->
+<div class="dashboard-header text-center py-4">
+    <h1 class="text-gradient mb-2">🌊 Maritime Dashboard</h1>
+    <p class="lead mb-3">Live AIS • MET Weather • RTZ Routes</p>
+    
+    <!-- Calculate actual route count from database -->
+    {% set actual_route_count = routes|length if routes else 0 %}
+    
+    <!-- Dynamic Count Badge - Shows actual data -->
+    <div class="mb-3">
+        <span class="badge data-driven-badge me-2" id="data-truth-badge" 
+              title="Actual RTZ routes count from database">
+            <i class="fas fa-database me-1"></i>
+            <span id="route-count-badge">{{ actual_route_count }}</span> Actual RTZ Routes
+            <span class="badge bg-light text-dark ms-1">✓ Live Data</span>
+        </span>
+        <span class="badge bg-info me-2">
+            <i class="fas fa-ship me-1"></i>
+            Real-time AIS
+        </span>
+        <span class="badge bg-warning">
+            <i class="fas fa-wind me-1"></i>
+            Live Weather
+        </span>
+    </div>
+    
+    <!-- Data Information Notice -->
+    <div class="alert alert-info mb-3 py-2" id="data-info-alert">
+        <div class="d-flex align-items-center">
+            <i class="fas fa-database me-3"></i>
+            <div>
+                <strong>Data-Driven Dashboard</strong>
+                <p class="mb-0 small">
+                    Showing actual counts from database. 
+                    Routes: <strong id="actual-route-count">{{ actual_route_count }}</strong>, 
+                    Ports: <strong>{{ ports_list|length if ports_list else 0 }}</strong>
+                    <button class="btn btn-sm btn-outline-info ms-2" id="show-data-source">
+                        <i class="fas fa-info-circle"></i> Data Source
+                    </button>
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Actual empirical verification -->
+    {% if empirical_verification and empirical_verification.verification_hash %}
+    <div class="alert alert-success mb-3 py-2">
+        <div class="d-flex align-items-center">
+            <i class="fas fa-check-circle me-3"></i>
+            <div>
+                <strong>Empirical Verification Complete</strong>
+                <p class="mb-0 small">
+                    Data verified at: {{ empirical_verification.timestamp|default('Unknown') }}
+                    Hash: <code class="small">{{ empirical_verification.verification_hash[:8] }}...</code>
+                    <button class="btn btn-sm btn-outline-success ms-2" id="refresh-data">
+                        <i class="fas fa-redo"></i> Refresh Data
+                    </button>
+                </p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <div class="ports-badges-container mb-3">
+        {% if ports_list and ports_list|length > 0 %}
+            {% for port in ports_list %}
+            <span class="city-badge" 
+                  data-port="{{ port|lower }}">
+                {{ port }}
+            </span>
+            {% endfor %}
+        {% else %}
+            <span class="text-muted">No ports available</span>
+        {% endif %}
+        <!-- Reset button -->
+        <span class="city-badge" id="reset-filters" style="background-color: #6c757d; color: white;" data-port="reset">
+            <i class="fas fa-times me-1"></i> Reset
+        </span>
+    </div>
+</div>
+
+<!-- Main Dashboard -->
+<div class="container-fluid mt-4">
+    
+    <!-- Control Bar -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="dashboard-controls">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="status-indicator status-live"></span>
+                        <span class="fw-semibold text-success" id="data-status">Live</span>
+                        <span class="ms-3" id="local-time">--:--</span>
+                    </div>
+                    <div class="btn-group btn-group-sm">
+                        <button class="control-btn" id="refresh-btn" title="Refresh Dashboard">
+                            <i class="bi bi-arrow-clockwise"></i>
+                        </button>
+                        <button class="control-btn active" id="rtz-btn" title="Highlight Routes">
+                            <i class="fas fa-route"></i>
+                        </button>
+                        <button class="control-btn active" id="weather-btn" title="Toggle Weather">
+                            <i class="bi bi-cloud-sun"></i>
+                        </button>
+                        <button class="control-btn active" id="ais-btn" title="Refresh Data">
+                            <i class="bi bi-arrow-repeat"></i>
+                        </button>
+                        <button class="control-btn" id="turbine-btn" title="Turbine Status">
+                            <i class="bi bi-lightning-charge"></i>
+                        </button>
+                        <button class="control-btn" id="tanker-btn" title="Fuel Prices">
+                            <i class="bi bi-fuel-pump"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Map Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="dashboard-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-geo-alt me-2"></i>Norwegian Waters</h5>
+                    <div>
+                        <span class="badge bg-light text-dark me-2">
+                            <i class="bi bi-ship me-1"></i>
+                            <span id="vessel-count">0</span>
+                        </span>
+                        <span class="badge bg-success text-dark">
+                            <i class="fas fa-database me-1"></i>
+                            <span id="route-count">{{ actual_route_count }}</span>
+                        </span>
+                        <span class="badge bg-warning text-dark ms-2">
+                            <i class="bi bi-wind me-1"></i>
+                            <span id="turbine-count">0</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div id="maritime-map" style="height: 500px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        <!-- Weather -->
+        <div class="col-md-3 mb-3">
+            <div class="stats-card temp-stat">
+                <h6><i class="bi bi-cloud-sun me-2"></i>Weather</h6>
+                <h3 id="weather-temp">--°C</h3>
+                <small class="text-muted" id="weather-location">Bergen</small>
+            </div>
+        </div>
+        
+        <!-- Wind -->
+        <div class="col-md-3 mb-3">
+            <div class="stats-card wind-stat">
+                <h6><i class="bi bi-wind me-2"></i>Wind</h6>
+                <h3 id="wind-speed">-- m/s</h3>
+                <small class="text-muted" id="wind-direction">--°</small>
+            </div>
+        </div>
+        
+        <!-- Vessels -->
+        <div class="col-md-3 mb-3">
+            <div class="stats-card vessels-stat">
+                <h6><i class="bi bi-ship me-2"></i>Vessels</h6>
+                <h3 id="active-vessels">--</h3>
+                <small class="text-muted" id="vessel-type">Loading...</small>
+            </div>
+        </div>
+        
+        <!-- RTZ Routes - ACTUAL DATA -->
+        <div class="col-md-3 mb-3">
+            <div class="stats-card rtz-stat border-info">
+                <h6><i class="fas fa-database me-2"></i>Actual Routes</h6>
+                <h3 id="route-display-count">{{ actual_route_count }}</h3>
+                <small class="text-muted">
+                    {% if unique_ports_count is defined %}
+                        {{ unique_ports_count }}/{{ ports_list|length if ports_list else 0 }} ports
+                    {% else %}
+                        {{ ports_list|length if ports_list else 0 }} ports
+                    {% endif %}
+                </small>
+                <div class="data-note mt-2">
+                    <small class="text-info">
+                        <i class="fas fa-database me-1"></i>
+                        Live database count
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Routes Table -->
+    <div class="row">
+        <div class="col-12">
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-route me-2"></i>
+                        NCA Maritime Routes 
+                        <span class="badge bg-primary ms-2" id="actual-routes-badge">{{ actual_route_count }}</span>
+                        <span class="badge bg-info ms-1" title="Actual data from database">
+                            <i class="fas fa-database"></i> Live
+                        </span>
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if routes and routes|length > 0 %}
+                        <!-- Data Source Information -->
+                        <div class="alert alert-info mb-3">
+                            <div class="d-flex">
+                                <i class="fas fa-database me-2 mt-1"></i>
+                                <div>
+                                    <small>
+                                        Showing <strong>{{ routes|length }}</strong> actual RTZ routes from 
+                                        <strong>
+                                            {% if unique_ports_count is defined %}
+                                                {{ unique_ports_count }}
+                                            {% else %}
+                                                {{ ports_list|length if ports_list else 0 }}
+                                            {% endif %}
+                                        </strong> Norwegian ports.
+                                        <span class="text-success">
+                                            <i class="fas fa-check-circle ms-2"></i>
+                                            Real database count
+                                        </span>
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="route-table-container">
+                            <table class="table table-sm table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Route Name</th>
+                                        <th>From</th>
+                                        <th>To</th>
+                                        <th>Distance</th>
+                                        <th>Waypoints</th>
+                                        <th>Port</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="routes-table-body">
+                                    {% for route in routes %}
+                                    <tr class="route-row" data-city="{{ route.source_city|default('')|lower }}" 
+                                        data-port="{{ route.source_city|default('')|lower }}">
+                                        <!-- Row Number -->
+                                        <td class="text-muted">{{ loop.index }}</td>
+                                        
+                                        <!-- Route Name -->
+                                        <td>
+                                            {% if route.clean_name %}
+                                                <strong>{{ route.clean_name }}</strong>
+                                            {% elif route.route_name %}
+                                                {% set clean_name = route.route_name|replace('NCA_', '')|replace('_2025', '')|replace('_', ' ')|title %}
+                                                <strong>{{ clean_name }}</strong>
+                                            {% else %}
+                                                <strong>Route {{ loop.index }}</strong>
+                                            {% endif %}
+                                            {% if route.description %}
+                                                <br><small class="text-muted">{{ route.description[:50] }}...</small>
+                                            {% endif %}
+                                        </td>
+                                        
+                                        <!-- Origin -->
+                                        <td>
+                                            {% if route.origin and route.origin != 'Unknown' %}
+                                                <span class="badge bg-success bg-opacity-25">{{ route.origin }}</span>
+                                            {% else %}
+                                                <span class="text-muted">Coastal</span>
+                                            {% endif %}
+                                        </td>
+                                        
+                                        <!-- Destination -->
+                                        <td>
+                                            {% if route.destination and route.destination != 'Unknown' %}
+                                                <span class="badge bg-danger bg-opacity-25">{{ route.destination }}</span>
+                                            {% else %}
+                                                <span class="text-muted">Coastal</span>
+                                            {% endif %}
+                                        </td>
+                                        
+                                        <!-- Distance -->
+                                        <td>
+                                            {% if route.total_distance_nm %}
+                                                <strong>{{ "%.1f"|format(route.total_distance_nm) }} NM</strong>
+                                            {% else %}
+                                                <span class="text-muted">0.0 NM</span>
+                                            {% endif %}
+                                        </td>
+                                        
+                                        <!-- Waypoints -->
+                                        <td>
+                                            {% if route.waypoint_count %}
+                                                <span class="badge bg-info bg-opacity-25">{{ route.waypoint_count }}</span>
+                                            {% else %}
+                                                <span class="text-muted">0</span>
+                                            {% endif %}
+                                        </td>
+                                        
+                                        <!-- Source City -->
+                                        <td>
+                                            {% if route.source_city %}
+                                                <span class="badge bg-primary bg-opacity-25">{{ route.source_city|title }}</span>
+                                            {% else %}
+                                                <span class="text-muted">Unknown</span>
+                                            {% endif %}
+                                        </td>
+                                        
+                                        <!-- Status -->
+                                        <td>
+                                            <span class="badge bg-success status-badge">
+                                                <i class="bi bi-check-circle me-1"></i>
+                                                {% if route.empirically_verified %}
+                                                    Verified
+                                                {% else %}
+                                                    Active
+                                                {% endif %}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <!-- Route Statistics Footer -->
+                        <div class="mt-3 pt-3 border-top">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <small class="text-muted">
+                                        <i class="bi bi-list-check me-1"></i>
+                                        Total routes: <strong>{{ routes|length }}</strong>
+                                    </small>
+                                </div>
+                                <div class="col-md-4">
+                                    <small class="text-muted">
+                                        <i class="bi bi-geo-alt me-1"></i>
+                                        Unique ports: <strong>
+                                            {% if unique_ports_count is defined %}
+                                                {{ unique_ports_count }}
+                                            {% else %}
+                                                Calculating...
+                                            {% endif %}
+                                        </strong>
+                                    </small>
+                                </div>
+                                <div class="col-md-4">
+                                    <small class="text-muted">
+                                        <i class="bi bi-calendar me-1"></i>
+                                        Last updated: <span id="route-update-time">Now</span>
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <!-- No routes message -->
+                        <div class="text-center py-5">
+                            <div class="mb-3">
+                                <i class="fas fa-route text-muted fs-1"></i>
+                            </div>
+                            <h5 class="text-muted">No RTZ Routes Found</h5>
+                            <p class="text-muted mb-3">
+                                No RTZ route data is currently available in the database.
+                            </p>
+                            <div class="d-flex justify-content-center gap-3">
+                                <a href="{{ url_for('routes_bp.view_routes', lang=lang) }}" 
+                                   class="btn btn-outline-primary mt-3">
+                                    <i class="bi bi-search me-1"></i>Check Routes Page
+                                </a>
+                                <button class="btn btn-outline-info mt-3" id="check-database-btn">
+                                    <i class="fas fa-database me-1"></i>Check Database
+                                </button>
+                                <a href="{{ url_for('routes_bp.scan_rtz_files') }}" 
+                                   class="btn btn-outline-success mt-3">
+                                    <i class="fas fa-file-import me-1"></i>Import Routes
+                                </a>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Data Verification Footer -->
+    <div class="row mt-3">
+        <div class="col-12">
+            <div class="alert alert-secondary">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="fas fa-database me-1"></i>
+                        <strong>Data Integrity:</strong>
+                        <span class="ms-2" id="data-integrity-status">
+                            {{ actual_route_count }} routes loaded from database
+                        </span>
+                    </div>
+                    <div>
+                        <small class="text-muted me-3">
+                            <i class="bi bi-clock me-1"></i>
+                            <span id="data-update-time">--:--</span>
+                        </small>
+                        <a href="{{ url_for('routes_bp.view_routes', lang=lang) }}" 
+                           class="btn btn-sm btn-outline-secondary me-2">
+                            <i class="fas fa-external-link-alt me-1"></i>Full Routes View
+                        </a>
+                        <button class="btn btn-sm btn-outline-info" id="verify-data-btn">
+                            <i class="fas fa-sync me-1"></i>Verify Now
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Data Source Modal -->
+<div class="modal fade" id="dataSourceModal" tabindex="-1" aria-labelledby="dataSourceModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title" id="dataSourceModalLabel">
+                    <i class="fas fa-database me-2"></i>Data Source Information
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h6>Data Source Details</h6>
+                <p>This dashboard shows <strong>actual data</strong> from your database.</p>
+                
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h6 class="card-title">RTZ Routes</h6>
+                                <h3 class="text-primary">{{ actual_route_count }}</h3>
+                                <small>Actual count from database</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h6 class="card-title">Ports</h6>
+                                <h3 class="text-success">{{ ports_list|length if ports_list else 0 }}</h3>
+                                <small>Active Norwegian ports</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <h6 class="mt-4">Data Verification</h6>
+                <div class="alert alert-success">
+                    <p class="mb-0">
+                        <i class="fas fa-check-circle me-1"></i>
+                        All numbers are calculated live from PostgreSQL database
+                    </p>
+                </div>
+                
+                <div class="alert alert-info mt-3">
+                    <small>
+                        <i class="fas fa-info-circle me-1"></i>
+                        This ensures data integrity and accuracy in the maritime dashboard.
+                    </small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="window.location.reload()">
+                    <i class="fas fa-redo me-1"></i>Refresh Dashboard
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+<script src="{{ url_for('static', filename='js/split/maritime_map.js') }}"></script>
+<script src="{{ url_for('static', filename='js/split/maritime_weather.js') }}"></script>
+<script src="{{ url_for('static', filename='js/split/ais_realtime.js') }}"></script>
+<script src="{{ url_for('static', filename='js/split/wind_turbines_realtime.js') }}"></script>
+<script src="{{ url_for('static', filename='js/split/tanker_monitoring.js') }}"></script>
+<script src="{{ url_for('static', filename='js/split/rtz_routes_fixed.js') }}"></script>
+<script src="{{ url_for('static', filename='js/split/enhanced_dashboard_buttons.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/split/scientific_norwegian_routes.js') }}"></script>
+
+
+<script>
+// Data-Driven Maritime Dashboard
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚢 Maritime Dashboard (Data-Driven) initialized');
+    
+    // Get actual route count from the badge
+    const routeCountBadge = document.getElementById('route-count-badge');
+    const actualRouteCount = routeCountBadge ? parseInt(routeCountBadge.textContent) || 0 : 0;
+    console.log('📊 Actual route count from database:', actualRouteCount);
+    
+    // Count route rows in table
+    const routeRows = document.querySelectorAll('.route-row');
+    console.log('📋 Found', routeRows.length, 'route rows in table');
+    
+    // Initialize dashboard
+    initializeDashboard();
+    
+    function initializeDashboard() {
+        // Update time display
+        updateTime();
+        setInterval(updateTime, 60000);
+        
+        // Setup port filtering
+        setupPortFiltering();
+        
+        // Setup event listeners
+        setupEventListeners();
+        
+        // Initialize components after a delay
+        setTimeout(() => {
+            initializeComponents();
+        }, 1000);
+    }
+    
+    function updateTime() {
+        try {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('en-GB', { 
+                timeZone: 'Europe/Oslo',
+                hour: '2-digit', 
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            const dateStr = now.toLocaleDateString('en-GB', {
+                timeZone: 'Europe/Oslo',
+                weekday: 'short',
+                day: 'numeric',
+                month: 'short'
+            });
+            
+            // Update local time display
+            const localTimeElement = document.getElementById('local-time');
+            if (localTimeElement) {
+                localTimeElement.textContent = `${dateStr} ${timeStr}`;
+            }
+            
+            // Update data timestamp
+            const updateTimeElement = document.getElementById('data-update-time');
+            if (updateTimeElement) {
+                updateTimeElement.textContent = `Updated: ${dateStr} ${timeStr}`;
+            }
+            
+            // Update route update time
+            const routeUpdateElement = document.getElementById('route-update-time');
+            if (routeUpdateElement) {
+                routeUpdateElement.textContent = `${dateStr} ${timeStr}`;
+            }
+        } catch (error) {
+            console.warn('Time update error:', error);
+        }
+    }
+    
+    function setupPortFiltering() {
+        const cityBadges = document.querySelectorAll('.city-badge[data-port]');
+        
+        cityBadges.forEach(badge => {
+            badge.addEventListener('click', function() {
+                const port = this.dataset.port;
+                if (!port) return;
+                
+                console.log('📍 Filtering by port:', port);
+                
+                // Remove active class from all badges
+                document.querySelectorAll('.city-badge').forEach(b => {
+                    b.classList.remove('active');
+                });
+                
+                // Add active class to clicked badge
+                this.classList.add('active');
+                
+                // Get all route rows
+                const rows = document.querySelectorAll('.route-row');
+                let visibleCount = 0;
+                
+                // Filter rows
+                rows.forEach(row => {
+                    const rowPort = row.dataset.port || '';
+                    
+                    if (port === 'reset' || rowPort === port) {
+                        row.style.display = '';
+                        visibleCount++;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+                
+                console.log('👁️ Showing', visibleCount, 'routes for port:', port);
+                
+                // Show message if no routes found
+                if (port !== 'reset' && visibleCount === 0) {
+                    showAlert('info', `No routes found for this port. Showing all routes.`, 3000);
+                    // Auto-reset after 3 seconds
+                    setTimeout(() => {
+                        const resetBtn = document.querySelector('#reset-filters');
+                        if (resetBtn) {
+                            resetBtn.click();
+                        }
+                    }, 3000);
+                }
+            });
+        });
+    }
+    
+    function setupEventListeners() {
+        // Refresh button
+        const refreshBtn = document.getElementById('refresh-btn');
+        if (refreshBtn) {
+            refreshBtn.addEventListener('click', function() {
+                console.log('🔄 Manual refresh requested');
+                const originalHtml = this.innerHTML;
+                this.innerHTML = '<i class="bi bi-arrow-clockwise spin"></i>';
+                
+                setTimeout(() => {
+                    window.location.reload();
+                }, 500);
+            });
+        }
+        
+        // Verify data button
+        const verifyBtn = document.getElementById('verify-data-btn');
+        if (verifyBtn) {
+            verifyBtn.addEventListener('click', function() {
+                verifyDataIntegrity();
+            });
+        }
+        
+        // Check database button
+        const checkDbBtn = document.getElementById('check-database-btn');
+        if (checkDbBtn) {
+            checkDbBtn.addEventListener('click', function() {
+                checkDatabaseConnection();
+            });
+        }
+        
+        // Show data source button
+        const dataSourceBtn = document.getElementById('show-data-source');
+        if (dataSourceBtn) {
+            dataSourceBtn.addEventListener('click', function() {
+                const modalElement = document.getElementById('dataSourceModal');
+                if (modalElement) {
+                    const modal = new bootstrap.Modal(modalElement);
+                    modal.show();
+                }
+            });
+        }
+        
+        // Refresh data button
+        const refreshDataBtn = document.getElementById('refresh-data');
+        if (refreshDataBtn) {
+            refreshDataBtn.addEventListener('click', function() {
+                refreshRouteData();
+            });
+        }
+        
+        // Dashboard control buttons
+        const controlButtons = ['rtz-btn', 'weather-btn', 'ais-btn', 'turbine-btn', 'tanker-btn'];
+        controlButtons.forEach(btnId => {
+            const btn = document.getElementById(btnId);
+            if (btn) {
+                btn.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                    console.log('🎛️ Toggled:', btnId, 'active:', this.classList.contains('active'));
+                });
+            }
+        });
+    }
+    
+    function initializeComponents() {
+        console.log('⚙️ Initializing dashboard components...');
+        
+        // Initialize AIS if available
+        if (typeof window.aisManager !== 'undefined' && typeof window.aisManager.initialize === 'function') {
+            console.log('🚢 Initializing AIS manager...');
+            window.aisManager.initialize();
+        }
+        
+        // Initialize weather if available
+        if (typeof window.weatherManager !== 'undefined' && typeof window.weatherManager.initialize === 'function') {
+            console.log('🌤️ Initializing weather manager...');
+            window.weatherManager.initialize();
+        }
+        
+        // Initialize RTZ routes if available
+        if (typeof window.rtzManager !== 'undefined' && typeof window.rtzManager.initialize === 'function') {
+            console.log('🗺️ Initializing RTZ route manager...');
+            window.rtzManager.initialize();
+        }
+        
+        console.log('✅ Dashboard components initialized');
+    }
+    
+    function showAlert(type, message, duration = 5000) {
+        // Remove any existing alerts first
+        const existingAlerts = document.querySelectorAll('.alert-dismissible.temporary-alert');
+        existingAlerts.forEach(alert => alert.remove());
+        
+        // Create new alert
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type} alert-dismissible fade show mt-3 temporary-alert`;
+        alertDiv.innerHTML = `
+            <div class="d-flex align-items-center">
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'} me-2"></i>
+                <div>${message}</div>
+                <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+            </div>
+        `;
+        
+        // Add to page
+        const container = document.querySelector('.container-fluid');
+        if (container) {
+            container.prepend(alertDiv);
+        }
+        
+        // Auto-dismiss after duration
+        if (duration > 0) {
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.remove();
+                }
+            }, duration);
+        }
+        
+        return alertDiv;
+    }
+    
+    function verifyDataIntegrity() {
+        console.log('🔍 Verifying data integrity...');
+        
+        const verifyBtn = document.getElementById('verify-data-btn');
+        const originalHtml = verifyBtn ? verifyBtn.innerHTML : '';
+        
+        if (verifyBtn) {
+            verifyBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Verifying...';
+        }
+        
+        // Simulate verification (replace with actual API call)
+        setTimeout(() => {
+            const routeCount = document.querySelectorAll('.route-row').length;
+            const expectedCount = actualRouteCount;
+            
+            if (routeCount === expectedCount) {
+                showAlert('success', `Data integrity verified: ${routeCount} routes match database count`);
+                console.log('✅ Data integrity check passed');
+            } else {
+                showAlert('warning', `Data mismatch: Table shows ${routeCount} rows, database has ${expectedCount} routes`);
+                console.warn('⚠️ Data mismatch detected');
+            }
+            
+            if (verifyBtn) {
+                verifyBtn.innerHTML = originalHtml;
+            }
+        }, 1500);
+    }
+    
+    function checkDatabaseConnection() {
+        console.log('🔌 Checking database connection...');
+        
+        const checkBtn = document.getElementById('check-database-btn');
+        const originalHtml = checkBtn ? checkBtn.innerHTML : '';
+        
+        if (checkBtn) {
+            checkBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Checking...';
+        }
+        
+        // Make API call to check database
+        fetch('/api/check-database')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert('success', `Database connection OK: ${data.routes} routes, ${data.ports} ports`);
+                    console.log('✅ Database check:', data);
+                } else {
+                    showAlert('warning', 'Database connection issue detected');
+                    console.warn('⚠️ Database check failed');
+                }
+            })
+            .catch(error => {
+                console.error('❌ Database check error:', error);
+                showAlert('danger', 'Failed to check database connection');
+            })
+            .finally(() => {
+                if (checkBtn) {
+                    checkBtn.innerHTML = originalHtml;
+                }
+            });
+    }
+    
+    function refreshRouteData() {
+        console.log('🔄 Refreshing route data...');
+        
+        const refreshBtn = document.getElementById('refresh-data');
+        const originalHtml = refreshBtn ? refreshBtn.innerHTML : '';
+        
+        if (refreshBtn) {
+            refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Refreshing...';
+        }
+        
+        // Make API call to refresh data
+        fetch('/api/refresh-routes')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert('success', `Data refreshed: ${data.count} routes loaded`);
+                    console.log('✅ Route refresh:', data);
+                    
+                    // Reload page after 2 seconds to show updated data
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 2000);
+                } else {
+                    showAlert('warning', data.message || 'Refresh failed');
+                    console.warn('⚠️ Route refresh failed');
+                }
+            })
+            .catch(error => {
+                console.error('❌ Route refresh error:', error);
+                showAlert('danger', 'Failed to refresh route data');
+            })
+            .finally(() => {
+                if (refreshBtn) {
+                    refreshBtn.innerHTML = originalHtml;
+                }
+            });
+    }
+    
+    // Initialize dashboard after page load
+    console.log('🎯 Dashboard initialization complete');
+});
+</script>
+{% endblock %}

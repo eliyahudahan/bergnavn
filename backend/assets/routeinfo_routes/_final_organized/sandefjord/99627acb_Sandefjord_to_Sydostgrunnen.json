@@ -1,0 +1,79 @@
+{
+  "route_name": "NCA_Sandefj_Sydostgr_In_20250801",
+  "file_path": "/home/framg/dev/bergnavn/backend/assets/routeinfo_routes/sandefjord/raw/extracted/NCA_Sandefj_Sydostgr_In_20250731.rtz",
+  "waypoints": [
+    {
+      "name": "Sydostgrunnen",
+      "lat": 58.96718637,
+      "lon": 10.31389715,
+      "radius": 0.1
+    },
+    {
+      "name": "Leikarhausen",
+      "lat": 59.02540435,
+      "lon": 10.27543097,
+      "radius": 0.1
+    },
+    {
+      "name": "Holtskjaeret",
+      "lat": 59.03986166,
+      "lon": 10.2547104,
+      "radius": 0.1
+    },
+    {
+      "name": "Bueroya",
+      "lat": 59.08792901,
+      "lon": 10.24113205,
+      "radius": 0.1
+    },
+    {
+      "name": "Thoroya",
+      "lat": 59.10482164,
+      "lon": 10.23231757,
+      "radius": 0.1
+    },
+    {
+      "name": "Ranvik",
+      "lat": 59.11361029,
+      "lon": 10.22580123,
+      "radius": 0.1
+    }
+  ],
+  "legs": [
+    {
+      "from_waypoint": "Sydostgrunnen",
+      "to_waypoint": "Leikarhausen",
+      "distance_nm": 3.69
+    },
+    {
+      "from_waypoint": "Leikarhausen",
+      "to_waypoint": "Holtskjaeret",
+      "distance_nm": 1.08
+    },
+    {
+      "from_waypoint": "Holtskjaeret",
+      "to_waypoint": "Bueroya",
+      "distance_nm": 2.92
+    },
+    {
+      "from_waypoint": "Bueroya",
+      "to_waypoint": "Thoroya",
+      "distance_nm": 1.05
+    },
+    {
+      "from_waypoint": "Thoroya",
+      "to_waypoint": "Ranvik",
+      "distance_nm": 0.56
+    }
+  ],
+  "total_distance_nm": 9.3,
+  "waypoint_count": 6,
+  "leg_count": 5,
+  "origin": "Sandefjord",
+  "destination": "Sydostgrunnen",
+  "parse_timestamp": "2026-01-20T15:17:44.267304",
+  "data_source": "rtz_file_parser",
+  "source_city": "sandefjord",
+  "original_file": "NCA_Sandefj_Sydostgr_In_20250731.rtz",
+  "route_id": "99627acb"
+}

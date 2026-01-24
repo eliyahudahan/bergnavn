@@ -1,0 +1,90 @@
+{
+  "route_name": "NCA_Stavanger_Skudefjorden_In_20250801",
+  "file_path": "/home/framg/dev/bergnavn/backend/assets/routeinfo_routes/stavanger/raw/extracted/NCA_Stavanger_Skudefjorden_In_20250731.rtz",
+  "waypoints": [
+    {
+      "name": "Skudefjorden",
+      "lat": 59.07453632,
+      "lon": 5.34574312,
+      "radius": 0.1
+    },
+    {
+      "name": "Sveinane",
+      "lat": 59.10844223,
+      "lon": 5.46654488,
+      "radius": 0.1
+    },
+    {
+      "name": "Arsgrunnen",
+      "lat": 59.09974633,
+      "lon": 5.51121158,
+      "radius": 0.1
+    },
+    {
+      "name": "Bragen lt",
+      "lat": 59.04546091,
+      "lon": 5.58532745,
+      "radius": 0.1
+    },
+    {
+      "name": "Mekjarvik",
+      "lat": 59.02928999,
+      "lon": 5.62065085,
+      "radius": 0.1
+    },
+    {
+      "name": "Dusaviga",
+      "lat": 59.00260332,
+      "lon": 5.68410413,
+      "radius": 0.1
+    },
+    {
+      "name": "Stavanger",
+      "lat": 58.97757596,
+      "lon": 5.72596554,
+      "radius": 0.1
+    }
+  ],
+  "legs": [
+    {
+      "from_waypoint": "Skudefjorden",
+      "to_waypoint": "Sveinane",
+      "distance_nm": 4.25
+    },
+    {
+      "from_waypoint": "Sveinane",
+      "to_waypoint": "Arsgrunnen",
+      "distance_nm": 1.47
+    },
+    {
+      "from_waypoint": "Arsgrunnen",
+      "to_waypoint": "Bragen lt",
+      "distance_nm": 3.98
+    },
+    {
+      "from_waypoint": "Bragen lt",
+      "to_waypoint": "Mekjarvik",
+      "distance_nm": 1.46
+    },
+    {
+      "from_waypoint": "Mekjarvik",
+      "to_waypoint": "Dusaviga",
+      "distance_nm": 2.53
+    },
+    {
+      "from_waypoint": "Dusaviga",
+      "to_waypoint": "Stavanger",
+      "distance_nm": 1.98
+    }
+  ],
+  "total_distance_nm": 15.68,
+  "waypoint_count": 7,
+  "leg_count": 6,
+  "origin": "Stavanger",
+  "destination": "Skudefjorden",
+  "parse_timestamp": "2026-01-20T15:17:44.269521",
+  "data_source": "rtz_file_parser",
+  "source_city": "stavanger",
+  "original_file": "NCA_Stavanger_Skudefjorden_In_20250731.rtz",
+  "route_id": "9b62a349"
+}

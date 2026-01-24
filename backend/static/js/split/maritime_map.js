@@ -1,31 +1,30 @@
 /**
  * Maritime Map Module for BergNavn Dashboard
- * Handles Leaflet map initialization, AIS vessel display, and RTZ route integration
- * FIXED: Now properly loads real RTZ routes from your 104 discovered routes
+ * Handles Leaflet map initialization and RTZ route display
+ * FIXED VERSION: Loads routes directly from API (/maritime/api/rtz/complete)
+ * because template data doesn't include waypoints
  */
 
 // Global map variables
 let maritimeMap = null;
 let vesselMarkers = [];
-let routeLayers = {};
 let activeRoutes = [];
-let routeManager = null;
+let routePolylines = []; // Store references to all route lines
+let routeMarkers = [];   // Store references to all route markers
 
-/**
- * Initialize the maritime map
- */
+// Main map initialization - MUST be called first
 function initMaritimeMap() {
-    console.log('🗺️ Initializing maritime map...');
+    console.log('🌊 Maritime Map: Initializing...');
     
     const mapElement = document.getElementById('maritime-map');
     if (!mapElement) {
-        console.error('Map container not found');
+        console.error('❌ Map container not found');
         return null;
     }
     
-    // Initialize map if not already initialized
     if (!maritimeMap) {
-        maritimeMap = L.map('maritime-map').setView([60.392, 5.324], 8);
+        // Create map centered on Norway
+        maritimeMap = L.map('maritime-map').setView([64.0, 10.0], 6);
         
         // Add OpenStreetMap tiles
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -36,205 +35,93 @@ function initMaritimeMap() {
         // Add Norwegian waters layer
         L.tileLayer('https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png', {
             attribution: '© OpenSeaMap',
-            opacity: 0.6,
+            opacity: 0.4,
             maxZoom: 18,
         }).addTo(maritimeMap);
         
-        console.log('✅ Maritime map initialized');
+        console.log('✅ Maritime map created');
         
-        // Make map globally available
-        window.maritimeMap = maritimeMap;
+        // Make map available globally
+        window.map = maritimeMap;
+        console.log('✅ Map saved to window.map');
     }
     
     return maritimeMap;
 }
 
 /**
- * Format timestamp for display
+ * Load and display RTZ routes from API endpoint
+ * Uses /maritime/api/rtz/complete which contains full route data with waypoints
  */
-function formatTimestamp(isoString) {
-    if (!isoString) return "Just now";
+function loadAndDisplayRTZRoutes() {
+    console.log('🗺️ RTZ Routes: Loading from API...');
     
-    try {
-        const date = new Date(isoString);
-        const now = new Date();
-        const diffMs = now - date;
-        const diffMins = Math.floor(diffMs / 60000);
-        
-        // If less than 1 minute ago
-        if (diffMins < 1) {
-            return "Just now";
-        }
-        
-        // If less than 1 hour ago
-        if (diffMins < 60) {
-            return `${diffMins} minute${diffMins !== 1 ? 's' : ''} ago`;
-        }
-        
-        // Format as time
-        return date.toLocaleTimeString([], { 
-            hour: '2-digit', 
-            minute: '2-digit',
-            timeZone: 'Europe/Oslo'
-        });
-    } catch (e) {
-        return isoString.split('T')[1]?.substring(0, 5) || isoString;
-    }
-}
-
-/**
- * Load AIS data and display vessels on map
- */
-async function loadAIS() {
-    try {
-        console.log('🚢 Fetching AIS data...');
-        const response = await fetch('/maritime/api/ais-data');
-        const data = await response.json();
-        
-        console.log(`✅ Loaded ${data.vessels ? data.vessels.length : 0} vessels`);
-        
-        // Initialize map if not already done
-        if (!maritimeMap) {
-            initMaritimeMap();
-        }
-        
-        // Clear existing vessel markers
-        if (vesselMarkers && vesselMarkers.length > 0) {
-            vesselMarkers.forEach(marker => {
-                if (marker && maritimeMap) maritimeMap.removeLayer(marker);
-            });
-            vesselMarkers = [];
-        }
-        
-        // Check if we have vessel data
-        if (!data.vessels || data.vessels.length === 0) {
-            console.log('No vessels found in Norwegian waters');
-            
-            // Update UI with zero count
-            updateVesselCountUI(0);
-            return;
-        }
-        
-        // Add vessel markers
-        data.vessels.forEach(vessel => {
-            if (!vessel.lat || !vessel.lon) return;
-            
-            // Determine vessel type icon color
-            const vesselType = (vessel.type || '').toLowerCase();
-            let iconColor = '#3498db'; // Default blue
-            
-            if (vesselType.includes('cargo') || vesselType.includes('container')) {
-                iconColor = '#2ecc71'; // Green
-            } else if (vesselType.includes('passenger') || vesselType.includes('ferry')) {
-                iconColor = '#e74c3c'; // Red
-            } else if (vesselType.includes('tanker')) {
-                iconColor = '#f39c12'; // Orange
-            } else if (vesselType.includes('fishing')) {
-                iconColor = '#9b59b6'; // Purple
+    // Clear any existing routes first
+    clearAllRouteLayers();
+    
+    // Try to load from API first (contains waypoints)
+    fetch('/maritime/api/rtz/complete')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
-            
-            // Create custom vessel icon
-            const vesselIcon = L.divIcon({
-                className: 'vessel-marker',
-                html: `
-                    <div class="vessel-icon" style="transform: rotate(${vessel.course || 0}deg);">
-                        <i class="bi bi-ship" style="color: ${iconColor}; font-size: 20px;"></i>
-                    </div>
-                `,
-                iconSize: [30, 30],
-                iconAnchor: [15, 15]
-            });
-            
-            // Create marker
-            const marker = L.marker([vessel.lat, vessel.lon], {
-                icon: vesselIcon,
-                title: vessel.name || 'Vessel'
-            }).bindPopup(`
-                <div class="vessel-popup">
-                    <strong>${vessel.name || 'Unknown Vessel'}</strong><br>
-                    <small>MMSI: ${vessel.mmsi || 'N/A'}</small><br>
-                    Type: ${vessel.type || 'Unknown'}<br>
-                    Speed: ${vessel.speed ? vessel.speed.toFixed(1) : 0} knots<br>
-                    Course: ${vessel.course || 0}°<br>
-                    Destination: ${vessel.destination || 'Unknown'}<br>
-                    Status: ${vessel.status || 'Unknown'}<br>
-                    <small>Updated: ${formatTimestamp(vessel.timestamp)}</small>
-                    ${vessel.data_source ? `<br><small>Source: ${vessel.data_source}</small>` : ''}
-                </div>
-            `);
-            
-            marker.addTo(maritimeMap);
-            vesselMarkers.push(marker);
+            return response.json();
+        })
+        .then(data => {
+            if (data.routes && Array.isArray(data.routes) && data.routes.length > 0) {
+                console.log(`✅ Loaded ${data.routes.length} routes from API`);
+                activeRoutes = data.routes;
+                
+                // Save to window for other scripts
+                window.routesData = activeRoutes;
+                
+                // Display routes on map
+                displayRoutesOnMap();
+                
+                // Update UI counters
+                updateRouteCounters();
+                
+                // Show success message
+                showNotification(`Loaded ${activeRoutes.length} RTZ routes with waypoints`, 'success');
+                
+                return activeRoutes;
+            } else {
+                console.warn('⚠️ API returned no routes, trying template data');
+                return loadRoutesFromTemplate();
+            }
+        })
+        .catch(error => {
+            console.error('❌ Error loading from API:', error);
+            console.log('🔄 Falling back to template data');
+            return loadRoutesFromTemplate();
         });
-        
-        // Update vessel count in UI
-        updateVesselCountUI(data.vessels.length);
-        
-        // Update AIS timestamp
-        const aisTimestamp = document.getElementById('ais-timestamp');
-        if (aisTimestamp) {
-            aisTimestamp.textContent = formatTimestamp(data.timestamp);
-        }
-        
-        // Fit map bounds to show all vessels if we have markers
-        if (vesselMarkers.length > 0) {
-            const vesselGroup = L.featureGroup(vesselMarkers);
-            maritimeMap.fitBounds(vesselGroup.getBounds().pad(0.2));
-        }
-        
-    } catch (error) {
-        console.error('AIS load error:', error);
-        
-        // Show fallback message
-        updateVesselCountUI('Error');
-        
-        // Create some sample vessels for demo
-        createDemoVessels();
-    }
 }
 
 /**
- * Load RTZ routes and display them on map
+ * Fallback: Load routes from template data (doesn't have waypoints)
  */
-async function loadRTZRoutes() {
+function loadRoutesFromTemplate() {
     try {
-        console.log('🗺️ Fetching RTZ routes...');
-        const response = await fetch('/maritime/api/rtz/routes');
-        
-        if (!response.ok) {
-            throw new Error(`API error: ${response.status}`);
+        // Get routes from embedded JSON in HTML
+        const routesDataElement = document.getElementById('routes-data');
+        if (!routesDataElement || !routesDataElement.textContent) {
+            console.error('❌ No routes data found in HTML');
+            return [];
         }
         
-        const data = await response.json();
-        activeRoutes = data.routes || [];
+        activeRoutes = JSON.parse(routesDataElement.textContent);
+        console.log(`✅ Found ${activeRoutes.length} routes in HTML (no waypoints)`);
         
-        console.log(`✅ Loaded ${activeRoutes.length} RTZ routes`);
-        
-        // Initialize map if needed
-        if (!maritimeMap) {
-            initMaritimeMap();
-        }
-        
-        // Clear existing route layers
-        clearRouteLayers();
-        
-        // Display routes on map
-        displayRoutesOnMap();
-        
-        // Populate route selector dropdown
-        populateRouteSelector();
-        
-        // Update route counters
+        // Update UI but can't display on map without waypoints
         updateRouteCounters();
+        
+        // Show warning
+        showNotification(`Loaded ${activeRoutes.length} routes (no waypoints in template data)`, 'warning');
         
         return activeRoutes;
         
     } catch (error) {
-        console.error('❌ Failed to load RTZ routes:', error);
-        
-        // Create demo routes for fallback
-        createDemoRoutes();
-        
+        console.error('❌ Error loading RTZ routes from template:', error);
         return [];
     }
 }
@@ -243,248 +130,458 @@ async function loadRTZRoutes() {
  * Display all routes on the map
  */
 function displayRoutesOnMap() {
+    if (!maritimeMap) {
+        console.error('❌ Cannot display routes: No map available');
+        return;
+    }
+    
+    if (!activeRoutes.length) {
+        console.warn('⚠️ No routes to display');
+        return;
+    }
+    
+    console.log(`🗺️ Displaying ${activeRoutes.length} routes on map...`);
+    
+    // Clear any existing routes
+    clearAllRouteLayers();
+    
+    let displayedCount = 0;
+    let skippedCount = 0;
+    
+    // Display each route
     activeRoutes.forEach((route, index) => {
         try {
-            const waypoints = route.waypoints || [];
-            
-            if (waypoints.length < 2) {
-                console.warn(`Route ${index} has insufficient waypoints`);
-                return;
+            const success = displaySingleRoute(route, index);
+            if (success) {
+                displayedCount++;
+            } else {
+                skippedCount++;
             }
-            
-            // Convert waypoints to LatLng array
-            const latLngs = waypoints.map(wp => [wp.lat, wp.lon]);
-            
-            // Choose color based on index
-            const colors = [
-                '#1e88e5', '#43a047', '#fb8c00', '#e53935',
-                '#8e24aa', '#3949ab', '#00897b', '#f4511e',
-                '#5e35b1', '#039be5', '#7cb342', '#ffb300'
-            ];
-            const color = colors[index % colors.length];
-            
-            // Create polyline with maritime styling
-            const polyline = L.polyline(latLngs, {
-                color: color,
-                weight: 3,
-                opacity: 0.7,
-                dashArray: '5, 10',
-                className: 'rtz-route-line'
-            }).addTo(maritimeMap);
-            
-            // Add popup with route info
-            const popupContent = createRoutePopup(route);
-            polyline.bindPopup(popupContent);
-            
-            // Store reference
-            const routeId = `route_${index}`;
-            routeLayers[routeId] = polyline;
-            
-            // Add markers for start and end
-            if (waypoints.length > 0) {
-                addWaypointMarker(waypoints[0], 'Start', '#43a047');
-                addWaypointMarker(waypoints[waypoints.length - 1], 'End', '#e53935');
-            }
-            
         } catch (error) {
-            console.error(`Error adding route ${index} to map:`, error);
+            console.error(`❌ Error displaying route ${index}:`, error);
+            skippedCount++;
         }
     });
     
-    console.log(`🗺️ Displayed ${Object.keys(routeLayers).length} routes on map`);
+    console.log(`✅ Successfully displayed ${displayedCount} routes, skipped ${skippedCount}`);
+    
+    // Fit map to show all routes
+    if (displayedCount > 0) {
+        fitMapToRoutes();
+    }
+    
+    // Add legend
+    addMapLegend();
 }
 
 /**
- * Create popup content for a route
+ * Display a single route on the map
  */
-function createRoutePopup(route) {
-    const distance = route.total_distance_nm ? route.total_distance_nm.toFixed(1) : '0.0';
-    const waypointCount = route.waypoint_count || route.waypoints?.length || 0;
+function displaySingleRoute(route, index) {
+    if (!maritimeMap) return false;
+    
+    // Debug logging
+    console.log(`📋 Processing route ${index}: ${route.clean_name || route.route_name || 'Unnamed route'}`);
+    
+    // Get route waypoints - MUST exist for display
+    const waypoints = extractWaypointsFromRoute(route);
+    
+    if (waypoints.length < 2) {
+        console.warn(`Route ${index} has insufficient waypoints: ${waypoints.length}`, {
+            routeName: route.clean_name || route.route_name,
+            hasWaypointsProperty: !!route.waypoints,
+            waypointCountProperty: route.waypoint_count,
+            extractedWaypoints: waypoints.length
+        });
+        return false;
+    }
+    
+    console.log(`📍 Route ${index} has ${waypoints.length} waypoints`);
+    
+    // Choose color based on source city
+    const colors = {
+        'bergen': '#1e88e5',     // Blue
+        'oslo': '#43a047',       // Green
+        'stavanger': '#f39c12',  // Orange
+        'trondheim': '#e74c3c',  // Red
+        'alesund': '#9b59b6',    // Purple
+        'andalsnes': '#3498db',  // Light Blue
+        'kristiansand': '#2ecc71', // Emerald
+        'drammen': '#e67e22',    // Carrot
+        'sandefjord': '#16a085', // Teal
+        'flekkefjord': '#8e44ad'  // Violet
+    };
+    
+    const port = (route.source_city || '').toLowerCase();
+    const color = colors[port] || '#1e88e5';
+    
+    console.log(`🎨 Route ${index} color: ${color} (port: ${port})`);
+    
+    // Create coordinates array for polyline
+    const coordinates = waypoints.map(wp => [wp.lat, wp.lon]);
+    
+    // Draw the route line
+    const polyline = L.polyline(coordinates, {
+        color: color,
+        weight: 4,
+        opacity: 0.8,
+        lineCap: 'round',
+        lineJoin: 'round',
+        className: 'rtz-route-line'
+    }).addTo(maritimeMap);
+    
+    // Store reference for later manipulation
+    routePolylines.push(polyline);
+    
+    // Add start marker (GREEN)
+    const startMarker = L.circleMarker(coordinates[0], {
+        color: '#28a745',
+        fillColor: '#28a745',
+        fillOpacity: 1.0,
+        radius: 8,
+        weight: 3,
+        className: 'route-start-marker'
+    }).addTo(maritimeMap);
+    
+    startMarker.bindTooltip(`<b>Start:</b> ${route.origin || 'Unknown'}`);
+    
+    // Add end marker (RED)
+    const endMarker = L.circleMarker(coordinates[coordinates.length - 1], {
+        color: '#dc3545',
+        fillColor: '#dc3545',
+        fillOpacity: 1.0,
+        radius: 8,
+        weight: 3,
+        className: 'route-end-marker'
+    }).addTo(maritimeMap);
+    
+    endMarker.bindTooltip(`<b>End:</b> ${route.destination || 'Unknown'}`);
+    
+    // Store marker references
+    routeMarkers.push({ start: startMarker, end: endMarker, routeIndex: index });
+    
+    // Create popup content
+    const popupContent = createRoutePopup(route, index, color);
+    
+    // Bind popups
+    polyline.bindPopup(popupContent);
+    startMarker.bindPopup(popupContent);
+    endMarker.bindPopup(popupContent);
+    
+    // Add hover effects
+    polyline.on('mouseover', function() {
+        this.setStyle({ weight: 6, opacity: 1.0 });
+        // Also highlight markers
+        startMarker.setStyle({ radius: 10 });
+        endMarker.setStyle({ radius: 10 });
+    });
+    
+    polyline.on('mouseout', function() {
+        this.setStyle({ weight: 4, opacity: 0.8 });
+        // Reset markers
+        startMarker.setStyle({ radius: 8 });
+        endMarker.setStyle({ radius: 8 });
+    });
+    
+    // Add click handler to zoom to route
+    polyline.on('click', function() {
+        zoomToRoute(index);
+    });
+    
+    // Store route ID for later reference
+    const routeId = route.route_id || `route_${index}`;
+    route.routeElementId = routeId;
+    route.mapPolyline = polyline; // Store reference on route object
+    
+    console.log(`✅ Added route ${index}: ${route.clean_name || route.route_name || 'Unnamed route'}`);
+    
+    return true;
+}
+
+/**
+ * Extract waypoints from route data in various formats
+ * Enhanced with better debugging
+ */
+function extractWaypointsFromRoute(route) {
+    let waypoints = [];
+    
+    // DEBUG: Log what we're working with
+    console.log(`🛠️ Extracting waypoints for: ${route.clean_name || route.route_name}`);
+    console.log(`   Has 'waypoints' property: ${!!route.waypoints}`);
+    console.log(`   Has 'geometry' property: ${!!route.geometry}`);
+    console.log(`   Has 'path' property: ${!!route.path}`);
+    
+    // Format 1: Direct waypoints array (the main format from API)
+    if (route.waypoints && Array.isArray(route.waypoints)) {
+        console.log(`   Found ${route.waypoints.length} waypoints in route.waypoints`);
+        
+        waypoints = route.waypoints.map((wp, i) => {
+            // Handle various waypoint formats
+            if (wp && typeof wp === 'object') {
+                return {
+                    lat: wp.lat || wp[1],
+                    lon: wp.lon || wp[0],
+                    name: wp.name || `WP${i + 1}`
+                };
+            }
+            // Handle array format [lon, lat]
+            else if (Array.isArray(wp) && wp.length >= 2) {
+                return {
+                    lat: wp[1],
+                    lon: wp[0],
+                    name: `WP${i + 1}`
+                };
+            }
+            // Invalid format
+            return null;
+        }).filter(wp => wp !== null); // Remove null entries
+        
+        console.log(`   Successfully parsed ${waypoints.length} waypoints`);
+    }
+    // Format 2: Geometry coordinates
+    else if (route.geometry && route.geometry.coordinates) {
+        console.log(`   Found geometry with ${route.geometry.coordinates.length} coordinates`);
+        waypoints = route.geometry.coordinates.map((coord, i) => ({
+            lat: coord[1],
+            lon: coord[0],
+            name: `WP${i + 1}`
+        }));
+    }
+    // Format 3: Path array
+    else if (route.path && Array.isArray(route.path)) {
+        console.log(`   Found path with ${route.path.length} points`);
+        waypoints = route.path.map((coord, i) => ({
+            lat: coord[1] || coord.lat,
+            lon: coord[0] || coord.lon,
+            name: `WP${i + 1}`
+        }));
+    }
+    else {
+        console.warn(`   No waypoints found in any expected format`);
+    }
+    
+    // Filter out invalid coordinates
+    const validWaypoints = waypoints.filter(wp => {
+        const isValid = wp && wp.lat && wp.lon && 
+                       !isNaN(wp.lat) && !isNaN(wp.lon) &&
+                       wp.lat >= 55 && wp.lat <= 72 &&   // Norwegian latitude range
+                       wp.lon >= 0 && wp.lon <= 32;      // Norwegian longitude range
+        
+        if (!isValid && wp) {
+            console.warn(`   Invalid waypoint filtered out: lat=${wp.lat}, lon=${wp.lon}`);
+        }
+        
+        return isValid;
+    });
+    
+    console.log(`   ${validWaypoints.length} valid waypoints after filtering`);
+    
+    return validWaypoints;
+}
+
+/**
+ * Create HTML popup for a route
+ */
+function createRoutePopup(route, index, color) {
+    const routeName = route.clean_name || 
+                     (route.route_name ? 
+                      route.route_name.replace('NCA_', '')
+                                     .replace('_2025', '')
+                                     .replace('_2024', '')
+                                     .replace(/_/g, ' ') : 
+                      `Route ${index + 1}`);
+    
+    const distance = route.total_distance_nm ? 
+                    `${route.total_distance_nm.toFixed(1)} NM` : 
+                    'Unknown';
+    
+    const waypointCount = route.waypoints ? route.waypoints.length : 
+                         (route.waypoint_count || 'Unknown');
     
     return `
-        <div class="route-popup" style="min-width: 220px;">
-            <h6 style="color: #1a73e8; margin-bottom: 10px;">${route.name || 'RTZ Route'}</h6>
-            <table class="table table-sm" style="font-size: 12px;">
-                <tr>
-                    <td><strong>Origin:</strong></td>
-                    <td>${route.origin || 'Unknown'}</td>
-                </tr>
-                <tr>
-                    <td><strong>Destination:</strong></td>
-                    <td>${route.destination || 'Unknown'}</td>
-                </tr>
-                <tr>
-                    <td><strong>Distance:</strong></td>
-                    <td>${distance} NM</td>
-                </tr>
-                <tr>
-                    <td><strong>Waypoints:</strong></td>
-                    <td>${waypointCount}</td>
-                </tr>
-                <tr>
-                    <td><strong>Source City:</strong></td>
-                    <td>${route.source_city || 'Unknown'}</td>
-                </tr>
-                ${route.data_source ? `
-                <tr>
-                    <td><strong>Source:</strong></td>
-                    <td>${route.data_source}</td>
-                </tr>
-                ` : ''}
-            </table>
-            <small class="text-muted">Click outside to close</small>
+        <div style="min-width: 250px;">
+            <div style="background: ${color}; color: white; padding: 10px; border-radius: 5px 5px 0 0;">
+                <i class="fas fa-route"></i> ${routeName}
+            </div>
+            <div style="padding: 10px; background: white;">
+                <table style="width: 100%; font-size: 12px;">
+                    <tr>
+                        <td><strong>Origin:</strong></td>
+                        <td style="color: #28a745;">${route.origin || 'Unknown'}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Destination:</strong></td>
+                        <td style="color: #dc3545;">${route.destination || 'Unknown'}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Distance:</strong></td>
+                        <td>${distance}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Waypoints:</strong></td>
+                        <td>${waypointCount}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Port:</strong></td>
+                        <td>${route.source_city || 'Unknown'}</td>
+                    </tr>
+                </table>
+                <div style="margin-top: 10px; display: flex; gap: 5px;">
+                    <button onclick="zoomToRoute(${index})"
+                            style="background: ${color}; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-size: 12px;">
+                        <i class="fas fa-search-plus"></i> Zoom to Route
+                    </button>
+                    <button onclick="highlightRoute(${index})"
+                            style="background: #ffc107; color: #212529; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-size: 12px;">
+                        <i class="fas fa-highlighter"></i> Highlight
+                    </button>
+                </div>
+            </div>
         </div>
     `;
 }
 
 /**
- * Add waypoint marker to map
+ * Zoom map to a specific route
  */
-function addWaypointMarker(waypoint, label, color) {
-    try {
-        const marker = L.marker([waypoint.lat, waypoint.lon], {
-            icon: L.divIcon({
-                className: 'waypoint-marker',
-                html: `
-                    <div class="marker-pin" style="background-color: ${color};"></div>
-                    <span class="marker-label">${label}</span>
-                `,
-                iconSize: [30, 42],
-                iconAnchor: [15, 42]
-            })
-        }).addTo(maritimeMap);
-        
-        marker.bindPopup(`
-            <strong>${label} Waypoint</strong><br>
-            ${waypoint.name || 'Unnamed waypoint'}<br>
-            Lat: ${waypoint.lat.toFixed(4)}<br>
-            Lon: ${waypoint.lon.toFixed(4)}
-        `);
-        
-    } catch (error) {
-        console.error('Error adding waypoint marker:', error);
-    }
-}
-
-/**
- * Populate route selector dropdown
- */
-function populateRouteSelector() {
-    const selector = document.getElementById('route-selector');
-    if (!selector) {
-        console.log('Route selector not found, skipping dropdown population');
+function zoomToRoute(routeIndex) {
+    if (!maritimeMap || !activeRoutes[routeIndex]) {
+        console.error(`Cannot zoom to route ${routeIndex}: No map or route`);
         return;
     }
     
-    // Clear existing options except the first one
-    while (selector.options.length > 1) {
-        selector.remove(1);
+    console.log(`🎯 Zooming to route ${routeIndex}`);
+    
+    const route = activeRoutes[routeIndex];
+    const waypoints = extractWaypointsFromRoute(route);
+    
+    if (waypoints.length < 2) {
+        console.warn(`Cannot zoom: Route ${routeIndex} has insufficient waypoints`);
+        showNotification(`Cannot zoom: Route has no waypoints`, 'warning');
+        return;
     }
     
-    // Add all real routes to selector
-    activeRoutes.forEach((route, index) => {
-        const option = document.createElement('option');
-        option.value = index;
-        
-        // Create display text
-        const origin = route.origin || 'Unknown';
-        const destination = route.destination || 'Unknown';
-        const distance = route.total_distance_nm ? route.total_distance_nm.toFixed(1) : '0.0';
-        
-        option.textContent = `${origin} → ${destination} (${distance} nm)`;
-        selector.appendChild(option);
-    });
+    // Create bounds from waypoints
+    const bounds = L.latLngBounds(waypoints.map(wp => [wp.lat, wp.lon]));
     
-    console.log(`📋 Populated route selector with ${activeRoutes.length} routes`);
-    
-    // Add event listener for route selection
-    selector.addEventListener('change', function() {
-        const selectedIndex = parseInt(this.value);
-        if (selectedIndex >= 0 && selectedIndex < activeRoutes.length) {
-            selectRouteOnMap(selectedIndex);
-        }
-    });
+    if (bounds.isValid()) {
+        maritimeMap.fitBounds(bounds.pad(0.1));
+        
+        // Flash the route to highlight it
+        highlightRoute(routeIndex);
+        
+        // Show notification
+        showNotification(`Zoomed to route: ${route.clean_name || route.route_name}`, 'info');
+    }
 }
 
 /**
- * Select and highlight a specific route on the map
+ * Highlight a specific route by making it more visible
  */
-function selectRouteOnMap(routeIndex) {
-    try {
-        // Reset all routes to normal style
-        Object.values(routeLayers).forEach((layer, index) => {
-            if (layer && layer.setStyle) {
-                const colors = [
-                    '#1e88e5', '#43a047', '#fb8c00', '#e53935',
-                    '#8e24aa', '#3949ab', '#00897b', '#f4511e',
-                    '#5e35b1', '#039be5', '#7cb342', '#ffb300'
-                ];
-                const color = colors[index % colors.length];
-                
-                layer.setStyle({
-                    color: color,
-                    weight: 3,
-                    opacity: 0.7
-                });
-            }
+function highlightRoute(routeIndex) {
+    if (!maritimeMap || !activeRoutes[routeIndex]) return;
+    
+    // Reset all routes to normal
+    routePolylines.forEach(polyline => {
+        polyline.setStyle({ weight: 4, opacity: 0.8 });
+    });
+    
+    // Highlight the selected route
+    const route = activeRoutes[routeIndex];
+    if (route.mapPolyline) {
+        route.mapPolyline.setStyle({ 
+            weight: 8, 
+            opacity: 1.0,
+            color: '#ff5722' // Orange highlight color
         });
         
-        // Highlight selected route
-        const routeId = `route_${routeIndex}`;
-        const selectedRoute = routeLayers[routeId];
+        // Bring to front
+        route.mapPolyline.bringToFront();
         
-        if (selectedRoute) {
-            selectedRoute.setStyle({
-                color: '#ff0000',
-                weight: 5,
-                opacity: 1.0
-            });
-            
-            // Zoom to the selected route
-            maritimeMap.fitBounds(selectedRoute.getBounds().pad(0.1));
-            
-            // Open popup
-            selectedRoute.openPopup();
-            
-            console.log(`📍 Selected route ${routeIndex}: ${activeRoutes[routeIndex].name || 'Unnamed'}`);
-        }
-        
-    } catch (error) {
-        console.error('Error selecting route:', error);
+        console.log(`🔦 Highlighted route ${routeIndex}`);
     }
+}
+
+/**
+ * Fit map to show all routes
+ */
+function fitMapToRoutes() {
+    if (!maritimeMap || routePolylines.length === 0) return;
+    
+    // Get bounds from all polylines
+    const bounds = L.latLngBounds();
+    
+    routePolylines.forEach(polyline => {
+        if (polyline.getBounds) {
+            bounds.extend(polyline.getBounds());
+        }
+    });
+    
+    if (bounds.isValid()) {
+        maritimeMap.fitBounds(bounds.pad(0.1));
+        console.log('🗺️ Map fitted to routes');
+    }
+}
+
+/**
+ * Add legend to map
+ */
+function addMapLegend() {
+    if (!maritimeMap) return;
+    
+    const legend = L.control({ position: 'bottomleft' });
+    
+    legend.onAdd = function(map) {
+        const div = L.DomUtil.create('div', 'leaflet-control-legend');
+        div.innerHTML = `
+            <div class="legend-title">Maritime Map Legend</div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #28a745;"></div>
+                <div class="legend-label"><i class="fas fa-play"></i> Route Start</div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #dc3545;"></div>
+                <div class="legend-label"><i class="fas fa-flag-checkered"></i> Route End</div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="height: 4px; background-color: #1e88e5; margin-top: 8px;"></div>
+                <div class="legend-label"><i class="fas fa-route"></i> RTZ Route</div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #ffc107;"></div>
+                <div class="legend-label"><i class="fas fa-ship"></i> Vessel</div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #17a2b8;"></div>
+                <div class="legend-label"><i class="fas fa-cloud-sun"></i> Weather Station</div>
+            </div>
+        `;
+        return div;
+    };
+    
+    legend.addTo(maritimeMap);
 }
 
 /**
  * Clear all route layers from map
  */
-function clearRouteLayers() {
-    Object.values(routeLayers).forEach(layer => {
-        if (layer && maritimeMap.hasLayer(layer)) {
-            maritimeMap.removeLayer(layer);
-        }
-    });
+function clearAllRouteLayers() {
+    if (!maritimeMap) return;
     
-    routeLayers = {};
-}
-
-/**
- * Update vessel count in all UI elements
- */
-function updateVesselCountUI(count) {
-    // Update all possible vessel count elements
-    const countElements = [
-        'vessel-count',
-        'vessel-count-number',
-        'active-vessels',
-        'live-vessel-count'
-    ];
-    
-    countElements.forEach(id => {
-        const element = document.getElementById(id);
-        if (element) {
-            element.textContent = count;
-        }
+    // Remove all polylines
+    routePolylines.forEach(polyline => {
+        maritimeMap.removeLayer(polyline);
     });
+    routePolylines = [];
+    
+    // Remove all markers
+    routeMarkers.forEach(markerGroup => {
+        if (markerGroup.start) maritimeMap.removeLayer(markerGroup.start);
+        if (markerGroup.end) maritimeMap.removeLayer(markerGroup.end);
+    });
+    routeMarkers = [];
+    
+    console.log('🗑️ Cleared all route layers from map');
 }
 
 /**
@@ -493,231 +590,163 @@ function updateVesselCountUI(count) {
 function updateRouteCounters() {
     // Update route count display
     const routeCountElement = document.getElementById('route-count');
-    const routeDisplayElement = document.getElementById('route-display-count');
+    const routeCountBadge = document.getElementById('route-count-badge');
+    const waypointCountElement = document.getElementById('waypoint-count');
     
     if (routeCountElement) {
         routeCountElement.textContent = activeRoutes.length;
     }
     
-    if (routeDisplayElement) {
-        routeDisplayElement.textContent = activeRoutes.length;
+    if (routeCountBadge) {
+        routeCountBadge.textContent = activeRoutes.length;
     }
     
-    // Update route coverage
-    const uniqueCities = [...new Set(activeRoutes.map(r => r.source_city).filter(Boolean))];
-    const coverageElement = document.getElementById('route-coverage');
-    if (coverageElement) {
-        coverageElement.textContent = `${uniqueCities.length}/10 ports`;
-    }
-    
-    // Update route status
-    const routeStatusElement = document.getElementById('route-status');
-    if (routeStatusElement) {
-        routeStatusElement.textContent = `${activeRoutes.length} active`;
-        routeStatusElement.dataset.routeCount = activeRoutes.length;
-    }
-}
-
-/**
- * Create demo vessels for fallback display
- */
-function createDemoVessels() {
-    console.log('Creating demo vessels for display');
-    
-    // Initialize map if needed
-    if (!maritimeMap) {
-        initMaritimeMap();
-    }
-    
-    // Clear existing markers
-    if (vesselMarkers && vesselMarkers.length > 0) {
-        vesselMarkers.forEach(marker => {
-            if (marker && maritimeMap) maritimeMap.removeLayer(marker);
-        });
-        vesselMarkers = [];
-    }
-    
-    // Create some sample vessels around Bergen
-    const demoVessels = [
-        { lat: 60.392, lon: 5.324, name: 'NORWEGIAN CARGO', type: 'Cargo', course: 45 },
-        { lat: 60.398, lon: 5.315, name: 'FJORD TRADER', type: 'Container', course: 120 },
-        { lat: 60.385, lon: 5.335, name: 'NORTH SEA TANKER', type: 'Tanker', course: 280 },
-        { lat: 60.395, lon: 5.310, name: 'COASTAL PATROL', type: 'Patrol', course: 90 }
-    ];
-    
-    demoVessels.forEach(vessel => {
-        const icon = L.divIcon({
-            className: 'vessel-marker',
-            html: '<i class="bi bi-ship" style="color: #3498db; font-size: 20px;"></i>',
-            iconSize: [30, 30],
-            iconAnchor: [15, 15]
-        });
-        
-        const marker = L.marker([vessel.lat, vessel.lon], { icon: icon })
-            .bindPopup(`<strong>${vessel.name}</strong><br>Type: ${vessel.type}<br>Demo vessel`);
-        
-        marker.addTo(maritimeMap);
-        vesselMarkers.push(marker);
-    });
-    
-    updateVesselCountUI(demoVessels.length);
-    console.log('Created 4 demo vessels');
-}
-
-/**
- * Create demo routes for fallback display
- */
-function createDemoRoutes() {
-    console.log('Creating demo routes for fallback display');
-    
-    activeRoutes = [
-        {
-            name: 'Bergen Coastal Route',
-            origin: 'Bergen',
-            destination: 'Stavanger',
-            total_distance_nm: 31.29,
-            waypoint_count: 18,
-            source_city: 'bergen',
-            data_source: 'demo_fallback',
-            waypoints: [
-                { lat: 60.3913, lon: 5.3221, name: 'Bergen Harbor' },
-                { lat: 60.3945, lon: 5.3182, name: 'Bergen West' },
-                { lat: 60.3978, lon: 5.3105, name: 'Fjord Entrance' },
-                { lat: 60.4050, lon: 5.3050, name: 'Coastal Waypoint' }
-            ]
-        },
-        {
-            name: 'Oslo Fjord Route',
-            origin: 'Oslo',
-            destination: 'Drammen',
-            total_distance_nm: 24.5,
-            waypoint_count: 12,
-            source_city: 'oslo',
-            data_source: 'demo_fallback',
-            waypoints: [
-                { lat: 59.9139, lon: 10.7522, name: 'Oslo Harbor' },
-                { lat: 59.9050, lon: 10.7450, name: 'Fjord Channel' },
-                { lat: 59.8950, lon: 10.7350, name: 'Mid Fjord' },
-                { lat: 59.8850, lon: 10.7250, name: 'Drammen Approach' }
-            ]
-        }
-    ];
-    
-    displayRoutesOnMap();
-    populateRouteSelector();
-    updateRouteCounters();
-}
-
-/**
- * Toggle RTZ routes visibility
- */
-function toggleRTZRoutes() {
-    const isVisible = Object.values(routeLayers).some(layer => maritimeMap.hasLayer(layer));
-    
-    Object.values(routeLayers).forEach(layer => {
-        if (isVisible) {
-            maritimeMap.removeLayer(layer);
-        } else {
-            maritimeMap.addLayer(layer);
+    // Calculate total waypoints
+    let totalWaypoints = 0;
+    activeRoutes.forEach(route => {
+        if (route.waypoints && Array.isArray(route.waypoints)) {
+            totalWaypoints += route.waypoints.length;
+        } else if (route.waypoint_count) {
+            totalWaypoints += route.waypoint_count;
         }
     });
     
-    console.log(`RTZ routes ${isVisible ? 'hidden' : 'shown'}`);
-    return !isVisible;
+    if (waypointCountElement) {
+        waypointCountElement.textContent = totalWaypoints;
+    }
+    
+    console.log(`📊 Updated counters: ${activeRoutes.length} routes, ${totalWaypoints} waypoints`);
 }
 
 /**
- * Initialize map and load all data when DOM is ready
+ * Show notification message
+ */
+function showNotification(message, type = 'info') {
+    const types = {
+        'info': { class: 'alert-info', icon: 'ℹ️' },
+        'success': { class: 'alert-success', icon: '✅' },
+        'warning': { class: 'alert-warning', icon: '⚠️' },
+        'error': { class: 'alert-danger', icon: '❌' }
+    };
+    
+    const config = types[type] || types.info;
+    
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `alert ${config.class} alert-dismissible fade show`;
+    notification.style.cssText = `
+        position: fixed;
+        top: 80px;
+        right: 20px;
+        z-index: 9999;
+        max-width: 300px;
+        animation: slideIn 0.3s ease-out;
+    `;
+    
+    notification.innerHTML = `
+        <strong>${config.icon} ${type.charAt(0).toUpperCase() + type.slice(1)}:</strong>
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    // Add to page
+    document.body.appendChild(notification);
+    
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.remove();
+        }
+    }, 5000);
+}
+
+/**
+ * Initialize everything when page loads
  */
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🗺️ Maritime map module loaded');
+    console.log('🌊 Maritime Map Module: DOM loaded, starting initialization...');
     
     // Initialize map immediately
     initMaritimeMap();
     
-    // Load AIS data after a short delay
-    setTimeout(loadAIS, 1000);
+    // Load and display routes after short delay (let map initialize)
+    setTimeout(() => {
+        loadAndDisplayRTZRoutes();
+    }, 500);
     
-    // Load RTZ routes after a slightly longer delay
-    setTimeout(loadRTZRoutes, 2000);
+    // Make functions available globally
+    window.loadRTZRoutes = loadAndDisplayRTZRoutes;
+    window.initMaritimeMap = initMaritimeMap;
+    window.zoomToRoute = zoomToRoute;
+    window.highlightRoute = highlightRoute;
+    window.showNotification = showNotification;
     
-    // Set up periodic refresh (every 30 seconds for AIS, 60 seconds for routes)
-    setInterval(loadAIS, 30000);
-    setInterval(loadRTZRoutes, 60000);
-    
-    // Add CSS for markers
-    const style = document.createElement('style');
-    style.textContent = `
-        .vessel-marker {
-            background: transparent;
-            border: none;
-        }
-        .vessel-icon {
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
-        }
-        .waypoint-marker {
-            background: transparent;
-            border: none;
-        }
-        .marker-pin {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            border: 2px solid white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        }
-        .marker-label {
-            position: absolute;
-            top: -20px;
-            left: -10px;
-            background: white;
-            padding: 2px 6px;
-            border-radius: 3px;
-            font-size: 10px;
-            font-weight: bold;
-            white-space: nowrap;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-        }
-        .rtz-route-line {
-            cursor: pointer;
-        }
-        .route-popup {
-            min-width: 200px;
-        }
-        .route-popup h6 {
-            color: #1a73e8;
-            margin-bottom: 10px;
-        }
-    `;
-    document.head.appendChild(style);
+    console.log('✅ Maritime Map Module ready');
 });
 
-// Export functions for global use
-window.loadAIS = loadAIS;
-window.loadRTZRoutes = loadRTZRoutes;
-window.initMaritimeMap = initMaritimeMap;
-window.toggleRTZRoutes = toggleRTZRoutes;
-
-// Create route manager object for dashboard integration
-window.rtzManager = {
-    loadRoutes: loadRTZRoutes,
-    toggle: toggleRTZRoutes,
-    getRouteCount: () => activeRoutes.length,
-    selectRoute: selectRouteOnMap
-};
-
-// ============================================================================
-// EXPORT FUNCTIONS FOR DASHBOARD INTEGRATION
-// ============================================================================
-
-// Export addRoutesToMap for dashboard (points to the real function)
-window.addRoutesToMap = displayRoutesOnMap;
-
-// Trigger map ready event for dashboard integration
-setTimeout(() => {
-    if (typeof window.triggerMapReady === 'function') {
-        window.triggerMapReady();
+// Add some CSS for the routes and animations
+const routeStyles = document.createElement('style');
+routeStyles.textContent = `
+    .rtz-route-line {
+        cursor: pointer;
+        transition: all 0.3s ease;
     }
-}, 1500);
-
-console.log("✅ Maritime map module ready for dashboard integration");
+    .route-start-marker {
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    .route-end-marker {
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    .leaflet-control-legend {
+        background: white;
+        padding: 10px;
+        border-radius: 5px;
+        box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+        font-size: 12px;
+    }
+    .legend-title {
+        font-weight: bold;
+        margin-bottom: 8px;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 5px;
+    }
+    .legend-item {
+        display: flex;
+        align-items: center;
+        margin: 4px 0;
+    }
+    .legend-color {
+        width: 15px;
+        height: 15px;
+        border-radius: 3px;
+        margin-right: 8px;
+    }
+    .legend-label {
+        font-size: 11px;
+    }
+    
+    @keyframes slideIn {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+    
+    .route-highlighted {
+        animation: pulse 1s infinite;
+        filter: drop-shadow(0 0 5px rgba(255, 87, 34, 0.7));
+    }
+`;
+document.head.appendChild(routeStyles);

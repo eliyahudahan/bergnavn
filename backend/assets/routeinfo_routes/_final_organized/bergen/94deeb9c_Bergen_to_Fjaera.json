@@ -1,0 +1,574 @@
+{
+  "route_name": "NCA_Bergen_Fjaera_20250801",
+  "file_path": "/home/framg/dev/bergnavn/backend/assets/routeinfo_routes/bergen/raw/extracted/NCA_Bergen_Fjaera_20250801.rtz",
+  "waypoints": [
+    {
+      "name": "Bergen",
+      "lat": 60.40239225,
+      "lon": 5.27522905,
+      "radius": 0.1
+    },
+    {
+      "name": "Kvarven",
+      "lat": 60.40297952,
+      "lon": 5.2414078,
+      "radius": 0.1
+    },
+    {
+      "name": "Askoy bridge",
+      "lat": 60.3960179,
+      "lon": 5.21478962,
+      "radius": 0.1
+    },
+    {
+      "name": "Tollneset",
+      "lat": 60.38502273,
+      "lon": 5.17429947,
+      "radius": 0.1
+    },
+    {
+      "name": "Tollneset",
+      "lat": 60.37971712,
+      "lon": 5.16646305,
+      "radius": 0.1
+    },
+    {
+      "name": "Sotra bridge",
+      "lat": 60.37389122,
+      "lon": 5.16562847,
+      "radius": 0.1
+    },
+    {
+      "name": "Stongi",
+      "lat": 60.3634249,
+      "lon": 5.16806858,
+      "radius": 0.1
+    },
+    {
+      "name": "Hakonshella",
+      "lat": 60.34599407,
+      "lon": 5.1694718,
+      "radius": 0.1
+    },
+    {
+      "name": "Hakonshella",
+      "lat": 60.34313333,
+      "lon": 5.17196667,
+      "radius": 0.1
+    },
+    {
+      "name": "Trollholmen",
+      "lat": 60.3393337,
+      "lon": 5.17886617,
+      "radius": 0.1
+    },
+    {
+      "name": "Vatlestraumen",
+      "lat": 60.33606057,
+      "lon": 5.18862422,
+      "radius": 0.1
+    },
+    {
+      "name": "Hilleren",
+      "lat": 60.33123055,
+      "lon": 5.19384998,
+      "radius": 0.1
+    },
+    {
+      "name": "Bjoroy",
+      "lat": 60.31798443,
+      "lon": 5.19701488,
+      "radius": 0.1
+    },
+    {
+      "name": "Hestholmen",
+      "lat": 60.29536667,
+      "lon": 5.19166667,
+      "radius": 0.1
+    },
+    {
+      "name": "Fleslandsskjeret",
+      "lat": 60.28251798,
+      "lon": 5.18336323,
+      "radius": 0.1
+    },
+    {
+      "name": "Raunane",
+      "lat": 60.26496373,
+      "lon": 5.15378603,
+      "radius": 0.1
+    },
+    {
+      "name": "Tangaflu",
+      "lat": 60.24193343,
+      "lon": 5.15212075,
+      "radius": 0.1
+    },
+    {
+      "name": "Leroyna",
+      "lat": 60.22481422,
+      "lon": 5.16474202,
+      "radius": 0.1
+    },
+    {
+      "name": "Litle Laugaroy",
+      "lat": 60.15315246,
+      "lon": 5.26467568,
+      "radius": 0.1
+    },
+    {
+      "name": "Ospoya",
+      "lat": 60.11331773,
+      "lon": 5.29784094,
+      "radius": 0.1
+    },
+    {
+      "name": "Bjornafjorden",
+      "lat": 60.07351178,
+      "lon": 5.32339295,
+      "radius": 0.1
+    },
+    {
+      "name": "Rommelines",
+      "lat": 60.02170308,
+      "lon": 5.32667458,
+      "radius": 0.1
+    },
+    {
+      "name": "Reksteren",
+      "lat": 59.98961672,
+      "lon": 5.34963825,
+      "radius": 0.1
+    },
+    {
+      "name": "Landroypynten",
+      "lat": 59.97503428,
+      "lon": 5.37352805,
+      "radius": 0.1
+    },
+    {
+      "name": "Storeklubben",
+      "lat": 59.93915713,
+      "lon": 5.45946259,
+      "radius": 0.1
+    },
+    {
+      "name": "Langenuen",
+      "lat": 59.92841667,
+      "lon": 5.4808,
+      "radius": 0.1
+    },
+    {
+      "name": "Langenuen",
+      "lat": 59.91231013,
+      "lon": 5.50555193,
+      "radius": 0.1
+    },
+    {
+      "name": "Skor",
+      "lat": 59.88650265,
+      "lon": 5.53075187,
+      "radius": 0.1
+    },
+    {
+      "name": "Grovaholmen",
+      "lat": 59.84203357,
+      "lon": 5.54320527,
+      "radius": 0.1
+    },
+    {
+      "name": "Huglahammaren",
+      "lat": 59.81067689,
+      "lon": 5.56169225,
+      "radius": 0.1
+    },
+    {
+      "name": "Huglahammaren",
+      "lat": 59.80412153,
+      "lon": 5.57291633,
+      "radius": 0.1
+    },
+    {
+      "name": "Hardangerfjorden",
+      "lat": 59.80941242,
+      "lon": 5.60629625,
+      "radius": 0.1
+    },
+    {
+      "name": "Svinoya",
+      "lat": 59.8268157,
+      "lon": 5.66150668,
+      "radius": 0.1
+    },
+    {
+      "name": "Bjellandsoya lt",
+      "lat": 59.8207795,
+      "lon": 5.69588769,
+      "radius": 0.1
+    },
+    {
+      "name": "Skottaflu lt",
+      "lat": 59.82570171,
+      "lon": 5.74514662,
+      "radius": 0.1
+    },
+    {
+      "name": "Trollskjeret",
+      "lat": 59.82450254,
+      "lon": 5.7638518,
+      "radius": 0.1
+    },
+    {
+      "name": "Hillestadholmen lt",
+      "lat": 59.79638541,
+      "lon": 5.78930688,
+      "radius": 0.1
+    },
+    {
+      "name": "Mehusflu bn",
+      "lat": 59.79026513,
+      "lon": 5.81307015,
+      "radius": 0.1
+    },
+    {
+      "name": "Hoylandssundet",
+      "lat": 59.76074562,
+      "lon": 5.87891518,
+      "radius": 0.1
+    },
+    {
+      "name": "Straumneset",
+      "lat": 59.77596661,
+      "lon": 5.93303091,
+      "radius": 0.1
+    },
+    {
+      "name": "Sollesvik",
+      "lat": 59.75926874,
+      "lon": 5.97404676,
+      "radius": 0.1
+    },
+    {
+      "name": "Hauganeset",
+      "lat": 59.74836479,
+      "lon": 6.01630397,
+      "radius": 0.1
+    },
+    {
+      "name": "Susodden lt",
+      "lat": 59.75005214,
+      "lon": 6.05861349,
+      "radius": 0.1
+    },
+    {
+      "name": "Alsakerneset",
+      "lat": 59.75588219,
+      "lon": 6.08751607,
+      "radius": 0.1
+    },
+    {
+      "name": "Holaneset",
+      "lat": 59.78366252,
+      "lon": 6.13592553,
+      "radius": 0.1
+    },
+    {
+      "name": "Skalnes",
+      "lat": 59.83261091,
+      "lon": 6.24556291,
+      "radius": 0.1
+    },
+    {
+      "name": "Braskot",
+      "lat": 59.83997904,
+      "lon": 6.29624111,
+      "radius": 0.1
+    },
+    {
+      "name": "Mosnes lt",
+      "lat": 59.85248567,
+      "lon": 6.34665583,
+      "radius": 0.1
+    },
+    {
+      "name": "Eljarvikneset",
+      "lat": 59.85993171,
+      "lon": 6.34854812,
+      "radius": 0.1
+    },
+    {
+      "name": "Ombesneset",
+      "lat": 59.87065621,
+      "lon": 6.36523173,
+      "radius": 0.1
+    },
+    {
+      "name": "Fjaera",
+      "lat": 59.87335288,
+      "lon": 6.37160142,
+      "radius": 0.1
+    }
+  ],
+  "legs": [
+    {
+      "from_waypoint": "Bergen",
+      "to_waypoint": "Kvarven",
+      "distance_nm": 1.0
+    },
+    {
+      "from_waypoint": "Kvarven",
+      "to_waypoint": "Askoy bridge",
+      "distance_nm": 0.89
+    },
+    {
+      "from_waypoint": "Askoy bridge",
+      "to_waypoint": "Tollneset",
+      "distance_nm": 1.37
+    },
+    {
+      "from_waypoint": "Tollneset",
+      "to_waypoint": "Tollneset",
+      "distance_nm": 0.39
+    },
+    {
+      "from_waypoint": "Tollneset",
+      "to_waypoint": "Sotra bridge",
+      "distance_nm": 0.35
+    },
+    {
+      "from_waypoint": "Sotra bridge",
+      "to_waypoint": "Stongi",
+      "distance_nm": 0.63
+    },
+    {
+      "from_waypoint": "Stongi",
+      "to_waypoint": "Hakonshella",
+      "distance_nm": 1.05
+    },
+    {
+      "from_waypoint": "Hakonshella",
+      "to_waypoint": "Hakonshella",
+      "distance_nm": 0.19
+    },
+    {
+      "from_waypoint": "Hakonshella",
+      "to_waypoint": "Trollholmen",
+      "distance_nm": 0.31
+    },
+    {
+      "from_waypoint": "Trollholmen",
+      "to_waypoint": "Vatlestraumen",
+      "distance_nm": 0.35
+    },
+    {
+      "from_waypoint": "Vatlestraumen",
+      "to_waypoint": "Hilleren",
+      "distance_nm": 0.33
+    },
+    {
+      "from_waypoint": "Hilleren",
+      "to_waypoint": "Bjoroy",
+      "distance_nm": 0.8
+    },
+    {
+      "from_waypoint": "Bjoroy",
+      "to_waypoint": "Hestholmen",
+      "distance_nm": 1.37
+    },
+    {
+      "from_waypoint": "Hestholmen",
+      "to_waypoint": "Fleslandsskjeret",
+      "distance_nm": 0.81
+    },
+    {
+      "from_waypoint": "Fleslandsskjeret",
+      "to_waypoint": "Raunane",
+      "distance_nm": 1.37
+    },
+    {
+      "from_waypoint": "Raunane",
+      "to_waypoint": "Tangaflu",
+      "distance_nm": 1.38
+    },
+    {
+      "from_waypoint": "Tangaflu",
+      "to_waypoint": "Leroyna",
+      "distance_nm": 1.09
+    },
+    {
+      "from_waypoint": "Leroyna",
+      "to_waypoint": "Litle Laugaroy",
+      "distance_nm": 5.24
+    },
+    {
+      "from_waypoint": "Litle Laugaroy",
+      "to_waypoint": "Ospoya",
+      "distance_nm": 2.59
+    },
+    {
+      "from_waypoint": "Ospoya",
+      "to_waypoint": "Bjornafjorden",
+      "distance_nm": 2.51
+    },
+    {
+      "from_waypoint": "Bjornafjorden",
+      "to_waypoint": "Rommelines",
+      "distance_nm": 3.11
+    },
+    {
+      "from_waypoint": "Rommelines",
+      "to_waypoint": "Reksteren",
+      "distance_nm": 2.05
+    },
+    {
+      "from_waypoint": "Reksteren",
+      "to_waypoint": "Landroypynten",
+      "distance_nm": 1.13
+    },
+    {
+      "from_waypoint": "Landroypynten",
+      "to_waypoint": "Storeklubben",
+      "distance_nm": 3.36
+    },
+    {
+      "from_waypoint": "Storeklubben",
+      "to_waypoint": "Langenuen",
+      "distance_nm": 0.91
+    },
+    {
+      "from_waypoint": "Langenuen",
+      "to_waypoint": "Langenuen",
+      "distance_nm": 1.22
+    },
+    {
+      "from_waypoint": "Langenuen",
+      "to_waypoint": "Skor",
+      "distance_nm": 1.73
+    },
+    {
+      "from_waypoint": "Skor",
+      "to_waypoint": "Grovaholmen",
+      "distance_nm": 2.7
+    },
+    {
+      "from_waypoint": "Grovaholmen",
+      "to_waypoint": "Huglahammaren",
+      "distance_nm": 1.96
+    },
+    {
+      "from_waypoint": "Huglahammaren",
+      "to_waypoint": "Huglahammaren",
+      "distance_nm": 0.52
+    },
+    {
+      "from_waypoint": "Huglahammaren",
+      "to_waypoint": "Hardangerfjorden",
+      "distance_nm": 1.06
+    },
+    {
+      "from_waypoint": "Hardangerfjorden",
+      "to_waypoint": "Svinoya",
+      "distance_nm": 1.97
+    },
+    {
+      "from_waypoint": "Svinoya",
+      "to_waypoint": "Bjellandsoya lt",
+      "distance_nm": 1.1
+    },
+    {
+      "from_waypoint": "Bjellandsoya lt",
+      "to_waypoint": "Skottaflu lt",
+      "distance_nm": 1.52
+    },
+    {
+      "from_waypoint": "Skottaflu lt",
+      "to_waypoint": "Trollskjeret",
+      "distance_nm": 0.57
+    },
+    {
+      "from_waypoint": "Trollskjeret",
+      "to_waypoint": "Hillestadholmen lt",
+      "distance_nm": 1.85
+    },
+    {
+      "from_waypoint": "Hillestadholmen lt",
+      "to_waypoint": "Mehusflu bn",
+      "distance_nm": 0.81
+    },
+    {
+      "from_waypoint": "Mehusflu bn",
+      "to_waypoint": "Hoylandssundet",
+      "distance_nm": 2.66
+    },
+    {
+      "from_waypoint": "Hoylandssundet",
+      "to_waypoint": "Straumneset",
+      "distance_nm": 1.87
+    },
+    {
+      "from_waypoint": "Straumneset",
+      "to_waypoint": "Sollesvik",
+      "distance_nm": 1.59
+    },
+    {
+      "from_waypoint": "Sollesvik",
+      "to_waypoint": "Hauganeset",
+      "distance_nm": 1.44
+    },
+    {
+      "from_waypoint": "Hauganeset",
+      "to_waypoint": "Susodden lt",
+      "distance_nm": 1.28
+    },
+    {
+      "from_waypoint": "Susodden lt",
+      "to_waypoint": "Alsakerneset",
+      "distance_nm": 0.94
+    },
+    {
+      "from_waypoint": "Alsakerneset",
+      "to_waypoint": "Holaneset",
+      "distance_nm": 2.22
+    },
+    {
+      "from_waypoint": "Holaneset",
+      "to_waypoint": "Skalnes",
+      "distance_nm": 4.43
+    },
+    {
+      "from_waypoint": "Skalnes",
+      "to_waypoint": "Braskot",
+      "distance_nm": 1.59
+    },
+    {
+      "from_waypoint": "Braskot",
+      "to_waypoint": "Mosnes lt",
+      "distance_nm": 1.7
+    },
+    {
+      "from_waypoint": "Mosnes lt",
+      "to_waypoint": "Eljarvikneset",
+      "distance_nm": 0.45
+    },
+    {
+      "from_waypoint": "Eljarvikneset",
+      "to_waypoint": "Ombesneset",
+      "distance_nm": 0.82
+    },
+    {
+      "from_waypoint": "Ombesneset",
+      "to_waypoint": "Fjaera",
+      "distance_nm": 0.25
+    }
+  ],
+  "total_distance_nm": 72.83,
+  "waypoint_count": 51,
+  "leg_count": 50,
+  "origin": "Bergen",
+  "destination": "Fjaera",
+  "parse_timestamp": "2026-01-20T15:17:44.250018",
+  "data_source": "rtz_file_parser",
+  "source_city": "bergen",
+  "original_file": "NCA_Bergen_Fjaera_20250801.rtz",
+  "route_id": "94deeb9c"
+}

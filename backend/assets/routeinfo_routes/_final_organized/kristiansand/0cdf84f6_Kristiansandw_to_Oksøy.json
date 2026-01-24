@@ -1,0 +1,68 @@
+{
+  "route_name": "NCA_KristiansandW_Oksoy_In_20250801",
+  "file_path": "/home/framg/dev/bergnavn/backend/assets/routeinfo_routes/kristiansand/raw/extracted/NCA_KristiansandW_Oksoy_In_20250731.rtz",
+  "waypoints": [
+    {
+      "name": "Oksoy pilot boarding",
+      "lat": 58.0565677,
+      "lon": 8.1015835,
+      "radius": 0.1
+    },
+    {
+      "name": "Gronningen",
+      "lat": 58.07279089,
+      "lon": 8.08509957,
+      "radius": 0.1
+    },
+    {
+      "name": "Kinn",
+      "lat": 58.10177743,
+      "lon": 8.04600096,
+      "radius": 0.1
+    },
+    {
+      "name": "Odderoya",
+      "lat": 58.12289874,
+      "lon": 8.02427618,
+      "radius": 0.1
+    },
+    {
+      "name": "Kristiansand west",
+      "lat": 58.13306224,
+      "lon": 7.98926167,
+      "radius": 0.1
+    }
+  ],
+  "legs": [
+    {
+      "from_waypoint": "Oksoy pilot boarding",
+      "to_waypoint": "Gronningen",
+      "distance_nm": 1.11
+    },
+    {
+      "from_waypoint": "Gronningen",
+      "to_waypoint": "Kinn",
+      "distance_nm": 2.14
+    },
+    {
+      "from_waypoint": "Kinn",
+      "to_waypoint": "Odderoya",
+      "distance_nm": 1.44
+    },
+    {
+      "from_waypoint": "Odderoya",
+      "to_waypoint": "Kristiansand west",
+      "distance_nm": 1.27
+    }
+  ],
+  "total_distance_nm": 5.95,
+  "waypoint_count": 5,
+  "leg_count": 4,
+  "origin": "Kristiansandw",
+  "destination": "Oks\u00f8y",
+  "parse_timestamp": "2026-01-20T15:17:44.261819",
+  "data_source": "rtz_file_parser",
+  "source_city": "kristiansand",
+  "original_file": "NCA_KristiansandW_Oksoy_In_20250731.rtz",
+  "route_id": "0cdf84f6"
+}

@@ -1,0 +1,145 @@
+{
+  "route_name": "NCA_Flekkefjord_In_20250801",
+  "file_path": "/home/framg/dev/bergnavn/backend/assets/routeinfo_routes/flekkefjord/raw/extracted/NCA_Flekkefjord_In_20250731.rtz",
+  "waypoints": [
+    {
+      "name": "Lista",
+      "lat": 58.14841602,
+      "lon": 6.48361028,
+      "radius": 0.1
+    },
+    {
+      "name": "Varneset lt",
+      "lat": 58.18354029,
+      "lon": 6.6190382,
+      "radius": 0.1
+    },
+    {
+      "name": "Skagesteinodden",
+      "lat": 58.19642748,
+      "lon": 6.66951812,
+      "radius": 0.1
+    },
+    {
+      "name": "Skarvehelleren",
+      "lat": 58.20657319,
+      "lon": 6.69916115,
+      "radius": 0.1
+    },
+    {
+      "name": "Pinnen",
+      "lat": 58.22702817,
+      "lon": 6.69334699,
+      "radius": 0.1
+    },
+    {
+      "name": "Bolshus",
+      "lat": 58.24563139,
+      "lon": 6.66698235,
+      "radius": 0.1
+    },
+    {
+      "name": "Stamdalsflua",
+      "lat": 58.25351041,
+      "lon": 6.65977703,
+      "radius": 0.1
+    },
+    {
+      "name": "Stamdalsflua",
+      "lat": 58.25532509,
+      "lon": 6.65924217,
+      "radius": 0.1
+    },
+    {
+      "name": "Hasund",
+      "lat": 58.25782886,
+      "lon": 6.65704789,
+      "radius": 0.1
+    },
+    {
+      "name": "Torsoy",
+      "lat": 58.26578656,
+      "lon": 6.65434706,
+      "radius": 0.1
+    },
+    {
+      "name": "leading lights",
+      "lat": 58.28247896,
+      "lon": 6.66137229,
+      "radius": 0.1
+    },
+    {
+      "name": "Flekkefjord",
+      "lat": 58.28841752,
+      "lon": 6.65560204,
+      "radius": 0.1
+    }
+  ],
+  "legs": [
+    {
+      "from_waypoint": "Lista",
+      "to_waypoint": "Varneset lt",
+      "distance_nm": 4.78
+    },
+    {
+      "from_waypoint": "Varneset lt",
+      "to_waypoint": "Skagesteinodden",
+      "distance_nm": 1.78
+    },
+    {
+      "from_waypoint": "Skagesteinodden",
+      "to_waypoint": "Skarvehelleren",
+      "distance_nm": 1.12
+    },
+    {
+      "from_waypoint": "Skarvehelleren",
+      "to_waypoint": "Pinnen",
+      "distance_nm": 1.24
+    },
+    {
+      "from_waypoint": "Pinnen",
+      "to_waypoint": "Bolshus",
+      "distance_nm": 1.39
+    },
+    {
+      "from_waypoint": "Bolshus",
+      "to_waypoint": "Stamdalsflua",
+      "distance_nm": 0.52
+    },
+    {
+      "from_waypoint": "Stamdalsflua",
+      "to_waypoint": "Stamdalsflua",
+      "distance_nm": 0.11
+    },
+    {
+      "from_waypoint": "Stamdalsflua",
+      "to_waypoint": "Hasund",
+      "distance_nm": 0.17
+    },
+    {
+      "from_waypoint": "Hasund",
+      "to_waypoint": "Torsoy",
+      "distance_nm": 0.49
+    },
+    {
+      "from_waypoint": "Torsoy",
+      "to_waypoint": "leading lights",
+      "distance_nm": 1.03
+    },
+    {
+      "from_waypoint": "leading lights",
+      "to_waypoint": "Flekkefjord",
+      "distance_nm": 0.4
+    }
+  ],
+  "total_distance_nm": 13.02,
+  "waypoint_count": 12,
+  "leg_count": 11,
+  "origin": "Flekkefjord",
+  "destination": "In",
+  "parse_timestamp": "2026-01-20T15:17:44.260124",
+  "data_source": "rtz_file_parser",
+  "source_city": "flekkefjord",
+  "original_file": "NCA_Flekkefjord_In_20250731.rtz",
+  "route_id": "98c6f5bf"
+}

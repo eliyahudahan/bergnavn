@@ -1,0 +1,58 @@
+{
+  "city_stats": {
+    "alesund": {
+      "total_routes": 12,
+      "valid_routes": 12,
+      "waypoint_count": 354
+    },
+    "andalsnes": {
+      "total_routes": 3,
+      "valid_routes": 3,
+      "waypoint_count": 98
+    },
+    "bergen": {
+      "total_routes": 6,
+      "valid_routes": 6,
+      "waypoint_count": 269
+    },
+    "drammen": {
+      "total_routes": 1,
+      "valid_routes": 1,
+      "waypoint_count": 14
+    },
+    "flekkefjord": {
+      "total_routes": 1,
+      "valid_routes": 1,
+      "waypoint_count": 12
+    },
+    "kristiansand": {
+      "total_routes": 2,
+      "valid_routes": 2,
+      "waypoint_count": 12
+    },
+    "oslo": {
+      "total_routes": 2,
+      "valid_routes": 2,
+      "waypoint_count": 35
+    },
+    "sandefjord": {
+      "total_routes": 2,
+      "valid_routes": 2,
+      "waypoint_count": 12
+    },
+    "stavanger": {
+      "total_routes": 2,
+      "valid_routes": 2,
+      "waypoint_count": 17
+    },
+    "trondheim": {
+      "total_routes": 3,
+      "valid_routes": 3,
+      "waypoint_count": 99
+    }
+  },
+  "total_valid_routes": 34,
+  "total_waypoints": 922,
+  "total_distance_nm": 2330.75,
+  "generated_at": "2026-01-21T15:07:42.867959"
+}

@@ -1,0 +1,200 @@
+{
+  "route_name": "NCA_OsloWest_In_20250801",
+  "file_path": "/home/framg/dev/bergnavn/backend/assets/routeinfo_routes/oslo/raw/extracted/NCA_OsloWest_In_20250731.rtz",
+  "waypoints": [
+    {
+      "name": "Hollenderbaen - change to channel 19 - Horten VTS",
+      "lat": 59.16198333,
+      "lon": 10.65851142,
+      "radius": 0.1
+    },
+    {
+      "name": "Gullholmen",
+      "lat": 59.43414435,
+      "lon": 10.56165578,
+      "radius": 0.1
+    },
+    {
+      "name": "Tofteholmen",
+      "lat": 59.51514138,
+      "lon": 10.59131467,
+      "radius": 0.1
+    },
+    {
+      "name": "Filtvet",
+      "lat": 59.56659672,
+      "lon": 10.63847067,
+      "radius": 0.1
+    },
+    {
+      "name": "Rammebaen",
+      "lat": 59.60851347,
+      "lon": 10.63629247,
+      "radius": 0.1
+    },
+    {
+      "name": "Kaholmen",
+      "lat": 59.6791572,
+      "lon": 10.61326418,
+      "radius": 0.1
+    },
+    {
+      "name": "Langebat",
+      "lat": 59.68498657,
+      "lon": 10.60634258,
+      "radius": 0.1
+    },
+    {
+      "name": "Storegrunnen",
+      "lat": 59.70973265,
+      "lon": 10.59217457,
+      "radius": 0.1
+    },
+    {
+      "name": "Digerud S lt",
+      "lat": 59.71866107,
+      "lon": 10.58165038,
+      "radius": 0.1
+    },
+    {
+      "name": "Fagerstrand",
+      "lat": 59.730473,
+      "lon": 10.58227446,
+      "radius": 0.1
+    },
+    {
+      "name": "Solbakke",
+      "lat": 59.74050632,
+      "lon": 10.57597715,
+      "radius": 0.1
+    },
+    {
+      "name": "Sproodden",
+      "lat": 59.7619823,
+      "lon": 10.5761384,
+      "radius": 0.1
+    },
+    {
+      "name": "Torskegrunnen",
+      "lat": 59.8167384,
+      "lon": 10.58508388,
+      "radius": 0.1
+    },
+    {
+      "name": "Nordre Steilsand",
+      "lat": 59.82705298,
+      "lon": 10.59099222,
+      "radius": 0.1
+    },
+    {
+      "name": "Nesodden",
+      "lat": 59.87411667,
+      "lon": 10.64885417,
+      "radius": 0.1
+    },
+    {
+      "name": "Dyna",
+      "lat": 59.89139697,
+      "lon": 10.68122715,
+      "radius": 0.1
+    },
+    {
+      "name": "Oslo West",
+      "lat": 59.89815623,
+      "lon": 10.7032136,
+      "radius": 0.1
+    }
+  ],
+  "legs": [
+    {
+      "from_waypoint": "Hollenderbaen - change to channel 19 - Horten VTS",
+      "to_waypoint": "Gullholmen",
+      "distance_nm": 16.61
+    },
+    {
+      "from_waypoint": "Gullholmen",
+      "to_waypoint": "Tofteholmen",
+      "distance_nm": 4.95
+    },
+    {
+      "from_waypoint": "Tofteholmen",
+      "to_waypoint": "Filtvet",
+      "distance_nm": 3.41
+    },
+    {
+      "from_waypoint": "Filtvet",
+      "to_waypoint": "Rammebaen",
+      "distance_nm": 2.52
+    },
+    {
+      "from_waypoint": "Rammebaen",
+      "to_waypoint": "Kaholmen",
+      "distance_nm": 4.3
+    },
+    {
+      "from_waypoint": "Kaholmen",
+      "to_waypoint": "Langebat",
+      "distance_nm": 0.41
+    },
+    {
+      "from_waypoint": "Langebat",
+      "to_waypoint": "Storegrunnen",
+      "distance_nm": 1.55
+    },
+    {
+      "from_waypoint": "Storegrunnen",
+      "to_waypoint": "Digerud S lt",
+      "distance_nm": 0.62
+    },
+    {
+      "from_waypoint": "Digerud S lt",
+      "to_waypoint": "Fagerstrand",
+      "distance_nm": 0.71
+    },
+    {
+      "from_waypoint": "Fagerstrand",
+      "to_waypoint": "Solbakke",
+      "distance_nm": 0.63
+    },
+    {
+      "from_waypoint": "Solbakke",
+      "to_waypoint": "Sproodden",
+      "distance_nm": 1.29
+    },
+    {
+      "from_waypoint": "Sproodden",
+      "to_waypoint": "Torskegrunnen",
+      "distance_nm": 3.3
+    },
+    {
+      "from_waypoint": "Torskegrunnen",
+      "to_waypoint": "Nordre Steilsand",
+      "distance_nm": 0.64
+    },
+    {
+      "from_waypoint": "Nordre Steilsand",
+      "to_waypoint": "Nesodden",
+      "distance_nm": 3.32
+    },
+    {
+      "from_waypoint": "Nesodden",
+      "to_waypoint": "Dyna",
+      "distance_nm": 1.42
+    },
+    {
+      "from_waypoint": "Dyna",
+      "to_waypoint": "Oslo West",
+      "distance_nm": 0.78
+    }
+  ],
+  "total_distance_nm": 46.45,
+  "waypoint_count": 17,
+  "leg_count": 16,
+  "origin": "Oslowest",
+  "destination": "In",
+  "parse_timestamp": "2026-01-20T15:17:44.264241",
+  "data_source": "rtz_file_parser",
+  "source_city": "oslo",
+  "original_file": "NCA_OsloWest_In_20250731.rtz",
+  "route_id": "36773a7f"
+}

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<route xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="1.0" xmlns="https://cirm.org/rtz-xml-schemas">
+  <routeInfo routeName="NCA_OsloEast_In_20250801" validityPeriodStart="2025-08-01T00:00:00" validityPeriodStop="2026-03-19T00:00:00" />
+  <waypoints>
+    <defaultWaypoint radius="0.3">
+      <leg starboardXTD="0.1" portsideXTD="0.1" safetyContour="20" safetyDepth="20" geometryType="Loxodrome" staticUKC="0" dynamicUKC="0" />
+    </defaultWaypoint>
+    <waypoint id="1" name="Hollenderbaen - change to channel 19 - Horten VTS">
+      <position lat="59.16198333" lon="10.65851142" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="2" name="Gullholmen">
+      <position lat="59.43414435" lon="10.56165578" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="3" name="Tofteholmen">
+      <position lat="59.51514138" lon="10.59131467" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="4" name="Filtvet">
+      <position lat="59.56659672" lon="10.63847067" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="5" name="Rammebaen">
+      <position lat="59.60851347" lon="10.63629247" />
+      <leg starboardXTD="0.08" portsideXTD="0.08" legInfo="" />
+    </waypoint>
+    <waypoint id="6" name="Kaholmen">
+      <position lat="59.6791572" lon="10.61326418" />
+      <leg starboardXTD="0.05" portsideXTD="0.05" legInfo="" />
+    </waypoint>
+    <waypoint id="7" name="Langebat">
+      <position lat="59.68498657" lon="10.60634258" />
+      <leg starboardXTD="0.04" portsideXTD="0.04" legInfo="" />
+    </waypoint>
+    <waypoint id="8" name="Storegrunnen">
+      <position lat="59.70973265" lon="10.59217457" />
+      <leg starboardXTD="0.03" portsideXTD="0.03" legInfo="" />
+    </waypoint>
+    <waypoint id="9" name="Digerud S lt">
+      <position lat="59.71866107" lon="10.58165038" />
+      <leg starboardXTD="0.05" portsideXTD="0.05" legInfo="" />
+    </waypoint>
+    <waypoint id="10" name="Fagerstrand">
+      <position lat="59.730473" lon="10.58227446" />
+      <leg starboardXTD="0.05" portsideXTD="0.05" legInfo="" />
+    </waypoint>
+    <waypoint id="11" name="Solbakke">
+      <position lat="59.74050632" lon="10.57597715" />
+      <leg starboardXTD="0.05" portsideXTD="0.05" legInfo="" />
+    </waypoint>
+    <waypoint id="12" name="Sproodden">
+      <position lat="59.7619823" lon="10.5761384" />
+      <leg starboardXTD="0.08" portsideXTD="0.08" legInfo="" />
+    </waypoint>
+    <waypoint id="13" name="Torskegrunnen">
+      <position lat="59.8167384" lon="10.58508388" />
+      <leg starboardXTD="0.08" portsideXTD="0.08" legInfo="" />
+    </waypoint>
+    <waypoint id="14" name="Nordre Steilsand">
+      <position lat="59.82705298" lon="10.59099222" />
+      <leg starboardXTD="0.08" portsideXTD="0.08" legInfo="" />
+    </waypoint>
+    <waypoint id="15" name="Nesodden">
+      <position lat="59.87411667" lon="10.64885417" />
+      <leg starboardXTD="0.06" portsideXTD="0.06" legInfo="" />
+    </waypoint>
+    <waypoint id="16" name="Ostre Tangflu">
+      <position lat="59.87966148" lon="10.66578755" />
+      <leg starboardXTD="0.07" portsideXTD="0.07" legInfo="" />
+    </waypoint>
+    <waypoint id="17" name="Langoya">
+      <position lat="59.87403108" lon="10.70431532" />
+      <leg starboardXTD="0.06" portsideXTD="0.06" legInfo="" />
+    </waypoint>
+    <waypoint id="18" name="Oslo East">
+      <position lat="59.87864793" lon="10.72870903" />
+      <leg starboardXTD="0.08" portsideXTD="0.08" legInfo="" />
+    </waypoint>
+  </waypoints>
+  <extensions>
+    <extension manufacturer="Norwegian Coastal Administration" fullName="Oslo East - Hollenderbaen Inbound" productinfo="See information on http://www.routeinfo.no before use of this Reference Route for Navigation. The Reference Routes from NCA can be used as a basis in route planning. For routes with no comments on vessel size, 150 meter length and 9 meter draught has been used to quality assure the routes. Limitations in size of vessel may vary along the route caused by regulation or depths." routeNumber="NO-110002" xmlns="" />
+  </extensions>
+</route>

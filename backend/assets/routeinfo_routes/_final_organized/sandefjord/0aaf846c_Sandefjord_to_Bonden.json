@@ -1,0 +1,79 @@
+{
+  "route_name": "NCA_Sandefj_Bonden_In_20250801",
+  "file_path": "/home/framg/dev/bergnavn/backend/assets/routeinfo_routes/sandefjord/raw/extracted/NCA_Sandefj_Bonden_In_20250731.rtz",
+  "waypoints": [
+    {
+      "name": "Bonden",
+      "lat": 58.96650203,
+      "lon": 10.26037728,
+      "radius": 0.1
+    },
+    {
+      "name": "Leikarhausen",
+      "lat": 59.00672609,
+      "lon": 10.26409337,
+      "radius": 0.1
+    },
+    {
+      "name": "Holtskjaeret",
+      "lat": 59.03986166,
+      "lon": 10.2547104,
+      "radius": 0.1
+    },
+    {
+      "name": "Bueroya",
+      "lat": 59.08792901,
+      "lon": 10.24113205,
+      "radius": 0.1
+    },
+    {
+      "name": "Thoroya",
+      "lat": 59.10482164,
+      "lon": 10.23231757,
+      "radius": 0.1
+    },
+    {
+      "name": "Ranvik",
+      "lat": 59.11361029,
+      "lon": 10.22580123,
+      "radius": 0.1
+    }
+  ],
+  "legs": [
+    {
+      "from_waypoint": "Bonden",
+      "to_waypoint": "Leikarhausen",
+      "distance_nm": 2.42
+    },
+    {
+      "from_waypoint": "Leikarhausen",
+      "to_waypoint": "Holtskjaeret",
+      "distance_nm": 2.01
+    },
+    {
+      "from_waypoint": "Holtskjaeret",
+      "to_waypoint": "Bueroya",
+      "distance_nm": 2.92
+    },
+    {
+      "from_waypoint": "Bueroya",
+      "to_waypoint": "Thoroya",
+      "distance_nm": 1.05
+    },
+    {
+      "from_waypoint": "Thoroya",
+      "to_waypoint": "Ranvik",
+      "distance_nm": 0.56
+    }
+  ],
+  "total_distance_nm": 8.96,
+  "waypoint_count": 6,
+  "leg_count": 5,
+  "origin": "Sandefjord",
+  "destination": "Bonden",
+  "parse_timestamp": "2026-01-20T15:17:44.268206",
+  "data_source": "rtz_file_parser",
+  "source_city": "sandefjord",
+  "original_file": "NCA_Sandefj_Bonden_In_20250731.rtz",
+  "route_id": "0aaf846c"
+}

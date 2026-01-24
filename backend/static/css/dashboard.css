@@ -1,5 +1,6 @@
 /* backend/static/css/dashboard.css */
 /* Maritime Dashboard - Specific Styles */
+/* FIXED VERSION: Removed flickering animations from route lines */
 
 /* ===== Dashboard Header ===== */
 .dashboard-header {
@@ -253,15 +254,22 @@
 }
 
 /* ===== RTZ Routes Styling ===== */
+/* RTZ route lines - FIXED: animation removed to prevent flickering */
 .rtz-route-line {
-    animation: rtz-pulse 2s infinite;
+    /* Animation removed - was causing visual flickering/dancing effect */
+    /* Original problematic line: animation: rtz-pulse 2s infinite; */
+    
+    /* Smooth transition for better user experience on hover */
+    transition: opacity 0.3s ease, stroke-width 0.3s ease;
 }
 
-@keyframes rtz-pulse {
-    0% { opacity: 0.8; stroke-dashoffset: 0; }
-    50% { opacity: 0.4; }
-    100% { opacity: 0.8; stroke-dashoffset: -20; }
+/* Hover effect for better interactivity */
+.rtz-route-line:hover {
+    opacity: 1;
+    stroke-width: 6;
 }
+
+/* Note: The @keyframes rtz-pulse has been removed completely */
 
 /* RTZ Panel */
 .rtz-panel select:focus {

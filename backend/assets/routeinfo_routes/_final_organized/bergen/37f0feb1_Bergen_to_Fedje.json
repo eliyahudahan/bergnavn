@@ -1,0 +1,211 @@
+{
+  "route_name": "NCA_Bergen_Fedjeosen_In_20250801",
+  "file_path": "/home/framg/dev/bergnavn/backend/assets/routeinfo_routes/bergen/raw/extracted/NCA_Bergen_Fedjeosen_In_20250801.rtz",
+  "waypoints": [
+    {
+      "name": "Fedjeosen",
+      "lat": 60.74677877,
+      "lon": 4.65135633,
+      "radius": 0.1
+    },
+    {
+      "name": "Fedjeosen (2) pilot boarding",
+      "lat": 60.7351497,
+      "lon": 4.72259783,
+      "radius": 0.1
+    },
+    {
+      "name": "Rubbegarnstana",
+      "lat": 60.67381588,
+      "lon": 4.83151667,
+      "radius": 0.1
+    },
+    {
+      "name": "Stureholmen",
+      "lat": 60.61405,
+      "lon": 4.88266667,
+      "radius": 0.1
+    },
+    {
+      "name": "report to Fedje VTS on channel 71",
+      "lat": 60.52014703,
+      "lon": 4.9477569,
+      "radius": 0.1
+    },
+    {
+      "name": "Kalvsoyflua",
+      "lat": 60.45531128,
+      "lon": 5.00697693,
+      "radius": 0.1
+    },
+    {
+      "name": "Kalvanes",
+      "lat": 60.43352952,
+      "lon": 5.02947752,
+      "radius": 0.1
+    },
+    {
+      "name": "Sora Rotoyna",
+      "lat": 60.41346213,
+      "lon": 5.06605922,
+      "radius": 0.1
+    },
+    {
+      "name": "Midtholmen",
+      "lat": 60.40771068,
+      "lon": 5.10082903,
+      "radius": 0.1
+    },
+    {
+      "name": "Faeroy lt",
+      "lat": 60.4015744,
+      "lon": 5.11947872,
+      "radius": 0.1
+    },
+    {
+      "name": "Saltskoodden",
+      "lat": 60.39668422,
+      "lon": 5.14297193,
+      "radius": 0.1
+    },
+    {
+      "name": "Knappen",
+      "lat": 60.39039552,
+      "lon": 5.15793883,
+      "radius": 0.1
+    },
+    {
+      "name": "Hjeltaskjeret lt",
+      "lat": 60.38519423,
+      "lon": 5.1659437,
+      "radius": 0.1
+    },
+    {
+      "name": "Hjeltaskjeret lt",
+      "lat": 60.38408099,
+      "lon": 5.17555945,
+      "radius": 0.1
+    },
+    {
+      "name": "Tollneset",
+      "lat": 60.3861014,
+      "lon": 5.19007799,
+      "radius": 0.1
+    },
+    {
+      "name": "Askoy bridge",
+      "lat": 60.39461667,
+      "lon": 5.21598333,
+      "radius": 0.1
+    },
+    {
+      "name": "Kvarven",
+      "lat": 60.40115,
+      "lon": 5.23995,
+      "radius": 0.1
+    },
+    {
+      "name": "Bergen",
+      "lat": 60.40105,
+      "lon": 5.27515,
+      "radius": 0.1
+    }
+  ],
+  "legs": [
+    {
+      "from_waypoint": "Fedjeosen",
+      "to_waypoint": "Fedjeosen (2) pilot boarding",
+      "distance_nm": 2.2
+    },
+    {
+      "from_waypoint": "Fedjeosen (2) pilot boarding",
+      "to_waypoint": "Rubbegarnstana",
+      "distance_nm": 4.88
+    },
+    {
+      "from_waypoint": "Rubbegarnstana",
+      "to_waypoint": "Stureholmen",
+      "distance_nm": 3.89
+    },
+    {
+      "from_waypoint": "Stureholmen",
+      "to_waypoint": "report to Fedje VTS on channel 71",
+      "distance_nm": 5.96
+    },
+    {
+      "from_waypoint": "report to Fedje VTS on channel 71",
+      "to_waypoint": "Kalvsoyflua",
+      "distance_nm": 4.27
+    },
+    {
+      "from_waypoint": "Kalvsoyflua",
+      "to_waypoint": "Kalvanes",
+      "distance_nm": 1.47
+    },
+    {
+      "from_waypoint": "Kalvanes",
+      "to_waypoint": "Sora Rotoyna",
+      "distance_nm": 1.62
+    },
+    {
+      "from_waypoint": "Sora Rotoyna",
+      "to_waypoint": "Midtholmen",
+      "distance_nm": 1.09
+    },
+    {
+      "from_waypoint": "Midtholmen",
+      "to_waypoint": "Faeroy lt",
+      "distance_nm": 0.66
+    },
+    {
+      "from_waypoint": "Faeroy lt",
+      "to_waypoint": "Saltskoodden",
+      "distance_nm": 0.76
+    },
+    {
+      "from_waypoint": "Saltskoodden",
+      "to_waypoint": "Knappen",
+      "distance_nm": 0.58
+    },
+    {
+      "from_waypoint": "Knappen",
+      "to_waypoint": "Hjeltaskjeret lt",
+      "distance_nm": 0.39
+    },
+    {
+      "from_waypoint": "Hjeltaskjeret lt",
+      "to_waypoint": "Hjeltaskjeret lt",
+      "distance_nm": 0.29
+    },
+    {
+      "from_waypoint": "Hjeltaskjeret lt",
+      "to_waypoint": "Tollneset",
+      "distance_nm": 0.45
+    },
+    {
+      "from_waypoint": "Tollneset",
+      "to_waypoint": "Askoy bridge",
+      "distance_nm": 0.92
+    },
+    {
+      "from_waypoint": "Askoy bridge",
+      "to_waypoint": "Kvarven",
+      "distance_nm": 0.81
+    },
+    {
+      "from_waypoint": "Kvarven",
+      "to_waypoint": "Bergen",
+      "distance_nm": 1.04
+    }
+  ],
+  "total_distance_nm": 31.29,
+  "waypoint_count": 18,
+  "leg_count": 17,
+  "origin": "Bergen",
+  "destination": "Fedje",
+  "parse_timestamp": "2026-01-20T15:17:44.245903",
+  "data_source": "rtz_file_parser",
+  "source_city": "bergen",
+  "original_file": "NCA_Bergen_Fedjeosen_In_20250801.rtz",
+  "route_id": "37f0feb1"
+}

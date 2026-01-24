@@ -1,0 +1,299 @@
+{
+  "route_name": "NCA_7_5m_AlesundS_Stad_Flavaer_In_20250801",
+  "file_path": "/home/framg/dev/bergnavn/backend/assets/routeinfo_routes/alesund/raw/extracted/NCA_7_5m_AlesundS_Stad_Flavaer_In_20250731.rtz",
+  "waypoints": [
+    {
+      "name": "Stalet",
+      "lat": 62.23332712,
+      "lon": 5.17768582,
+      "radius": 0.1
+    },
+    {
+      "name": "Skjeggefluda",
+      "lat": 62.27317369,
+      "lon": 5.31497614,
+      "radius": 0.1
+    },
+    {
+      "name": "Flavaer lt",
+      "lat": 62.31207991,
+      "lon": 5.55963892,
+      "radius": 0.1
+    },
+    {
+      "name": "Stabben lt",
+      "lat": 62.31136037,
+      "lon": 5.57735484,
+      "radius": 0.1
+    },
+    {
+      "name": "Klubben lt",
+      "lat": 62.30878821,
+      "lon": 5.59910369,
+      "radius": 0.1
+    },
+    {
+      "name": "Klubben lt",
+      "lat": 62.30835732,
+      "lon": 5.60956199,
+      "radius": 0.1
+    },
+    {
+      "name": "Tronden lt",
+      "lat": 62.31206559,
+      "lon": 5.62744445,
+      "radius": 0.1
+    },
+    {
+      "name": "Heroyhunden lt",
+      "lat": 62.31753428,
+      "lon": 5.67146876,
+      "radius": 0.1
+    },
+    {
+      "name": "Royrasundet",
+      "lat": 62.31933924,
+      "lon": 5.72128209,
+      "radius": 0.1
+    },
+    {
+      "name": "Teigesund lt",
+      "lat": 62.32066667,
+      "lon": 5.73481667,
+      "radius": 0.1
+    },
+    {
+      "name": "Teigesund lt",
+      "lat": 62.32205636,
+      "lon": 5.74885378,
+      "radius": 0.1
+    },
+    {
+      "name": "Brennholmen lt 6.9 m",
+      "lat": 62.32851096,
+      "lon": 5.7511608,
+      "radius": 0.1
+    },
+    {
+      "name": "Torvikhomen lt 6.9 m",
+      "lat": 62.33809314,
+      "lon": 5.73856845,
+      "radius": 0.1
+    },
+    {
+      "name": "Byholmane",
+      "lat": 62.35952667,
+      "lon": 5.77314485,
+      "radius": 0.1
+    },
+    {
+      "name": "Vattoya",
+      "lat": 62.36509477,
+      "lon": 5.7911294,
+      "radius": 0.1
+    },
+    {
+      "name": "Vattoy lt",
+      "lat": 62.37268618,
+      "lon": 5.79730202,
+      "radius": 0.1
+    },
+    {
+      "name": "Flo lt",
+      "lat": 62.39371089,
+      "lon": 5.80692878,
+      "radius": 0.1
+    },
+    {
+      "name": "Flo",
+      "lat": 62.40752333,
+      "lon": 5.82996009,
+      "radius": 0.1
+    },
+    {
+      "name": "Kleggen",
+      "lat": 62.4185445,
+      "lon": 5.85683644,
+      "radius": 0.1
+    },
+    {
+      "name": "Breisundet",
+      "lat": 62.42712612,
+      "lon": 5.89034092,
+      "radius": 0.1
+    },
+    {
+      "name": "Eltraneset lt",
+      "lat": 62.44618084,
+      "lon": 6.05318243,
+      "radius": 0.1
+    },
+    {
+      "name": "Hessafjorden",
+      "lat": 62.44636362,
+      "lon": 6.11197795,
+      "radius": 0.1
+    },
+    {
+      "name": "Rognholmen lt",
+      "lat": 62.4551797,
+      "lon": 6.17622405,
+      "radius": 0.1
+    },
+    {
+      "name": "Gasholmen",
+      "lat": 62.45634169,
+      "lon": 6.20368526,
+      "radius": 0.1
+    },
+    {
+      "name": "Bogneset",
+      "lat": 62.45173133,
+      "lon": 6.24948118,
+      "radius": 0.1
+    },
+    {
+      "name": "Spjelkavik",
+      "lat": 62.45783276,
+      "lon": 6.3449976,
+      "radius": 0.1
+    }
+  ],
+  "legs": [
+    {
+      "from_waypoint": "Stalet",
+      "to_waypoint": "Skjeggefluda",
+      "distance_nm": 4.52
+    },
+    {
+      "from_waypoint": "Skjeggefluda",
+      "to_waypoint": "Flavaer lt",
+      "distance_nm": 7.22
+    },
+    {
+      "from_waypoint": "Flavaer lt",
+      "to_waypoint": "Stabben lt",
+      "distance_nm": 0.5
+    },
+    {
+      "from_waypoint": "Stabben lt",
+      "to_waypoint": "Klubben lt",
+      "distance_nm": 0.63
+    },
+    {
+      "from_waypoint": "Klubben lt",
+      "to_waypoint": "Klubben lt",
+      "distance_nm": 0.29
+    },
+    {
+      "from_waypoint": "Klubben lt",
+      "to_waypoint": "Tronden lt",
+      "distance_nm": 0.55
+    },
+    {
+      "from_waypoint": "Tronden lt",
+      "to_waypoint": "Heroyhunden lt",
+      "distance_nm": 1.27
+    },
+    {
+      "from_waypoint": "Heroyhunden lt",
+      "to_waypoint": "Royrasundet",
+      "distance_nm": 1.39
+    },
+    {
+      "from_waypoint": "Royrasundet",
+      "to_waypoint": "Teigesund lt",
+      "distance_nm": 0.39
+    },
+    {
+      "from_waypoint": "Teigesund lt",
+      "to_waypoint": "Teigesund lt",
+      "distance_nm": 0.4
+    },
+    {
+      "from_waypoint": "Teigesund lt",
+      "to_waypoint": "Brennholmen lt 6.9 m",
+      "distance_nm": 0.39
+    },
+    {
+      "from_waypoint": "Brennholmen lt 6.9 m",
+      "to_waypoint": "Torvikhomen lt 6.9 m",
+      "distance_nm": 0.67
+    },
+    {
+      "from_waypoint": "Torvikhomen lt 6.9 m",
+      "to_waypoint": "Byholmane",
+      "distance_nm": 1.61
+    },
+    {
+      "from_waypoint": "Byholmane",
+      "to_waypoint": "Vattoya",
+      "distance_nm": 0.6
+    },
+    {
+      "from_waypoint": "Vattoya",
+      "to_waypoint": "Vattoy lt",
+      "distance_nm": 0.49
+    },
+    {
+      "from_waypoint": "Vattoy lt",
+      "to_waypoint": "Flo lt",
+      "distance_nm": 1.29
+    },
+    {
+      "from_waypoint": "Flo lt",
+      "to_waypoint": "Flo",
+      "distance_nm": 1.05
+    },
+    {
+      "from_waypoint": "Flo",
+      "to_waypoint": "Kleggen",
+      "distance_nm": 1.0
+    },
+    {
+      "from_waypoint": "Kleggen",
+      "to_waypoint": "Breisundet",
+      "distance_nm": 1.06
+    },
+    {
+      "from_waypoint": "Breisundet",
+      "to_waypoint": "Eltraneset lt",
+      "distance_nm": 4.67
+    },
+    {
+      "from_waypoint": "Eltraneset lt",
+      "to_waypoint": "Hessafjorden",
+      "distance_nm": 1.63
+    },
+    {
+      "from_waypoint": "Hessafjorden",
+      "to_waypoint": "Rognholmen lt",
+      "distance_nm": 1.86
+    },
+    {
+      "from_waypoint": "Rognholmen lt",
+      "to_waypoint": "Gasholmen",
+      "distance_nm": 0.77
+    },
+    {
+      "from_waypoint": "Gasholmen",
+      "to_waypoint": "Bogneset",
+      "distance_nm": 1.3
+    },
+    {
+      "from_waypoint": "Bogneset",
+      "to_waypoint": "Spjelkavik",
+      "distance_nm": 2.68
+    }
+  ],
+  "total_distance_nm": 38.22,
+  "waypoint_count": 26,
+  "leg_count": 25,
+  "origin": "7",
+  "destination": "5M",
+  "parse_timestamp": "2026-01-20T15:17:44.240254",
+  "data_source": "rtz_file_parser",
+  "source_city": "alesund",
+  "original_file": "NCA_7_5m_AlesundS_Stad_Flavaer_In_20250731.rtz",
+  "route_id": "9ae4668f"
+}

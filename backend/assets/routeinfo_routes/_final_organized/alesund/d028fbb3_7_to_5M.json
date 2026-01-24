@@ -1,0 +1,277 @@
+{
+  "route_name": "NCA_7_5m_AlesundS_Stad_Aramsd_In_20250801",
+  "file_path": "/home/framg/dev/bergnavn/backend/assets/routeinfo_routes/alesund/raw/extracted/NCA_7_5m_AlesundS_Stad_Aramsd_In_20250731.rtz",
+  "waypoints": [
+    {
+      "name": "Stalet",
+      "lat": 62.23332712,
+      "lon": 5.17768582,
+      "radius": 0.1
+    },
+    {
+      "name": "Stalet",
+      "lat": 62.23160884,
+      "lon": 5.20743921,
+      "radius": 0.1
+    },
+    {
+      "name": "Kviteneset",
+      "lat": 62.22520843,
+      "lon": 5.23919503,
+      "radius": 0.1
+    },
+    {
+      "name": "Rivjehornet",
+      "lat": 62.17560483,
+      "lon": 5.33877331,
+      "radius": 0.1
+    },
+    {
+      "name": "Haugsholmen lt",
+      "lat": 62.17124662,
+      "lon": 5.35861314,
+      "radius": 0.1
+    },
+    {
+      "name": "Storesundet",
+      "lat": 62.17479533,
+      "lon": 5.38267179,
+      "radius": 0.1
+    },
+    {
+      "name": "Haugsfjorden",
+      "lat": 62.19053509,
+      "lon": 5.42253173,
+      "radius": 0.1
+    },
+    {
+      "name": "Aramsundet west",
+      "lat": 62.20397196,
+      "lon": 5.47473529,
+      "radius": 0.1
+    },
+    {
+      "name": "Aramsundet ",
+      "lat": 62.20479688,
+      "lon": 5.48381396,
+      "radius": 0.1
+    },
+    {
+      "name": "Aramsundet east 11 m",
+      "lat": 62.20389208,
+      "lon": 5.49494321,
+      "radius": 0.1
+    },
+    {
+      "name": "Saudeholmen",
+      "lat": 62.17750163,
+      "lon": 5.60430637,
+      "radius": 0.1
+    },
+    {
+      "name": "Laupsneset",
+      "lat": 62.19778971,
+      "lon": 5.76758988,
+      "radius": 0.1
+    },
+    {
+      "name": "Yksnoy lt",
+      "lat": 62.21844681,
+      "lon": 5.897255,
+      "radius": 0.1
+    },
+    {
+      "name": "Flavikneset",
+      "lat": 62.27333538,
+      "lon": 5.97472596,
+      "radius": 0.1
+    },
+    {
+      "name": "Hjorungenneset",
+      "lat": 62.34392246,
+      "lon": 6.13514886,
+      "radius": 0.1
+    },
+    {
+      "name": "Hjorungenneset",
+      "lat": 62.3569972,
+      "lon": 6.13693772,
+      "radius": 0.1
+    },
+    {
+      "name": "Eltraneset",
+      "lat": 62.42387181,
+      "lon": 6.0367014,
+      "radius": 0.1
+    },
+    {
+      "name": "Eltraneset lt",
+      "lat": 62.43673783,
+      "lon": 6.03681349,
+      "radius": 0.1
+    },
+    {
+      "name": "Eltraneset lt",
+      "lat": 62.44618084,
+      "lon": 6.05318243,
+      "radius": 0.1
+    },
+    {
+      "name": "Hessafjorden",
+      "lat": 62.44636362,
+      "lon": 6.11197795,
+      "radius": 0.1
+    },
+    {
+      "name": "Rognholmen lt",
+      "lat": 62.4551797,
+      "lon": 6.17622405,
+      "radius": 0.1
+    },
+    {
+      "name": "Gasholmen",
+      "lat": 62.45634169,
+      "lon": 6.20368526,
+      "radius": 0.1
+    },
+    {
+      "name": "Bogneset",
+      "lat": 62.45173133,
+      "lon": 6.24948118,
+      "radius": 0.1
+    },
+    {
+      "name": "Spjelkavik",
+      "lat": 62.45783276,
+      "lon": 6.3449976,
+      "radius": 0.1
+    }
+  ],
+  "legs": [
+    {
+      "from_waypoint": "Stalet",
+      "to_waypoint": "Stalet",
+      "distance_nm": 0.84
+    },
+    {
+      "from_waypoint": "Stalet",
+      "to_waypoint": "Kviteneset",
+      "distance_nm": 0.97
+    },
+    {
+      "from_waypoint": "Kviteneset",
+      "to_waypoint": "Rivjehornet",
+      "distance_nm": 4.08
+    },
+    {
+      "from_waypoint": "Rivjehornet",
+      "to_waypoint": "Haugsholmen lt",
+      "distance_nm": 0.61
+    },
+    {
+      "from_waypoint": "Haugsholmen lt",
+      "to_waypoint": "Storesundet",
+      "distance_nm": 0.71
+    },
+    {
+      "from_waypoint": "Storesundet",
+      "to_waypoint": "Haugsfjorden",
+      "distance_nm": 1.46
+    },
+    {
+      "from_waypoint": "Haugsfjorden",
+      "to_waypoint": "Aramsundet west",
+      "distance_nm": 1.67
+    },
+    {
+      "from_waypoint": "Aramsundet west",
+      "to_waypoint": "Aramsundet ",
+      "distance_nm": 0.26
+    },
+    {
+      "from_waypoint": "Aramsundet ",
+      "to_waypoint": "Aramsundet east 11 m",
+      "distance_nm": 0.32
+    },
+    {
+      "from_waypoint": "Aramsundet east 11 m",
+      "to_waypoint": "Saudeholmen",
+      "distance_nm": 3.45
+    },
+    {
+      "from_waypoint": "Saudeholmen",
+      "to_waypoint": "Laupsneset",
+      "distance_nm": 4.73
+    },
+    {
+      "from_waypoint": "Laupsneset",
+      "to_waypoint": "Yksnoy lt",
+      "distance_nm": 3.84
+    },
+    {
+      "from_waypoint": "Yksnoy lt",
+      "to_waypoint": "Flavikneset",
+      "distance_nm": 3.94
+    },
+    {
+      "from_waypoint": "Flavikneset",
+      "to_waypoint": "Hjorungenneset",
+      "distance_nm": 6.16
+    },
+    {
+      "from_waypoint": "Hjorungenneset",
+      "to_waypoint": "Hjorungenneset",
+      "distance_nm": 0.79
+    },
+    {
+      "from_waypoint": "Hjorungenneset",
+      "to_waypoint": "Eltraneset",
+      "distance_nm": 4.89
+    },
+    {
+      "from_waypoint": "Eltraneset",
+      "to_waypoint": "Eltraneset lt",
+      "distance_nm": 0.77
+    },
+    {
+      "from_waypoint": "Eltraneset lt",
+      "to_waypoint": "Eltraneset lt",
+      "distance_nm": 0.73
+    },
+    {
+      "from_waypoint": "Eltraneset lt",
+      "to_waypoint": "Hessafjorden",
+      "distance_nm": 1.63
+    },
+    {
+      "from_waypoint": "Hessafjorden",
+      "to_waypoint": "Rognholmen lt",
+      "distance_nm": 1.86
+    },
+    {
+      "from_waypoint": "Rognholmen lt",
+      "to_waypoint": "Gasholmen",
+      "distance_nm": 0.77
+    },
+    {
+      "from_waypoint": "Gasholmen",
+      "to_waypoint": "Bogneset",
+      "distance_nm": 1.3
+    },
+    {
+      "from_waypoint": "Bogneset",
+      "to_waypoint": "Spjelkavik",
+      "distance_nm": 2.68
+    }
+  ],
+  "total_distance_nm": 48.46,
+  "waypoint_count": 24,
+  "leg_count": 23,
+  "origin": "7",
+  "destination": "5M",
+  "parse_timestamp": "2026-01-20T15:17:44.232111",
+  "data_source": "rtz_file_parser",
+  "source_city": "alesund",
+  "original_file": "NCA_7_5m_AlesundS_Stad_Aramsd_In_20250731.rtz",
+  "route_id": "d028fbb3"
+}

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<route xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="1.0" xmlns="https://cirm.org/rtz-xml-schemas">
+  <routeInfo routeName="NCA_Trondheim_Grip_In_20250801" validityPeriodStart="2025-08-01T00:00:00" validityPeriodStop="2026-04-16T00:00:00" />
+  <waypoints>
+    <defaultWaypoint radius="0.3">
+      <leg starboardXTD="0.1" portsideXTD="0.1" safetyContour="20" safetyDepth="20" geometryType="Loxodrome" staticUKC="0" dynamicUKC="0" />
+    </defaultWaypoint>
+    <waypoint id="1" name="Grip outer pilot boarding">
+      <position lat="63.25096667" lon="7.5957" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="2" name="Grip inner pilot boarding">
+      <position lat="63.23285672" lon="7.70226658" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="3" name="Godtaren lt">
+      <position lat="63.22408419" lon="7.76305131" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="4" name="Baeflua">
+      <position lat="63.21593032" lon="7.86628357" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="5" name="Hammarsundet lt">
+      <position lat="63.22406531" lon="7.955446" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="6" name="Edoy lt">
+      <position lat="63.27350456" lon="8.15418194" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="7" name="Kyrhaug lt">
+      <position lat="63.30301326" lon="8.23864242" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="8" name="Klakksbroren lt">
+      <position lat="63.3620164" lon="8.39161336" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="9" name="Skipnesstranda">
+      <position lat="63.39426323" lon="8.51450151" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="10" name="Terningen lt">
+      <position lat="63.48809477" lon="9.04547051" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="11" name="Storaflu lt">
+      <position lat="63.55761794" lon="9.33332465" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="12" name="Bjornoyflua lt">
+      <position lat="63.58326667" lon="9.44231667" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="13" name="Roysaneset lt">
+      <position lat="63.6276" lon="9.58473333" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="14" name="Hogholmen lt">
+      <position lat="63.65451667" lon="9.6863" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="15" name="Kjerringa">
+      <position lat="63.65545" lon="9.72803333" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="16" name="Ringflua lt">
+      <position lat="63.65016342" lon="9.7631476" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="17" name="Hysneset lt">
+      <position lat="63.62456759" lon="9.77597641" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="18" name="Storneset">
+      <position lat="63.49520805" lon="9.90840994" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="19" name="Rodbergneset">
+      <position lat="63.47576245" lon="9.9787621" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="20" name="Flakkfjorden">
+      <position lat="63.46752128" lon="10.19017705" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="21" name="Digermulen">
+      <position lat="63.45845001" lon="10.30423466" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="22" name="Nordneset">
+      <position lat="63.45073333" lon="10.34578333" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="23" name="Trondheim">
+      <position lat="63.44545" lon="10.36245" />
+      <leg legInfo="" />
+    </waypoint>
+  </waypoints>
+  <extensions>
+    <extension manufacturer="Norwegian Coastal Administration" fullName="Trondheim - Grip Inbound" productinfo="See information on http://www.routeinfo.no before use of this Reference Route for Navigation. The Reference Routes from NCA can be used as a basis in route planning. For routes with no comments on vessel size, 150 meter length and 9 meter draught has been used to quality assure the routes. Limitations in size of vessel may vary along the route caused by regulation or depths." routeNumber="NO-510042" xmlns="" />
+  </extensions>
+</route>

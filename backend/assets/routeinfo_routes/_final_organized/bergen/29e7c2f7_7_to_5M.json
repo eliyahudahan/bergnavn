@@ -1,0 +1,915 @@
+{
+  "route_name": "NCA_7_5m_Bergen_Stad_Krakhelle_In_20250801",
+  "file_path": "/home/framg/dev/bergnavn/backend/assets/routeinfo_routes/bergen/raw/extracted/NCA_7_5m_Bergen_Stad_Krakhelle_In_20250731.rtz",
+  "waypoints": [
+    {
+      "name": "Stalet",
+      "lat": 62.23493333,
+      "lon": 5.17295,
+      "radius": 0.1
+    },
+    {
+      "name": "Bukketjuvane",
+      "lat": 62.19356612,
+      "lon": 5.02141797,
+      "radius": 0.1
+    },
+    {
+      "name": "Ytstebaane",
+      "lat": 62.1405335,
+      "lon": 5.02199248,
+      "radius": 0.1
+    },
+    {
+      "name": "Gamla",
+      "lat": 62.09677538,
+      "lon": 5.09904143,
+      "radius": 0.1
+    },
+    {
+      "name": "Sildegapet",
+      "lat": 62.04106345,
+      "lon": 5.13976223,
+      "radius": 0.1
+    },
+    {
+      "name": "Timmevikgrunna",
+      "lat": 62.01699675,
+      "lon": 5.15216642,
+      "radius": 0.1
+    },
+    {
+      "name": "Ulvesund",
+      "lat": 61.99155418,
+      "lon": 5.165412,
+      "radius": 0.1
+    },
+    {
+      "name": "Hjartaneset",
+      "lat": 61.97996993,
+      "lon": 5.15008918,
+      "radius": 0.1
+    },
+    {
+      "name": "Kyrkjenesflua - report to Kinn VTS on channel 18",
+      "lat": 61.97264272,
+      "lon": 5.14895517,
+      "radius": 0.1
+    },
+    {
+      "name": "Ulven",
+      "lat": 61.9633821,
+      "lon": 5.14491818,
+      "radius": 0.1
+    },
+    {
+      "name": "Skoraneset",
+      "lat": 61.9565121,
+      "lon": 5.1465629,
+      "radius": 0.1
+    },
+    {
+      "name": "Leistholmen",
+      "lat": 61.94715928,
+      "lon": 5.14057167,
+      "radius": 0.1
+    },
+    {
+      "name": "Maloysundet",
+      "lat": 61.93500658,
+      "lon": 5.123983,
+      "radius": 0.1
+    },
+    {
+      "name": "Maloystraumen",
+      "lat": 61.92754327,
+      "lon": 5.12121617,
+      "radius": 0.1
+    },
+    {
+      "name": "Kariskjer",
+      "lat": 61.91751135,
+      "lon": 5.11272995,
+      "radius": 0.1
+    },
+    {
+      "name": "Gjermundsfluda",
+      "lat": 61.91295817,
+      "lon": 5.11412527,
+      "radius": 0.1
+    },
+    {
+      "name": "Gangsoy",
+      "lat": 61.88780748,
+      "lon": 5.17024947,
+      "radius": 0.1
+    },
+    {
+      "name": "Gangsoyskjeret",
+      "lat": 61.87663677,
+      "lon": 5.17044956,
+      "radius": 0.1
+    },
+    {
+      "name": "Skaten",
+      "lat": 61.87477278,
+      "lon": 5.21297568,
+      "radius": 0.1
+    },
+    {
+      "name": "Hornelflua",
+      "lat": 61.86460088,
+      "lon": 5.25666073,
+      "radius": 0.1
+    },
+    {
+      "name": "Hornelneset",
+      "lat": 61.86120167,
+      "lon": 5.26611333,
+      "radius": 0.1
+    },
+    {
+      "name": "Hornelen",
+      "lat": 61.83593823,
+      "lon": 5.2612927,
+      "radius": 0.1
+    },
+    {
+      "name": "Hornelen",
+      "lat": 61.8317157,
+      "lon": 5.25367387,
+      "radius": 0.1
+    },
+    {
+      "name": "Bardvikneset",
+      "lat": 61.81702325,
+      "lon": 5.15390173,
+      "radius": 0.1
+    },
+    {
+      "name": "Froysjoen",
+      "lat": 61.75069108,
+      "lon": 4.9925771,
+      "radius": 0.1
+    },
+    {
+      "name": "Olaskjeret 7.5 m",
+      "lat": 61.72699097,
+      "lon": 4.96597637,
+      "radius": 0.1
+    },
+    {
+      "name": "Olaskjeret 7.5 m",
+      "lat": 61.71347212,
+      "lon": 4.95477848,
+      "radius": 0.1
+    },
+    {
+      "name": "Seljestokken",
+      "lat": 61.67156587,
+      "lon": 4.95936572,
+      "radius": 0.1
+    },
+    {
+      "name": "Dragjaskjerflu",
+      "lat": 61.65122407,
+      "lon": 4.98106665,
+      "radius": 0.1
+    },
+    {
+      "name": "Vestre Tekneskjerflua",
+      "lat": 61.63687152,
+      "lon": 4.98122415,
+      "radius": 0.1
+    },
+    {
+      "name": "Arebrot",
+      "lat": 61.62313907,
+      "lon": 4.98224855,
+      "radius": 0.1
+    },
+    {
+      "name": "Naeroyflua",
+      "lat": 61.61595577,
+      "lon": 4.97947292,
+      "radius": 0.1
+    },
+    {
+      "name": "Grasskjeret lt",
+      "lat": 61.60422277,
+      "lon": 4.96086168,
+      "radius": 0.1
+    },
+    {
+      "name": "Nordre Kalvata lt",
+      "lat": 61.58792003,
+      "lon": 4.95188573,
+      "radius": 0.1
+    },
+    {
+      "name": "Nekkoyosen",
+      "lat": 61.57803458,
+      "lon": 4.95119587,
+      "radius": 0.1
+    },
+    {
+      "name": "Oddane",
+      "lat": 61.55470438,
+      "lon": 4.99900562,
+      "radius": 0.1
+    },
+    {
+      "name": "Askrova",
+      "lat": 61.5158147,
+      "lon": 5.00541845,
+      "radius": 0.1
+    },
+    {
+      "name": "Askrova",
+      "lat": 61.50771667,
+      "lon": 4.99728333,
+      "radius": 0.1
+    },
+    {
+      "name": "Tansoyosen",
+      "lat": 61.49785247,
+      "lon": 4.98343813,
+      "radius": 0.1
+    },
+    {
+      "name": "Trefotskjer",
+      "lat": 61.47770905,
+      "lon": 4.97704567,
+      "radius": 0.1
+    },
+    {
+      "name": "Blana",
+      "lat": 61.41847658,
+      "lon": 4.84744333,
+      "radius": 0.1
+    },
+    {
+      "name": "Tussen",
+      "lat": 61.37986777,
+      "lon": 4.81405853,
+      "radius": 0.1
+    },
+    {
+      "name": "Midtflu",
+      "lat": 61.34162938,
+      "lon": 4.79842403,
+      "radius": 0.1
+    },
+    {
+      "name": "Alden",
+      "lat": 61.32019465,
+      "lon": 4.80020208,
+      "radius": 0.1
+    },
+    {
+      "name": "Skardholmen",
+      "lat": 61.29095,
+      "lon": 4.80114007,
+      "radius": 0.1
+    },
+    {
+      "name": "Stabben bn",
+      "lat": 61.28003298,
+      "lon": 4.81447132,
+      "radius": 0.1
+    },
+    {
+      "name": "Kraka lt",
+      "lat": 61.26692532,
+      "lon": 4.85465732,
+      "radius": 0.1
+    },
+    {
+      "name": "Sakrisskjeret lt",
+      "lat": 61.22040382,
+      "lon": 4.94688953,
+      "radius": 0.1
+    },
+    {
+      "name": "Kraksnova",
+      "lat": 61.20039067,
+      "lon": 5.00617963,
+      "radius": 0.1
+    },
+    {
+      "name": "Seljeskorneset",
+      "lat": 61.16466278,
+      "lon": 5.01867975,
+      "radius": 0.1
+    },
+    {
+      "name": "Seglsteinen lt",
+      "lat": 61.15555847,
+      "lon": 5.02112038,
+      "radius": 0.1
+    },
+    {
+      "name": "Lasken",
+      "lat": 61.1478172,
+      "lon": 5.0208265,
+      "radius": 0.1
+    },
+    {
+      "name": "Meltevikskjer lt",
+      "lat": 61.11803333,
+      "lon": 5.029,
+      "radius": 0.1
+    },
+    {
+      "name": "Djupvikneset",
+      "lat": 61.10777648,
+      "lon": 5.02807737,
+      "radius": 0.1
+    },
+    {
+      "name": "Skorane",
+      "lat": 61.09716512,
+      "lon": 5.02053147,
+      "radius": 0.1
+    },
+    {
+      "name": "Krakeneset",
+      "lat": 61.0515692,
+      "lon": 4.94448383,
+      "radius": 0.1
+    },
+    {
+      "name": "Rossoyna varde",
+      "lat": 60.99368857,
+      "lon": 4.77793582,
+      "radius": 0.1
+    },
+    {
+      "name": "Kvernebaen",
+      "lat": 60.96327513,
+      "lon": 4.75256377,
+      "radius": 0.1
+    },
+    {
+      "name": "Sogneoksen - report to Fedje VTS on channel 80",
+      "lat": 60.94755,
+      "lon": 4.75213333,
+      "radius": 0.1
+    },
+    {
+      "name": "Krakeskallane 13 m",
+      "lat": 60.93945928,
+      "lon": 4.75819432,
+      "radius": 0.1
+    },
+    {
+      "name": "Saloyflua buoy",
+      "lat": 60.92651638,
+      "lon": 4.76205962,
+      "radius": 0.1
+    },
+    {
+      "name": "Fiskholmen",
+      "lat": 60.90350198,
+      "lon": 4.75951345,
+      "radius": 0.1
+    },
+    {
+      "name": "Brosmeosen",
+      "lat": 60.87802342,
+      "lon": 4.77460743,
+      "radius": 0.1
+    },
+    {
+      "name": "Brosmeosen",
+      "lat": 60.87049007,
+      "lon": 4.77593673,
+      "radius": 0.1
+    },
+    {
+      "name": "Grimeskjeret",
+      "lat": 60.84951718,
+      "lon": 4.74434602,
+      "radius": 0.1
+    },
+    {
+      "name": "Vetegjograskjeret",
+      "lat": 60.8200757,
+      "lon": 4.72643527,
+      "radius": 0.1
+    },
+    {
+      "name": "Fedje",
+      "lat": 60.79710388,
+      "lon": 4.73844117,
+      "radius": 0.1
+    },
+    {
+      "name": "Stureholmen",
+      "lat": 60.61405,
+      "lon": 4.88266667,
+      "radius": 0.1
+    },
+    {
+      "name": "report to Fedje VTS on channel 71",
+      "lat": 60.52014703,
+      "lon": 4.9477569,
+      "radius": 0.1
+    },
+    {
+      "name": "Kalvsoyflua",
+      "lat": 60.45531128,
+      "lon": 5.00697693,
+      "radius": 0.1
+    },
+    {
+      "name": "Kalvanes",
+      "lat": 60.43352952,
+      "lon": 5.02947752,
+      "radius": 0.1
+    },
+    {
+      "name": "Sora Rotoyna",
+      "lat": 60.41346213,
+      "lon": 5.06605922,
+      "radius": 0.1
+    },
+    {
+      "name": "Midtholmen",
+      "lat": 60.40771068,
+      "lon": 5.10082903,
+      "radius": 0.1
+    },
+    {
+      "name": "Faeroy lt",
+      "lat": 60.4015744,
+      "lon": 5.11947872,
+      "radius": 0.1
+    },
+    {
+      "name": "Saltskoodden",
+      "lat": 60.39668422,
+      "lon": 5.14297193,
+      "radius": 0.1
+    },
+    {
+      "name": "Knappen",
+      "lat": 60.39039552,
+      "lon": 5.15793883,
+      "radius": 0.1
+    },
+    {
+      "name": "Hjeltaskjeret lt",
+      "lat": 60.38519423,
+      "lon": 5.1659437,
+      "radius": 0.1
+    },
+    {
+      "name": "Hjeltaskjeret lt",
+      "lat": 60.38408099,
+      "lon": 5.17555945,
+      "radius": 0.1
+    },
+    {
+      "name": "Tollneset",
+      "lat": 60.3861014,
+      "lon": 5.19007799,
+      "radius": 0.1
+    },
+    {
+      "name": "Askoy bridge",
+      "lat": 60.39461667,
+      "lon": 5.21598333,
+      "radius": 0.1
+    },
+    {
+      "name": "Kvarven",
+      "lat": 60.40115,
+      "lon": 5.23995,
+      "radius": 0.1
+    },
+    {
+      "name": "Bergen",
+      "lat": 60.40105,
+      "lon": 5.27515,
+      "radius": 0.1
+    }
+  ],
+  "legs": [
+    {
+      "from_waypoint": "Stalet",
+      "to_waypoint": "Bukketjuvane",
+      "distance_nm": 4.91
+    },
+    {
+      "from_waypoint": "Bukketjuvane",
+      "to_waypoint": "Ytstebaane",
+      "distance_nm": 3.18
+    },
+    {
+      "from_waypoint": "Ytstebaane",
+      "to_waypoint": "Gamla",
+      "distance_nm": 3.4
+    },
+    {
+      "from_waypoint": "Gamla",
+      "to_waypoint": "Sildegapet",
+      "distance_nm": 3.54
+    },
+    {
+      "from_waypoint": "Sildegapet",
+      "to_waypoint": "Timmevikgrunna",
+      "distance_nm": 1.49
+    },
+    {
+      "from_waypoint": "Timmevikgrunna",
+      "to_waypoint": "Ulvesund",
+      "distance_nm": 1.57
+    },
+    {
+      "from_waypoint": "Ulvesund",
+      "to_waypoint": "Hjartaneset",
+      "distance_nm": 0.82
+    },
+    {
+      "from_waypoint": "Hjartaneset",
+      "to_waypoint": "Kyrkjenesflua - report to Kinn VTS on channel 18",
+      "distance_nm": 0.44
+    },
+    {
+      "from_waypoint": "Kyrkjenesflua - report to Kinn VTS on channel 18",
+      "to_waypoint": "Ulven",
+      "distance_nm": 0.57
+    },
+    {
+      "from_waypoint": "Ulven",
+      "to_waypoint": "Skoraneset",
+      "distance_nm": 0.42
+    },
+    {
+      "from_waypoint": "Skoraneset",
+      "to_waypoint": "Leistholmen",
+      "distance_nm": 0.59
+    },
+    {
+      "from_waypoint": "Leistholmen",
+      "to_waypoint": "Maloysundet",
+      "distance_nm": 0.87
+    },
+    {
+      "from_waypoint": "Maloysundet",
+      "to_waypoint": "Maloystraumen",
+      "distance_nm": 0.45
+    },
+    {
+      "from_waypoint": "Maloystraumen",
+      "to_waypoint": "Kariskjer",
+      "distance_nm": 0.65
+    },
+    {
+      "from_waypoint": "Kariskjer",
+      "to_waypoint": "Gjermundsfluda",
+      "distance_nm": 0.28
+    },
+    {
+      "from_waypoint": "Gjermundsfluda",
+      "to_waypoint": "Gangsoy",
+      "distance_nm": 2.19
+    },
+    {
+      "from_waypoint": "Gangsoy",
+      "to_waypoint": "Gangsoyskjeret",
+      "distance_nm": 0.67
+    },
+    {
+      "from_waypoint": "Gangsoyskjeret",
+      "to_waypoint": "Skaten",
+      "distance_nm": 1.21
+    },
+    {
+      "from_waypoint": "Skaten",
+      "to_waypoint": "Hornelflua",
+      "distance_nm": 1.38
+    },
+    {
+      "from_waypoint": "Hornelflua",
+      "to_waypoint": "Hornelneset",
+      "distance_nm": 0.34
+    },
+    {
+      "from_waypoint": "Hornelneset",
+      "to_waypoint": "Hornelen",
+      "distance_nm": 1.52
+    },
+    {
+      "from_waypoint": "Hornelen",
+      "to_waypoint": "Hornelen",
+      "distance_nm": 0.33
+    },
+    {
+      "from_waypoint": "Hornelen",
+      "to_waypoint": "Bardvikneset",
+      "distance_nm": 2.96
+    },
+    {
+      "from_waypoint": "Bardvikneset",
+      "to_waypoint": "Froysjoen",
+      "distance_nm": 6.07
+    },
+    {
+      "from_waypoint": "Froysjoen",
+      "to_waypoint": "Olaskjeret 7.5 m",
+      "distance_nm": 1.61
+    },
+    {
+      "from_waypoint": "Olaskjeret 7.5 m",
+      "to_waypoint": "Olaskjeret 7.5 m",
+      "distance_nm": 0.87
+    },
+    {
+      "from_waypoint": "Olaskjeret 7.5 m",
+      "to_waypoint": "Seljestokken",
+      "distance_nm": 2.52
+    },
+    {
+      "from_waypoint": "Seljestokken",
+      "to_waypoint": "Dragjaskjerflu",
+      "distance_nm": 1.37
+    },
+    {
+      "from_waypoint": "Dragjaskjerflu",
+      "to_waypoint": "Vestre Tekneskjerflua",
+      "distance_nm": 0.86
+    },
+    {
+      "from_waypoint": "Vestre Tekneskjerflua",
+      "to_waypoint": "Arebrot",
+      "distance_nm": 0.83
+    },
+    {
+      "from_waypoint": "Arebrot",
+      "to_waypoint": "Naeroyflua",
+      "distance_nm": 0.44
+    },
+    {
+      "from_waypoint": "Naeroyflua",
+      "to_waypoint": "Grasskjeret lt",
+      "distance_nm": 0.88
+    },
+    {
+      "from_waypoint": "Grasskjeret lt",
+      "to_waypoint": "Nordre Kalvata lt",
+      "distance_nm": 1.01
+    },
+    {
+      "from_waypoint": "Nordre Kalvata lt",
+      "to_waypoint": "Nekkoyosen",
+      "distance_nm": 0.59
+    },
+    {
+      "from_waypoint": "Nekkoyosen",
+      "to_waypoint": "Oddane",
+      "distance_nm": 1.96
+    },
+    {
+      "from_waypoint": "Oddane",
+      "to_waypoint": "Askrova",
+      "distance_nm": 2.34
+    },
+    {
+      "from_waypoint": "Askrova",
+      "to_waypoint": "Askrova",
+      "distance_nm": 0.54
+    },
+    {
+      "from_waypoint": "Askrova",
+      "to_waypoint": "Tansoyosen",
+      "distance_nm": 0.71
+    },
+    {
+      "from_waypoint": "Tansoyosen",
+      "to_waypoint": "Trefotskjer",
+      "distance_nm": 1.22
+    },
+    {
+      "from_waypoint": "Trefotskjer",
+      "to_waypoint": "Blana",
+      "distance_nm": 5.15
+    },
+    {
+      "from_waypoint": "Blana",
+      "to_waypoint": "Tussen",
+      "distance_nm": 2.51
+    },
+    {
+      "from_waypoint": "Tussen",
+      "to_waypoint": "Midtflu",
+      "distance_nm": 2.34
+    },
+    {
+      "from_waypoint": "Midtflu",
+      "to_waypoint": "Alden",
+      "distance_nm": 1.29
+    },
+    {
+      "from_waypoint": "Alden",
+      "to_waypoint": "Skardholmen",
+      "distance_nm": 1.76
+    },
+    {
+      "from_waypoint": "Skardholmen",
+      "to_waypoint": "Stabben bn",
+      "distance_nm": 0.76
+    },
+    {
+      "from_waypoint": "Stabben bn",
+      "to_waypoint": "Kraka lt",
+      "distance_nm": 1.4
+    },
+    {
+      "from_waypoint": "Kraka lt",
+      "to_waypoint": "Sakrisskjeret lt",
+      "distance_nm": 3.86
+    },
+    {
+      "from_waypoint": "Sakrisskjeret lt",
+      "to_waypoint": "Kraksnova",
+      "distance_nm": 2.09
+    },
+    {
+      "from_waypoint": "Kraksnova",
+      "to_waypoint": "Seljeskorneset",
+      "distance_nm": 2.18
+    },
+    {
+      "from_waypoint": "Seljeskorneset",
+      "to_waypoint": "Seglsteinen lt",
+      "distance_nm": 0.55
+    },
+    {
+      "from_waypoint": "Seglsteinen lt",
+      "to_waypoint": "Lasken",
+      "distance_nm": 0.46
+    },
+    {
+      "from_waypoint": "Lasken",
+      "to_waypoint": "Meltevikskjer lt",
+      "distance_nm": 1.8
+    },
+    {
+      "from_waypoint": "Meltevikskjer lt",
+      "to_waypoint": "Djupvikneset",
+      "distance_nm": 0.62
+    },
+    {
+      "from_waypoint": "Djupvikneset",
+      "to_waypoint": "Skorane",
+      "distance_nm": 0.67
+    },
+    {
+      "from_waypoint": "Skorane",
+      "to_waypoint": "Krakeneset",
+      "distance_nm": 3.52
+    },
+    {
+      "from_waypoint": "Krakeneset",
+      "to_waypoint": "Rossoyna varde",
+      "distance_nm": 5.96
+    },
+    {
+      "from_waypoint": "Rossoyna varde",
+      "to_waypoint": "Kvernebaen",
+      "distance_nm": 1.97
+    },
+    {
+      "from_waypoint": "Kvernebaen",
+      "to_waypoint": "Sogneoksen - report to Fedje VTS on channel 80",
+      "distance_nm": 0.94
+    },
+    {
+      "from_waypoint": "Sogneoksen - report to Fedje VTS on channel 80",
+      "to_waypoint": "Krakeskallane 13 m",
+      "distance_nm": 0.52
+    },
+    {
+      "from_waypoint": "Krakeskallane 13 m",
+      "to_waypoint": "Saloyflua buoy",
+      "distance_nm": 0.79
+    },
+    {
+      "from_waypoint": "Saloyflua buoy",
+      "to_waypoint": "Fiskholmen",
+      "distance_nm": 1.38
+    },
+    {
+      "from_waypoint": "Fiskholmen",
+      "to_waypoint": "Brosmeosen",
+      "distance_nm": 1.59
+    },
+    {
+      "from_waypoint": "Brosmeosen",
+      "to_waypoint": "Brosmeosen",
+      "distance_nm": 0.45
+    },
+    {
+      "from_waypoint": "Brosmeosen",
+      "to_waypoint": "Grimeskjeret",
+      "distance_nm": 1.56
+    },
+    {
+      "from_waypoint": "Grimeskjeret",
+      "to_waypoint": "Vetegjograskjeret",
+      "distance_nm": 1.84
+    },
+    {
+      "from_waypoint": "Vetegjograskjeret",
+      "to_waypoint": "Fedje",
+      "distance_nm": 1.42
+    },
+    {
+      "from_waypoint": "Fedje",
+      "to_waypoint": "Stureholmen",
+      "distance_nm": 11.78
+    },
+    {
+      "from_waypoint": "Stureholmen",
+      "to_waypoint": "report to Fedje VTS on channel 71",
+      "distance_nm": 5.96
+    },
+    {
+      "from_waypoint": "report to Fedje VTS on channel 71",
+      "to_waypoint": "Kalvsoyflua",
+      "distance_nm": 4.27
+    },
+    {
+      "from_waypoint": "Kalvsoyflua",
+      "to_waypoint": "Kalvanes",
+      "distance_nm": 1.47
+    },
+    {
+      "from_waypoint": "Kalvanes",
+      "to_waypoint": "Sora Rotoyna",
+      "distance_nm": 1.62
+    },
+    {
+      "from_waypoint": "Sora Rotoyna",
+      "to_waypoint": "Midtholmen",
+      "distance_nm": 1.09
+    },
+    {
+      "from_waypoint": "Midtholmen",
+      "to_waypoint": "Faeroy lt",
+      "distance_nm": 0.66
+    },
+    {
+      "from_waypoint": "Faeroy lt",
+      "to_waypoint": "Saltskoodden",
+      "distance_nm": 0.76
+    },
+    {
+      "from_waypoint": "Saltskoodden",
+      "to_waypoint": "Knappen",
+      "distance_nm": 0.58
+    },
+    {
+      "from_waypoint": "Knappen",
+      "to_waypoint": "Hjeltaskjeret lt",
+      "distance_nm": 0.39
+    },
+    {
+      "from_waypoint": "Hjeltaskjeret lt",
+      "to_waypoint": "Hjeltaskjeret lt",
+      "distance_nm": 0.29
+    },
+    {
+      "from_waypoint": "Hjeltaskjeret lt",
+      "to_waypoint": "Tollneset",
+      "distance_nm": 0.45
+    },
+    {
+      "from_waypoint": "Tollneset",
+      "to_waypoint": "Askoy bridge",
+      "distance_nm": 0.92
+    },
+    {
+      "from_waypoint": "Askoy bridge",
+      "to_waypoint": "Kvarven",
+      "distance_nm": 0.81
+    },
+    {
+      "from_waypoint": "Kvarven",
+      "to_waypoint": "Bergen",
+      "distance_nm": 1.04
+    }
+  ],
+  "total_distance_nm": 139.09,
+  "waypoint_count": 82,
+  "leg_count": 81,
+  "origin": "7",
+  "destination": "5M",
+  "parse_timestamp": "2026-01-20T15:17:44.253880",
+  "data_source": "rtz_file_parser",
+  "source_city": "bergen",
+  "original_file": "NCA_7_5m_Bergen_Stad_Krakhelle_In_20250731.rtz",
+  "route_id": "29e7c2f7"
+}

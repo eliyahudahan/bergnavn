@@ -1,0 +1,255 @@
+{
+  "route_name": "NCA_Andalsnes_Breisundet_In_20250801",
+  "file_path": "/home/framg/dev/bergnavn/backend/assets/routeinfo_routes/andalsnes/raw/extracted/NCA_Andalsnes_Breisundet_In_20250731.rtz",
+  "waypoints": [
+    {
+      "name": "Breisunddjupet",
+      "lat": 62.51022878,
+      "lon": 5.68239097,
+      "radius": 0.1
+    },
+    {
+      "name": "Breisundet",
+      "lat": 62.44828561,
+      "lon": 5.91428191,
+      "radius": 0.1
+    },
+    {
+      "name": "Hogsteinen lt",
+      "lat": 62.44651783,
+      "lon": 6.03079354,
+      "radius": 0.1
+    },
+    {
+      "name": "Hogsteinen lt",
+      "lat": 62.45349269,
+      "lon": 6.04813121,
+      "radius": 0.1
+    },
+    {
+      "name": "Erknaflu",
+      "lat": 62.47086266,
+      "lon": 6.059799,
+      "radius": 0.1
+    },
+    {
+      "name": "Valderhaug",
+      "lat": 62.49078869,
+      "lon": 6.14069915,
+      "radius": 0.1
+    },
+    {
+      "name": "Valderhaug",
+      "lat": 62.49710248,
+      "lon": 6.1469222,
+      "radius": 0.1
+    },
+    {
+      "name": "Oksebasen",
+      "lat": 62.50956621,
+      "lon": 6.14242229,
+      "radius": 0.1
+    },
+    {
+      "name": "Hanen lt",
+      "lat": 62.55427375,
+      "lon": 6.17472564,
+      "radius": 0.1
+    },
+    {
+      "name": "Lepsoyrevet",
+      "lat": 62.56709746,
+      "lon": 6.19655906,
+      "radius": 0.1
+    },
+    {
+      "name": "Lepsoyrevet",
+      "lat": 62.58125845,
+      "lon": 6.23023899,
+      "radius": 0.1
+    },
+    {
+      "name": "Lepsoyrevet",
+      "lat": 62.5943579,
+      "lon": 6.26137262,
+      "radius": 0.1
+    },
+    {
+      "name": "Haugflua lt",
+      "lat": 62.61778333,
+      "lon": 6.31611667,
+      "radius": 0.1
+    },
+    {
+      "name": "Dronenholmen lt",
+      "lat": 62.62926667,
+      "lon": 6.52065,
+      "radius": 0.1
+    },
+    {
+      "name": "Tautra - precautionary area",
+      "lat": 62.67509959,
+      "lon": 6.83744422,
+      "radius": 0.1
+    },
+    {
+      "name": "Tautraflua 16 m",
+      "lat": 62.69444697,
+      "lon": 6.93478934,
+      "radius": 0.1
+    },
+    {
+      "name": "Helgestones lt",
+      "lat": 62.61330339,
+      "lon": 7.36873393,
+      "radius": 0.1
+    },
+    {
+      "name": "Norvikhalsen",
+      "lat": 62.57739679,
+      "lon": 7.42528334,
+      "radius": 0.1
+    },
+    {
+      "name": "Vindsneset",
+      "lat": 62.56080614,
+      "lon": 7.4685783,
+      "radius": 0.1
+    },
+    {
+      "name": "Hovdenes lt",
+      "lat": 62.54695214,
+      "lon": 7.54570219,
+      "radius": 0.1
+    },
+    {
+      "name": "Andalsnes",
+      "lat": 62.56200121,
+      "lon": 7.63443169,
+      "radius": 0.1
+    },
+    {
+      "name": "Andalsnes",
+      "lat": 62.57266667,
+      "lon": 7.6842,
+      "radius": 0.1
+    }
+  ],
+  "legs": [
+    {
+      "from_waypoint": "Breisunddjupet",
+      "to_waypoint": "Breisundet",
+      "distance_nm": 7.43
+    },
+    {
+      "from_waypoint": "Breisundet",
+      "to_waypoint": "Hogsteinen lt",
+      "distance_nm": 3.24
+    },
+    {
+      "from_waypoint": "Hogsteinen lt",
+      "to_waypoint": "Hogsteinen lt",
+      "distance_nm": 0.64
+    },
+    {
+      "from_waypoint": "Hogsteinen lt",
+      "to_waypoint": "Erknaflu",
+      "distance_nm": 1.09
+    },
+    {
+      "from_waypoint": "Erknaflu",
+      "to_waypoint": "Valderhaug",
+      "distance_nm": 2.54
+    },
+    {
+      "from_waypoint": "Valderhaug",
+      "to_waypoint": "Valderhaug",
+      "distance_nm": 0.42
+    },
+    {
+      "from_waypoint": "Valderhaug",
+      "to_waypoint": "Oksebasen",
+      "distance_nm": 0.76
+    },
+    {
+      "from_waypoint": "Oksebasen",
+      "to_waypoint": "Hanen lt",
+      "distance_nm": 2.83
+    },
+    {
+      "from_waypoint": "Hanen lt",
+      "to_waypoint": "Lepsoyrevet",
+      "distance_nm": 0.98
+    },
+    {
+      "from_waypoint": "Lepsoyrevet",
+      "to_waypoint": "Lepsoyrevet",
+      "distance_nm": 1.26
+    },
+    {
+      "from_waypoint": "Lepsoyrevet",
+      "to_waypoint": "Lepsoyrevet",
+      "distance_nm": 1.17
+    },
+    {
+      "from_waypoint": "Lepsoyrevet",
+      "to_waypoint": "Haugflua lt",
+      "distance_nm": 2.07
+    },
+    {
+      "from_waypoint": "Haugflua lt",
+      "to_waypoint": "Dronenholmen lt",
+      "distance_nm": 5.69
+    },
+    {
+      "from_waypoint": "Dronenholmen lt",
+      "to_waypoint": "Tautra - precautionary area",
+      "distance_nm": 9.16
+    },
+    {
+      "from_waypoint": "Tautra - precautionary area",
+      "to_waypoint": "Tautraflua 16 m",
+      "distance_nm": 2.92
+    },
+    {
+      "from_waypoint": "Tautraflua 16 m",
+      "to_waypoint": "Helgestones lt",
+      "distance_nm": 12.92
+    },
+    {
+      "from_waypoint": "Helgestones lt",
+      "to_waypoint": "Norvikhalsen",
+      "distance_nm": 2.66
+    },
+    {
+      "from_waypoint": "Norvikhalsen",
+      "to_waypoint": "Vindsneset",
+      "distance_nm": 1.56
+    },
+    {
+      "from_waypoint": "Vindsneset",
+      "to_waypoint": "Hovdenes lt",
+      "distance_nm": 2.29
+    },
+    {
+      "from_waypoint": "Hovdenes lt",
+      "to_waypoint": "Andalsnes",
+      "distance_nm": 2.62
+    },
+    {
+      "from_waypoint": "Andalsnes",
+      "to_waypoint": "Andalsnes",
+      "distance_nm": 1.52
+    }
+  ],
+  "total_distance_nm": 65.76,
+  "waypoint_count": 22,
+  "leg_count": 21,
+  "origin": "\u00c5ndalsnes",
+  "destination": "Breisundet",
+  "parse_timestamp": "2026-01-20T15:17:44.243209",
+  "data_source": "rtz_file_parser",
+  "source_city": "andalsnes",
+  "original_file": "NCA_Andalsnes_Breisundet_In_20250731.rtz",
+  "route_id": "71e30254"
+}

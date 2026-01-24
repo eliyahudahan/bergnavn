@@ -1,0 +1,21 @@
+{
+  "empirical": true,
+  "total_unique_rtz_files": 0,
+  "cities_with_files": 0,
+  "duplicates_found": 0,
+  "file_counts_by_city": {
+    "alesund": 0,
+    "bergen": 0,
+    "trondheim": 0,
+    "andalsnes": 0,
+    "stavanger": 0,
+    "oslo": 0,
+    "kristiansand": 0,
+    "sandefjord": 0,
+    "drammen": 0,
+    "flekkefjord": 0
+  },
+  "data_source": "Norwegian Coastal Administration via routeinfo.no",
+  "coordinate_precision": "6 decimal places (0.1 meter accuracy)",
+  "verification_timestamp": "2026-01-20T14:30:00Z"
+}

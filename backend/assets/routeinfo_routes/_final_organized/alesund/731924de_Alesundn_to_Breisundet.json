@@ -1,0 +1,167 @@
+{
+  "route_name": "NCA_AlesundN_Breisundet_In_20250801",
+  "file_path": "/home/framg/dev/bergnavn/backend/assets/routeinfo_routes/alesund/raw/extracted/NCA_AlesundN_Breisundet_In_20250731.rtz",
+  "waypoints": [
+    {
+      "name": "Breisunddjupet",
+      "lat": 62.51022878,
+      "lon": 5.68239097,
+      "radius": 0.1
+    },
+    {
+      "name": "Breisundet",
+      "lat": 62.44828561,
+      "lon": 5.91428191,
+      "radius": 0.1
+    },
+    {
+      "name": "Hogsteinen lt",
+      "lat": 62.44651783,
+      "lon": 6.03079354,
+      "radius": 0.1
+    },
+    {
+      "name": "Hogsteinen lt",
+      "lat": 62.45349269,
+      "lon": 6.04813121,
+      "radius": 0.1
+    },
+    {
+      "name": "Erknaflu",
+      "lat": 62.47086266,
+      "lon": 6.059799,
+      "radius": 0.1
+    },
+    {
+      "name": "Olsskjer lt",
+      "lat": 62.48476092,
+      "lon": 6.13991275,
+      "radius": 0.1
+    },
+    {
+      "name": "Ellingsoyfjorden",
+      "lat": 62.48572,
+      "lon": 6.18174294,
+      "radius": 0.1
+    },
+    {
+      "name": "Brattholmen lt",
+      "lat": 62.48837813,
+      "lon": 6.21202408,
+      "radius": 0.1
+    },
+    {
+      "name": "Vardeflua",
+      "lat": 62.4843874,
+      "lon": 6.25473911,
+      "radius": 0.1
+    },
+    {
+      "name": "Svinoysundet",
+      "lat": 62.47307589,
+      "lon": 6.27187611,
+      "radius": 0.1
+    },
+    {
+      "name": "Kalvoysundet",
+      "lat": 62.47641737,
+      "lon": 6.28719523,
+      "radius": 0.1
+    },
+    {
+      "name": "Hestholmen",
+      "lat": 62.47984662,
+      "lon": 6.34553374,
+      "radius": 0.1
+    },
+    {
+      "name": "Langoya",
+      "lat": 62.48675692,
+      "lon": 6.36837106,
+      "radius": 0.1
+    },
+    {
+      "name": "Alvika",
+      "lat": 62.48812652,
+      "lon": 6.38531788,
+      "radius": 0.1
+    }
+  ],
+  "legs": [
+    {
+      "from_waypoint": "Breisunddjupet",
+      "to_waypoint": "Breisundet",
+      "distance_nm": 7.43
+    },
+    {
+      "from_waypoint": "Breisundet",
+      "to_waypoint": "Hogsteinen lt",
+      "distance_nm": 3.24
+    },
+    {
+      "from_waypoint": "Hogsteinen lt",
+      "to_waypoint": "Hogsteinen lt",
+      "distance_nm": 0.64
+    },
+    {
+      "from_waypoint": "Hogsteinen lt",
+      "to_waypoint": "Erknaflu",
+      "distance_nm": 1.09
+    },
+    {
+      "from_waypoint": "Erknaflu",
+      "to_waypoint": "Olsskjer lt",
+      "distance_nm": 2.37
+    },
+    {
+      "from_waypoint": "Olsskjer lt",
+      "to_waypoint": "Ellingsoyfjorden",
+      "distance_nm": 1.16
+    },
+    {
+      "from_waypoint": "Ellingsoyfjorden",
+      "to_waypoint": "Brattholmen lt",
+      "distance_nm": 0.85
+    },
+    {
+      "from_waypoint": "Brattholmen lt",
+      "to_waypoint": "Vardeflua",
+      "distance_nm": 1.21
+    },
+    {
+      "from_waypoint": "Vardeflua",
+      "to_waypoint": "Svinoysundet",
+      "distance_nm": 0.83
+    },
+    {
+      "from_waypoint": "Svinoysundet",
+      "to_waypoint": "Kalvoysundet",
+      "distance_nm": 0.47
+    },
+    {
+      "from_waypoint": "Kalvoysundet",
+      "to_waypoint": "Hestholmen",
+      "distance_nm": 1.63
+    },
+    {
+      "from_waypoint": "Hestholmen",
+      "to_waypoint": "Langoya",
+      "distance_nm": 0.76
+    },
+    {
+      "from_waypoint": "Langoya",
+      "to_waypoint": "Alvika",
+      "distance_nm": 0.48
+    }
+  ],
+  "total_distance_nm": 22.16,
+  "waypoint_count": 14,
+  "leg_count": 13,
+  "origin": "Alesundn",
+  "destination": "Breisundet",
+  "parse_timestamp": "2026-01-20T15:17:44.227143",
+  "data_source": "rtz_file_parser",
+  "source_city": "alesund",
+  "original_file": "NCA_AlesundN_Breisundet_In_20250731.rtz",
+  "route_id": "731924de"
+}

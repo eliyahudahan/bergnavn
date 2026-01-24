@@ -1,0 +1,662 @@
+{
+  "route_name": "NCA_7_5m_Trondheim_Grande_Rorvik_In_20250801",
+  "file_path": "/home/framg/dev/bergnavn/backend/assets/routeinfo_routes/trondheim/raw/extracted/NCA_7_5m_Trondheim_Grande_Rorvik_In_20250731.rtz",
+  "waypoints": [
+    {
+      "name": "Ottersoya",
+      "lat": 64.85848333,
+      "lon": 11.25641667,
+      "radius": 0.1
+    },
+    {
+      "name": "Maroyskjer lt",
+      "lat": 64.85703333,
+      "lon": 11.23763333,
+      "radius": 0.1
+    },
+    {
+      "name": "Rorvik",
+      "lat": 64.85283333,
+      "lon": 11.22413333,
+      "radius": 0.1
+    },
+    {
+      "name": "Naeroysundet lt",
+      "lat": 64.84155,
+      "lon": 11.19825,
+      "radius": 0.1
+    },
+    {
+      "name": "Naeroysundet",
+      "lat": 64.79233564,
+      "lon": 11.08758932,
+      "radius": 0.1
+    },
+    {
+      "name": "Grinna lt",
+      "lat": 64.75396518,
+      "lon": 11.01470258,
+      "radius": 0.1
+    },
+    {
+      "name": "Grinna pilot boarding",
+      "lat": 64.73494268,
+      "lon": 10.9640142,
+      "radius": 0.1
+    },
+    {
+      "name": "Gjaeslingan S",
+      "lat": 64.69176762,
+      "lon": 10.78735538,
+      "radius": 0.1
+    },
+    {
+      "name": "Langroa lt",
+      "lat": 64.47170985,
+      "lon": 10.42725392,
+      "radius": 0.1
+    },
+    {
+      "name": "Buholmrasa",
+      "lat": 64.42262919,
+      "lon": 10.44930023,
+      "radius": 0.1
+    },
+    {
+      "name": "Nordre Nesvagflua",
+      "lat": 64.41261667,
+      "lon": 10.44068333,
+      "radius": 0.1
+    },
+    {
+      "name": "Saksa lt",
+      "lat": 64.40185318,
+      "lon": 10.43136417,
+      "radius": 0.1
+    },
+    {
+      "name": "Saksa lt",
+      "lat": 64.39914709,
+      "lon": 10.43235449,
+      "radius": 0.1
+    },
+    {
+      "name": "Oksholmen lt",
+      "lat": 64.37561225,
+      "lon": 10.4637894,
+      "radius": 0.1
+    },
+    {
+      "name": "Oksholmen lt",
+      "lat": 64.36730317,
+      "lon": 10.46354527,
+      "radius": 0.1
+    },
+    {
+      "name": "Bjorsneset lt",
+      "lat": 64.35503703,
+      "lon": 10.43864239,
+      "radius": 0.1
+    },
+    {
+      "name": "Ramsoyodden lt",
+      "lat": 64.33206988,
+      "lon": 10.44795111,
+      "radius": 0.1
+    },
+    {
+      "name": "Ramsoysundet",
+      "lat": 64.32627323,
+      "lon": 10.4375797,
+      "radius": 0.1
+    },
+    {
+      "name": "Finnmarkstoyten",
+      "lat": 64.31466566,
+      "lon": 10.406931,
+      "radius": 0.1
+    },
+    {
+      "name": "Mosterskjeret lt",
+      "lat": 64.29287586,
+      "lon": 10.3359438,
+      "radius": 0.1
+    },
+    {
+      "name": "Drogsholmen lt",
+      "lat": 64.27840619,
+      "lon": 10.32305589,
+      "radius": 0.1
+    },
+    {
+      "name": "Bessaker lt",
+      "lat": 64.25409586,
+      "lon": 10.32480693,
+      "radius": 0.1
+    },
+    {
+      "name": "Bessaker lt",
+      "lat": 64.25059982,
+      "lon": 10.31571116,
+      "radius": 0.1
+    },
+    {
+      "name": "Bessakersundet lt",
+      "lat": 64.24832585,
+      "lon": 10.29656479,
+      "radius": 0.1
+    },
+    {
+      "name": "Bessakersundet lt",
+      "lat": 64.24553939,
+      "lon": 10.28562354,
+      "radius": 0.1
+    },
+    {
+      "name": "Terningen lt",
+      "lat": 64.22751477,
+      "lon": 10.22407808,
+      "radius": 0.1
+    },
+    {
+      "name": "Kjeoya lt",
+      "lat": 64.19208301,
+      "lon": 10.1671343,
+      "radius": 0.1
+    },
+    {
+      "name": "Marflesa lt",
+      "lat": 64.16464868,
+      "lon": 10.12188332,
+      "radius": 0.1
+    },
+    {
+      "name": "Krosskjera lt",
+      "lat": 64.14577098,
+      "lon": 10.10910921,
+      "radius": 0.1
+    },
+    {
+      "name": "Galten lt",
+      "lat": 64.13341722,
+      "lon": 10.09110026,
+      "radius": 0.1
+    },
+    {
+      "name": "Storskjeret lt",
+      "lat": 64.05781529,
+      "lon": 9.8353776,
+      "radius": 0.1
+    },
+    {
+      "name": "Langtaren",
+      "lat": 64.03402477,
+      "lon": 9.78175505,
+      "radius": 0.1
+    },
+    {
+      "name": "Trebaan",
+      "lat": 64.00208309,
+      "lon": 9.77486833,
+      "radius": 0.1
+    },
+    {
+      "name": "Nautflu lt",
+      "lat": 63.9299738,
+      "lon": 9.78761047,
+      "radius": 0.1
+    },
+    {
+      "name": "Treholmen lt",
+      "lat": 63.89180962,
+      "lon": 9.76071426,
+      "radius": 0.1
+    },
+    {
+      "name": "Kvaloya lt",
+      "lat": 63.8759423,
+      "lon": 9.71046929,
+      "radius": 0.1
+    },
+    {
+      "name": "Torramuren bn",
+      "lat": 63.85839234,
+      "lon": 9.66349164,
+      "radius": 0.1
+    },
+    {
+      "name": "Hestvadfluene lt",
+      "lat": 63.83286762,
+      "lon": 9.62331332,
+      "radius": 0.1
+    },
+    {
+      "name": "Valsholmflua lt",
+      "lat": 63.81311788,
+      "lon": 9.57844581,
+      "radius": 0.1
+    },
+    {
+      "name": "Vettabaen lt",
+      "lat": 63.79813091,
+      "lon": 9.56888423,
+      "radius": 0.1
+    },
+    {
+      "name": "Bjugnskjaeret lt",
+      "lat": 63.76196902,
+      "lon": 9.53183869,
+      "radius": 0.1
+    },
+    {
+      "name": "Kjeungskjaeret lt",
+      "lat": 63.72799338,
+      "lon": 9.53924168,
+      "radius": 0.1
+    },
+    {
+      "name": "Ribeflua lt",
+      "lat": 63.70395306,
+      "lon": 9.50928355,
+      "radius": 0.1
+    },
+    {
+      "name": "Haflua 5 m",
+      "lat": 63.69621667,
+      "lon": 9.50610665,
+      "radius": 0.1
+    },
+    {
+      "name": "Raudsidegrunnen",
+      "lat": 63.6615539,
+      "lon": 9.47290521,
+      "radius": 0.1
+    },
+    {
+      "name": "Tjuvholmen",
+      "lat": 63.64324902,
+      "lon": 9.48498826,
+      "radius": 0.1
+    },
+    {
+      "name": "Nebbtaren",
+      "lat": 63.63377173,
+      "lon": 9.48463763,
+      "radius": 0.1
+    },
+    {
+      "name": "Smellingflua",
+      "lat": 63.62582586,
+      "lon": 9.49850887,
+      "radius": 0.1
+    },
+    {
+      "name": "Roysaneset lt",
+      "lat": 63.6276,
+      "lon": 9.58473333,
+      "radius": 0.1
+    },
+    {
+      "name": "Hogholmen lt",
+      "lat": 63.65451667,
+      "lon": 9.6863,
+      "radius": 0.1
+    },
+    {
+      "name": "Kjerringa",
+      "lat": 63.65545,
+      "lon": 9.72803333,
+      "radius": 0.1
+    },
+    {
+      "name": "Ringflua lt",
+      "lat": 63.65016342,
+      "lon": 9.7631476,
+      "radius": 0.1
+    },
+    {
+      "name": "Hysneset lt",
+      "lat": 63.62456759,
+      "lon": 9.77597641,
+      "radius": 0.1
+    },
+    {
+      "name": "Storneset",
+      "lat": 63.49520805,
+      "lon": 9.90840994,
+      "radius": 0.1
+    },
+    {
+      "name": "Rodbergneset",
+      "lat": 63.47576245,
+      "lon": 9.9787621,
+      "radius": 0.1
+    },
+    {
+      "name": "Flakkfjorden",
+      "lat": 63.46752128,
+      "lon": 10.19017705,
+      "radius": 0.1
+    },
+    {
+      "name": "Digermulen",
+      "lat": 63.45845001,
+      "lon": 10.30423466,
+      "radius": 0.1
+    },
+    {
+      "name": "Nordneset",
+      "lat": 63.45073333,
+      "lon": 10.34578333,
+      "radius": 0.1
+    },
+    {
+      "name": "Trondheim",
+      "lat": 63.44545,
+      "lon": 10.36245,
+      "radius": 0.1
+    }
+  ],
+  "legs": [
+    {
+      "from_waypoint": "Ottersoya",
+      "to_waypoint": "Maroyskjer lt",
+      "distance_nm": 0.49
+    },
+    {
+      "from_waypoint": "Maroyskjer lt",
+      "to_waypoint": "Rorvik",
+      "distance_nm": 0.43
+    },
+    {
+      "from_waypoint": "Rorvik",
+      "to_waypoint": "Naeroysundet lt",
+      "distance_nm": 0.95
+    },
+    {
+      "from_waypoint": "Naeroysundet lt",
+      "to_waypoint": "Naeroysundet",
+      "distance_nm": 4.09
+    },
+    {
+      "from_waypoint": "Naeroysundet",
+      "to_waypoint": "Grinna lt",
+      "distance_nm": 2.96
+    },
+    {
+      "from_waypoint": "Grinna lt",
+      "to_waypoint": "Grinna pilot boarding",
+      "distance_nm": 1.73
+    },
+    {
+      "from_waypoint": "Grinna pilot boarding",
+      "to_waypoint": "Gjaeslingan S",
+      "distance_nm": 5.22
+    },
+    {
+      "from_waypoint": "Gjaeslingan S",
+      "to_waypoint": "Langroa lt",
+      "distance_nm": 16.15
+    },
+    {
+      "from_waypoint": "Langroa lt",
+      "to_waypoint": "Buholmrasa",
+      "distance_nm": 3.0
+    },
+    {
+      "from_waypoint": "Buholmrasa",
+      "to_waypoint": "Nordre Nesvagflua",
+      "distance_nm": 0.64
+    },
+    {
+      "from_waypoint": "Nordre Nesvagflua",
+      "to_waypoint": "Saksa lt",
+      "distance_nm": 0.69
+    },
+    {
+      "from_waypoint": "Saksa lt",
+      "to_waypoint": "Saksa lt",
+      "distance_nm": 0.16
+    },
+    {
+      "from_waypoint": "Saksa lt",
+      "to_waypoint": "Oksholmen lt",
+      "distance_nm": 1.63
+    },
+    {
+      "from_waypoint": "Oksholmen lt",
+      "to_waypoint": "Oksholmen lt",
+      "distance_nm": 0.5
+    },
+    {
+      "from_waypoint": "Oksholmen lt",
+      "to_waypoint": "Bjorsneset lt",
+      "distance_nm": 0.98
+    },
+    {
+      "from_waypoint": "Bjorsneset lt",
+      "to_waypoint": "Ramsoyodden lt",
+      "distance_nm": 1.4
+    },
+    {
+      "from_waypoint": "Ramsoyodden lt",
+      "to_waypoint": "Ramsoysundet",
+      "distance_nm": 0.44
+    },
+    {
+      "from_waypoint": "Ramsoysundet",
+      "to_waypoint": "Finnmarkstoyten",
+      "distance_nm": 1.06
+    },
+    {
+      "from_waypoint": "Finnmarkstoyten",
+      "to_waypoint": "Mosterskjeret lt",
+      "distance_nm": 2.26
+    },
+    {
+      "from_waypoint": "Mosterskjeret lt",
+      "to_waypoint": "Drogsholmen lt",
+      "distance_nm": 0.93
+    },
+    {
+      "from_waypoint": "Drogsholmen lt",
+      "to_waypoint": "Bessaker lt",
+      "distance_nm": 1.46
+    },
+    {
+      "from_waypoint": "Bessaker lt",
+      "to_waypoint": "Bessaker lt",
+      "distance_nm": 0.32
+    },
+    {
+      "from_waypoint": "Bessaker lt",
+      "to_waypoint": "Bessakersundet lt",
+      "distance_nm": 0.52
+    },
+    {
+      "from_waypoint": "Bessakersundet lt",
+      "to_waypoint": "Bessakersundet lt",
+      "distance_nm": 0.33
+    },
+    {
+      "from_waypoint": "Bessakersundet lt",
+      "to_waypoint": "Terningen lt",
+      "distance_nm": 1.94
+    },
+    {
+      "from_waypoint": "Terningen lt",
+      "to_waypoint": "Kjeoya lt",
+      "distance_nm": 2.6
+    },
+    {
+      "from_waypoint": "Kjeoya lt",
+      "to_waypoint": "Marflesa lt",
+      "distance_nm": 2.03
+    },
+    {
+      "from_waypoint": "Marflesa lt",
+      "to_waypoint": "Krosskjera lt",
+      "distance_nm": 1.18
+    },
+    {
+      "from_waypoint": "Krosskjera lt",
+      "to_waypoint": "Galten lt",
+      "distance_nm": 0.88
+    },
+    {
+      "from_waypoint": "Galten lt",
+      "to_waypoint": "Storskjeret lt",
+      "distance_nm": 8.1
+    },
+    {
+      "from_waypoint": "Storskjeret lt",
+      "to_waypoint": "Langtaren",
+      "distance_nm": 2.01
+    },
+    {
+      "from_waypoint": "Langtaren",
+      "to_waypoint": "Trebaan",
+      "distance_nm": 1.93
+    },
+    {
+      "from_waypoint": "Trebaan",
+      "to_waypoint": "Nautflu lt",
+      "distance_nm": 4.34
+    },
+    {
+      "from_waypoint": "Nautflu lt",
+      "to_waypoint": "Treholmen lt",
+      "distance_nm": 2.4
+    },
+    {
+      "from_waypoint": "Treholmen lt",
+      "to_waypoint": "Kvaloya lt",
+      "distance_nm": 1.63
+    },
+    {
+      "from_waypoint": "Kvaloya lt",
+      "to_waypoint": "Torramuren bn",
+      "distance_nm": 1.63
+    },
+    {
+      "from_waypoint": "Torramuren bn",
+      "to_waypoint": "Hestvadfluene lt",
+      "distance_nm": 1.87
+    },
+    {
+      "from_waypoint": "Hestvadfluene lt",
+      "to_waypoint": "Valsholmflua lt",
+      "distance_nm": 1.68
+    },
+    {
+      "from_waypoint": "Valsholmflua lt",
+      "to_waypoint": "Vettabaen lt",
+      "distance_nm": 0.93
+    },
+    {
+      "from_waypoint": "Vettabaen lt",
+      "to_waypoint": "Bjugnskjaeret lt",
+      "distance_nm": 2.38
+    },
+    {
+      "from_waypoint": "Bjugnskjaeret lt",
+      "to_waypoint": "Kjeungskjaeret lt",
+      "distance_nm": 2.05
+    },
+    {
+      "from_waypoint": "Kjeungskjaeret lt",
+      "to_waypoint": "Ribeflua lt",
+      "distance_nm": 1.65
+    },
+    {
+      "from_waypoint": "Ribeflua lt",
+      "to_waypoint": "Haflua 5 m",
+      "distance_nm": 0.47
+    },
+    {
+      "from_waypoint": "Haflua 5 m",
+      "to_waypoint": "Raudsidegrunnen",
+      "distance_nm": 2.26
+    },
+    {
+      "from_waypoint": "Raudsidegrunnen",
+      "to_waypoint": "Tjuvholmen",
+      "distance_nm": 1.15
+    },
+    {
+      "from_waypoint": "Tjuvholmen",
+      "to_waypoint": "Nebbtaren",
+      "distance_nm": 0.57
+    },
+    {
+      "from_waypoint": "Nebbtaren",
+      "to_waypoint": "Smellingflua",
+      "distance_nm": 0.6
+    },
+    {
+      "from_waypoint": "Smellingflua",
+      "to_waypoint": "Roysaneset lt",
+      "distance_nm": 2.3
+    },
+    {
+      "from_waypoint": "Roysaneset lt",
+      "to_waypoint": "Hogholmen lt",
+      "distance_nm": 3.15
+    },
+    {
+      "from_waypoint": "Hogholmen lt",
+      "to_waypoint": "Kjerringa",
+      "distance_nm": 1.11
+    },
+    {
+      "from_waypoint": "Kjerringa",
+      "to_waypoint": "Ringflua lt",
+      "distance_nm": 0.99
+    },
+    {
+      "from_waypoint": "Ringflua lt",
+      "to_waypoint": "Hysneset lt",
+      "distance_nm": 1.57
+    },
+    {
+      "from_waypoint": "Hysneset lt",
+      "to_waypoint": "Storneset",
+      "distance_nm": 8.54
+    },
+    {
+      "from_waypoint": "Storneset",
+      "to_waypoint": "Rodbergneset",
+      "distance_nm": 2.22
+    },
+    {
+      "from_waypoint": "Rodbergneset",
+      "to_waypoint": "Flakkfjorden",
+      "distance_nm": 5.69
+    },
+    {
+      "from_waypoint": "Flakkfjorden",
+      "to_waypoint": "Digermulen",
+      "distance_nm": 3.11
+    },
+    {
+      "from_waypoint": "Digermulen",
+      "to_waypoint": "Nordneset",
+      "distance_nm": 1.21
+    },
+    {
+      "from_waypoint": "Nordneset",
+      "to_waypoint": "Trondheim",
+      "distance_nm": 0.55
+    }
+  ],
+  "total_distance_nm": 125.05,
+  "waypoint_count": 59,
+  "leg_count": 58,
+  "origin": "7",
+  "destination": "5M",
+  "parse_timestamp": "2026-01-20T15:17:44.274400",
+  "data_source": "rtz_file_parser",
+  "source_city": "trondheim",
+  "original_file": "NCA_7_5m_Trondheim_Grande_Rorvik_In_20250731.rtz",
+  "route_id": "c7f8a7cd"
+}

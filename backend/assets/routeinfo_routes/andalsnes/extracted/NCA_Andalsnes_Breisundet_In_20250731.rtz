@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<route xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="1.0" xmlns="https://cirm.org/rtz-xml-schemas">
+  <routeInfo routeName="NCA_Andalsnes_Breisundet_In_20250801" validityPeriodStart="2025-08-01T00:00:00" validityPeriodStop="2026-04-16T00:00:00" />
+  <waypoints>
+    <defaultWaypoint radius="0.3">
+      <leg starboardXTD="0.1" portsideXTD="0.1" safetyContour="20" safetyDepth="20" geometryType="Loxodrome" staticUKC="0" dynamicUKC="0" />
+    </defaultWaypoint>
+    <waypoint id="1" name="Breisunddjupet">
+      <position lat="62.51022878" lon="5.68239097" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="2" name="Breisundet">
+      <position lat="62.44828561" lon="5.91428191" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="3" name="Hogsteinen lt">
+      <position lat="62.44651783" lon="6.03079354" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="4" name="Hogsteinen lt">
+      <position lat="62.45349269" lon="6.04813121" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="5" name="Erknaflu">
+      <position lat="62.47086266" lon="6.059799" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="6" name="Valderhaug">
+      <position lat="62.49078869" lon="6.14069915" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="7" name="Valderhaug">
+      <position lat="62.49710248" lon="6.1469222" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="8" name="Oksebasen">
+      <position lat="62.50956621" lon="6.14242229" />
+      <leg starboardXTD="0.07" portsideXTD="0.07" legInfo="" />
+    </waypoint>
+    <waypoint id="9" name="Hanen lt">
+      <position lat="62.55427375" lon="6.17472564" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="10" name="Lepsoyrevet">
+      <position lat="62.56709746" lon="6.19655906" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="11" name="Lepsoyrevet">
+      <position lat="62.58125845" lon="6.23023899" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="12" name="Lepsoyrevet">
+      <position lat="62.5943579" lon="6.26137262" />
+      <leg starboardXTD="0.02" portsideXTD="0.02" legInfo="" />
+    </waypoint>
+    <waypoint id="13" name="Haugflua lt">
+      <position lat="62.61778333" lon="6.31611667" />
+      <leg starboardXTD="0.02" portsideXTD="0.02" legInfo="" />
+    </waypoint>
+    <waypoint id="14" name="Dronenholmen lt">
+      <position lat="62.62926667" lon="6.52065" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="15" name="Tautra - precautionary area">
+      <position lat="62.67509959" lon="6.83744422" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="16" name="Tautraflua 16 m">
+      <position lat="62.69444697" lon="6.93478934" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="17" name="Helgestones lt">
+      <position lat="62.61330339" lon="7.36873393" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="18" name="Norvikhalsen">
+      <position lat="62.57739679" lon="7.42528334" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="19" name="Vindsneset">
+      <position lat="62.56080614" lon="7.4685783" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="20" name="Hovdenes lt">
+      <position lat="62.54695214" lon="7.54570219" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="21" name="Andalsnes">
+      <position lat="62.56200121" lon="7.63443169" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="22" name="Andalsnes">
+      <position lat="62.57266667" lon="7.6842" />
+      <leg legInfo="" />
+    </waypoint>
+  </waypoints>
+  <extensions>
+    <extension manufacturer="Norwegian Coastal Administration" fullName="Andalsnes - Breisundet Inbound" productinfo="See information on http://www.routeinfo.no before use of this Reference Route for Navigation. The Reference Routes from NCA can be used as a basis in route planning. For routes with no comments on vessel size, 150 meter length and 9 meter draught has been used to quality assure the routes. Limitations in size of vessel may vary along the route caused by regulation or depths." routeNumber="NO-510017" xmlns="" />
+  </extensions>
+</route>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<route xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="1.0" xmlns="https://cirm.org/rtz-xml-schemas">
+  <routeInfo routeName="NCA_AlesundN_Breisundet_In_20250801" validityPeriodStart="2025-08-01T00:00:00" validityPeriodStop="2026-04-16T00:00:00" />
+  <waypoints>
+    <defaultWaypoint radius="0.3">
+      <leg starboardXTD="0.1" portsideXTD="0.1" safetyContour="20" safetyDepth="20" geometryType="Loxodrome" staticUKC="0" dynamicUKC="0" />
+    </defaultWaypoint>
+    <waypoint id="1" name="Breisunddjupet">
+      <position lat="62.51022878" lon="5.68239097" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="2" name="Breisundet">
+      <position lat="62.44828561" lon="5.91428191" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="3" name="Hogsteinen lt">
+      <position lat="62.44651783" lon="6.03079354" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="4" name="Hogsteinen lt">
+      <position lat="62.45349269" lon="6.04813121" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="5" name="Erknaflu">
+      <position lat="62.47086266" lon="6.059799" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="6" name="Olsskjer lt">
+      <position lat="62.48476092" lon="6.13991275" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="7" name="Ellingsoyfjorden">
+      <position lat="62.48572" lon="6.18174294" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="8" name="Brattholmen lt">
+      <position lat="62.48837813" lon="6.21202408" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="9" name="Vardeflua">
+      <position lat="62.4843874" lon="6.25473911" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="10" name="Svinoysundet">
+      <position lat="62.47307589" lon="6.27187611" />
+      <leg starboardXTD="0.06" portsideXTD="0.06" legInfo="" />
+    </waypoint>
+    <waypoint id="11" name="Kalvoysundet">
+      <position lat="62.47641737" lon="6.28719523" />
+      <leg starboardXTD="0.06" portsideXTD="0.06" legInfo="" />
+    </waypoint>
+    <waypoint id="12" name="Hestholmen">
+      <position lat="62.47984662" lon="6.34553374" />
+      <leg starboardXTD="0.08" portsideXTD="0.08" legInfo="" />
+    </waypoint>
+    <waypoint id="13" name="Langoya">
+      <position lat="62.48675692" lon="6.36837106" />
+      <leg legInfo="" />
+    </waypoint>
+    <waypoint id="14" name="Alvika">
+      <position lat="62.48812652" lon="6.38531788" />
+      <leg legInfo="" />
+    </waypoint>
+  </waypoints>
+  <extensions>
+    <extension manufacturer="Norwegian Coastal Administration" fullName="Alesund North - Breisundet Inbound" productinfo="See information on http://www.routeinfo.no before use of this Reference Route for Navigation. The Reference Routes from NCA can be used as a basis in route planning. For routes with no comments on vessel size, 150 meter length and 9 meter draught has been used to quality assure the routes. Limitations in size of vessel may vary along the route caused by regulation or depths." routeNumber="NO-510014" xmlns="" />
+  </extensions>
+</route>

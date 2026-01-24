@@ -1,0 +1,167 @@
+{
+  "route_name": "NCA_Drammen_In_20250801",
+  "file_path": "/home/framg/dev/bergnavn/backend/assets/routeinfo_routes/drammen/raw/extracted/NCA_Drammen_In_20250731.rtz",
+  "waypoints": [
+    {
+      "name": "Hollenderbaen - change to channel 19 - Horten VTS",
+      "lat": 59.16198333,
+      "lon": 10.65851142,
+      "radius": 0.1
+    },
+    {
+      "name": "Gullholmen",
+      "lat": 59.43414435,
+      "lon": 10.56165578,
+      "radius": 0.1
+    },
+    {
+      "name": "Molen",
+      "lat": 59.4729177,
+      "lon": 10.49530413,
+      "radius": 0.1
+    },
+    {
+      "name": "Rodtangen",
+      "lat": 59.52711957,
+      "lon": 10.40955338,
+      "radius": 0.1
+    },
+    {
+      "name": "Holtnesodden",
+      "lat": 59.54047058,
+      "lon": 10.40587543,
+      "radius": 0.1
+    },
+    {
+      "name": "Kroksberget",
+      "lat": 59.56051055,
+      "lon": 10.40997177,
+      "radius": 0.1
+    },
+    {
+      "name": "Bjorneskjaer",
+      "lat": 59.5905166,
+      "lon": 10.42927185,
+      "radius": 0.1
+    },
+    {
+      "name": "Svelvikrennen NV and NE lt",
+      "lat": 59.60445093,
+      "lon": 10.41593632,
+      "radius": 0.1
+    },
+    {
+      "name": "Batterioyen",
+      "lat": 59.60882855,
+      "lon": 10.41150105,
+      "radius": 0.1
+    },
+    {
+      "name": "Verksoya",
+      "lat": 59.61191622,
+      "lon": 10.4107735,
+      "radius": 0.1
+    },
+    {
+      "name": "Ryggen",
+      "lat": 59.61674295,
+      "lon": 10.41203703,
+      "radius": 0.1
+    },
+    {
+      "name": "Blindeskjaer",
+      "lat": 59.62544505,
+      "lon": 10.42009608,
+      "radius": 0.1
+    },
+    {
+      "name": "Steinsbraten",
+      "lat": 59.68305482,
+      "lon": 10.38712103,
+      "radius": 0.1
+    },
+    {
+      "name": "Drammen",
+      "lat": 59.72725012,
+      "lon": 10.2725091,
+      "radius": 0.1
+    }
+  ],
+  "legs": [
+    {
+      "from_waypoint": "Hollenderbaen - change to channel 19 - Horten VTS",
+      "to_waypoint": "Gullholmen",
+      "distance_nm": 16.61
+    },
+    {
+      "from_waypoint": "Gullholmen",
+      "to_waypoint": "Molen",
+      "distance_nm": 3.09
+    },
+    {
+      "from_waypoint": "Molen",
+      "to_waypoint": "Rodtangen",
+      "distance_nm": 4.17
+    },
+    {
+      "from_waypoint": "Rodtangen",
+      "to_waypoint": "Holtnesodden",
+      "distance_nm": 0.81
+    },
+    {
+      "from_waypoint": "Holtnesodden",
+      "to_waypoint": "Kroksberget",
+      "distance_nm": 1.21
+    },
+    {
+      "from_waypoint": "Kroksberget",
+      "to_waypoint": "Bjorneskjaer",
+      "distance_nm": 1.89
+    },
+    {
+      "from_waypoint": "Bjorneskjaer",
+      "to_waypoint": "Svelvikrennen NV and NE lt",
+      "distance_nm": 0.93
+    },
+    {
+      "from_waypoint": "Svelvikrennen NV and NE lt",
+      "to_waypoint": "Batterioyen",
+      "distance_nm": 0.3
+    },
+    {
+      "from_waypoint": "Batterioyen",
+      "to_waypoint": "Verksoya",
+      "distance_nm": 0.19
+    },
+    {
+      "from_waypoint": "Verksoya",
+      "to_waypoint": "Ryggen",
+      "distance_nm": 0.29
+    },
+    {
+      "from_waypoint": "Ryggen",
+      "to_waypoint": "Blindeskjaer",
+      "distance_nm": 0.58
+    },
+    {
+      "from_waypoint": "Blindeskjaer",
+      "to_waypoint": "Steinsbraten",
+      "distance_nm": 3.6
+    },
+    {
+      "from_waypoint": "Steinsbraten",
+      "to_waypoint": "Drammen",
+      "distance_nm": 4.37
+    }
+  ],
+  "total_distance_nm": 38.03,
+  "waypoint_count": 14,
+  "leg_count": 13,
+  "origin": "Drammen",
+  "destination": "In",
+  "parse_timestamp": "2026-01-20T15:17:44.258631",
+  "data_source": "rtz_file_parser",
+  "source_city": "drammen",
+  "original_file": "NCA_Drammen_In_20250731.rtz",
+  "route_id": "c5dbf2b7"
+}

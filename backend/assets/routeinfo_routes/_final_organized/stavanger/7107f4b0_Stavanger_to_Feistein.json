@@ -1,0 +1,123 @@
+{
+  "route_name": "NCA_Stavanger_Feistein_In_20250801",
+  "file_path": "/home/framg/dev/bergnavn/backend/assets/routeinfo_routes/stavanger/raw/extracted/NCA_Stavanger_Feistein_In_20250731.rtz",
+  "waypoints": [
+    {
+      "name": "Skotemedgrunnen",
+      "lat": 58.79532251,
+      "lon": 5.39650141,
+      "radius": 0.1
+    },
+    {
+      "name": "Feistein pilot boarding",
+      "lat": 58.85413962,
+      "lon": 5.51533482,
+      "radius": 0.1
+    },
+    {
+      "name": "Midtfjaera",
+      "lat": 58.92975588,
+      "lon": 5.55001726,
+      "radius": 0.1
+    },
+    {
+      "name": "Dalhaugflua",
+      "lat": 58.98092821,
+      "lon": 5.55315073,
+      "radius": 0.1
+    },
+    {
+      "name": "Boskjenane",
+      "lat": 59.00735737,
+      "lon": 5.54951155,
+      "radius": 0.1
+    },
+    {
+      "name": "Bragen lt",
+      "lat": 59.04250287,
+      "lon": 5.55235971,
+      "radius": 0.1
+    },
+    {
+      "name": "Bragen lt",
+      "lat": 59.04788543,
+      "lon": 5.56516194,
+      "radius": 0.1
+    },
+    {
+      "name": "Mekjarvik",
+      "lat": 59.02928999,
+      "lon": 5.62065085,
+      "radius": 0.1
+    },
+    {
+      "name": "Dusaviga",
+      "lat": 59.00260332,
+      "lon": 5.68410413,
+      "radius": 0.1
+    },
+    {
+      "name": "Stavanger",
+      "lat": 58.97757596,
+      "lon": 5.72596554,
+      "radius": 0.1
+    }
+  ],
+  "legs": [
+    {
+      "from_waypoint": "Skotemedgrunnen",
+      "to_waypoint": "Feistein pilot boarding",
+      "distance_nm": 5.11
+    },
+    {
+      "from_waypoint": "Feistein pilot boarding",
+      "to_waypoint": "Midtfjaera",
+      "distance_nm": 4.67
+    },
+    {
+      "from_waypoint": "Midtfjaera",
+      "to_waypoint": "Dalhaugflua",
+      "distance_nm": 3.07
+    },
+    {
+      "from_waypoint": "Dalhaugflua",
+      "to_waypoint": "Boskjenane",
+      "distance_nm": 1.59
+    },
+    {
+      "from_waypoint": "Boskjenane",
+      "to_waypoint": "Bragen lt",
+      "distance_nm": 2.11
+    },
+    {
+      "from_waypoint": "Bragen lt",
+      "to_waypoint": "Bragen lt",
+      "distance_nm": 0.51
+    },
+    {
+      "from_waypoint": "Bragen lt",
+      "to_waypoint": "Mekjarvik",
+      "distance_nm": 2.05
+    },
+    {
+      "from_waypoint": "Mekjarvik",
+      "to_waypoint": "Dusaviga",
+      "distance_nm": 2.53
+    },
+    {
+      "from_waypoint": "Dusaviga",
+      "to_waypoint": "Stavanger",
+      "distance_nm": 1.98
+    }
+  ],
+  "total_distance_nm": 23.62,
+  "waypoint_count": 10,
+  "leg_count": 9,
+  "origin": "Stavanger",
+  "destination": "Feistein",
+  "parse_timestamp": "2026-01-20T15:17:44.270430",
+  "data_source": "rtz_file_parser",
+  "source_city": "stavanger",
+  "original_file": "NCA_Stavanger_Feistein_In_20250731.rtz",
+  "route_id": "7107f4b0"
+}

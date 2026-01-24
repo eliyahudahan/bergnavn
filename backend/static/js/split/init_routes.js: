@@ -1,0 +1,48 @@
+// backend/static/js/split/init_routes.js
+// Simple script to load your existing RTZ routes
+
+function loadRTZRoutesOnDashboard() {
+    console.log('🚢 Loading RTZ routes for dashboard...');
+    
+    // Check if we have route data in the HTML
+    const routesDataElement = document.getElementById('routes-data');
+    if (routesDataElement) {
+        try {
+            const routes = JSON.parse(routesDataElement.textContent);
+            if (window.rtzManager && routes.length > 0) {
+                window.rtzManager.init(routes);
+                console.log(`✅ Loaded ${routes.length} routes from HTML`);
+                return;
+            }
+        } catch (e) {
+            console.warn('Could not parse routes from HTML:', e);
+        }
+    }
+    
+    // Fallback: Load from API
+    fetch('/maritime/api/rtz/routes')
+        .then(response => response.json())
+        .then(data => {
+            if (data.routes && data.routes.length > 0) {
+                // Use whichever manager is available
+                if (window.rtzManager && window.rtzManager.init) {
+                    window.rtzManager.init(data.routes);
+                } else if (window.loadRTZRoutesFixed) {
+                    window.loadRTZRoutesFixed();
+                } else if (window.initRTZRoutes && window.map) {
+                    window.initRTZRoutes(window.map);
+                }
+                
+                console.log(`✅ Loaded ${data.routes.length} RTZ routes from API`);
+            }
+        })
+        .catch(error => {
+            console.error('Failed to load RTZ routes:', error);
+        });
+}
+
+// Start when dashboard loads
+document.addEventListener('DOMContentLoaded', function() {
+    // Wait for map
+    setTimeout(loadRTZRoutesOnDashboard, 1500);
+});

@@ -1,0 +1,3650 @@
+{
+  "metadata": {
+    "total_routes": 36,
+    "total_cities": 10,
+    "total_waypoints": 1037,
+    "average_waypoints_per_route": 28.8,
+    "generated_date": "2026-01-20T15:17:44.319624",
+    "data_source": "Norwegian Coastal Administration (routeinfo.no)",
+    "coordinate_system": "WGS84",
+    "coordinate_precision": "6 decimal places",
+    "verified": true
+  },
+  "cities": {
+    "alesund": {
+      "route_count": 12,
+      "waypoint_count": 354,
+      "sample_routes": [
+        {
+          "route_id": "731924de",
+          "route_name": "NCA_AlesundN_Breisundet_In_20250801",
+          "origin": "Alesundn",
+          "destination": "Breisundet",
+          "waypoint_count": 14
+        },
+        {
+          "route_id": "1d77cbd1",
+          "route_name": "NCA_7_5m_AlesundN_Stad_Aramsd_In_20250801",
+          "origin": "7",
+          "destination": "5M",
+          "waypoint_count": 28
+        },
+        {
+          "route_id": "5f96a24c",
+          "route_name": "NCA_7_5m_AlesundN_Halten_In_20250801",
+          "origin": "7",
+          "destination": "5M",
+          "waypoint_count": 40
+        }
+      ]
+    },
+    "andalsnes": {
+      "route_count": 3,
+      "waypoint_count": 98,
+      "sample_routes": [
+        {
+          "route_id": "7d7a7d54",
+          "route_name": "NCA_7_5m_Andalsnes_Halten_In_20250801",
+          "origin": "7",
+          "destination": "5M",
+          "waypoint_count": 38
+        },
+        {
+          "route_id": "71e30254",
+          "route_name": "NCA_Andalsnes_Breisundet_In_20250801",
+          "origin": "\u00c5ndalsnes",
+          "destination": "Breisundet",
+          "waypoint_count": 22
+        },
+        {
+          "route_id": "0196a05f",
+          "route_name": "NCA_9m_Andalsnes_Halten_In_20250801",
+          "origin": "9M",
+          "destination": "\u00c5ndalsnes",
+          "waypoint_count": 38
+        }
+      ]
+    },
+    "bergen": {
+      "route_count": 8,
+      "waypoint_count": 384,
+      "sample_routes": [
+        {
+          "route_id": "37f0feb1",
+          "route_name": "NCA_Bergen_Fedjeosen_In_20250801",
+          "origin": "Bergen",
+          "destination": "Fedje",
+          "waypoint_count": 18
+        },
+        {
+          "route_id": "caa4fd73",
+          "route_name": "NCA_Bergeneset_Lodingen_Out_20250801",
+          "origin": "Bergeneset",
+          "destination": "Lodingen",
+          "waypoint_count": 57
+        },
+        {
+          "route_id": "380952ba",
+          "route_name": "NCA_Bergen_Marstein_Kobbaleia_In_20250801",
+          "origin": "Bergen",
+          "destination": "Marstein",
+          "waypoint_count": 17
+        }
+      ]
+    },
+    "drammen": {
+      "route_count": 1,
+      "waypoint_count": 14,
+      "sample_routes": [
+        {
+          "route_id": "c5dbf2b7",
+          "route_name": "NCA_Drammen_In_20250801",
+          "origin": "Drammen",
+          "destination": "In",
+          "waypoint_count": 14
+        }
+      ]
+    },
+    "flekkefjord": {
+      "route_count": 1,
+      "waypoint_count": 12,
+      "sample_routes": [
+        {
+          "route_id": "98c6f5bf",
+          "route_name": "NCA_Flekkefjord_In_20250801",
+          "origin": "Flekkefjord",
+          "destination": "In",
+          "waypoint_count": 12
+        }
+      ]
+    },
+    "kristiansand": {
+      "route_count": 2,
+      "waypoint_count": 12,
+      "sample_routes": [
+        {
+          "route_id": "0cdf84f6",
+          "route_name": "NCA_KristiansandW_Oksoy_In_20250801",
+          "origin": "Kristiansandw",
+          "destination": "Oks\u00f8y",
+          "waypoint_count": 5
+        },
+        {
+          "route_id": "4c2410a4",
+          "route_name": "NCA_KristiansandE_Oksoy_In_20250801",
+          "origin": "Kristiansande",
+          "destination": "Oks\u00f8y",
+          "waypoint_count": 7
+        }
+      ]
+    },
+    "oslo": {
+      "route_count": 2,
+      "waypoint_count": 35,
+      "sample_routes": [
+        {
+          "route_id": "36773a7f",
+          "route_name": "NCA_OsloWest_In_20250801",
+          "origin": "Oslowest",
+          "destination": "In",
+          "waypoint_count": 17
+        },
+        {
+          "route_id": "6a9b8351",
+          "route_name": "NCA_OsloEast_In_20250801",
+          "origin": "Osloeast",
+          "destination": "In",
+          "waypoint_count": 18
+        }
+      ]
+    },
+    "sandefjord": {
+      "route_count": 2,
+      "waypoint_count": 12,
+      "sample_routes": [
+        {
+          "route_id": "99627acb",
+          "route_name": "NCA_Sandefj_Sydostgr_In_20250801",
+          "origin": "Sandefjord",
+          "destination": "Sydostgrunnen",
+          "waypoint_count": 6
+        },
+        {
+          "route_id": "0aaf846c",
+          "route_name": "NCA_Sandefj_Bonden_In_20250801",
+          "origin": "Sandefjord",
+          "destination": "Bonden",
+          "waypoint_count": 6
+        }
+      ]
+    },
+    "stavanger": {
+      "route_count": 2,
+      "waypoint_count": 17,
+      "sample_routes": [
+        {
+          "route_id": "9b62a349",
+          "route_name": "NCA_Stavanger_Skudefjorden_In_20250801",
+          "origin": "Stavanger",
+          "destination": "Skudefjorden",
+          "waypoint_count": 7
+        },
+        {
+          "route_id": "7107f4b0",
+          "route_name": "NCA_Stavanger_Feistein_In_20250801",
+          "origin": "Stavanger",
+          "destination": "Feistein",
+          "waypoint_count": 10
+        }
+      ]
+    },
+    "trondheim": {
+      "route_count": 3,
+      "waypoint_count": 99,
+      "sample_routes": [
+        {
+          "route_id": "27efe1d7",
+          "route_name": "NCA_Trondheim_Halten_In_20250801",
+          "origin": "Trondheim",
+          "destination": "Haltenbanken",
+          "waypoint_count": 17
+        },
+        {
+          "route_id": "c7f8a7cd",
+          "route_name": "NCA_7_5m_Trondheim_Grande_Rorvik_In_20250801",
+          "origin": "7",
+          "destination": "5M",
+          "waypoint_count": 59
+        },
+        {
+          "route_id": "cf1bcfac",
+          "route_name": "NCA_Trondheim_Grip_In_20250801",
+          "origin": "Trondheim",
+          "destination": "Grip",
+          "waypoint_count": 23
+        }
+      ]
+    }
+  },
+  "routes_sample": [
+    {
+      "route_name": "NCA_AlesundN_Breisundet_In_20250801",
+      "file_path": "/home/framg/dev/bergnavn/backend/assets/routeinfo_routes/alesund/raw/extracted/NCA_AlesundN_Breisundet_In_20250731.rtz",
+      "waypoints": [
+        {
+          "name": "Breisunddjupet",
+          "lat": 62.51022878,
+          "lon": 5.68239097,
+          "radius": 0.1
+        },
+        {
+          "name": "Breisundet",
+          "lat": 62.44828561,
+          "lon": 5.91428191,
+          "radius": 0.1
+        },
+        {
+          "name": "Hogsteinen lt",
+          "lat": 62.44651783,
+          "lon": 6.03079354,
+          "radius": 0.1
+        },
+        {
+          "name": "Hogsteinen lt",
+          "lat": 62.45349269,
+          "lon": 6.04813121,
+          "radius": 0.1
+        },
+        {
+          "name": "Erknaflu",
+          "lat": 62.47086266,
+          "lon": 6.059799,
+          "radius": 0.1
+        },
+        {
+          "name": "Olsskjer lt",
+          "lat": 62.48476092,
+          "lon": 6.13991275,
+          "radius": 0.1
+        },
+        {
+          "name": "Ellingsoyfjorden",
+          "lat": 62.48572,
+          "lon": 6.18174294,
+          "radius": 0.1
+        },
+        {
+          "name": "Brattholmen lt",
+          "lat": 62.48837813,
+          "lon": 6.21202408,
+          "radius": 0.1
+        },
+        {
+          "name": "Vardeflua",
+          "lat": 62.4843874,
+          "lon": 6.25473911,
+          "radius": 0.1
+        },
+        {
+          "name": "Svinoysundet",
+          "lat": 62.47307589,
+          "lon": 6.27187611,
+          "radius": 0.1
+        },
+        {
+          "name": "Kalvoysundet",
+          "lat": 62.47641737,
+          "lon": 6.28719523,
+          "radius": 0.1
+        },
+        {
+          "name": "Hestholmen",
+          "lat": 62.47984662,
+          "lon": 6.34553374,
+          "radius": 0.1
+        },
+        {
+          "name": "Langoya",
+          "lat": 62.48675692,
+          "lon": 6.36837106,
+          "radius": 0.1
+        },
+        {
+          "name": "Alvika",
+          "lat": 62.48812652,
+          "lon": 6.38531788,
+          "radius": 0.1
+        }
+      ],
+      "legs": [
+        {
+          "from_waypoint": "Breisunddjupet",
+          "to_waypoint": "Breisundet",
+          "distance_nm": 7.43
+        },
+        {
+          "from_waypoint": "Breisundet",
+          "to_waypoint": "Hogsteinen lt",
+          "distance_nm": 3.24
+        },
+        {
+          "from_waypoint": "Hogsteinen lt",
+          "to_waypoint": "Hogsteinen lt",
+          "distance_nm": 0.64
+        },
+        {
+          "from_waypoint": "Hogsteinen lt",
+          "to_waypoint": "Erknaflu",
+          "distance_nm": 1.09
+        },
+        {
+          "from_waypoint": "Erknaflu",
+          "to_waypoint": "Olsskjer lt",
+          "distance_nm": 2.37
+        },
+        {
+          "from_waypoint": "Olsskjer lt",
+          "to_waypoint": "Ellingsoyfjorden",
+          "distance_nm": 1.16
+        },
+        {
+          "from_waypoint": "Ellingsoyfjorden",
+          "to_waypoint": "Brattholmen lt",
+          "distance_nm": 0.85
+        },
+        {
+          "from_waypoint": "Brattholmen lt",
+          "to_waypoint": "Vardeflua",
+          "distance_nm": 1.21
+        },
+        {
+          "from_waypoint": "Vardeflua",
+          "to_waypoint": "Svinoysundet",
+          "distance_nm": 0.83
+        },
+        {
+          "from_waypoint": "Svinoysundet",
+          "to_waypoint": "Kalvoysundet",
+          "distance_nm": 0.47
+        },
+        {
+          "from_waypoint": "Kalvoysundet",
+          "to_waypoint": "Hestholmen",
+          "distance_nm": 1.63
+        },
+        {
+          "from_waypoint": "Hestholmen",
+          "to_waypoint": "Langoya",
+          "distance_nm": 0.76
+        },
+        {
+          "from_waypoint": "Langoya",
+          "to_waypoint": "Alvika",
+          "distance_nm": 0.48
+        }
+      ],
+      "total_distance_nm": 22.16,
+      "waypoint_count": 14,
+      "leg_count": 13,
+      "origin": "Alesundn",
+      "destination": "Breisundet",
+      "parse_timestamp": "2026-01-20T15:17:44.227143",
+      "data_source": "rtz_file_parser",
+      "source_city": "alesund",
+      "original_file": "NCA_AlesundN_Breisundet_In_20250731.rtz",
+      "route_id": "731924de"
+    },
+    {
+      "route_name": "NCA_7_5m_AlesundN_Stad_Aramsd_In_20250801",
+      "file_path": "/home/framg/dev/bergnavn/backend/assets/routeinfo_routes/alesund/raw/extracted/NCA_7_5m_AlesundN_Stad_Aramsd_In_20250731.rtz",
+      "waypoints": [
+        {
+          "name": "Stalet",
+          "lat": 62.23332712,
+          "lon": 5.17768582,
+          "radius": 0.1
+        },
+        {
+          "name": "Stalet",
+          "lat": 62.23160884,
+          "lon": 5.20743921,
+          "radius": 0.1
+        },
+        {
+          "name": "Kviteneset",
+          "lat": 62.22520843,
+          "lon": 5.23919503,
+          "radius": 0.1
+        },
+        {
+          "name": "Rivjehornet",
+          "lat": 62.17560483,
+          "lon": 5.33877331,
+          "radius": 0.1
+        },
+        {
+          "name": "Haugsholmen lt",
+          "lat": 62.17124662,
+          "lon": 5.35861314,
+          "radius": 0.1
+        },
+        {
+          "name": "Storesundet",
+          "lat": 62.17479533,
+          "lon": 5.38267179,
+          "radius": 0.1
+        },
+        {
+          "name": "Haugsfjorden",
+          "lat": 62.19053509,
+          "lon": 5.42253173,
+          "radius": 0.1
+        },
+        {
+          "name": "Aramsundet west",
+          "lat": 62.20397196,
+          "lon": 5.47473529,
+          "radius": 0.1
+        },
+        {
+          "name": "Aramsundet ",
+          "lat": 62.20479688,
+          "lon": 5.48381396,
+          "radius": 0.1
+        },
+        {
+          "name": "Aramsundet east 11 m",
+          "lat": 62.20389208,
+          "lon": 5.49494321,
+          "radius": 0.1
+        },
+        {
+          "name": "Saudeholmen",
+          "lat": 62.17750163,
+          "lon": 5.60430637,
+          "radius": 0.1
+        },
+        {
+          "name": "Laupsneset",
+          "lat": 62.19778971,
+          "lon": 5.76758988,
+          "radius": 0.1
+        },
+        {
+          "name": "Yksnoy lt",
+          "lat": 62.21844681,
+          "lon": 5.897255,
+          "radius": 0.1
+        },
+        {
+          "name": "Flavikneset",
+          "lat": 62.27333538,
+          "lon": 5.97472596,
+          "radius": 0.1
+        },
+        {
+          "name": "Hjorungenneset",
+          "lat": 62.34392246,
+          "lon": 6.13514886,
+          "radius": 0.1
+        },
+        {
+          "name": "Hjorungenneset",
+          "lat": 62.3569972,
+          "lon": 6.13693772,
+          "radius": 0.1
+        },
+        {
+          "name": "Eltraneset",
+          "lat": 62.42387181,
+          "lon": 6.0367014,
+          "radius": 0.1
+        },
+        {
+          "name": "Eltraneset lt",
+          "lat": 62.43673783,
+          "lon": 6.03681349,
+          "radius": 0.1
+        },
+        {
+          "name": "Erknaflu",
+          "lat": 62.47086266,
+          "lon": 6.059799,
+          "radius": 0.1
+        },
+        {
+          "name": "Olsskjer lt",
+          "lat": 62.48476092,
+          "lon": 6.13991275,
+          "radius": 0.1
+        },
+        {
+          "name": "Ellingsoyfjorden",
+          "lat": 62.48572,
+          "lon": 6.18174294,
+          "radius": 0.1
+        },
+        {
+          "name": "Brattholmen lt",
+          "lat": 62.48837813,
+          "lon": 6.21202408,
+          "radius": 0.1
+        },
+        {
+          "name": "Vardeflua",
+          "lat": 62.4843874,
+          "lon": 6.25473911,
+          "radius": 0.1
+        },
+        {
+          "name": "Svinoysundet",
+          "lat": 62.47307589,
+          "lon": 6.27187611,
+          "radius": 0.1
+        },
+        {
+          "name": "Kalvoysundet",
+          "lat": 62.47641737,
+          "lon": 6.28719523,
+          "radius": 0.1
+        },
+        {
+          "name": "Hestholmen",
+          "lat": 62.47984662,
+          "lon": 6.34553374,
+          "radius": 0.1
+        },
+        {
+          "name": "Langoya",
+          "lat": 62.48675692,
+          "lon": 6.36837106,
+          "radius": 0.1
+        },
+        {
+          "name": "Alvika",
+          "lat": 62.48812652,
+          "lon": 6.38531788,
+          "radius": 0.1
+        }
+      ],
+      "legs": [
+        {
+          "from_waypoint": "Stalet",
+          "to_waypoint": "Stalet",
+          "distance_nm": 0.84
+        },
+        {
+          "from_waypoint": "Stalet",
+          "to_waypoint": "Kviteneset",
+          "distance_nm": 0.97
+        },
+        {
+          "from_waypoint": "Kviteneset",
+          "to_waypoint": "Rivjehornet",
+          "distance_nm": 4.08
+        },
+        {
+          "from_waypoint": "Rivjehornet",
+          "to_waypoint": "Haugsholmen lt",
+          "distance_nm": 0.61
+        },
+        {
+          "from_waypoint": "Haugsholmen lt",
+          "to_waypoint": "Storesundet",
+          "distance_nm": 0.71
+        },
+        {
+          "from_waypoint": "Storesundet",
+          "to_waypoint": "Haugsfjorden",
+          "distance_nm": 1.46
+        },
+        {
+          "from_waypoint": "Haugsfjorden",
+          "to_waypoint": "Aramsundet west",
+          "distance_nm": 1.67
+        },
+        {
+          "from_waypoint": "Aramsundet west",
+          "to_waypoint": "Aramsundet ",
+          "distance_nm": 0.26
+        },
+        {
+          "from_waypoint": "Aramsundet ",
+          "to_waypoint": "Aramsundet east 11 m",
+          "distance_nm": 0.32
+        },
+        {
+          "from_waypoint": "Aramsundet east 11 m",
+          "to_waypoint": "Saudeholmen",
+          "distance_nm": 3.45
+        },
+        {
+          "from_waypoint": "Saudeholmen",
+          "to_waypoint": "Laupsneset",
+          "distance_nm": 4.73
+        },
+        {
+          "from_waypoint": "Laupsneset",
+          "to_waypoint": "Yksnoy lt",
+          "distance_nm": 3.84
+        },
+        {
+          "from_waypoint": "Yksnoy lt",
+          "to_waypoint": "Flavikneset",
+          "distance_nm": 3.94
+        },
+        {
+          "from_waypoint": "Flavikneset",
+          "to_waypoint": "Hjorungenneset",
+          "distance_nm": 6.16
+        },
+        {
+          "from_waypoint": "Hjorungenneset",
+          "to_waypoint": "Hjorungenneset",
+          "distance_nm": 0.79
+        },
+        {
+          "from_waypoint": "Hjorungenneset",
+          "to_waypoint": "Eltraneset",
+          "distance_nm": 4.89
+        },
+        {
+          "from_waypoint": "Eltraneset",
+          "to_waypoint": "Eltraneset lt",
+          "distance_nm": 0.77
+        },
+        {
+          "from_waypoint": "Eltraneset lt",
+          "to_waypoint": "Erknaflu",
+          "distance_nm": 2.15
+        },
+        {
+          "from_waypoint": "Erknaflu",
+          "to_waypoint": "Olsskjer lt",
+          "distance_nm": 2.37
+        },
+        {
+          "from_waypoint": "Olsskjer lt",
+          "to_waypoint": "Ellingsoyfjorden",
+          "distance_nm": 1.16
+        },
+        {
+          "from_waypoint": "Ellingsoyfjorden",
+          "to_waypoint": "Brattholmen lt",
+          "distance_nm": 0.85
+        },
+        {
+          "from_waypoint": "Brattholmen lt",
+          "to_waypoint": "Vardeflua",
+          "distance_nm": 1.21
+        },
+        {
+          "from_waypoint": "Vardeflua",
+          "to_waypoint": "Svinoysundet",
+          "distance_nm": 0.83
+        },
+        {
+          "from_waypoint": "Svinoysundet",
+          "to_waypoint": "Kalvoysundet",
+          "distance_nm": 0.47
+        },
+        {
+          "from_waypoint": "Kalvoysundet",
+          "to_waypoint": "Hestholmen",
+          "distance_nm": 1.63
+        },
+        {
+          "from_waypoint": "Hestholmen",
+          "to_waypoint": "Langoya",
+          "distance_nm": 0.76
+        },
+        {
+          "from_waypoint": "Langoya",
+          "to_waypoint": "Alvika",
+          "distance_nm": 0.48
+        }
+      ],
+      "total_distance_nm": 51.4,
+      "waypoint_count": 28,
+      "leg_count": 27,
+      "origin": "7",
+      "destination": "5M",
+      "parse_timestamp": "2026-01-20T15:17:44.228474",
+      "data_source": "rtz_file_parser",
+      "source_city": "alesund",
+      "original_file": "NCA_7_5m_AlesundN_Stad_Aramsd_In_20250731.rtz",
+      "route_id": "1d77cbd1"
+    },
+    {
+      "route_name": "NCA_7_5m_AlesundN_Halten_In_20250801",
+      "file_path": "/home/framg/dev/bergnavn/backend/assets/routeinfo_routes/alesund/raw/extracted/NCA_7_5m_AlesundN_Halten_In_20250731.rtz",
+      "waypoints": [
+        {
+          "name": "Frohavet",
+          "lat": 64.25626858,
+          "lon": 9.75179652,
+          "radius": 0.1
+        },
+        {
+          "name": "Tarva lt",
+          "lat": 63.82722217,
+          "lon": 9.26903527,
+          "radius": 0.1
+        },
+        {
+          "name": "Svissaflua 16 m",
+          "lat": 63.7006193,
+          "lon": 9.24036868,
+          "radius": 0.1
+        },
+        {
+          "name": "Flesa pilot boarding",
+          "lat": 63.65054591,
+          "lon": 9.24847105,
+          "radius": 0.1
+        },
+        {
+          "name": "Sliskjeara",
+          "lat": 63.59572094,
+          "lon": 9.26176026,
+          "radius": 0.1
+        },
+        {
+          "name": "Storaflu lt",
+          "lat": 63.54756484,
+          "lon": 9.25840884,
+          "radius": 0.1
+        },
+        {
+          "name": "Terningen lt",
+          "lat": 63.49043035,
+          "lon": 9.04337753,
+          "radius": 0.1
+        },
+        {
+          "name": "Skipnesstranda",
+          "lat": 63.40095517,
+          "lon": 8.5089409,
+          "radius": 0.1
+        },
+        {
+          "name": "Klakksbroren lt",
+          "lat": 63.36544053,
+          "lon": 8.3874474,
+          "radius": 0.1
+        },
+        {
+          "name": "Kyrhaug lt",
+          "lat": 63.30550355,
+          "lon": 8.23465826,
+          "radius": 0.1
+        },
+        {
+          "name": "Edoy lt",
+          "lat": 63.27708477,
+          "lon": 8.1526243,
+          "radius": 0.1
+        },
+        {
+          "name": "Lyktlangholmen lt",
+          "lat": 63.20173362,
+          "lon": 7.84277736,
+          "radius": 0.1
+        },
+        {
+          "name": "Helklakken 11 m",
+          "lat": 63.1405088,
+          "lon": 7.64437075,
+          "radius": 0.1
+        },
+        {
+          "name": "Sveggesundet lt",
+          "lat": 63.11996821,
+          "lon": 7.56851597,
+          "radius": 0.1
+        },
+        {
+          "name": "Hestskjeret lt",
+          "lat": 63.09412504,
+          "lon": 7.48697922,
+          "radius": 0.1
+        },
+        {
+          "name": "Brakan lt",
+          "lat": 63.08280559,
+          "lon": 7.46214795,
+          "radius": 0.1
+        },
+        {
+          "name": "Baramskrakene",
+          "lat": 63.06403333,
+          "lon": 7.36203333,
+          "radius": 0.1
+        },
+        {
+          "name": "Myrgrunnan light buoy",
+          "lat": 63.0549635,
+          "lon": 7.32525278,
+          "radius": 0.1
+        },
+        {
+          "name": "Bjugna",
+          "lat": 63.05319167,
+          "lon": 7.28032657,
+          "radius": 0.1
+        },
+        {
+          "name": "Midtflua light buoy",
+          "lat": 63.02598154,
+          "lon": 7.15968141,
+          "radius": 0.1
+        },
+        {
+          "name": "Breigrunntaren",
+          "lat": 63.01039,
+          "lon": 6.99576,
+          "radius": 0.1
+        },
+        {
+          "name": "Kolbeinsflu light buoy - precautionary area",
+          "lat": 62.97563378,
+          "lon": 6.86740392,
+          "radius": 0.1
+        },
+        {
+          "name": "Saltsteinsleia",
+          "lat": 62.86866754,
+          "lon": 6.70042724,
+          "radius": 0.1
+        },
+        {
+          "name": "Raudholmane",
+          "lat": 62.63736934,
+          "lon": 6.37728794,
+          "radius": 0.1
+        },
+        {
+          "name": "Haugflua",
+          "lat": 62.61972194,
+          "lon": 6.31253266,
+          "radius": 0.1
+        },
+        {
+          "name": "Lepsoyrevet",
+          "lat": 62.60378059,
+          "lon": 6.28338791,
+          "radius": 0.1
+        },
+        {
+          "name": "Lepsoyrevet",
+          "lat": 62.58125845,
+          "lon": 6.23023899,
+          "radius": 0.1
+        },
+        {
+          "name": "Vigrafjorden",
+          "lat": 62.56967123,
+          "lon": 6.19211611,
+          "radius": 0.1
+        },
+        {
+          "name": "Hanen lt",
+          "lat": 62.55728991,
+          "lon": 6.17046397,
+          "radius": 0.1
+        },
+        {
+          "name": "Oksneset",
+          "lat": 62.51882324,
+          "lon": 6.1454432,
+          "radius": 0.1
+        },
+        {
+          "name": "Oksebasen",
+          "lat": 62.50956621,
+          "lon": 6.14242229,
+          "radius": 0.1
+        },
+        {
+          "name": "Olsskjer lt",
+          "lat": 62.48504269,
+          "lon": 6.15129891,
+          "radius": 0.1
+        },
+        {
+          "name": "Ellingsoyfjorden",
+          "lat": 62.48572,
+          "lon": 6.18174294,
+          "radius": 0.1
+        },
+        {
+          "name": "Brattholmen lt",
+          "lat": 62.48837813,
+          "lon": 6.21202408,
+          "radius": 0.1
+        },
+        {
+          "name": "Vardeflua",
+          "lat": 62.4843874,
+          "lon": 6.25473911,
+          "radius": 0.1
+        },
+        {
+          "name": "Svinoysundet",
+          "lat": 62.47307589,
+          "lon": 6.27187611,
+          "radius": 0.1
+        },
+        {
+          "name": "Kalvoysundet",
+          "lat": 62.47641737,
+          "lon": 6.28719523,
+          "radius": 0.1
+        },
+        {
+          "name": "Hestholmen",
+          "lat": 62.47984662,
+          "lon": 6.34553374,
+          "radius": 0.1
+        },
+        {
+          "name": "Langoya",
+          "lat": 62.48675692,
+          "lon": 6.36837106,
+          "radius": 0.1
+        },
+        {
+          "name": "Alvika",
+          "lat": 62.48812652,
+          "lon": 6.38531788,
+          "radius": 0.1
+        }
+      ],
+      "legs": [
+        {
+          "from_waypoint": "Frohavet",
+          "to_waypoint": "Tarva lt",
+          "distance_nm": 28.71
+        },
+        {
+          "from_waypoint": "Tarva lt",
+          "to_waypoint": "Svissaflua 16 m",
+          "distance_nm": 7.64
+        },
+        {
+          "from_waypoint": "Svissaflua 16 m",
+          "to_waypoint": "Flesa pilot boarding",
+          "distance_nm": 3.01
+        },
+        {
+          "from_waypoint": "Flesa pilot boarding",
+          "to_waypoint": "Sliskjeara",
+          "distance_nm": 3.31
+        },
+        {
+          "from_waypoint": "Sliskjeara",
+          "to_waypoint": "Storaflu lt",
+          "distance_nm": 2.89
+        },
+        {
+          "from_waypoint": "Storaflu lt",
+          "to_waypoint": "Terningen lt",
+          "distance_nm": 6.7
+        },
+        {
+          "from_waypoint": "Terningen lt",
+          "to_waypoint": "Skipnesstranda",
+          "distance_nm": 15.32
+        },
+        {
+          "from_waypoint": "Skipnesstranda",
+          "to_waypoint": "Klakksbroren lt",
+          "distance_nm": 3.9
+        },
+        {
+          "from_waypoint": "Klakksbroren lt",
+          "to_waypoint": "Kyrhaug lt",
+          "distance_nm": 5.47
+        },
+        {
+          "from_waypoint": "Kyrhaug lt",
+          "to_waypoint": "Edoy lt",
+          "distance_nm": 2.79
+        },
+        {
+          "from_waypoint": "Edoy lt",
+          "to_waypoint": "Lyktlangholmen lt",
+          "distance_nm": 9.52
+        },
+        {
+          "from_waypoint": "Lyktlangholmen lt",
+          "to_waypoint": "Helklakken 11 m",
+          "distance_nm": 6.51
+        },
+        {
+          "from_waypoint": "Helklakken 11 m",
+          "to_waypoint": "Sveggesundet lt",
+          "distance_nm": 2.4
+        },
+        {
+          "from_waypoint": "Sveggesundet lt",
+          "to_waypoint": "Hestskjeret lt",
+          "distance_nm": 2.7
+        },
+        {
+          "from_waypoint": "Hestskjeret lt",
+          "to_waypoint": "Brakan lt",
+          "distance_nm": 0.96
+        },
+        {
+          "from_waypoint": "Brakan lt",
+          "to_waypoint": "Baramskrakene",
+          "distance_nm": 2.95
+        },
+        {
+          "from_waypoint": "Baramskrakene",
+          "to_waypoint": "Myrgrunnan light buoy",
+          "distance_nm": 1.14
+        },
+        {
+          "from_waypoint": "Myrgrunnan light buoy",
+          "to_waypoint": "Bjugna",
+          "distance_nm": 1.23
+        },
+        {
+          "from_waypoint": "Bjugna",
+          "to_waypoint": "Midtflua light buoy",
+          "distance_nm": 3.67
+        },
+        {
+          "from_waypoint": "Midtflua light buoy",
+          "to_waypoint": "Breigrunntaren",
+          "distance_nm": 4.56
+        },
+        {
+          "from_waypoint": "Breigrunntaren",
+          "to_waypoint": "Kolbeinsflu light buoy - precautionary area",
+          "distance_nm": 4.07
+        },
+        {
+          "from_waypoint": "Kolbeinsflu light buoy - precautionary area",
+          "to_waypoint": "Saltsteinsleia",
+          "distance_nm": 7.88
+        },
+        {
+          "from_waypoint": "Saltsteinsleia",
+          "to_waypoint": "Raudholmane",
+          "distance_nm": 16.48
+        },
+        {
+          "from_waypoint": "Raudholmane",
+          "to_waypoint": "Haugflua",
+          "distance_nm": 2.08
+        },
+        {
+          "from_waypoint": "Haugflua",
+          "to_waypoint": "Lepsoyrevet",
+          "distance_nm": 1.25
+        },
+        {
+          "from_waypoint": "Lepsoyrevet",
+          "to_waypoint": "Lepsoyrevet",
+          "distance_nm": 2.0
+        },
+        {
+          "from_waypoint": "Lepsoyrevet",
+          "to_waypoint": "Vigrafjorden",
+          "distance_nm": 1.26
+        },
+        {
+          "from_waypoint": "Vigrafjorden",
+          "to_waypoint": "Hanen lt",
+          "distance_nm": 0.95
+        },
+        {
+          "from_waypoint": "Hanen lt",
+          "to_waypoint": "Oksneset",
+          "distance_nm": 2.41
+        },
+        {
+          "from_waypoint": "Oksneset",
+          "to_waypoint": "Oksebasen",
+          "distance_nm": 0.56
+        },
+        {
+          "from_waypoint": "Oksebasen",
+          "to_waypoint": "Olsskjer lt",
+          "distance_nm": 1.49
+        },
+        {
+          "from_waypoint": "Olsskjer lt",
+          "to_waypoint": "Ellingsoyfjorden",
+          "distance_nm": 0.85
+        },
+        {
+          "from_waypoint": "Ellingsoyfjorden",
+          "to_waypoint": "Brattholmen lt",
+          "distance_nm": 0.85
+        },
+        {
+          "from_waypoint": "Brattholmen lt",
+          "to_waypoint": "Vardeflua",
+          "distance_nm": 1.21
+        },
+        {
+          "from_waypoint": "Vardeflua",
+          "to_waypoint": "Svinoysundet",
+          "distance_nm": 0.83
+        },
+        {
+          "from_waypoint": "Svinoysundet",
+          "to_waypoint": "Kalvoysundet",
+          "distance_nm": 0.47
+        },
+        {
+          "from_waypoint": "Kalvoysundet",
+          "to_waypoint": "Hestholmen",
+          "distance_nm": 1.63
+        },
+        {
+          "from_waypoint": "Hestholmen",
+          "to_waypoint": "Langoya",
+          "distance_nm": 0.76
+        },
+        {
+          "from_waypoint": "Langoya",
+          "to_waypoint": "Alvika",
+          "distance_nm": 0.48
+        }
+      ],
+      "total_distance_nm": 162.91,
+      "waypoint_count": 40,
+      "leg_count": 39,
+      "origin": "7",
+      "destination": "5M",
+      "parse_timestamp": "2026-01-20T15:17:44.229754",
+      "data_source": "rtz_file_parser",
+      "source_city": "alesund",
+      "original_file": "NCA_7_5m_AlesundN_Halten_In_20250731.rtz",
+      "route_id": "5f96a24c"
+    },
+    {
+      "route_name": "NCA_9m_AlesundS_Stad_In_20250801",
+      "file_path": "/home/framg/dev/bergnavn/backend/assets/routeinfo_routes/alesund/raw/extracted/NCA_9m_AlesundS_Stad_In_20250731.rtz",
+      "waypoints": [
+        {
+          "name": "Stalet",
+          "lat": 62.23332712,
+          "lon": 5.17768582,
+          "radius": 0.1
+        },
+        {
+          "name": "Stalet",
+          "lat": 62.23160884,
+          "lon": 5.20743921,
+          "radius": 0.1
+        },
+        {
+          "name": "Kviteneset",
+          "lat": 62.22520843,
+          "lon": 5.23919503,
+          "radius": 0.1
+        },
+        {
+          "name": "Vanylvsgapet pilot boarding",
+          "lat": 62.20648333,
+          "lon": 5.2768,
+          "radius": 0.1
+        },
+        {
+          "name": "Rivjehornet",
+          "lat": 62.17560483,
+          "lon": 5.33877331,
+          "radius": 0.1
+        },
+        {
+          "name": "Sore Torrane",
+          "lat": 62.16093205,
+          "lon": 5.38305804,
+          "radius": 0.1
+        },
+        {
+          "name": "Bjornholmen",
+          "lat": 62.1638574,
+          "lon": 5.41178402,
+          "radius": 0.1
+        },
+        {
+          "name": "Ytstefluda",
+          "lat": 62.1964447,
+          "lon": 5.44805666,
+          "radius": 0.1
+        },
+        {
+          "name": "Aramsundet west",
+          "lat": 62.20397196,
+          "lon": 5.47473529,
+          "radius": 0.1
+        },
+        {
+          "name": "Aramsundet ",
+          "lat": 62.20479688,
+          "lon": 5.48381396,
+          "radius": 0.1
+        },
+        {
+          "name": "Aramsundet east 11 m",
+          "lat": 62.20389208,
+          "lon": 5.49494321,
+          "radius": 0.1
+        },
+        {
+          "name": "Saudeholmen",
+          "lat": 62.17750163,
+          "lon": 5.60430637,
+          "radius": 0.1
+        },
+        {
+          "name": "Laupsneset",
+          "lat": 62.19778971,
+          "lon": 5.76758988,
+          "radius": 0.1
+        },
+        {
+          "name": "Yksnoy lt",
+          "lat": 62.21844681,
+          "lon": 5.897255,
+          "radius": 0.1
+        },
+        {
+          "name": "Flavikneset",
+          "lat": 62.27333538,
+          "lon": 5.97472596,
+          "radius": 0.1
+        },
+        {
+          "name": "Hjorungenneset",
+          "lat": 62.34392246,
+          "lon": 6.13514886,
+          "radius": 0.1
+        },
+        {
+          "name": "Hjorungenneset",
+          "lat": 62.3569972,
+          "lon": 6.13693772,
+          "radius": 0.1
+        },
+        {
+          "name": "Eltraneset",
+          "lat": 62.42387181,
+          "lon": 6.0367014,
+          "radius": 0.1
+        },
+        {
+          "name": "Eltraneset lt",
+          "lat": 62.43673783,
+          "lon": 6.03681349,
+          "radius": 0.1
+        },
+        {
+          "name": "Eltraneset lt",
+          "lat": 62.44618084,
+          "lon": 6.05318243,
+          "radius": 0.1
+        },
+        {
+          "name": "Hessafjorden",
+          "lat": 62.44636362,
+          "lon": 6.11197795,
+          "radius": 0.1
+        },
+        {
+          "name": "Rognholmen lt",
+          "lat": 62.4551797,
+          "lon": 6.17622405,
+          "radius": 0.1
+        },
+        {
+          "name": "Gasholmen",
+          "lat": 62.45634169,
+          "lon": 6.20368526,
+          "radius": 0.1
+        },
+        {
+          "name": "Bogneset",
+          "lat": 62.45173133,
+          "lon": 6.24948118,
+          "radius": 0.1
+        },
+        {
+          "name": "Spjelkavik",
+          "lat": 62.45783276,
+          "lon": 6.3449976,
+          "radius": 0.1
+        }
+      ],
+      "legs": [
+        {
+          "from_waypoint": "Stalet",
+          "to_waypoint": "Stalet",
+          "distance_nm": 0.84
+        },
+        {
+          "from_waypoint": "Stalet",
+          "to_waypoint": "Kviteneset",
+          "distance_nm": 0.97
+        },
+        {
+          "from_waypoint": "Kviteneset",
+          "to_waypoint": "Vanylvsgapet pilot boarding",
+          "distance_nm": 1.54
+        },
+        {
+          "from_waypoint": "Vanylvsgapet pilot boarding",
+          "to_waypoint": "Rivjehornet",
+          "distance_nm": 2.54
+        },
+        {
+          "from_waypoint": "Rivjehornet",
+          "to_waypoint": "Sore Torrane",
+          "distance_nm": 1.52
+        },
+        {
+          "from_waypoint": "Sore Torrane",
+          "to_waypoint": "Bjornholmen",
+          "distance_nm": 0.82
+        },
+        {
+          "from_waypoint": "Bjornholmen",
+          "to_waypoint": "Ytstefluda",
+          "distance_nm": 2.2
+        },
+        {
+          "from_waypoint": "Ytstefluda",
+          "to_waypoint": "Aramsundet west",
+          "distance_nm": 0.87
+        },
+        {
+          "from_waypoint": "Aramsundet west",
+          "to_waypoint": "Aramsundet ",
+          "distance_nm": 0.26
+        },
+        {
+          "from_waypoint": "Aramsundet ",
+          "to_waypoint": "Aramsundet east 11 m",
+          "distance_nm": 0.32
+        },
+        {
+          "from_waypoint": "Aramsundet east 11 m",
+          "to_waypoint": "Saudeholmen",
+          "distance_nm": 3.45
+        },
+        {
+          "from_waypoint": "Saudeholmen",
+          "to_waypoint": "Laupsneset",
+          "distance_nm": 4.73
+        },
+        {
+          "from_waypoint": "Laupsneset",
+          "to_waypoint": "Yksnoy lt",
+          "distance_nm": 3.84
+        },
+        {
+          "from_waypoint": "Yksnoy lt",
+          "to_waypoint": "Flavikneset",
+          "distance_nm": 3.94
+        },
+        {
+          "from_waypoint": "Flavikneset",
+          "to_waypoint": "Hjorungenneset",
+          "distance_nm": 6.16
+        },
+        {
+          "from_waypoint": "Hjorungenneset",
+          "to_waypoint": "Hjorungenneset",
+          "distance_nm": 0.79
+        },
+        {
+          "from_waypoint": "Hjorungenneset",
+          "to_waypoint": "Eltraneset",
+          "distance_nm": 4.89
+        },
+        {
+          "from_waypoint": "Eltraneset",
+          "to_waypoint": "Eltraneset lt",
+          "distance_nm": 0.77
+        },
+        {
+          "from_waypoint": "Eltraneset lt",
+          "to_waypoint": "Eltraneset lt",
+          "distance_nm": 0.73
+        },
+        {
+          "from_waypoint": "Eltraneset lt",
+          "to_waypoint": "Hessafjorden",
+          "distance_nm": 1.63
+        },
+        {
+          "from_waypoint": "Hessafjorden",
+          "to_waypoint": "Rognholmen lt",
+          "distance_nm": 1.86
+        },
+        {
+          "from_waypoint": "Rognholmen lt",
+          "to_waypoint": "Gasholmen",
+          "distance_nm": 0.77
+        },
+        {
+          "from_waypoint": "Gasholmen",
+          "to_waypoint": "Bogneset",
+          "distance_nm": 1.3
+        },
+        {
+          "from_waypoint": "Bogneset",
+          "to_waypoint": "Spjelkavik",
+          "distance_nm": 2.68
+        }
+      ],
+      "total_distance_nm": 49.43,
+      "waypoint_count": 25,
+      "leg_count": 24,
+      "origin": "9M",
+      "destination": "Alesunds",
+      "parse_timestamp": "2026-01-20T15:17:44.230811",
+      "data_source": "rtz_file_parser",
+      "source_city": "alesund",
+      "original_file": "NCA_9m_AlesundS_Stad_In_20250731.rtz",
+      "route_id": "76285a2e"
+    },
+    {
+      "route_name": "NCA_7_5m_AlesundS_Stad_Aramsd_In_20250801",
+      "file_path": "/home/framg/dev/bergnavn/backend/assets/routeinfo_routes/alesund/raw/extracted/NCA_7_5m_AlesundS_Stad_Aramsd_In_20250731.rtz",
+      "waypoints": [
+        {
+          "name": "Stalet",
+          "lat": 62.23332712,
+          "lon": 5.17768582,
+          "radius": 0.1
+        },
+        {
+          "name": "Stalet",
+          "lat": 62.23160884,
+          "lon": 5.20743921,
+          "radius": 0.1
+        },
+        {
+          "name": "Kviteneset",
+          "lat": 62.22520843,
+          "lon": 5.23919503,
+          "radius": 0.1
+        },
+        {
+          "name": "Rivjehornet",
+          "lat": 62.17560483,
+          "lon": 5.33877331,
+          "radius": 0.1
+        },
+        {
+          "name": "Haugsholmen lt",
+          "lat": 62.17124662,
+          "lon": 5.35861314,
+          "radius": 0.1
+        },
+        {
+          "name": "Storesundet",
+          "lat": 62.17479533,
+          "lon": 5.38267179,
+          "radius": 0.1
+        },
+        {
+          "name": "Haugsfjorden",
+          "lat": 62.19053509,
+          "lon": 5.42253173,
+          "radius": 0.1
+        },
+        {
+          "name": "Aramsundet west",
+          "lat": 62.20397196,
+          "lon": 5.47473529,
+          "radius": 0.1
+        },
+        {
+          "name": "Aramsundet ",
+          "lat": 62.20479688,
+          "lon": 5.48381396,
+          "radius": 0.1
+        },
+        {
+          "name": "Aramsundet east 11 m",
+          "lat": 62.20389208,
+          "lon": 5.49494321,
+          "radius": 0.1
+        },
+        {
+          "name": "Saudeholmen",
+          "lat": 62.17750163,
+          "lon": 5.60430637,
+          "radius": 0.1
+        },
+        {
+          "name": "Laupsneset",
+          "lat": 62.19778971,
+          "lon": 5.76758988,
+          "radius": 0.1
+        },
+        {
+          "name": "Yksnoy lt",
+          "lat": 62.21844681,
+          "lon": 5.897255,
+          "radius": 0.1
+        },
+        {
+          "name": "Flavikneset",
+          "lat": 62.27333538,
+          "lon": 5.97472596,
+          "radius": 0.1
+        },
+        {
+          "name": "Hjorungenneset",
+          "lat": 62.34392246,
+          "lon": 6.13514886,
+          "radius": 0.1
+        },
+        {
+          "name": "Hjorungenneset",
+          "lat": 62.3569972,
+          "lon": 6.13693772,
+          "radius": 0.1
+        },
+        {
+          "name": "Eltraneset",
+          "lat": 62.42387181,
+          "lon": 6.0367014,
+          "radius": 0.1
+        },
+        {
+          "name": "Eltraneset lt",
+          "lat": 62.43673783,
+          "lon": 6.03681349,
+          "radius": 0.1
+        },
+        {
+          "name": "Eltraneset lt",
+          "lat": 62.44618084,
+          "lon": 6.05318243,
+          "radius": 0.1
+        },
+        {
+          "name": "Hessafjorden",
+          "lat": 62.44636362,
+          "lon": 6.11197795,
+          "radius": 0.1
+        },
+        {
+          "name": "Rognholmen lt",
+          "lat": 62.4551797,
+          "lon": 6.17622405,
+          "radius": 0.1
+        },
+        {
+          "name": "Gasholmen",
+          "lat": 62.45634169,
+          "lon": 6.20368526,
+          "radius": 0.1
+        },
+        {
+          "name": "Bogneset",
+          "lat": 62.45173133,
+          "lon": 6.24948118,
+          "radius": 0.1
+        },
+        {
+          "name": "Spjelkavik",
+          "lat": 62.45783276,
+          "lon": 6.3449976,
+          "radius": 0.1
+        }
+      ],
+      "legs": [
+        {
+          "from_waypoint": "Stalet",
+          "to_waypoint": "Stalet",
+          "distance_nm": 0.84
+        },
+        {
+          "from_waypoint": "Stalet",
+          "to_waypoint": "Kviteneset",
+          "distance_nm": 0.97
+        },
+        {
+          "from_waypoint": "Kviteneset",
+          "to_waypoint": "Rivjehornet",
+          "distance_nm": 4.08
+        },
+        {
+          "from_waypoint": "Rivjehornet",
+          "to_waypoint": "Haugsholmen lt",
+          "distance_nm": 0.61
+        },
+        {
+          "from_waypoint": "Haugsholmen lt",
+          "to_waypoint": "Storesundet",
+          "distance_nm": 0.71
+        },
+        {
+          "from_waypoint": "Storesundet",
+          "to_waypoint": "Haugsfjorden",
+          "distance_nm": 1.46
+        },
+        {
+          "from_waypoint": "Haugsfjorden",
+          "to_waypoint": "Aramsundet west",
+          "distance_nm": 1.67
+        },
+        {
+          "from_waypoint": "Aramsundet west",
+          "to_waypoint": "Aramsundet ",
+          "distance_nm": 0.26
+        },
+        {
+          "from_waypoint": "Aramsundet ",
+          "to_waypoint": "Aramsundet east 11 m",
+          "distance_nm": 0.32
+        },
+        {
+          "from_waypoint": "Aramsundet east 11 m",
+          "to_waypoint": "Saudeholmen",
+          "distance_nm": 3.45
+        },
+        {
+          "from_waypoint": "Saudeholmen",
+          "to_waypoint": "Laupsneset",
+          "distance_nm": 4.73
+        },
+        {
+          "from_waypoint": "Laupsneset",
+          "to_waypoint": "Yksnoy lt",
+          "distance_nm": 3.84
+        },
+        {
+          "from_waypoint": "Yksnoy lt",
+          "to_waypoint": "Flavikneset",
+          "distance_nm": 3.94
+        },
+        {
+          "from_waypoint": "Flavikneset",
+          "to_waypoint": "Hjorungenneset",
+          "distance_nm": 6.16
+        },
+        {
+          "from_waypoint": "Hjorungenneset",
+          "to_waypoint": "Hjorungenneset",
+          "distance_nm": 0.79
+        },
+        {
+          "from_waypoint": "Hjorungenneset",
+          "to_waypoint": "Eltraneset",
+          "distance_nm": 4.89
+        },
+        {
+          "from_waypoint": "Eltraneset",
+          "to_waypoint": "Eltraneset lt",
+          "distance_nm": 0.77
+        },
+        {
+          "from_waypoint": "Eltraneset lt",
+          "to_waypoint": "Eltraneset lt",
+          "distance_nm": 0.73
+        },
+        {
+          "from_waypoint": "Eltraneset lt",
+          "to_waypoint": "Hessafjorden",
+          "distance_nm": 1.63
+        },
+        {
+          "from_waypoint": "Hessafjorden",
+          "to_waypoint": "Rognholmen lt",
+          "distance_nm": 1.86
+        },
+        {
+          "from_waypoint": "Rognholmen lt",
+          "to_waypoint": "Gasholmen",
+          "distance_nm": 0.77
+        },
+        {
+          "from_waypoint": "Gasholmen",
+          "to_waypoint": "Bogneset",
+          "distance_nm": 1.3
+        },
+        {
+          "from_waypoint": "Bogneset",
+          "to_waypoint": "Spjelkavik",
+          "distance_nm": 2.68
+        }
+      ],
+      "total_distance_nm": 48.46,
+      "waypoint_count": 24,
+      "leg_count": 23,
+      "origin": "7",
+      "destination": "5M",
+      "parse_timestamp": "2026-01-20T15:17:44.232111",
+      "data_source": "rtz_file_parser",
+      "source_city": "alesund",
+      "original_file": "NCA_7_5m_AlesundS_Stad_Aramsd_In_20250731.rtz",
+      "route_id": "d028fbb3"
+    },
+    {
+      "route_name": "NCA_9m_AlesundS_Halten_In_20250801",
+      "file_path": "/home/framg/dev/bergnavn/backend/assets/routeinfo_routes/alesund/raw/extracted/NCA_9m_AlesundS_Halten_In_20250731.rtz",
+      "waypoints": [
+        {
+          "name": "Frohavet",
+          "lat": 64.25626858,
+          "lon": 9.75179652,
+          "radius": 0.1
+        },
+        {
+          "name": "Tarva lt",
+          "lat": 63.82722217,
+          "lon": 9.26903527,
+          "radius": 0.1
+        },
+        {
+          "name": "Svissaflua 16 m",
+          "lat": 63.7006193,
+          "lon": 9.24036868,
+          "radius": 0.1
+        },
+        {
+          "name": "Flesa pilot boarding",
+          "lat": 63.65054591,
+          "lon": 9.24847105,
+          "radius": 0.1
+        },
+        {
+          "name": "Sliskjeara",
+          "lat": 63.59572094,
+          "lon": 9.26176026,
+          "radius": 0.1
+        },
+        {
+          "name": "Storaflu lt",
+          "lat": 63.54756484,
+          "lon": 9.25840884,
+          "radius": 0.1
+        },
+        {
+          "name": "Terningen lt",
+          "lat": 63.49043035,
+          "lon": 9.04337753,
+          "radius": 0.1
+        },
+        {
+          "name": "Skipnesstranda",
+          "lat": 63.40095517,
+          "lon": 8.5089409,
+          "radius": 0.1
+        },
+        {
+          "name": "Klakksbroren lt",
+          "lat": 63.36544053,
+          "lon": 8.3874474,
+          "radius": 0.1
+        },
+        {
+          "name": "Kyrhaug lt",
+          "lat": 63.30550355,
+          "lon": 8.23465826,
+          "radius": 0.1
+        },
+        {
+          "name": "Edoy lt",
+          "lat": 63.27708477,
+          "lon": 8.1526243,
+          "radius": 0.1
+        },
+        {
+          "name": "Lyktlangholmen lt",
+          "lat": 63.20173362,
+          "lon": 7.84277736,
+          "radius": 0.1
+        },
+        {
+          "name": "Helklakken 11 m",
+          "lat": 63.1405088,
+          "lon": 7.64437075,
+          "radius": 0.1
+        },
+        {
+          "name": "Sveggesundet lt",
+          "lat": 63.11996821,
+          "lon": 7.56851597,
+          "radius": 0.1
+        },
+        {
+          "name": "Hestskjeret lt",
+          "lat": 63.09412504,
+          "lon": 7.48697922,
+          "radius": 0.1
+        },
+        {
+          "name": "Brakan lt",
+          "lat": 63.08280559,
+          "lon": 7.46214795,
+          "radius": 0.1
+        },
+        {
+          "name": "Baramskrakene",
+          "lat": 63.06403333,
+          "lon": 7.36203333,
+          "radius": 0.1
+        },
+        {
+          "name": "Myrgrunnan light buoy",
+          "lat": 63.0549635,
+          "lon": 7.32525278,
+          "radius": 0.1
+        },
+        {
+          "name": "Bjugna",
+          "lat": 63.05253797,
+          "lon": 7.25497976,
+          "radius": 0.1
+        },
+        {
+          "name": "Fuglen lt",
+          "lat": 63.05936814,
+          "lon": 7.12623239,
+          "radius": 0.1
+        },
+        {
+          "name": "Hustadvika",
+          "lat": 63.02750201,
+          "lon": 7.05919656,
+          "radius": 0.1
+        },
+        {
+          "name": "Kolbeinsflu light buoy - precautionary area",
+          "lat": 62.97563378,
+          "lon": 6.86740392,
+          "radius": 0.1
+        },
+        {
+          "name": "Saltsteinsleia",
+          "lat": 62.86866754,
+          "lon": 6.70042724,
+          "radius": 0.1
+        },
+        {
+          "name": "Raudholmane",
+          "lat": 62.63736934,
+          "lon": 6.37728794,
+          "radius": 0.1
+        },
+        {
+          "name": "Kyrkjeflua",
+          "lat": 62.62272464,
+          "lon": 6.28224184,
+          "radius": 0.1
+        },
+        {
+          "name": "Hestoyskallen",
+          "lat": 62.62497742,
+          "lon": 6.248428,
+          "radius": 0.1
+        },
+        {
+          "name": "Hellevik lt",
+          "lat": 62.6455782,
+          "lon": 6.18182474,
+          "radius": 0.1
+        },
+        {
+          "name": "Isaksfallet",
+          "lat": 62.64926921,
+          "lon": 6.14016062,
+          "radius": 0.1
+        },
+        {
+          "name": "Faksen bn",
+          "lat": 62.64596682,
+          "lon": 6.11935181,
+          "radius": 0.1
+        },
+        {
+          "name": "Innholmen lt",
+          "lat": 62.62865097,
+          "lon": 6.09454886,
+          "radius": 0.1
+        },
+        {
+          "name": "Ramnen",
+          "lat": 62.6111062,
+          "lon": 6.12821373,
+          "radius": 0.1
+        },
+        {
+          "name": "Flight Zone",
+          "lat": 62.56685321,
+          "lon": 6.17588126,
+          "radius": 0.1
+        },
+        {
+          "name": "Oksneset",
+          "lat": 62.51882324,
+          "lon": 6.1454432,
+          "radius": 0.1
+        },
+        {
+          "name": "Oksebasen",
+          "lat": 62.50956621,
+          "lon": 6.14242229,
+          "radius": 0.1
+        },
+        {
+          "name": "Valderhaug",
+          "lat": 62.49967156,
+          "lon": 6.14600828,
+          "radius": 0.1
+        },
+        {
+          "name": "Valderhaug",
+          "lat": 62.49333398,
+          "lon": 6.13700343,
+          "radius": 0.1
+        },
+        {
+          "name": "Erknaflu",
+          "lat": 62.47314474,
+          "lon": 6.05752087,
+          "radius": 0.1
+        },
+        {
+          "name": "Hogsteinen lt",
+          "lat": 62.45951603,
+          "lon": 6.04727295,
+          "radius": 0.1
+        },
+        {
+          "name": "Eltraneset lt",
+          "lat": 62.44622567,
+          "lon": 6.06809489,
+          "radius": 0.1
+        },
+        {
+          "name": "Hessafjorden",
+          "lat": 62.44636362,
+          "lon": 6.11197795,
+          "radius": 0.1
+        },
+        {
+          "name": "Rognholmen lt",
+          "lat": 62.4551797,
+          "lon": 6.17622405,
+          "radius": 0.1
+        },
+        {
+          "name": "Gasholmen",
+          "lat": 62.45634169,
+          "lon": 6.20368526,
+          "radius": 0.1
+        },
+        {
+          "name": "Bogneset",
+          "lat": 62.45173133,
+          "lon": 6.24948118,
+          "radius": 0.1
+        },
+        {
+          "name": "Spjelkavik",
+          "lat": 62.45783276,
+          "lon": 6.3449976,
+          "radius": 0.1
+        }
+      ],
+      "legs": [
+        {
+          "from_waypoint": "Frohavet",
+          "to_waypoint": "Tarva lt",
+          "distance_nm": 28.71
+        },
+        {
+          "from_waypoint": "Tarva lt",
+          "to_waypoint": "Svissaflua 16 m",
+          "distance_nm": 7.64
+        },
+        {
+          "from_waypoint": "Svissaflua 16 m",
+          "to_waypoint": "Flesa pilot boarding",
+          "distance_nm": 3.01
+        },
+        {
+          "from_waypoint": "Flesa pilot boarding",
+          "to_waypoint": "Sliskjeara",
+          "distance_nm": 3.31
+        },
+        {
+          "from_waypoint": "Sliskjeara",
+          "to_waypoint": "Storaflu lt",
+          "distance_nm": 2.89
+        },
+        {
+          "from_waypoint": "Storaflu lt",
+          "to_waypoint": "Terningen lt",
+          "distance_nm": 6.7
+        },
+        {
+          "from_waypoint": "Terningen lt",
+          "to_waypoint": "Skipnesstranda",
+          "distance_nm": 15.32
+        },
+        {
+          "from_waypoint": "Skipnesstranda",
+          "to_waypoint": "Klakksbroren lt",
+          "distance_nm": 3.9
+        },
+        {
+          "from_waypoint": "Klakksbroren lt",
+          "to_waypoint": "Kyrhaug lt",
+          "distance_nm": 5.47
+        },
+        {
+          "from_waypoint": "Kyrhaug lt",
+          "to_waypoint": "Edoy lt",
+          "distance_nm": 2.79
+        },
+        {
+          "from_waypoint": "Edoy lt",
+          "to_waypoint": "Lyktlangholmen lt",
+          "distance_nm": 9.52
+        },
+        {
+          "from_waypoint": "Lyktlangholmen lt",
+          "to_waypoint": "Helklakken 11 m",
+          "distance_nm": 6.51
+        },
+        {
+          "from_waypoint": "Helklakken 11 m",
+          "to_waypoint": "Sveggesundet lt",
+          "distance_nm": 2.4
+        },
+        {
+          "from_waypoint": "Sveggesundet lt",
+          "to_waypoint": "Hestskjeret lt",
+          "distance_nm": 2.7
+        },
+        {
+          "from_waypoint": "Hestskjeret lt",
+          "to_waypoint": "Brakan lt",
+          "distance_nm": 0.96
+        },
+        {
+          "from_waypoint": "Brakan lt",
+          "to_waypoint": "Baramskrakene",
+          "distance_nm": 2.95
+        },
+        {
+          "from_waypoint": "Baramskrakene",
+          "to_waypoint": "Myrgrunnan light buoy",
+          "distance_nm": 1.14
+        },
+        {
+          "from_waypoint": "Myrgrunnan light buoy",
+          "to_waypoint": "Bjugna",
+          "distance_nm": 1.92
+        },
+        {
+          "from_waypoint": "Bjugna",
+          "to_waypoint": "Fuglen lt",
+          "distance_nm": 3.53
+        },
+        {
+          "from_waypoint": "Fuglen lt",
+          "to_waypoint": "Hustadvika",
+          "distance_nm": 2.64
+        },
+        {
+          "from_waypoint": "Hustadvika",
+          "to_waypoint": "Kolbeinsflu light buoy - precautionary area",
+          "distance_nm": 6.08
+        },
+        {
+          "from_waypoint": "Kolbeinsflu light buoy - precautionary area",
+          "to_waypoint": "Saltsteinsleia",
+          "distance_nm": 7.88
+        },
+        {
+          "from_waypoint": "Saltsteinsleia",
+          "to_waypoint": "Raudholmane",
+          "distance_nm": 16.48
+        },
+        {
+          "from_waypoint": "Raudholmane",
+          "to_waypoint": "Kyrkjeflua",
+          "distance_nm": 2.77
+        },
+        {
+          "from_waypoint": "Kyrkjeflua",
+          "to_waypoint": "Hestoyskallen",
+          "distance_nm": 0.94
+        },
+        {
+          "from_waypoint": "Hestoyskallen",
+          "to_waypoint": "Hellevik lt",
+          "distance_nm": 2.22
+        },
+        {
+          "from_waypoint": "Hellevik lt",
+          "to_waypoint": "Isaksfallet",
+          "distance_nm": 1.17
+        },
+        {
+          "from_waypoint": "Isaksfallet",
+          "to_waypoint": "Faksen bn",
+          "distance_nm": 0.61
+        },
+        {
+          "from_waypoint": "Faksen bn",
+          "to_waypoint": "Innholmen lt",
+          "distance_nm": 1.24
+        },
+        {
+          "from_waypoint": "Innholmen lt",
+          "to_waypoint": "Ramnen",
+          "distance_nm": 1.4
+        },
+        {
+          "from_waypoint": "Ramnen",
+          "to_waypoint": "Flight Zone",
+          "distance_nm": 2.97
+        },
+        {
+          "from_waypoint": "Flight Zone",
+          "to_waypoint": "Oksneset",
+          "distance_nm": 3.0
+        },
+        {
+          "from_waypoint": "Oksneset",
+          "to_waypoint": "Oksebasen",
+          "distance_nm": 0.56
+        },
+        {
+          "from_waypoint": "Oksebasen",
+          "to_waypoint": "Valderhaug",
+          "distance_nm": 0.6
+        },
+        {
+          "from_waypoint": "Valderhaug",
+          "to_waypoint": "Valderhaug",
+          "distance_nm": 0.46
+        },
+        {
+          "from_waypoint": "Valderhaug",
+          "to_waypoint": "Erknaflu",
+          "distance_nm": 2.52
+        },
+        {
+          "from_waypoint": "Erknaflu",
+          "to_waypoint": "Hogsteinen lt",
+          "distance_nm": 0.87
+        },
+        {
+          "from_waypoint": "Hogsteinen lt",
+          "to_waypoint": "Eltraneset lt",
+          "distance_nm": 0.99
+        },
+        {
+          "from_waypoint": "Eltraneset lt",
+          "to_waypoint": "Hessafjorden",
+          "distance_nm": 1.22
+        },
+        {
+          "from_waypoint": "Hessafjorden",
+          "to_waypoint": "Rognholmen lt",
+          "distance_nm": 1.86
+        },
+        {
+          "from_waypoint": "Rognholmen lt",
+          "to_waypoint": "Gasholmen",
+          "distance_nm": 0.77
+        },
+        {
+          "from_waypoint": "Gasholmen",
+          "to_waypoint": "Bogneset",
+          "distance_nm": 1.3
+        },
+        {
+          "from_waypoint": "Bogneset",
+          "to_waypoint": "Spjelkavik",
+          "distance_nm": 2.68
+        }
+      ],
+      "total_distance_nm": 174.61,
+      "waypoint_count": 44,
+      "leg_count": 43,
+      "origin": "9M",
+      "destination": "Alesunds",
+      "parse_timestamp": "2026-01-20T15:17:44.233330",
+      "data_source": "rtz_file_parser",
+      "source_city": "alesund",
+      "original_file": "NCA_9m_AlesundS_Halten_In_20250731.rtz",
+      "route_id": "4a384731"
+    },
+    {
+      "route_name": "NCA_7_5m_AlesundN_Stad_Flavaer_In_20250801",
+      "file_path": "/home/framg/dev/bergnavn/backend/assets/routeinfo_routes/alesund/raw/extracted/NCA_7_5m_AlesundN_Stad_Flavaer_In_20250731.rtz",
+      "waypoints": [
+        {
+          "name": "Stalet",
+          "lat": 62.23332712,
+          "lon": 5.17768582,
+          "radius": 0.1
+        },
+        {
+          "name": "Skjeggefluda",
+          "lat": 62.27317369,
+          "lon": 5.31497614,
+          "radius": 0.1
+        },
+        {
+          "name": "Flavaer lt",
+          "lat": 62.31207991,
+          "lon": 5.55963892,
+          "radius": 0.1
+        },
+        {
+          "name": "Stabben lt",
+          "lat": 62.31136037,
+          "lon": 5.57735484,
+          "radius": 0.1
+        },
+        {
+          "name": "Klubben lt",
+          "lat": 62.30878821,
+          "lon": 5.59910369,
+          "radius": 0.1
+        },
+        {
+          "name": "Klubben lt",
+          "lat": 62.30835732,
+          "lon": 5.60956199,
+          "radius": 0.1
+        },
+        {
+          "name": "Tronden lt",
+          "lat": 62.31206559,
+          "lon": 5.62744445,
+          "radius": 0.1
+        },
+        {
+          "name": "Heroyhunden lt",
+          "lat": 62.31753428,
+          "lon": 5.67146876,
+          "radius": 0.1
+        },
+        {
+          "name": "Royrasundet",
+          "lat": 62.31933924,
+          "lon": 5.72128209,
+          "radius": 0.1
+        },
+        {
+          "name": "Teigesund lt",
+          "lat": 62.32066667,
+          "lon": 5.73481667,
+          "radius": 0.1
+        },
+        {
+          "name": "Teigesund lt",
+          "lat": 62.32205636,
+          "lon": 5.74885378,
+          "radius": 0.1
+        },
+        {
+          "name": "Brennholmen lt 6.9 m",
+          "lat": 62.32851096,
+          "lon": 5.7511608,
+          "radius": 0.1
+        },
+        {
+          "name": "Torvikhomen lt 6.9 m",
+          "lat": 62.33809314,
+          "lon": 5.73856845,
+          "radius": 0.1
+        },
+        {
+          "name": "Byholmane",
+          "lat": 62.35952667,
+          "lon": 5.77314485,
+          "radius": 0.1
+        },
+        {
+          "name": "Vattoya",
+          "lat": 62.36509477,
+          "lon": 5.7911294,
+          "radius": 0.1
+        },
+        {
+          "name": "Vattoy lt",
+          "lat": 62.37268618,
+          "lon": 5.79730202,
+          "radius": 0.1
+        },
+        {
+          "name": "Flo lt",
+          "lat": 62.39371089,
+          "lon": 5.80692878,
+          "radius": 0.1
+        },
+        {
+          "name": "Flo",
+          "lat": 62.40752333,
+          "lon": 5.82996009,
+          "radius": 0.1
+        },
+        {
+          "name": "Kleggen",
+          "lat": 62.4185445,
+          "lon": 5.85683644,
+          "radius": 0.1
+        },
+        {
+          "name": "Breisundet",
+          "lat": 62.42712612,
+          "lon": 5.89034092,
+          "radius": 0.1
+        },
+        {
+          "name": "Hogsteinen lt",
+          "lat": 62.44651783,
+          "lon": 6.03079354,
+          "radius": 0.1
+        },
+        {
+          "name": "Hogsteinen lt",
+          "lat": 62.45349269,
+          "lon": 6.04813121,
+          "radius": 0.1
+        },
+        {
+          "name": "Erknaflu",
+          "lat": 62.47086266,
+          "lon": 6.059799,
+          "radius": 0.1
+        },
+        {
+          "name": "Olsskjer lt",
+          "lat": 62.48476092,
+          "lon": 6.13991275,
+          "radius": 0.1
+        },
+        {
+          "name": "Ellingsoyfjorden",
+          "lat": 62.48572,
+          "lon": 6.18174294,
+          "radius": 0.1
+        },
+        {
+          "name": "Brattholmen lt",
+          "lat": 62.48837813,
+          "lon": 6.21202408,
+          "radius": 0.1
+        },
+        {
+          "name": "Vardeflua",
+          "lat": 62.4843874,
+          "lon": 6.25473911,
+          "radius": 0.1
+        },
+        {
+          "name": "Svinoysundet",
+          "lat": 62.47307589,
+          "lon": 6.27187611,
+          "radius": 0.1
+        },
+        {
+          "name": "Kalvoysundet",
+          "lat": 62.47641737,
+          "lon": 6.28719523,
+          "radius": 0.1
+        },
+        {
+          "name": "Hestholmen",
+          "lat": 62.47984662,
+          "lon": 6.34553374,
+          "radius": 0.1
+        },
+        {
+          "name": "Langoya",
+          "lat": 62.48675692,
+          "lon": 6.36837106,
+          "radius": 0.1
+        },
+        {
+          "name": "Alvika",
+          "lat": 62.48812652,
+          "lon": 6.38531788,
+          "radius": 0.1
+        }
+      ],
+      "legs": [
+        {
+          "from_waypoint": "Stalet",
+          "to_waypoint": "Skjeggefluda",
+          "distance_nm": 4.52
+        },
+        {
+          "from_waypoint": "Skjeggefluda",
+          "to_waypoint": "Flavaer lt",
+          "distance_nm": 7.22
+        },
+        {
+          "from_waypoint": "Flavaer lt",
+          "to_waypoint": "Stabben lt",
+          "distance_nm": 0.5
+        },
+        {
+          "from_waypoint": "Stabben lt",
+          "to_waypoint": "Klubben lt",
+          "distance_nm": 0.63
+        },
+        {
+          "from_waypoint": "Klubben lt",
+          "to_waypoint": "Klubben lt",
+          "distance_nm": 0.29
+        },
+        {
+          "from_waypoint": "Klubben lt",
+          "to_waypoint": "Tronden lt",
+          "distance_nm": 0.55
+        },
+        {
+          "from_waypoint": "Tronden lt",
+          "to_waypoint": "Heroyhunden lt",
+          "distance_nm": 1.27
+        },
+        {
+          "from_waypoint": "Heroyhunden lt",
+          "to_waypoint": "Royrasundet",
+          "distance_nm": 1.39
+        },
+        {
+          "from_waypoint": "Royrasundet",
+          "to_waypoint": "Teigesund lt",
+          "distance_nm": 0.39
+        },
+        {
+          "from_waypoint": "Teigesund lt",
+          "to_waypoint": "Teigesund lt",
+          "distance_nm": 0.4
+        },
+        {
+          "from_waypoint": "Teigesund lt",
+          "to_waypoint": "Brennholmen lt 6.9 m",
+          "distance_nm": 0.39
+        },
+        {
+          "from_waypoint": "Brennholmen lt 6.9 m",
+          "to_waypoint": "Torvikhomen lt 6.9 m",
+          "distance_nm": 0.67
+        },
+        {
+          "from_waypoint": "Torvikhomen lt 6.9 m",
+          "to_waypoint": "Byholmane",
+          "distance_nm": 1.61
+        },
+        {
+          "from_waypoint": "Byholmane",
+          "to_waypoint": "Vattoya",
+          "distance_nm": 0.6
+        },
+        {
+          "from_waypoint": "Vattoya",
+          "to_waypoint": "Vattoy lt",
+          "distance_nm": 0.49
+        },
+        {
+          "from_waypoint": "Vattoy lt",
+          "to_waypoint": "Flo lt",
+          "distance_nm": 1.29
+        },
+        {
+          "from_waypoint": "Flo lt",
+          "to_waypoint": "Flo",
+          "distance_nm": 1.05
+        },
+        {
+          "from_waypoint": "Flo",
+          "to_waypoint": "Kleggen",
+          "distance_nm": 1.0
+        },
+        {
+          "from_waypoint": "Kleggen",
+          "to_waypoint": "Breisundet",
+          "distance_nm": 1.06
+        },
+        {
+          "from_waypoint": "Breisundet",
+          "to_waypoint": "Hogsteinen lt",
+          "distance_nm": 4.07
+        },
+        {
+          "from_waypoint": "Hogsteinen lt",
+          "to_waypoint": "Hogsteinen lt",
+          "distance_nm": 0.64
+        },
+        {
+          "from_waypoint": "Hogsteinen lt",
+          "to_waypoint": "Erknaflu",
+          "distance_nm": 1.09
+        },
+        {
+          "from_waypoint": "Erknaflu",
+          "to_waypoint": "Olsskjer lt",
+          "distance_nm": 2.37
+        },
+        {
+          "from_waypoint": "Olsskjer lt",
+          "to_waypoint": "Ellingsoyfjorden",
+          "distance_nm": 1.16
+        },
+        {
+          "from_waypoint": "Ellingsoyfjorden",
+          "to_waypoint": "Brattholmen lt",
+          "distance_nm": 0.85
+        },
+        {
+          "from_waypoint": "Brattholmen lt",
+          "to_waypoint": "Vardeflua",
+          "distance_nm": 1.21
+        },
+        {
+          "from_waypoint": "Vardeflua",
+          "to_waypoint": "Svinoysundet",
+          "distance_nm": 0.83
+        },
+        {
+          "from_waypoint": "Svinoysundet",
+          "to_waypoint": "Kalvoysundet",
+          "distance_nm": 0.47
+        },
+        {
+          "from_waypoint": "Kalvoysundet",
+          "to_waypoint": "Hestholmen",
+          "distance_nm": 1.63
+        },
+        {
+          "from_waypoint": "Hestholmen",
+          "to_waypoint": "Langoya",
+          "distance_nm": 0.76
+        },
+        {
+          "from_waypoint": "Langoya",
+          "to_waypoint": "Alvika",
+          "distance_nm": 0.48
+        }
+      ],
+      "total_distance_nm": 40.88,
+      "waypoint_count": 32,
+      "leg_count": 31,
+      "origin": "7",
+      "destination": "5M",
+      "parse_timestamp": "2026-01-20T15:17:44.234566",
+      "data_source": "rtz_file_parser",
+      "source_city": "alesund",
+      "original_file": "NCA_7_5m_AlesundN_Stad_Flavaer_In_20250731.rtz",
+      "route_id": "a31ea0b8"
+    },
+    {
+      "route_name": "NCA_7_5m_AlesundS_Halten_In_20250801",
+      "file_path": "/home/framg/dev/bergnavn/backend/assets/routeinfo_routes/alesund/raw/extracted/NCA_7_5m_AlesundS_Halten_In_20250731.rtz",
+      "waypoints": [
+        {
+          "name": "Frohavet",
+          "lat": 64.25626858,
+          "lon": 9.75179652,
+          "radius": 0.1
+        },
+        {
+          "name": "Tarva lt",
+          "lat": 63.82722217,
+          "lon": 9.26903527,
+          "radius": 0.1
+        },
+        {
+          "name": "Svissaflua 16 m",
+          "lat": 63.7006193,
+          "lon": 9.24036868,
+          "radius": 0.1
+        },
+        {
+          "name": "Flesa pilot boarding",
+          "lat": 63.65054591,
+          "lon": 9.24847105,
+          "radius": 0.1
+        },
+        {
+          "name": "Sliskjeara",
+          "lat": 63.59572094,
+          "lon": 9.26176026,
+          "radius": 0.1
+        },
+        {
+          "name": "Storaflu lt",
+          "lat": 63.54756484,
+          "lon": 9.25840884,
+          "radius": 0.1
+        },
+        {
+          "name": "Terningen lt",
+          "lat": 63.49043035,
+          "lon": 9.04337753,
+          "radius": 0.1
+        },
+        {
+          "name": "Skipnesstranda",
+          "lat": 63.40095517,
+          "lon": 8.5089409,
+          "radius": 0.1
+        },
+        {
+          "name": "Klakksbroren lt",
+          "lat": 63.36544053,
+          "lon": 8.3874474,
+          "radius": 0.1
+        },
+        {
+          "name": "Kyrhaug lt",
+          "lat": 63.30550355,
+          "lon": 8.23465826,
+          "radius": 0.1
+        },
+        {
+          "name": "Edoy lt",
+          "lat": 63.27708477,
+          "lon": 8.1526243,
+          "radius": 0.1
+        },
+        {
+          "name": "Lyktlangholmen lt",
+          "lat": 63.20173362,
+          "lon": 7.84277736,
+          "radius": 0.1
+        },
+        {
+          "name": "Helklakken 11 m",
+          "lat": 63.1405088,
+          "lon": 7.64437075,
+          "radius": 0.1
+        },
+        {
+          "name": "Sveggesundet lt",
+          "lat": 63.11996821,
+          "lon": 7.56851597,
+          "radius": 0.1
+        },
+        {
+          "name": "Hestskjeret lt",
+          "lat": 63.09412504,
+          "lon": 7.48697922,
+          "radius": 0.1
+        },
+        {
+          "name": "Brakan lt",
+          "lat": 63.08280559,
+          "lon": 7.46214795,
+          "radius": 0.1
+        },
+        {
+          "name": "Baramskrakene",
+          "lat": 63.06403333,
+          "lon": 7.36203333,
+          "radius": 0.1
+        },
+        {
+          "name": "Myrgrunnan light buoy",
+          "lat": 63.0549635,
+          "lon": 7.32525278,
+          "radius": 0.1
+        },
+        {
+          "name": "Bjugna",
+          "lat": 63.05319167,
+          "lon": 7.28032657,
+          "radius": 0.1
+        },
+        {
+          "name": "Midtflua light buoy",
+          "lat": 63.02598154,
+          "lon": 7.15968141,
+          "radius": 0.1
+        },
+        {
+          "name": "Breigrunntaren",
+          "lat": 63.01039,
+          "lon": 6.99576,
+          "radius": 0.1
+        },
+        {
+          "name": "Kolbeinsflu light buoy - precautionary area",
+          "lat": 62.97563378,
+          "lon": 6.86740392,
+          "radius": 0.1
+        },
+        {
+          "name": "Saltsteinsleia",
+          "lat": 62.86866754,
+          "lon": 6.70042724,
+          "radius": 0.1
+        },
+        {
+          "name": "Raudholmane",
+          "lat": 62.63736934,
+          "lon": 6.37728794,
+          "radius": 0.1
+        },
+        {
+          "name": "Haugflua",
+          "lat": 62.61972194,
+          "lon": 6.31253266,
+          "radius": 0.1
+        },
+        {
+          "name": "Lepsoyrevet",
+          "lat": 62.60378059,
+          "lon": 6.28338791,
+          "radius": 0.1
+        },
+        {
+          "name": "Lepsoyrevet",
+          "lat": 62.58125845,
+          "lon": 6.23023899,
+          "radius": 0.1
+        },
+        {
+          "name": "Vigrafjorden",
+          "lat": 62.56967123,
+          "lon": 6.19211611,
+          "radius": 0.1
+        },
+        {
+          "name": "Hanen lt",
+          "lat": 62.55728991,
+          "lon": 6.17046397,
+          "radius": 0.1
+        },
+        {
+          "name": "Oksneset",
+          "lat": 62.51882324,
+          "lon": 6.1454432,
+          "radius": 0.1
+        },
+        {
+          "name": "Oksebasen",
+          "lat": 62.50956621,
+          "lon": 6.14242229,
+          "radius": 0.1
+        },
+        {
+          "name": "Valderhaug",
+          "lat": 62.49967156,
+          "lon": 6.14600828,
+          "radius": 0.1
+        },
+        {
+          "name": "Valderhaug",
+          "lat": 62.49333398,
+          "lon": 6.13700343,
+          "radius": 0.1
+        },
+        {
+          "name": "Erknaflu",
+          "lat": 62.47314474,
+          "lon": 6.05752087,
+          "radius": 0.1
+        },
+        {
+          "name": "Hogsteinen lt",
+          "lat": 62.45951603,
+          "lon": 6.04727295,
+          "radius": 0.1
+        },
+        {
+          "name": "Eltraneset lt",
+          "lat": 62.44622567,
+          "lon": 6.06809489,
+          "radius": 0.1
+        },
+        {
+          "name": "Hessafjorden",
+          "lat": 62.44636362,
+          "lon": 6.11197795,
+          "radius": 0.1
+        },
+        {
+          "name": "Rognholmen lt",
+          "lat": 62.4551797,
+          "lon": 6.17622405,
+          "radius": 0.1
+        },
+        {
+          "name": "Gasholmen",
+          "lat": 62.45634169,
+          "lon": 6.20368526,
+          "radius": 0.1
+        },
+        {
+          "name": "Bogneset",
+          "lat": 62.45173133,
+          "lon": 6.24948118,
+          "radius": 0.1
+        },
+        {
+          "name": "Spjelkavik",
+          "lat": 62.45783276,
+          "lon": 6.3449976,
+          "radius": 0.1
+        }
+      ],
+      "legs": [
+        {
+          "from_waypoint": "Frohavet",
+          "to_waypoint": "Tarva lt",
+          "distance_nm": 28.71
+        },
+        {
+          "from_waypoint": "Tarva lt",
+          "to_waypoint": "Svissaflua 16 m",
+          "distance_nm": 7.64
+        },
+        {
+          "from_waypoint": "Svissaflua 16 m",
+          "to_waypoint": "Flesa pilot boarding",
+          "distance_nm": 3.01
+        },
+        {
+          "from_waypoint": "Flesa pilot boarding",
+          "to_waypoint": "Sliskjeara",
+          "distance_nm": 3.31
+        },
+        {
+          "from_waypoint": "Sliskjeara",
+          "to_waypoint": "Storaflu lt",
+          "distance_nm": 2.89
+        },
+        {
+          "from_waypoint": "Storaflu lt",
+          "to_waypoint": "Terningen lt",
+          "distance_nm": 6.7
+        },
+        {
+          "from_waypoint": "Terningen lt",
+          "to_waypoint": "Skipnesstranda",
+          "distance_nm": 15.32
+        },
+        {
+          "from_waypoint": "Skipnesstranda",
+          "to_waypoint": "Klakksbroren lt",
+          "distance_nm": 3.9
+        },
+        {
+          "from_waypoint": "Klakksbroren lt",
+          "to_waypoint": "Kyrhaug lt",
+          "distance_nm": 5.47
+        },
+        {
+          "from_waypoint": "Kyrhaug lt",
+          "to_waypoint": "Edoy lt",
+          "distance_nm": 2.79
+        },
+        {
+          "from_waypoint": "Edoy lt",
+          "to_waypoint": "Lyktlangholmen lt",
+          "distance_nm": 9.52
+        },
+        {
+          "from_waypoint": "Lyktlangholmen lt",
+          "to_waypoint": "Helklakken 11 m",
+          "distance_nm": 6.51
+        },
+        {
+          "from_waypoint": "Helklakken 11 m",
+          "to_waypoint": "Sveggesundet lt",
+          "distance_nm": 2.4
+        },
+        {
+          "from_waypoint": "Sveggesundet lt",
+          "to_waypoint": "Hestskjeret lt",
+          "distance_nm": 2.7
+        },
+        {
+          "from_waypoint": "Hestskjeret lt",
+          "to_waypoint": "Brakan lt",
+          "distance_nm": 0.96
+        },
+        {
+          "from_waypoint": "Brakan lt",
+          "to_waypoint": "Baramskrakene",
+          "distance_nm": 2.95
+        },
+        {
+          "from_waypoint": "Baramskrakene",
+          "to_waypoint": "Myrgrunnan light buoy",
+          "distance_nm": 1.14
+        },
+        {
+          "from_waypoint": "Myrgrunnan light buoy",
+          "to_waypoint": "Bjugna",
+          "distance_nm": 1.23
+        },
+        {
+          "from_waypoint": "Bjugna",
+          "to_waypoint": "Midtflua light buoy",
+          "distance_nm": 3.67
+        },
+        {
+          "from_waypoint": "Midtflua light buoy",
+          "to_waypoint": "Breigrunntaren",
+          "distance_nm": 4.56
+        },
+        {
+          "from_waypoint": "Breigrunntaren",
+          "to_waypoint": "Kolbeinsflu light buoy - precautionary area",
+          "distance_nm": 4.07
+        },
+        {
+          "from_waypoint": "Kolbeinsflu light buoy - precautionary area",
+          "to_waypoint": "Saltsteinsleia",
+          "distance_nm": 7.88
+        },
+        {
+          "from_waypoint": "Saltsteinsleia",
+          "to_waypoint": "Raudholmane",
+          "distance_nm": 16.48
+        },
+        {
+          "from_waypoint": "Raudholmane",
+          "to_waypoint": "Haugflua",
+          "distance_nm": 2.08
+        },
+        {
+          "from_waypoint": "Haugflua",
+          "to_waypoint": "Lepsoyrevet",
+          "distance_nm": 1.25
+        },
+        {
+          "from_waypoint": "Lepsoyrevet",
+          "to_waypoint": "Lepsoyrevet",
+          "distance_nm": 2.0
+        },
+        {
+          "from_waypoint": "Lepsoyrevet",
+          "to_waypoint": "Vigrafjorden",
+          "distance_nm": 1.26
+        },
+        {
+          "from_waypoint": "Vigrafjorden",
+          "to_waypoint": "Hanen lt",
+          "distance_nm": 0.95
+        },
+        {
+          "from_waypoint": "Hanen lt",
+          "to_waypoint": "Oksneset",
+          "distance_nm": 2.41
+        },
+        {
+          "from_waypoint": "Oksneset",
+          "to_waypoint": "Oksebasen",
+          "distance_nm": 0.56
+        },
+        {
+          "from_waypoint": "Oksebasen",
+          "to_waypoint": "Valderhaug",
+          "distance_nm": 0.6
+        },
+        {
+          "from_waypoint": "Valderhaug",
+          "to_waypoint": "Valderhaug",
+          "distance_nm": 0.46
+        },
+        {
+          "from_waypoint": "Valderhaug",
+          "to_waypoint": "Erknaflu",
+          "distance_nm": 2.52
+        },
+        {
+          "from_waypoint": "Erknaflu",
+          "to_waypoint": "Hogsteinen lt",
+          "distance_nm": 0.87
+        },
+        {
+          "from_waypoint": "Hogsteinen lt",
+          "to_waypoint": "Eltraneset lt",
+          "distance_nm": 0.99
+        },
+        {
+          "from_waypoint": "Eltraneset lt",
+          "to_waypoint": "Hessafjorden",
+          "distance_nm": 1.22
+        },
+        {
+          "from_waypoint": "Hessafjorden",
+          "to_waypoint": "Rognholmen lt",
+          "distance_nm": 1.86
+        },
+        {
+          "from_waypoint": "Rognholmen lt",
+          "to_waypoint": "Gasholmen",
+          "distance_nm": 0.77
+        },
+        {
+          "from_waypoint": "Gasholmen",
+          "to_waypoint": "Bogneset",
+          "distance_nm": 1.3
+        },
+        {
+          "from_waypoint": "Bogneset",
+          "to_waypoint": "Spjelkavik",
+          "distance_nm": 2.68
+        }
+      ],
+      "total_distance_nm": 167.6,
+      "waypoint_count": 41,
+      "leg_count": 40,
+      "origin": "7",
+      "destination": "5M",
+      "parse_timestamp": "2026-01-20T15:17:44.235879",
+      "data_source": "rtz_file_parser",
+      "source_city": "alesund",
+      "original_file": "NCA_7_5m_AlesundS_Halten_In_20250731.rtz",
+      "route_id": "3ee5a122"
+    },
+    {
+      "route_name": "NCA_AlesundS_Breisundet_In_20250801",
+      "file_path": "/home/framg/dev/bergnavn/backend/assets/routeinfo_routes/alesund/raw/extracted/NCA_AlesundS_Breisundet_In_20250731.rtz",
+      "waypoints": [
+        {
+          "name": "Breisunddjupet",
+          "lat": 62.51022878,
+          "lon": 5.68239097,
+          "radius": 0.1
+        },
+        {
+          "name": "Breisundet",
+          "lat": 62.44828561,
+          "lon": 5.91428191,
+          "radius": 0.1
+        },
+        {
+          "name": "Eltraneset lt",
+          "lat": 62.44618084,
+          "lon": 6.05318243,
+          "radius": 0.1
+        },
+        {
+          "name": "Hessafjorden",
+          "lat": 62.44636362,
+          "lon": 6.11197795,
+          "radius": 0.1
+        },
+        {
+          "name": "Rognholmen lt",
+          "lat": 62.4551797,
+          "lon": 6.17622405,
+          "radius": 0.1
+        },
+        {
+          "name": "Gasholmen",
+          "lat": 62.45634169,
+          "lon": 6.20368526,
+          "radius": 0.1
+        },
+        {
+          "name": "Bogneset",
+          "lat": 62.45173133,
+          "lon": 6.24948118,
+          "radius": 0.1
+        },
+        {
+          "name": "Spjelkavik",
+          "lat": 62.45783276,
+          "lon": 6.3449976,
+          "radius": 0.1
+        }
+      ],
+      "legs": [
+        {
+          "from_waypoint": "Breisunddjupet",
+          "to_waypoint": "Breisundet",
+          "distance_nm": 7.43
+        },
+        {
+          "from_waypoint": "Breisundet",
+          "to_waypoint": "Eltraneset lt",
+          "distance_nm": 3.86
+        },
+        {
+          "from_waypoint": "Eltraneset lt",
+          "to_waypoint": "Hessafjorden",
+          "distance_nm": 1.63
+        },
+        {
+          "from_waypoint": "Hessafjorden",
+          "to_waypoint": "Rognholmen lt",
+          "distance_nm": 1.86
+        },
+        {
+          "from_waypoint": "Rognholmen lt",
+          "to_waypoint": "Gasholmen",
+          "distance_nm": 0.77
+        },
+        {
+          "from_waypoint": "Gasholmen",
+          "to_waypoint": "Bogneset",
+          "distance_nm": 1.3
+        },
+        {
+          "from_waypoint": "Bogneset",
+          "to_waypoint": "Spjelkavik",
+          "distance_nm": 2.68
+        }
+      ],
+      "total_distance_nm": 19.53,
+      "waypoint_count": 8,
+      "leg_count": 7,
+      "origin": "Alesunds",
+      "destination": "Breisundet",
+      "parse_timestamp": "2026-01-20T15:17:44.236809",
+      "data_source": "rtz_file_parser",
+      "source_city": "alesund",
+      "original_file": "NCA_AlesundS_Breisundet_In_20250731.rtz",
+      "route_id": "5c0bf037"
+    },
+    {
+      "route_name": "NCA_9m_AlesundN_Halten_In_20250801",
+      "file_path": "/home/framg/dev/bergnavn/backend/assets/routeinfo_routes/alesund/raw/extracted/NCA_9m_AlesundN_Halten_In_20250731.rtz",
+      "waypoints": [
+        {
+          "name": "Frohavet",
+          "lat": 64.25626858,
+          "lon": 9.75179652,
+          "radius": 0.1
+        },
+        {
+          "name": "Tarva lt",
+          "lat": 63.82722217,
+          "lon": 9.26903527,
+          "radius": 0.1
+        },
+        {
+          "name": "Svissaflua 16 m",
+          "lat": 63.7006193,
+          "lon": 9.24036868,
+          "radius": 0.1
+        },
+        {
+          "name": "Flesa pilot boarding",
+          "lat": 63.65054591,
+          "lon": 9.24847105,
+          "radius": 0.1
+        },
+        {
+          "name": "Sliskjeara",
+          "lat": 63.59572094,
+          "lon": 9.26176026,
+          "radius": 0.1
+        },
+        {
+          "name": "Storaflu lt",
+          "lat": 63.54756484,
+          "lon": 9.25840884,
+          "radius": 0.1
+        },
+        {
+          "name": "Terningen lt",
+          "lat": 63.49043035,
+          "lon": 9.04337753,
+          "radius": 0.1
+        },
+        {
+          "name": "Skipnesstranda",
+          "lat": 63.40095517,
+          "lon": 8.5089409,
+          "radius": 0.1
+        },
+        {
+          "name": "Klakksbroren lt",
+          "lat": 63.36544053,
+          "lon": 8.3874474,
+          "radius": 0.1
+        },
+        {
+          "name": "Kyrhaug lt",
+          "lat": 63.30550355,
+          "lon": 8.23465826,
+          "radius": 0.1
+        },
+        {
+          "name": "Edoy lt",
+          "lat": 63.27708477,
+          "lon": 8.1526243,
+          "radius": 0.1
+        },
+        {
+          "name": "Lyktlangholmen lt",
+          "lat": 63.20173362,
+          "lon": 7.84277736,
+          "radius": 0.1
+        },
+        {
+          "name": "Helklakken 11 m",
+          "lat": 63.1405088,
+          "lon": 7.64437075,
+          "radius": 0.1
+        },
+        {
+          "name": "Sveggesundet lt",
+          "lat": 63.11996821,
+          "lon": 7.56851597,
+          "radius": 0.1
+        },
+        {
+          "name": "Hestskjeret lt",
+          "lat": 63.09412504,
+          "lon": 7.48697922,
+          "radius": 0.1
+        },
+        {
+          "name": "Brakan lt",
+          "lat": 63.08280559,
+          "lon": 7.46214795,
+          "radius": 0.1
+        },
+        {
+          "name": "Baramskrakene",
+          "lat": 63.06403333,
+          "lon": 7.36203333,
+          "radius": 0.1
+        },
+        {
+          "name": "Myrgrunnan light buoy",
+          "lat": 63.0549635,
+          "lon": 7.32525278,
+          "radius": 0.1
+        },
+        {
+          "name": "Bjugna",
+          "lat": 63.05253797,
+          "lon": 7.25497976,
+          "radius": 0.1
+        },
+        {
+          "name": "Fuglen lt",
+          "lat": 63.05936814,
+          "lon": 7.12623239,
+          "radius": 0.1
+        },
+        {
+          "name": "Hustadvika",
+          "lat": 63.02750201,
+          "lon": 7.05919656,
+          "radius": 0.1
+        },
+        {
+          "name": "Kolbeinsflu light buoy - precautionary area",
+          "lat": 62.97563378,
+          "lon": 6.86740392,
+          "radius": 0.1
+        },
+        {
+          "name": "Saltsteinsleia",
+          "lat": 62.86866754,
+          "lon": 6.70042724,
+          "radius": 0.1
+        },
+        {
+          "name": "Raudholmane",
+          "lat": 62.63736934,
+          "lon": 6.37728794,
+          "radius": 0.1
+        },
+        {
+          "name": "Kyrkjeflua",
+          "lat": 62.62272464,
+          "lon": 6.28224184,
+          "radius": 0.1
+        },
+        {
+          "name": "Hestoyskallen",
+          "lat": 62.62497742,
+          "lon": 6.248428,
+          "radius": 0.1
+        },
+        {
+          "name": "Hellevik lt",
+          "lat": 62.6455782,
+          "lon": 6.18182474,
+          "radius": 0.1
+        },
+        {
+          "name": "Isaksfallet",
+          "lat": 62.64926921,
+          "lon": 6.14016062,
+          "radius": 0.1
+        },
+        {
+          "name": "Faksen bn",
+          "lat": 62.64596682,
+          "lon": 6.11935181,
+          "radius": 0.1
+        },
+        {
+          "name": "Innholmen lt",
+          "lat": 62.62865097,
+          "lon": 6.09454886,
+          "radius": 0.1
+        },
+        {
+          "name": "Ramnen",
+          "lat": 62.6111062,
+          "lon": 6.12821373,
+          "radius": 0.1
+        },
+        {
+          "name": "Flight Zone",
+          "lat": 62.56685321,
+          "lon": 6.17588126,
+          "radius": 0.1
+        },
+        {
+          "name": "Oksneset",
+          "lat": 62.51882324,
+          "lon": 6.1454432,
+          "radius": 0.1
+        },
+        {
+          "name": "Oksebasen",
+          "lat": 62.50956621,
+          "lon": 6.14242229,
+          "radius": 0.1
+        },
+        {
+          "name": "Olsskjer lt",
+          "lat": 62.48504269,
+          "lon": 6.15129891,
+          "radius": 0.1
+        },
+        {
+          "name": "Ellingsoyfjorden",
+          "lat": 62.48572,
+          "lon": 6.18174294,
+          "radius": 0.1
+        },
+        {
+          "name": "Brattholmen lt",
+          "lat": 62.48837813,
+          "lon": 6.21202408,
+          "radius": 0.1
+        },
+        {
+          "name": "Vardeflua",
+          "lat": 62.4843874,
+          "lon": 6.25473911,
+          "radius": 0.1
+        },
+        {
+          "name": "Svinoysundet",
+          "lat": 62.47307589,
+          "lon": 6.27187611,
+          "radius": 0.1
+        },
+        {
+          "name": "Kalvoysundet",
+          "lat": 62.47641737,
+          "lon": 6.28719523,
+          "radius": 0.1
+        },
+        {
+          "name": "Hestholmen",
+          "lat": 62.47984662,
+          "lon": 6.34553374,
+          "radius": 0.1
+        },
+        {
+          "name": "Langoya",
+          "lat": 62.48675692,
+          "lon": 6.36837106,
+          "radius": 0.1
+        },
+        {
+          "name": "Alvika",
+          "lat": 62.48812652,
+          "lon": 6.38531788,
+          "radius": 0.1
+        }
+      ],
+      "legs": [
+        {
+          "from_waypoint": "Frohavet",
+          "to_waypoint": "Tarva lt",
+          "distance_nm": 28.71
+        },
+        {
+          "from_waypoint": "Tarva lt",
+          "to_waypoint": "Svissaflua 16 m",
+          "distance_nm": 7.64
+        },
+        {
+          "from_waypoint": "Svissaflua 16 m",
+          "to_waypoint": "Flesa pilot boarding",
+          "distance_nm": 3.01
+        },
+        {
+          "from_waypoint": "Flesa pilot boarding",
+          "to_waypoint": "Sliskjeara",
+          "distance_nm": 3.31
+        },
+        {
+          "from_waypoint": "Sliskjeara",
+          "to_waypoint": "Storaflu lt",
+          "distance_nm": 2.89
+        },
+        {
+          "from_waypoint": "Storaflu lt",
+          "to_waypoint": "Terningen lt",
+          "distance_nm": 6.7
+        },
+        {
+          "from_waypoint": "Terningen lt",
+          "to_waypoint": "Skipnesstranda",
+          "distance_nm": 15.32
+        },
+        {
+          "from_waypoint": "Skipnesstranda",
+          "to_waypoint": "Klakksbroren lt",
+          "distance_nm": 3.9
+        },
+        {
+          "from_waypoint": "Klakksbroren lt",
+          "to_waypoint": "Kyrhaug lt",
+          "distance_nm": 5.47
+        },
+        {
+          "from_waypoint": "Kyrhaug lt",
+          "to_waypoint": "Edoy lt",
+          "distance_nm": 2.79
+        },
+        {
+          "from_waypoint": "Edoy lt",
+          "to_waypoint": "Lyktlangholmen lt",
+          "distance_nm": 9.52
+        },
+        {
+          "from_waypoint": "Lyktlangholmen lt",
+          "to_waypoint": "Helklakken 11 m",
+          "distance_nm": 6.51
+        },
+        {
+          "from_waypoint": "Helklakken 11 m",
+          "to_waypoint": "Sveggesundet lt",
+          "distance_nm": 2.4
+        },
+        {
+          "from_waypoint": "Sveggesundet lt",
+          "to_waypoint": "Hestskjeret lt",
+          "distance_nm": 2.7
+        },
+        {
+          "from_waypoint": "Hestskjeret lt",
+          "to_waypoint": "Brakan lt",
+          "distance_nm": 0.96
+        },
+        {
+          "from_waypoint": "Brakan lt",
+          "to_waypoint": "Baramskrakene",
+          "distance_nm": 2.95
+        },
+        {
+          "from_waypoint": "Baramskrakene",
+          "to_waypoint": "Myrgrunnan light buoy",
+          "distance_nm": 1.14
+        },
+        {
+          "from_waypoint": "Myrgrunnan light buoy",
+          "to_waypoint": "Bjugna",
+          "distance_nm": 1.92
+        },
+        {
+          "from_waypoint": "Bjugna",
+          "to_waypoint": "Fuglen lt",
+          "distance_nm": 3.53
+        },
+        {
+          "from_waypoint": "Fuglen lt",
+          "to_waypoint": "Hustadvika",
+          "distance_nm": 2.64
+        },
+        {
+          "from_waypoint": "Hustadvika",
+          "to_waypoint": "Kolbeinsflu light buoy - precautionary area",
+          "distance_nm": 6.08
+        },
+        {
+          "from_waypoint": "Kolbeinsflu light buoy - precautionary area",
+          "to_waypoint": "Saltsteinsleia",
+          "distance_nm": 7.88
+        },
+        {
+          "from_waypoint": "Saltsteinsleia",
+          "to_waypoint": "Raudholmane",
+          "distance_nm": 16.48
+        },
+        {
+          "from_waypoint": "Raudholmane",
+          "to_waypoint": "Kyrkjeflua",
+          "distance_nm": 2.77
+        },
+        {
+          "from_waypoint": "Kyrkjeflua",
+          "to_waypoint": "Hestoyskallen",
+          "distance_nm": 0.94
+        },
+        {
+          "from_waypoint": "Hestoyskallen",
+          "to_waypoint": "Hellevik lt",
+          "distance_nm": 2.22
+        },
+        {
+          "from_waypoint": "Hellevik lt",
+          "to_waypoint": "Isaksfallet",
+          "distance_nm": 1.17
+        },
+        {
+          "from_waypoint": "Isaksfallet",
+          "to_waypoint": "Faksen bn",
+          "distance_nm": 0.61
+        },
+        {
+          "from_waypoint": "Faksen bn",
+          "to_waypoint": "Innholmen lt",
+          "distance_nm": 1.24
+        },
+        {
+          "from_waypoint": "Innholmen lt",
+          "to_waypoint": "Ramnen",
+          "distance_nm": 1.4
+        },
+        {
+          "from_waypoint": "Ramnen",
+          "to_waypoint": "Flight Zone",
+          "distance_nm": 2.97
+        },
+        {
+          "from_waypoint": "Flight Zone",
+          "to_waypoint": "Oksneset",
+          "distance_nm": 3.0
+        },
+        {
+          "from_waypoint": "Oksneset",
+          "to_waypoint": "Oksebasen",
+          "distance_nm": 0.56
+        },
+        {
+          "from_waypoint": "Oksebasen",
+          "to_waypoint": "Olsskjer lt",
+          "distance_nm": 1.49
+        },
+        {
+          "from_waypoint": "Olsskjer lt",
+          "to_waypoint": "Ellingsoyfjorden",
+          "distance_nm": 0.85
+        },
+        {
+          "from_waypoint": "Ellingsoyfjorden",
+          "to_waypoint": "Brattholmen lt",
+          "distance_nm": 0.85
+        },
+        {
+          "from_waypoint": "Brattholmen lt",
+          "to_waypoint": "Vardeflua",
+          "distance_nm": 1.21
+        },
+        {
+          "from_waypoint": "Vardeflua",
+          "to_waypoint": "Svinoysundet",
+          "distance_nm": 0.83
+        },
+        {
+          "from_waypoint": "Svinoysundet",
+          "to_waypoint": "Kalvoysundet",
+          "distance_nm": 0.47
+        },
+        {
+          "from_waypoint": "Kalvoysundet",
+          "to_waypoint": "Hestholmen",
+          "distance_nm": 1.63
+        },
+        {
+          "from_waypoint": "Hestholmen",
+          "to_waypoint": "Langoya",
+          "distance_nm": 0.76
+        },
+        {
+          "from_waypoint": "Langoya",
+          "to_waypoint": "Alvika",
+          "distance_nm": 0.48
+        }
+      ],
+      "total_distance_nm": 169.92,
+      "waypoint_count": 43,
+      "leg_count": 42,
+      "origin": "9M",
+      "destination": "Alesundn",
+      "parse_timestamp": "2026-01-20T15:17:44.238035",
+      "data_source": "rtz_file_parser",
+      "source_city": "alesund",
+      "original_file": "NCA_9m_AlesundN_Halten_In_20250731.rtz",
+      "route_id": "ef0540ce"
+    }
+  ]
+}

@@ -1,0 +1,200 @@
+{
+  "route_name": "NCA_Trondheim_Halten_In_20250801",
+  "file_path": "/home/framg/dev/bergnavn/backend/assets/routeinfo_routes/trondheim/raw/extracted/NCA_Trondheim_Halten_In_20250731.rtz",
+  "waypoints": [
+    {
+      "name": "Frohavet",
+      "lat": 64.25626858,
+      "lon": 9.75179652,
+      "radius": 0.1
+    },
+    {
+      "name": "Tarva lt",
+      "lat": 63.82722217,
+      "lon": 9.26903527,
+      "radius": 0.1
+    },
+    {
+      "name": "Svissaflua 16 m",
+      "lat": 63.7006193,
+      "lon": 9.24036868,
+      "radius": 0.1
+    },
+    {
+      "name": "Flesa pilot boarding",
+      "lat": 63.65054591,
+      "lon": 9.24847105,
+      "radius": 0.1
+    },
+    {
+      "name": "Kommersoy",
+      "lat": 63.62132461,
+      "lon": 9.30684108,
+      "radius": 0.1
+    },
+    {
+      "name": "Smellingflua",
+      "lat": 63.6141898,
+      "lon": 9.49231755,
+      "radius": 0.1
+    },
+    {
+      "name": "Roysaneset lt",
+      "lat": 63.6276,
+      "lon": 9.58473333,
+      "radius": 0.1
+    },
+    {
+      "name": "Hogholmen lt",
+      "lat": 63.65451667,
+      "lon": 9.6863,
+      "radius": 0.1
+    },
+    {
+      "name": "Kjerringa",
+      "lat": 63.65545,
+      "lon": 9.72803333,
+      "radius": 0.1
+    },
+    {
+      "name": "Ringflua lt",
+      "lat": 63.65016342,
+      "lon": 9.7631476,
+      "radius": 0.1
+    },
+    {
+      "name": "Hysneset lt",
+      "lat": 63.62456759,
+      "lon": 9.77597641,
+      "radius": 0.1
+    },
+    {
+      "name": "Storneset",
+      "lat": 63.49520805,
+      "lon": 9.90840994,
+      "radius": 0.1
+    },
+    {
+      "name": "Rodbergneset",
+      "lat": 63.47576245,
+      "lon": 9.9787621,
+      "radius": 0.1
+    },
+    {
+      "name": "Flakkfjorden",
+      "lat": 63.46752128,
+      "lon": 10.19017705,
+      "radius": 0.1
+    },
+    {
+      "name": "Digermulen",
+      "lat": 63.45845001,
+      "lon": 10.30423466,
+      "radius": 0.1
+    },
+    {
+      "name": "Nordneset",
+      "lat": 63.45073333,
+      "lon": 10.34578333,
+      "radius": 0.1
+    },
+    {
+      "name": "Trondheim",
+      "lat": 63.44545,
+      "lon": 10.36245,
+      "radius": 0.1
+    }
+  ],
+  "legs": [
+    {
+      "from_waypoint": "Frohavet",
+      "to_waypoint": "Tarva lt",
+      "distance_nm": 28.71
+    },
+    {
+      "from_waypoint": "Tarva lt",
+      "to_waypoint": "Svissaflua 16 m",
+      "distance_nm": 7.64
+    },
+    {
+      "from_waypoint": "Svissaflua 16 m",
+      "to_waypoint": "Flesa pilot boarding",
+      "distance_nm": 3.01
+    },
+    {
+      "from_waypoint": "Flesa pilot boarding",
+      "to_waypoint": "Kommersoy",
+      "distance_nm": 2.35
+    },
+    {
+      "from_waypoint": "Kommersoy",
+      "to_waypoint": "Smellingflua",
+      "distance_nm": 4.97
+    },
+    {
+      "from_waypoint": "Smellingflua",
+      "to_waypoint": "Roysaneset lt",
+      "distance_nm": 2.59
+    },
+    {
+      "from_waypoint": "Roysaneset lt",
+      "to_waypoint": "Hogholmen lt",
+      "distance_nm": 3.15
+    },
+    {
+      "from_waypoint": "Hogholmen lt",
+      "to_waypoint": "Kjerringa",
+      "distance_nm": 1.11
+    },
+    {
+      "from_waypoint": "Kjerringa",
+      "to_waypoint": "Ringflua lt",
+      "distance_nm": 0.99
+    },
+    {
+      "from_waypoint": "Ringflua lt",
+      "to_waypoint": "Hysneset lt",
+      "distance_nm": 1.57
+    },
+    {
+      "from_waypoint": "Hysneset lt",
+      "to_waypoint": "Storneset",
+      "distance_nm": 8.54
+    },
+    {
+      "from_waypoint": "Storneset",
+      "to_waypoint": "Rodbergneset",
+      "distance_nm": 2.22
+    },
+    {
+      "from_waypoint": "Rodbergneset",
+      "to_waypoint": "Flakkfjorden",
+      "distance_nm": 5.69
+    },
+    {
+      "from_waypoint": "Flakkfjorden",
+      "to_waypoint": "Digermulen",
+      "distance_nm": 3.11
+    },
+    {
+      "from_waypoint": "Digermulen",
+      "to_waypoint": "Nordneset",
+      "distance_nm": 1.21
+    },
+    {
+      "from_waypoint": "Nordneset",
+      "to_waypoint": "Trondheim",
+      "distance_nm": 0.55
+    }
+  ],
+  "total_distance_nm": 77.41,
+  "waypoint_count": 17,
+  "leg_count": 16,
+  "origin": "Trondheim",
+  "destination": "Haltenbanken",
+  "parse_timestamp": "2026-01-20T15:17:44.272975",
+  "data_source": "rtz_file_parser",
+  "source_city": "trondheim",
+  "original_file": "NCA_Trondheim_Halten_In_20250731.rtz",
+  "route_id": "27efe1d7"
+}

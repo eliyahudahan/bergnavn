@@ -1,0 +1,266 @@
+{
+  "route_name": "NCA_Trondheim_Grip_In_20250801",
+  "file_path": "/home/framg/dev/bergnavn/backend/assets/routeinfo_routes/trondheim/raw/extracted/NCA_Trondheim_Grip_In_20250731.rtz",
+  "waypoints": [
+    {
+      "name": "Grip outer pilot boarding",
+      "lat": 63.25096667,
+      "lon": 7.5957,
+      "radius": 0.1
+    },
+    {
+      "name": "Grip inner pilot boarding",
+      "lat": 63.23285672,
+      "lon": 7.70226658,
+      "radius": 0.1
+    },
+    {
+      "name": "Godtaren lt",
+      "lat": 63.22408419,
+      "lon": 7.76305131,
+      "radius": 0.1
+    },
+    {
+      "name": "Baeflua",
+      "lat": 63.21593032,
+      "lon": 7.86628357,
+      "radius": 0.1
+    },
+    {
+      "name": "Hammarsundet lt",
+      "lat": 63.22406531,
+      "lon": 7.955446,
+      "radius": 0.1
+    },
+    {
+      "name": "Edoy lt",
+      "lat": 63.27350456,
+      "lon": 8.15418194,
+      "radius": 0.1
+    },
+    {
+      "name": "Kyrhaug lt",
+      "lat": 63.30301326,
+      "lon": 8.23864242,
+      "radius": 0.1
+    },
+    {
+      "name": "Klakksbroren lt",
+      "lat": 63.3620164,
+      "lon": 8.39161336,
+      "radius": 0.1
+    },
+    {
+      "name": "Skipnesstranda",
+      "lat": 63.39426323,
+      "lon": 8.51450151,
+      "radius": 0.1
+    },
+    {
+      "name": "Terningen lt",
+      "lat": 63.48809477,
+      "lon": 9.04547051,
+      "radius": 0.1
+    },
+    {
+      "name": "Storaflu lt",
+      "lat": 63.55761794,
+      "lon": 9.33332465,
+      "radius": 0.1
+    },
+    {
+      "name": "Bjornoyflua lt",
+      "lat": 63.58326667,
+      "lon": 9.44231667,
+      "radius": 0.1
+    },
+    {
+      "name": "Roysaneset lt",
+      "lat": 63.6276,
+      "lon": 9.58473333,
+      "radius": 0.1
+    },
+    {
+      "name": "Hogholmen lt",
+      "lat": 63.65451667,
+      "lon": 9.6863,
+      "radius": 0.1
+    },
+    {
+      "name": "Kjerringa",
+      "lat": 63.65545,
+      "lon": 9.72803333,
+      "radius": 0.1
+    },
+    {
+      "name": "Ringflua lt",
+      "lat": 63.65016342,
+      "lon": 9.7631476,
+      "radius": 0.1
+    },
+    {
+      "name": "Hysneset lt",
+      "lat": 63.62456759,
+      "lon": 9.77597641,
+      "radius": 0.1
+    },
+    {
+      "name": "Storneset",
+      "lat": 63.49520805,
+      "lon": 9.90840994,
+      "radius": 0.1
+    },
+    {
+      "name": "Rodbergneset",
+      "lat": 63.47576245,
+      "lon": 9.9787621,
+      "radius": 0.1
+    },
+    {
+      "name": "Flakkfjorden",
+      "lat": 63.46752128,
+      "lon": 10.19017705,
+      "radius": 0.1
+    },
+    {
+      "name": "Digermulen",
+      "lat": 63.45845001,
+      "lon": 10.30423466,
+      "radius": 0.1
+    },
+    {
+      "name": "Nordneset",
+      "lat": 63.45073333,
+      "lon": 10.34578333,
+      "radius": 0.1
+    },
+    {
+      "name": "Trondheim",
+      "lat": 63.44545,
+      "lon": 10.36245,
+      "radius": 0.1
+    }
+  ],
+  "legs": [
+    {
+      "from_waypoint": "Grip outer pilot boarding",
+      "to_waypoint": "Grip inner pilot boarding",
+      "distance_nm": 3.08
+    },
+    {
+      "from_waypoint": "Grip inner pilot boarding",
+      "to_waypoint": "Godtaren lt",
+      "distance_nm": 1.73
+    },
+    {
+      "from_waypoint": "Godtaren lt",
+      "to_waypoint": "Baeflua",
+      "distance_nm": 2.84
+    },
+    {
+      "from_waypoint": "Baeflua",
+      "to_waypoint": "Hammarsundet lt",
+      "distance_nm": 2.46
+    },
+    {
+      "from_waypoint": "Hammarsundet lt",
+      "to_waypoint": "Edoy lt",
+      "distance_nm": 6.14
+    },
+    {
+      "from_waypoint": "Edoy lt",
+      "to_waypoint": "Kyrhaug lt",
+      "distance_nm": 2.89
+    },
+    {
+      "from_waypoint": "Kyrhaug lt",
+      "to_waypoint": "Klakksbroren lt",
+      "distance_nm": 5.44
+    },
+    {
+      "from_waypoint": "Klakksbroren lt",
+      "to_waypoint": "Skipnesstranda",
+      "distance_nm": 3.83
+    },
+    {
+      "from_waypoint": "Skipnesstranda",
+      "to_waypoint": "Terningen lt",
+      "distance_nm": 15.33
+    },
+    {
+      "from_waypoint": "Terningen lt",
+      "to_waypoint": "Storaflu lt",
+      "distance_nm": 8.76
+    },
+    {
+      "from_waypoint": "Storaflu lt",
+      "to_waypoint": "Bjornoyflua lt",
+      "distance_nm": 3.29
+    },
+    {
+      "from_waypoint": "Bjornoyflua lt",
+      "to_waypoint": "Roysaneset lt",
+      "distance_nm": 4.64
+    },
+    {
+      "from_waypoint": "Roysaneset lt",
+      "to_waypoint": "Hogholmen lt",
+      "distance_nm": 3.15
+    },
+    {
+      "from_waypoint": "Hogholmen lt",
+      "to_waypoint": "Kjerringa",
+      "distance_nm": 1.11
+    },
+    {
+      "from_waypoint": "Kjerringa",
+      "to_waypoint": "Ringflua lt",
+      "distance_nm": 0.99
+    },
+    {
+      "from_waypoint": "Ringflua lt",
+      "to_waypoint": "Hysneset lt",
+      "distance_nm": 1.57
+    },
+    {
+      "from_waypoint": "Hysneset lt",
+      "to_waypoint": "Storneset",
+      "distance_nm": 8.54
+    },
+    {
+      "from_waypoint": "Storneset",
+      "to_waypoint": "Rodbergneset",
+      "distance_nm": 2.22
+    },
+    {
+      "from_waypoint": "Rodbergneset",
+      "to_waypoint": "Flakkfjorden",
+      "distance_nm": 5.69
+    },
+    {
+      "from_waypoint": "Flakkfjorden",
+      "to_waypoint": "Digermulen",
+      "distance_nm": 3.11
+    },
+    {
+      "from_waypoint": "Digermulen",
+      "to_waypoint": "Nordneset",
+      "distance_nm": 1.21
+    },
+    {
+      "from_waypoint": "Nordneset",
+      "to_waypoint": "Trondheim",
+      "distance_nm": 0.55
+    }
+  ],
+  "total_distance_nm": 88.55,
+  "waypoint_count": 23,
+  "leg_count": 22,
+  "origin": "Trondheim",
+  "destination": "Grip",
+  "parse_timestamp": "2026-01-20T15:17:44.275195",
+  "data_source": "rtz_file_parser",
+  "source_city": "trondheim",
+  "original_file": "NCA_Trondheim_Grip_In_20250731.rtz",
+  "route_id": "cf1bcfac"
+}

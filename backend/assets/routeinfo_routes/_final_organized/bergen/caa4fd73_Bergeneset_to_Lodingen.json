@@ -1,0 +1,640 @@
+{
+  "route_name": "NCA_Bergeneset_Lodingen_Out_20250801",
+  "file_path": "/home/framg/dev/bergnavn/backend/assets/routeinfo_routes/bergen/raw/extracted/NCA_Bergeneset_Lodingen_Out_20250801.rtz",
+  "waypoints": [
+    {
+      "name": "Bergeneset",
+      "lat": 69.25052667,
+      "lon": 19.36940931,
+      "radius": 0.1
+    },
+    {
+      "name": "Tenneskjeret by",
+      "lat": 69.31434297,
+      "lon": 19.37536349,
+      "radius": 0.1
+    },
+    {
+      "name": "Sandneset",
+      "lat": 69.34798835,
+      "lon": 19.32671387,
+      "radius": 0.1
+    },
+    {
+      "name": "Svartneset",
+      "lat": 69.37021013,
+      "lon": 19.1007758,
+      "radius": 0.1
+    },
+    {
+      "name": "Nordvang",
+      "lat": 69.39531021,
+      "lon": 19.04494451,
+      "radius": 0.1
+    },
+    {
+      "name": "Middagsneset",
+      "lat": 69.4253136,
+      "lon": 19.01571972,
+      "radius": 0.1
+    },
+    {
+      "name": "Storneset lt",
+      "lat": 69.45586055,
+      "lon": 18.9515326,
+      "radius": 0.1
+    },
+    {
+      "name": "Kraksletta by",
+      "lat": 69.52554525,
+      "lon": 18.91903115,
+      "radius": 0.1
+    },
+    {
+      "name": "Bergegrunnen",
+      "lat": 69.56601146,
+      "lon": 18.86361735,
+      "radius": 0.1
+    },
+    {
+      "name": "Balsnesodden lt",
+      "lat": 69.570948,
+      "lon": 18.81680878,
+      "radius": 0.1
+    },
+    {
+      "name": "Rystraumen",
+      "lat": 69.55666667,
+      "lon": 18.755,
+      "radius": 0.1
+    },
+    {
+      "name": "Rystraumen lt",
+      "lat": 69.55126329,
+      "lon": 18.64604597,
+      "radius": 0.1
+    },
+    {
+      "name": "Malangen",
+      "lat": 69.48936313,
+      "lon": 18.18377332,
+      "radius": 0.1
+    },
+    {
+      "name": "Rodbergsodden lt",
+      "lat": 69.46353188,
+      "lon": 18.10446619,
+      "radius": 0.1
+    },
+    {
+      "name": "Mollnesskallen bn",
+      "lat": 69.42730451,
+      "lon": 18.12320277,
+      "radius": 0.1
+    },
+    {
+      "name": "Sandholmen lt",
+      "lat": 69.41233318,
+      "lon": 18.11727359,
+      "radius": 0.1
+    },
+    {
+      "name": "Slettneset lt",
+      "lat": 69.37977243,
+      "lon": 18.08489747,
+      "radius": 0.1
+    },
+    {
+      "name": "Vardneset lt",
+      "lat": 69.36231427,
+      "lon": 18.10128642,
+      "radius": 0.1
+    },
+    {
+      "name": "Nordgrunnen by",
+      "lat": 69.3578016,
+      "lon": 18.09394522,
+      "radius": 0.1
+    },
+    {
+      "name": "Bukkskinn lt",
+      "lat": 69.34917333,
+      "lon": 18.08835653,
+      "radius": 0.1
+    },
+    {
+      "name": "Kobboyra lt",
+      "lat": 69.3134106,
+      "lon": 17.97591665,
+      "radius": 0.1
+    },
+    {
+      "name": "Gisundet",
+      "lat": 69.3036248,
+      "lon": 17.96531125,
+      "radius": 0.1
+    },
+    {
+      "name": "Leiknesora lt",
+      "lat": 69.2964873,
+      "lon": 17.97593831,
+      "radius": 0.1
+    },
+    {
+      "name": "Trollvikgrunnen lt",
+      "lat": 69.26978877,
+      "lon": 17.96818127,
+      "radius": 0.1
+    },
+    {
+      "name": "Laukhella lt",
+      "lat": 69.2520841,
+      "lon": 17.97905647,
+      "radius": 0.1
+    },
+    {
+      "name": "Gisundet",
+      "lat": 69.23955215,
+      "lon": 17.95965121,
+      "radius": 0.1
+    },
+    {
+      "name": "Finnsnes",
+      "lat": 69.22416824,
+      "lon": 17.9468799,
+      "radius": 0.1
+    },
+    {
+      "name": "Finnsnesgrunnen lt",
+      "lat": 69.22020994,
+      "lon": 17.94682217,
+      "radius": 0.1
+    },
+    {
+      "name": "Klauvskjaerodden lt",
+      "lat": 69.20756667,
+      "lon": 17.99758333,
+      "radius": 0.1
+    },
+    {
+      "name": "Klauvskjaerodden lt",
+      "lat": 69.19876137,
+      "lon": 18.01645156,
+      "radius": 0.1
+    },
+    {
+      "name": "Lassegrunnen",
+      "lat": 69.19032545,
+      "lon": 18.02165904,
+      "radius": 0.1
+    },
+    {
+      "name": "Klauva lt",
+      "lat": 69.17364691,
+      "lon": 17.96341388,
+      "radius": 0.1
+    },
+    {
+      "name": "Solbergnakken",
+      "lat": 69.15420439,
+      "lon": 17.84253519,
+      "radius": 0.1
+    },
+    {
+      "name": "Dyroya lt",
+      "lat": 69.09512085,
+      "lon": 17.41985947,
+      "radius": 0.1
+    },
+    {
+      "name": "Dyroya lt",
+      "lat": 69.08117815,
+      "lon": 17.3698704,
+      "radius": 0.1
+    },
+    {
+      "name": "Bispeflua lt",
+      "lat": 69.00267587,
+      "lon": 17.25638884,
+      "radius": 0.1
+    },
+    {
+      "name": "Engenes lt",
+      "lat": 68.93667128,
+      "lon": 17.08256298,
+      "radius": 0.1
+    },
+    {
+      "name": "Rollnesboen lt",
+      "lat": 68.7636375,
+      "lon": 16.77608952,
+      "radius": 0.1
+    },
+    {
+      "name": "Grasholmen lt",
+      "lat": 68.67416668,
+      "lon": 16.6588491,
+      "radius": 0.1
+    },
+    {
+      "name": "Langkvitneset",
+      "lat": 68.6360631,
+      "lon": 16.58703816,
+      "radius": 0.1
+    },
+    {
+      "name": "Tjeldsund bridge",
+      "lat": 68.62795581,
+      "lon": 16.58292181,
+      "radius": 0.1
+    },
+    {
+      "name": "Staurneset",
+      "lat": 68.60732217,
+      "lon": 16.55306927,
+      "radius": 0.1
+    },
+    {
+      "name": "Storbaen lt",
+      "lat": 68.57192926,
+      "lon": 16.53224582,
+      "radius": 0.1
+    },
+    {
+      "name": "Remma lt",
+      "lat": 68.56316131,
+      "lon": 16.5155981,
+      "radius": 0.1
+    },
+    {
+      "name": "Stornesgrunnen lt",
+      "lat": 68.55588813,
+      "lon": 16.49428525,
+      "radius": 0.1
+    },
+    {
+      "name": "Nordoygrunnen lt",
+      "lat": 68.55227853,
+      "lon": 16.47099395,
+      "radius": 0.1
+    },
+    {
+      "name": "Steinsgrunnen lt",
+      "lat": 68.55233805,
+      "lon": 16.46317656,
+      "radius": 0.1
+    },
+    {
+      "name": "Harvikskallen",
+      "lat": 68.55893683,
+      "lon": 16.40743542,
+      "radius": 0.1
+    },
+    {
+      "name": "Tjeldsundet",
+      "lat": 68.56007347,
+      "lon": 16.35502195,
+      "radius": 0.1
+    },
+    {
+      "name": "Ballstadstraumen lt",
+      "lat": 68.55847058,
+      "lon": 16.32781627,
+      "radius": 0.1
+    },
+    {
+      "name": "Ballastadgrunnen lt",
+      "lat": 68.55386229,
+      "lon": 16.29981193,
+      "radius": 0.1
+    },
+    {
+      "name": "Klubbeskjeret",
+      "lat": 68.5513628,
+      "lon": 16.24297064,
+      "radius": 0.1
+    },
+    {
+      "name": "Reppevarden bn",
+      "lat": 68.54663594,
+      "lon": 16.21813349,
+      "radius": 0.1
+    },
+    {
+      "name": "Nordstrandskjaer lt",
+      "lat": 68.49656857,
+      "lon": 16.12700272,
+      "radius": 0.1
+    },
+    {
+      "name": "Lodingen pilot boarding",
+      "lat": 68.38431045,
+      "lon": 16.01897429,
+      "radius": 0.1
+    },
+    {
+      "name": "Rotvaer lt",
+      "lat": 68.36087417,
+      "lon": 15.97139505,
+      "radius": 0.1
+    },
+    {
+      "name": "Tranoy outer pilot boarding",
+      "lat": 68.22389539,
+      "lon": 15.6063681,
+      "radius": 0.1
+    }
+  ],
+  "legs": [
+    {
+      "from_waypoint": "Bergeneset",
+      "to_waypoint": "Tenneskjeret by",
+      "distance_nm": 3.83
+    },
+    {
+      "from_waypoint": "Tenneskjeret by",
+      "to_waypoint": "Sandneset",
+      "distance_nm": 2.27
+    },
+    {
+      "from_waypoint": "Sandneset",
+      "to_waypoint": "Svartneset",
+      "distance_nm": 4.96
+    },
+    {
+      "from_waypoint": "Svartneset",
+      "to_waypoint": "Nordvang",
+      "distance_nm": 1.91
+    },
+    {
+      "from_waypoint": "Nordvang",
+      "to_waypoint": "Middagsneset",
+      "distance_nm": 1.9
+    },
+    {
+      "from_waypoint": "Middagsneset",
+      "to_waypoint": "Storneset lt",
+      "distance_nm": 2.28
+    },
+    {
+      "from_waypoint": "Storneset lt",
+      "to_waypoint": "Kraksletta by",
+      "distance_nm": 4.24
+    },
+    {
+      "from_waypoint": "Kraksletta by",
+      "to_waypoint": "Bergegrunnen",
+      "distance_nm": 2.69
+    },
+    {
+      "from_waypoint": "Bergegrunnen",
+      "to_waypoint": "Balsnesodden lt",
+      "distance_nm": 1.02
+    },
+    {
+      "from_waypoint": "Balsnesodden lt",
+      "to_waypoint": "Rystraumen",
+      "distance_nm": 1.55
+    },
+    {
+      "from_waypoint": "Rystraumen",
+      "to_waypoint": "Rystraumen lt",
+      "distance_nm": 2.31
+    },
+    {
+      "from_waypoint": "Rystraumen lt",
+      "to_waypoint": "Malangen",
+      "distance_nm": 10.4
+    },
+    {
+      "from_waypoint": "Malangen",
+      "to_waypoint": "Rodbergsodden lt",
+      "distance_nm": 2.28
+    },
+    {
+      "from_waypoint": "Rodbergsodden lt",
+      "to_waypoint": "Mollnesskallen bn",
+      "distance_nm": 2.21
+    },
+    {
+      "from_waypoint": "Mollnesskallen bn",
+      "to_waypoint": "Sandholmen lt",
+      "distance_nm": 0.91
+    },
+    {
+      "from_waypoint": "Sandholmen lt",
+      "to_waypoint": "Slettneset lt",
+      "distance_nm": 2.07
+    },
+    {
+      "from_waypoint": "Slettneset lt",
+      "to_waypoint": "Vardneset lt",
+      "distance_nm": 1.1
+    },
+    {
+      "from_waypoint": "Vardneset lt",
+      "to_waypoint": "Nordgrunnen by",
+      "distance_nm": 0.31
+    },
+    {
+      "from_waypoint": "Nordgrunnen by",
+      "to_waypoint": "Bukkskinn lt",
+      "distance_nm": 0.53
+    },
+    {
+      "from_waypoint": "Bukkskinn lt",
+      "to_waypoint": "Kobboyra lt",
+      "distance_nm": 3.21
+    },
+    {
+      "from_waypoint": "Kobboyra lt",
+      "to_waypoint": "Gisundet",
+      "distance_nm": 0.63
+    },
+    {
+      "from_waypoint": "Gisundet",
+      "to_waypoint": "Leiknesora lt",
+      "distance_nm": 0.48
+    },
+    {
+      "from_waypoint": "Leiknesora lt",
+      "to_waypoint": "Trollvikgrunnen lt",
+      "distance_nm": 1.61
+    },
+    {
+      "from_waypoint": "Trollvikgrunnen lt",
+      "to_waypoint": "Laukhella lt",
+      "distance_nm": 1.09
+    },
+    {
+      "from_waypoint": "Laukhella lt",
+      "to_waypoint": "Gisundet",
+      "distance_nm": 0.86
+    },
+    {
+      "from_waypoint": "Gisundet",
+      "to_waypoint": "Finnsnes",
+      "distance_nm": 0.96
+    },
+    {
+      "from_waypoint": "Finnsnes",
+      "to_waypoint": "Finnsnesgrunnen lt",
+      "distance_nm": 0.24
+    },
+    {
+      "from_waypoint": "Finnsnesgrunnen lt",
+      "to_waypoint": "Klauvskjaerodden lt",
+      "distance_nm": 1.32
+    },
+    {
+      "from_waypoint": "Klauvskjaerodden lt",
+      "to_waypoint": "Klauvskjaerodden lt",
+      "distance_nm": 0.66
+    },
+    {
+      "from_waypoint": "Klauvskjaerodden lt",
+      "to_waypoint": "Lassegrunnen",
+      "distance_nm": 0.52
+    },
+    {
+      "from_waypoint": "Lassegrunnen",
+      "to_waypoint": "Klauva lt",
+      "distance_nm": 1.6
+    },
+    {
+      "from_waypoint": "Klauva lt",
+      "to_waypoint": "Solbergnakken",
+      "distance_nm": 2.83
+    },
+    {
+      "from_waypoint": "Solbergnakken",
+      "to_waypoint": "Dyroya lt",
+      "distance_nm": 9.71
+    },
+    {
+      "from_waypoint": "Dyroya lt",
+      "to_waypoint": "Dyroya lt",
+      "distance_nm": 1.36
+    },
+    {
+      "from_waypoint": "Dyroya lt",
+      "to_waypoint": "Bispeflua lt",
+      "distance_nm": 5.31
+    },
+    {
+      "from_waypoint": "Bispeflua lt",
+      "to_waypoint": "Engenes lt",
+      "distance_nm": 5.45
+    },
+    {
+      "from_waypoint": "Engenes lt",
+      "to_waypoint": "Rollnesboen lt",
+      "distance_nm": 12.33
+    },
+    {
+      "from_waypoint": "Rollnesboen lt",
+      "to_waypoint": "Grasholmen lt",
+      "distance_nm": 5.95
+    },
+    {
+      "from_waypoint": "Grasholmen lt",
+      "to_waypoint": "Langkvitneset",
+      "distance_nm": 2.77
+    },
+    {
+      "from_waypoint": "Langkvitneset",
+      "to_waypoint": "Tjeldsund bridge",
+      "distance_nm": 0.5
+    },
+    {
+      "from_waypoint": "Tjeldsund bridge",
+      "to_waypoint": "Staurneset",
+      "distance_nm": 1.4
+    },
+    {
+      "from_waypoint": "Staurneset",
+      "to_waypoint": "Storbaen lt",
+      "distance_nm": 2.17
+    },
+    {
+      "from_waypoint": "Storbaen lt",
+      "to_waypoint": "Remma lt",
+      "distance_nm": 0.64
+    },
+    {
+      "from_waypoint": "Remma lt",
+      "to_waypoint": "Stornesgrunnen lt",
+      "distance_nm": 0.64
+    },
+    {
+      "from_waypoint": "Stornesgrunnen lt",
+      "to_waypoint": "Nordoygrunnen lt",
+      "distance_nm": 0.56
+    },
+    {
+      "from_waypoint": "Nordoygrunnen lt",
+      "to_waypoint": "Steinsgrunnen lt",
+      "distance_nm": 0.17
+    },
+    {
+      "from_waypoint": "Steinsgrunnen lt",
+      "to_waypoint": "Harvikskallen",
+      "distance_nm": 1.29
+    },
+    {
+      "from_waypoint": "Harvikskallen",
+      "to_waypoint": "Tjeldsundet",
+      "distance_nm": 1.15
+    },
+    {
+      "from_waypoint": "Tjeldsundet",
+      "to_waypoint": "Ballstadstraumen lt",
+      "distance_nm": 0.6
+    },
+    {
+      "from_waypoint": "Ballstadstraumen lt",
+      "to_waypoint": "Ballastadgrunnen lt",
+      "distance_nm": 0.67
+    },
+    {
+      "from_waypoint": "Ballastadgrunnen lt",
+      "to_waypoint": "Klubbeskjeret",
+      "distance_nm": 1.26
+    },
+    {
+      "from_waypoint": "Klubbeskjeret",
+      "to_waypoint": "Reppevarden bn",
+      "distance_nm": 0.61
+    },
+    {
+      "from_waypoint": "Reppevarden bn",
+      "to_waypoint": "Nordstrandskjaer lt",
+      "distance_nm": 3.61
+    },
+    {
+      "from_waypoint": "Nordstrandskjaer lt",
+      "to_waypoint": "Lodingen pilot boarding",
+      "distance_nm": 7.15
+    },
+    {
+      "from_waypoint": "Lodingen pilot boarding",
+      "to_waypoint": "Rotvaer lt",
+      "distance_nm": 1.76
+    },
+    {
+      "from_waypoint": "Rotvaer lt",
+      "to_waypoint": "Tranoy outer pilot boarding",
+      "distance_nm": 11.55
+    }
+  ],
+  "total_distance_nm": 143.43,
+  "waypoint_count": 57,
+  "leg_count": 56,
+  "origin": "Bergeneset",
+  "destination": "Lodingen",
+  "parse_timestamp": "2026-01-20T15:17:44.247473",
+  "data_source": "rtz_file_parser",
+  "source_city": "bergen",
+  "original_file": "NCA_Bergeneset_Lodingen_Out_20250801.rtz",
+  "route_id": "caa4fd73"
+}
