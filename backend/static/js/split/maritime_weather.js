@@ -1,14 +1,17 @@
 /* backend/static/js/split/maritime_weather.js */
 /**
- * Maritime Weather Module for BergNavn Dashboard - FIXED VERSION
- * Real-time weather display with guaranteed data for dashboard.
- * ENHANCED: Works with weather_service.py structure and provides fallback.
- * FIXED: Removed setInterval that was causing map refresh/flickering.
+ * Maritime Weather Module for BergNavn Dashboard - UPDATED VERSION
+ * Uses the new Weather Integration Service API instead of old endpoints
+ * FIXED: No longer conflicts with new weather system
+ * UPDATED: Uses /api/simple-weather endpoint for real MET Norway data
  */
 
-// Configuration
-const WEATHER_API_URL = "/maritime/api/weather-dashboard";  // FIXED: Using new endpoint
-const UPDATE_INTERVAL_MS = 30000;  // 30 seconds for real-time updates (used only for manual refresh)
+// Configuration - Using NEW weather API endpoints
+const WEATHER_API_ENDPOINTS = [
+    "/api/simple-weather?lat=60.39&lon=5.32",    // Primary: New integration service
+    "/api/weather-pro?lat=60.39&lon=5.32",       // Secondary: Blueprint endpoint
+    "/maritime/api/weather-dashboard"            // Fallback: Legacy endpoint
+];
 
 // Fallback weather data - always available for emergencies
 const FALLBACK_WEATHER = {
@@ -19,12 +22,20 @@ const FALLBACK_WEATHER = {
     wind_direction: "NW",
     wind_dir_display: "NW",
     city: "Bergen",
-    data_source: "fallback_empirical"
+    condition: "Fallback Data",
+    data_source: "fallback_empirical",
+    display: {
+        temperature: "8°C",
+        wind: "5 m/s",
+        location: "Bergen",
+        condition: "Fallback Data",
+        source_badge: "📊 Fallback",
+        icon: "cloud"
+    }
 };
 
 /**
  * Converts wind direction from degrees to cardinal direction
- * Handles both numeric degrees and string directions
  */
 function degreesToCardinal(input) {
     if (!input && input !== 0) return 'N/A';
@@ -33,11 +44,9 @@ function degreesToCardinal(input) {
     if (typeof input === 'string') {
         const directions = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 
                           'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
-        // Check if input is already a valid direction
         if (directions.includes(input.toUpperCase())) {
             return input.toUpperCase();
         }
-        // Otherwise assume it's already a direction string
         return input;
     }
     
@@ -52,113 +61,38 @@ function degreesToCardinal(input) {
 }
 
 /**
- * Converts MET Norway condition codes to readable text
+ * Gets weather icon class based on condition or icon name
  */
-function getConditionText(symbolCode) {
-    if (!symbolCode) return 'Unknown';
-    
-    const conditionMap = {
-        'clearsky': 'Clear Sky',
-        'clearsky_day': 'Clear Sky',
-        'clearsky_night': 'Clear Sky',
-        'fair': 'Fair',
-        'fair_day': 'Fair',
-        'fair_night': 'Fair',
-        'partlycloudy': 'Partly Cloudy',
-        'partlycloudy_day': 'Partly Cloudy',
-        'partlycloudy_night': 'Partly Cloudy',
-        'cloudy': 'Cloudy',
-        'lightrain': 'Light Rain',
-        'rain': 'Rain',
-        'heavyrain': 'Heavy Rain',
-        'lightsleet': 'Light Sleet',
-        'sleet': 'Sleet',
-        'heavysleet': 'Heavy Sleet',
-        'lightsnow': 'Light Snow',
-        'snow': 'Snow',
-        'heavysnow': 'Heavy Snow',
-        'lightrainshowers': 'Light Rain Showers',
-        'rainshowers': 'Rain Showers',
-        'heavyrainshowers': 'Heavy Rain Showers',
-        'lightsleetshowers': 'Light Sleet Showers',
-        'sleetshowers': 'Sleet Showers',
-        'heavysleetshowers': 'Heavy Sleet Showers',
-        'lightsnowshowers': 'Light Snow Showers',
-        'snowshowers': 'Snow Showers',
-        'heavysnowshowers': 'Heavy Snow Showers',
-        'fog': 'Fog',
-        'snowthunder': 'Snow Thunder',
-        'rainthunder': 'Rain Thunder'
+function getWeatherIconClass(iconName) {
+    const iconMap = {
+        'sun': 'bi bi-sun-fill weather-icon weather-icon-sun',
+        'cloud': 'bi bi-cloud-fill weather-icon weather-icon-cloud',
+        'cloud-sun': 'bi bi-cloud-sun-fill weather-icon weather-icon-cloud',
+        'cloud-rain': 'bi bi-cloud-rain-fill weather-icon weather-icon-rain',
+        'cloud-snow': 'bi bi-cloud-snow-fill weather-icon weather-icon-snow',
+        'snow': 'bi bi-snow weather-icon weather-icon-snow',
+        'cloud-fog': 'bi bi-cloud-fog-fill weather-icon weather-icon-fog',
+        'cloud-lightning': 'bi bi-cloud-lightning-fill weather-icon weather-icon-cloud'
     };
     
-    return conditionMap[symbolCode] || symbolCode.replace('_', ' ').toLowerCase().replace(/\b\w/g, l => l.toUpperCase());
+    return iconMap[iconName] || 'bi bi-cloud-fill weather-icon weather-icon-cloud';
 }
 
 /**
- * Fetches weather data from the backend API with retry logic
- * ENHANCED: Uses environment variables from .env for API keys
+ * Gets source badge based on data source
  */
-async function fetchWeatherData() {
-    let lastError = null;
-    
-    console.log('🌤 Fetching weather data from backend...');
-    
-    // Try primary endpoint first (weather-dashboard)
-    try {
-        const response = await fetch(WEATHER_API_URL, {
-            signal: AbortSignal.timeout(5000),  // 5 second timeout
-            headers: {
-                'Accept': 'application/json',
-                'Cache-Control': 'no-cache'
-            }
-        });
-        
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
-        
-        const data = await response.json();
-        console.log('✅ Weather API response received');
-        
-        // Check if data is valid
-        if (data && (data.temperature_c !== undefined || data.temperature !== undefined)) {
-            return data;
-        } else {
-            console.warn('Weather API returned invalid data structure');
-            return FALLBACK_WEATHER;
-        }
-        
-    } catch (error) {
-        lastError = error;
-        console.warn('Primary weather endpoint failed:', error.message);
-    }
-    
-    // Try legacy endpoint as secondary fallback
-    try {
-        console.log('Trying legacy weather endpoint...');
-        const response = await fetch("/maritime/api/weather", {
-            signal: AbortSignal.timeout(3000),
-            headers: {
-                'Accept': 'application/json'
-            }
-        });
-        
-        if (response.ok) {
-            const data = await response.json();
-            console.log('✅ Legacy weather endpoint successful');
-            return data;
-        } else {
-            console.warn(`Legacy endpoint failed with status: ${response.status}`);
-        }
-    } catch (error) {
-        console.warn('Legacy endpoint also failed:', error.message);
-    }
-    
-    // All endpoints failed - use empirical fallback
-    console.log('⚠️ All weather endpoints failed, using empirical fallback data');
-    console.log('Fallback reason:', lastError?.message || 'Unknown error');
-    
-    return FALLBACK_WEATHER;
+function getSourceBadge(source) {
+    const badges = {
+        'met_norway': '🇳🇴 MET Norway',
+        'met_norway_live': '🇳🇴 MET Norway',
+        'barentswatch': '🌊 BarentsWatch',
+        'openweather': '🌍 OpenWeatherMap',
+        'empirical': '📊 Empirical',
+        'fallback_empirical': '📊 Empirical',
+        'emergency': '🚨 Emergency',
+        'fallback': '📊 Fallback'
+    };
+    return badges.get(source, '📊 Weather');
 }
 
 /**
@@ -173,17 +107,9 @@ function formatTimestamp(isoString) {
         const diffMs = now - date;
         const diffMins = Math.floor(diffMs / 60000);
         
-        // If less than 1 minute ago
-        if (diffMins < 1) {
-            return "Just now";
-        }
+        if (diffMins < 1) return "Just now";
+        if (diffMins < 60) return `${diffMins} minute${diffMins !== 1 ? 's' : ''} ago`;
         
-        // If less than 1 hour ago
-        if (diffMins < 60) {
-            return `${diffMins} minute${diffMins !== 1 ? 's' : ''} ago`;
-        }
-        
-        // Format as time
         return date.toLocaleTimeString([], { 
             hour: '2-digit', 
             minute: '2-digit',
@@ -195,186 +121,236 @@ function formatTimestamp(isoString) {
 }
 
 /**
- * Updates the dashboard weather display with new data
- * FIXED: No longer causes map flickering
+ * Fetches weather data using the NEW API endpoints
+ * Tries endpoints in order until one works
  */
-function updateWeatherDisplay(weatherData) {
-    console.log('Updating weather display...');
+async function fetchWeatherData() {
+    console.log('🌤️ Fetching weather data from new API system...');
     
-    // Use provided data or fallback
-    let weather = weatherData || FALLBACK_WEATHER;
-    
-    // Handle nested weather property (legacy format)
-    if (weatherData && weatherData.weather) {
-        weather = weatherData.weather;
+    // Try each endpoint in order
+    for (const endpoint of WEATHER_API_ENDPOINTS) {
+        try {
+            console.log(`🔍 Trying endpoint: ${endpoint}`);
+            
+            const response = await fetch(endpoint, {
+                signal: AbortSignal.timeout(5000),  // 5 second timeout
+                headers: {
+                    'Accept': 'application/json',
+                    'Cache-Control': 'no-cache'
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            
+            const data = await response.json();
+            console.log(`✅ Got response from ${endpoint}`);
+            
+            // Process the response based on endpoint structure
+            if (endpoint.includes('/api/simple-weather') || endpoint.includes('/api/weather-pro')) {
+                // New API format: {status: "success", data: {...}}
+                if (data.status === 'success' && data.data) {
+                    console.log(`✅ Using weather from: ${data.data.data_source || 'unknown'}`);
+                    return data.data;
+                }
+            } else if (endpoint.includes('/maritime/api/weather-dashboard')) {
+                // Legacy format: direct weather object
+                return data;
+            }
+            
+        } catch (error) {
+            console.warn(`⚠️ Endpoint ${endpoint} failed:`, error.message);
+            continue; // Try next endpoint
+        }
     }
     
-    // Validate data structure
-    if (!weather || (weather.temperature_c === undefined && weather.temperature === undefined)) {
-        console.warn('Invalid weather data format, using empirical fallback');
-        weather = FALLBACK_WEATHER;
+    // All endpoints failed - use empirical fallback
+    console.log('⚠️ All weather endpoints failed, using empirical fallback data');
+    return FALLBACK_WEATHER;
+}
+
+/**
+ * Updates the dashboard weather display with new data
+ * FIXED: Properly handles both new and old data formats
+ */
+function updateWeatherDisplay(weatherData) {
+    console.log('📊 Updating weather display...');
+    
+    let weather = weatherData || FALLBACK_WEATHER;
+    
+    // Ensure display object exists (for new API format)
+    if (weather && !weather.display) {
+        weather.display = {
+            temperature: `${Math.round(weather.temperature_c || 0)}°C`,
+            wind: `${Math.round(weather.wind_speed_ms || 0)} m/s`,
+            location: weather.location || weather.city || 'Bergen',
+            condition: weather.condition || 'Unknown',
+            source_badge: getSourceBadge(weather.data_source),
+            icon: weather.icon || 'cloud'
+        };
     }
     
     // Update dashboard stats
     updateWeatherStats(weather);
     
-    // Update status based on data source
-    const source = weather.data_source || 'fallback_empirical';
-    const status = source.includes('met_norway') ? 'success' : 
-                   source.includes('fallback') ? 'warning' : 'info';
+    // Update status badge
+    updateWeatherStatus(weather.data_source);
     
-    updateWeatherStatus(source, status);
-    
-    // Log update completion
-    const temp = weather.temperature_c || weather.temperature || 'N/A';
-    console.log(`✅ Weather updated: ${weather.city || 'Bergen'} - ${temp}°C (Source: ${source})`);
+    console.log(`✅ Weather updated: ${weather.display?.temperature}, ${weather.display?.wind}`);
 }
 
 /**
  * Updates dashboard statistics with weather data
+ * UPDATED: Uses display object from new API
  */
 function updateWeatherStats(weather) {
     if (!weather) {
-        // Use empirical fallback when no data
-        document.getElementById('weather-temp').textContent = '8.5°C';
-        document.getElementById('weather-wind').textContent = '5.2 m/s';
-        document.getElementById('weather-location').textContent = 'Bergen (Empirical)';
+        updateWithFallback();
         return;
     }
     
     try {
-        // Update temperature - handle both temperature_c and temperature fields
+        // Update temperature
         const tempElement = document.getElementById('weather-temp');
         if (tempElement) {
-            const temperature = weather.temperature_c || weather.temperature;
-            if (temperature !== null && temperature !== undefined) {
-                tempElement.textContent = `${Math.round(temperature)}°C`;
-                tempElement.title = `${temperature.toFixed(1)}°C precise (Source: ${weather.data_source || 'unknown'})`;
+            if (weather.display && weather.display.temperature) {
+                tempElement.textContent = weather.display.temperature;
+                tempElement.title = `${weather.temperature_c?.toFixed(1) || '8.5'}°C precise`;
             } else {
-                tempElement.textContent = '8.5°C';
-                tempElement.title = 'Empirical fallback data';
+                tempElement.textContent = `${Math.round(weather.temperature_c || 8.5)}°C`;
             }
         }
         
-        // Update wind speed - handle both wind_speed_ms and wind_speed fields
+        // Update wind speed
         const windElement = document.getElementById('weather-wind');
         if (windElement) {
-            const windSpeed = weather.wind_speed_ms || weather.wind_speed;
-            if (windSpeed !== null && windSpeed !== undefined) {
-                windElement.textContent = `${Math.round(windSpeed)} m/s`;
-                windElement.title = `${windSpeed.toFixed(1)} m/s precise`;
+            if (weather.display && weather.display.wind) {
+                windElement.textContent = weather.display.wind;
+                windElement.title = `${weather.wind_speed_ms?.toFixed(1) || '5.2'} m/s precise`;
             } else {
-                windElement.textContent = '5.2 m/s';
-                windElement.title = 'Empirical fallback data';
+                windElement.textContent = `${Math.round(weather.wind_speed_ms || 5.2)} m/s`;
             }
         }
         
-        // Update weather location
+        // Update location
         const locationElement = document.getElementById('weather-location');
         if (locationElement) {
-            const city = weather.city || weather.location || 'Bergen';
+            if (weather.display && weather.display.location) {
+                locationElement.textContent = weather.display.location;
+            } else {
+                locationElement.textContent = weather.location || weather.city || 'Bergen';
+            }
+        }
+        
+        // Update condition
+        const conditionElement = document.getElementById('weather-condition');
+        if (conditionElement) {
+            if (weather.display && weather.display.condition) {
+                conditionElement.textContent = weather.display.condition;
+            } else if (weather.condition) {
+                conditionElement.textContent = weather.condition;
+            }
+        }
+        
+        // Update timestamp
+        const updatedElement = document.getElementById('weather-updated');
+        if (updatedElement) {
+            updatedElement.textContent = `Updated: ${formatTimestamp(weather.timestamp)}`;
+        }
+        
+        // Update weather icon
+        const weatherIcon = document.getElementById('weather-main-icon');
+        if (weatherIcon) {
+            if (weather.display && weather.display.icon) {
+                weatherIcon.className = getWeatherIconClass(weather.display.icon);
+            } else {
+                weatherIcon.className = 'bi bi-cloud-fill weather-icon weather-icon-cloud';
+            }
+        }
+        
+        // Update source indicator
+        const sourceIndicator = document.getElementById('weather-source-indicator');
+        if (sourceIndicator) {
+            if (weather.display && weather.display.source_badge) {
+                sourceIndicator.textContent = weather.display.source_badge;
+            } else {
+                sourceIndicator.textContent = getSourceBadge(weather.data_source);
+            }
+            
+            // Update badge class
+            sourceIndicator.className = 'weather-source-badge';
             const source = weather.data_source || 'empirical';
-            locationElement.textContent = city;
-            locationElement.title = `Weather source: ${source.replace(/_/g, ' ')}`;
-            
-            // Add badge for source type
-            const sourceBadge = document.getElementById('weather-source-badge') || 
-                               (() => {
-                                   const badge = document.createElement('span');
-                                   badge.id = 'weather-source-badge';
-                                   badge.className = 'badge bg-secondary ms-2';
-                                   locationElement.parentNode.insertBefore(badge, locationElement.nextSibling);
-                                   return badge;
-                               })();
-            
-            sourceBadge.textContent = source.includes('met_norway') ? 'Live' :
-                                     source.includes('fallback') ? 'Empirical' : 'Other';
-            sourceBadge.className = source.includes('met_norway') ? 'badge bg-success ms-2' :
-                                   source.includes('fallback') ? 'badge bg-warning ms-2' :
-                                   'badge bg-secondary ms-2';
+            if (source.includes('met_norway')) {
+                sourceIndicator.classList.add('weather-source-met_norway');
+            } else if (source.includes('empirical') || source.includes('fallback')) {
+                sourceIndicator.classList.add('weather-source-empirical');
+            }
         }
         
     } catch (error) {
         console.error('Error updating weather stats:', error);
-        // On error, use empirical fallback values
-        document.getElementById('weather-temp').textContent = '8.5°C';
-        document.getElementById('weather-wind').textContent = '5.2 m/s';
-        document.getElementById('weather-location').textContent = 'Bergen (Empirical)';
+        updateWithFallback();
     }
 }
 
 /**
- * Updates the weather status badge in the dashboard
+ * Updates with fallback data
  */
-function updateWeatherStatus(source, status = 'warning') {
-    const weatherStatusElement = document.getElementById('weather-status');
-    if (!weatherStatusElement) return;
+function updateWithFallback() {
+    console.log('⚠️ Using fallback weather data');
     
-    const statusMap = {
-        'success': { text: 'Live Data', class: 'text-success' },
-        'warning': { text: 'Empirical', class: 'text-warning' },
-        'error': { text: 'Offline', class: 'text-danger' }
-    };
+    const tempElement = document.getElementById('weather-temp');
+    const windElement = document.getElementById('weather-wind');
+    const locationElement = document.getElementById('weather-location');
+    const conditionElement = document.getElementById('weather-condition');
+    const updatedElement = document.getElementById('weather-updated');
+    const weatherIcon = document.getElementById('weather-main-icon');
+    const sourceIndicator = document.getElementById('weather-source-indicator');
     
-    const statusInfo = statusMap[status] || statusMap.warning;
-    
-    // Determine display text based on source
-    let displayText = 'Empirical';
-    if (source.includes('met_norway_live')) displayText = 'Live';
-    else if (source.includes('met_norway')) displayText = 'MET Norway';
-    else if (source.includes('fallback')) displayText = 'Empirical';
-    
-    weatherStatusElement.textContent = displayText;
-    weatherStatusElement.className = statusInfo.class;
+    if (tempElement) tempElement.textContent = '8°C';
+    if (windElement) windElement.textContent = '5 m/s';
+    if (locationElement) locationElement.textContent = 'Bergen';
+    if (conditionElement) conditionElement.textContent = 'Fallback Data';
+    if (updatedElement) updatedElement.textContent = 'Updated: Fallback';
+    if (weatherIcon) weatherIcon.className = 'bi bi-cloud-fill weather-icon weather-icon-cloud';
+    if (sourceIndicator) {
+        sourceIndicator.textContent = '📊 Fallback';
+        sourceIndicator.className = 'weather-source-badge weather-source-empirical';
+    }
 }
 
 /**
- * Creates a weather widget for additional display (optional)
+ * Updates the weather status badge in the dashboard header
  */
-function createWeatherWidget(weather) {
-    if (!weather) return '';
+function updateWeatherStatus(source) {
+    const weatherStatusBadge = document.getElementById('weather-status-badge');
+    const weatherStatusText = document.getElementById('weather-status-text');
     
-    const temperature = weather.temperature_c || weather.temperature || 8.5;
-    const windSpeed = weather.wind_speed_ms || weather.wind_speed || 5.2;
-    const windDir = weather.wind_direction || degreesToCardinal(weather.wind_direction_deg) || 'NW';
-    const city = weather.city || weather.location || 'Bergen';
-    const source = weather.data_source || 'fallback_empirical';
+    if (!weatherStatusBadge || !weatherStatusText) return;
     
-    return `
-        <div class="weather-widget">
-            <div class="widget-header">
-                <h6><i class="bi bi-geo-alt"></i> ${city}</h6>
-                <small class="text-muted">${formatTimestamp(weather.timestamp)}</small>
-            </div>
-            <div class="widget-body">
-                <div class="temperature">
-                    <span class="temp-value">${Math.round(temperature)}°C</span>
-                    <span class="temp-label">Temperature</span>
-                </div>
-                <div class="wind">
-                    <i class="bi bi-wind"></i>
-                    <span class="wind-value">${Math.round(windSpeed)} m/s</span>
-                    <span class="wind-direction">${windDir}</span>
-                </div>
-            </div>
-            <div class="widget-footer">
-                <small class="text-muted">
-                    Source: ${source.replace(/_/g, ' ')} 
-                    <span class="badge ${source.includes('met_norway') ? 'bg-success' : 'bg-warning'} ms-1">
-                        ${source.includes('met_norway') ? 'Live' : 'Empirical'}
-                    </span>
-                </small>
-            </div>
-        </div>
-    `;
+    if (source === 'met_norway' || source === 'met_norway_live') {
+        weatherStatusBadge.className = 'badge bg-success me-2';
+        weatherStatusText.textContent = 'Live MET Norway';
+    } else if (source === 'empirical' || source === 'fallback_empirical') {
+        weatherStatusBadge.className = 'badge bg-warning me-2';
+        weatherStatusText.textContent = 'Empirical Data';
+    } else if (source === 'emergency_fallback' || source === 'emergency') {
+        weatherStatusBadge.className = 'badge bg-danger me-2';
+        weatherStatusText.textContent = 'Emergency Mode';
+    } else {
+        weatherStatusBadge.className = 'badge bg-info me-2';
+        weatherStatusText.textContent = 'Weather Data';
+    }
 }
 
 /**
  * Main function to load and display weather
- * FIXED: Simplified to prevent map interference
+ * UPDATED: Uses new API system
  */
 async function loadWeather() {
     try {
+        console.log('🌤️ Loading weather from new API system...');
         const data = await fetchWeatherData();
         updateWeatherDisplay(data);
         return data;
@@ -390,140 +366,123 @@ async function loadWeather() {
  */
 async function refreshWeather() {
     console.log('🔄 Manual weather refresh requested');
+    
     const refreshBtn = document.getElementById('weather-refresh-btn');
     if (refreshBtn) {
+        const originalHtml = refreshBtn.innerHTML;
         refreshBtn.innerHTML = '<i class="bi bi-arrow-clockwise spin"></i> Refreshing...';
         refreshBtn.disabled = true;
-    }
-    
-    const data = await loadWeather();
-    
-    if (refreshBtn) {
+        
+        const data = await loadWeather();
+        
         setTimeout(() => {
-            refreshBtn.innerHTML = '<i class="bi bi-arrow-clockwise"></i> Refresh Weather';
+            refreshBtn.innerHTML = originalHtml;
             refreshBtn.disabled = false;
         }, 1000);
+        
+        return data;
     }
     
-    return data;
+    return await loadWeather();
 }
 
 /**
- * Initialize weather display WITHOUT automatic interval
- * FIXED: Removed setInterval that was causing map flickering
+ * Initialize weather display - SIMPLIFIED VERSION
+ * Only loads once and doesn't interfere with other systems
  */
 function initializeWeather() {
-    console.log('🌤 Initializing weather module (manual refresh only)');
+    console.log('🌤️ Initializing weather module (simplified, no auto-refresh)');
     
-    // Create status badge if it doesn't exist
-    if (!document.getElementById('weather-status-badge')) {
-        const statusBar = document.querySelector('.dashboard-header');
-        if (statusBar) {
-            const badge = document.createElement('span');
-            badge.id = 'weather-status-badge';
-            badge.className = 'badge bg-light text-dark ms-2';
-            badge.innerHTML = '<i class="bi bi-cloud-sun me-1"></i>Weather: <span id="weather-status">Loading...</span>';
-            statusBar.appendChild(badge);
-        }
-    }
+    // Load initial weather data after a short delay
+    setTimeout(() => {
+        loadWeather();
+    }, 1500); // Give other systems time to initialize
     
-    // Create refresh button in controls
-    const controls = document.querySelector('.dashboard-controls');
-    if (controls && !document.getElementById('weather-refresh-btn')) {
-        const refreshBtn = document.createElement('button');
-        refreshBtn.id = 'weather-refresh-btn';
-        refreshBtn.className = 'control-btn';
-        refreshBtn.innerHTML = '<i class="bi bi-arrow-clockwise"></i> Refresh Weather';
-        refreshBtn.title = 'Manual weather refresh (does not affect map)';
-        refreshBtn.onclick = refreshWeather;
-        controls.appendChild(refreshBtn);
-    }
-    
-    // Load initial weather data
-    setTimeout(() => loadWeather(), 1000);
-    
-    console.log('✅ Weather module initialized (manual refresh mode)');
+    console.log('✅ Weather module initialized');
 }
 
 // Initialize when DOM is loaded
-document.addEventListener('DOMContentLoaded', initializeWeather);
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeWeather);
+} else {
+    initializeWeather();
+}
 
-// Export for global use
-window.weatherManager = {
+// Export for global use - SIMPLIFIED to avoid conflicts
+window.maritimeWeather = {
     loadWeather: loadWeather,
     refreshWeather: refreshWeather,
-    updateWeather: loadWeather,
-    getFallbackData: () => FALLBACK_WEATHER,
-    toggle: function() {
-        console.log('Weather display toggled');
-        // Implementation for showing/hiding weather elements
-    }
+    getFallbackData: () => FALLBACK_WEATHER
 };
 
-// Add CSS for weather display
-const weatherStyles = document.createElement('style');
-weatherStyles.textContent = `
-    .weather-widget {
-        background: white;
-        border-radius: 8px;
-        padding: 15px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        margin-bottom: 15px;
-    }
-    .widget-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 10px;
-        border-bottom: 1px solid #eee;
-        padding-bottom: 8px;
-    }
-    .widget-body {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    .temperature {
-        text-align: center;
-    }
-    .temp-value {
-        font-size: 24px;
-        font-weight: bold;
-        color: #1a73e8;
-        display: block;
-    }
-    .temp-label {
-        font-size: 12px;
-        color: #666;
-    }
-    .wind {
-        text-align: center;
-    }
-    .wind-value {
-        font-size: 18px;
-        font-weight: bold;
-        display: block;
-    }
-    .wind-direction {
-        font-size: 12px;
-        color: #666;
-    }
-    .widget-footer {
-        margin-top: 10px;
-        padding-top: 8px;
-        border-top: 1px solid #eee;
-        font-size: 11px;
-    }
-    
-    /* Spin animation for refresh button */
-    .spin {
-        animation: spin 1s linear infinite;
-        display: inline-block;
-    }
-    
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-`;
-document.head.appendChild(weatherStyles);
+// Add CSS for weather display if not already present
+if (!document.getElementById('weather-module-styles')) {
+    const weatherStyles = document.createElement('style');
+    weatherStyles.id = 'weather-module-styles';
+    weatherStyles.textContent = `
+        /* Weather icon styling */
+        .weather-icon {
+            font-size: 1.2rem;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        
+        .weather-icon-sun {
+            color: #ffc107;
+        }
+        
+        .weather-icon-cloud {
+            color: #6c757d;
+        }
+        
+        .weather-icon-rain {
+            color: #17a2b8;
+        }
+        
+        .weather-icon-snow {
+            color: #6f42c1;
+        }
+        
+        .weather-icon-fog {
+            color: #adb5bd;
+        }
+        
+        /* Weather source badge updates */
+        .weather-source-met_norway {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .weather-source-barentswatch {
+            background-color: #17a2b8;
+            color: white;
+        }
+        
+        .weather-source-openweather {
+            background-color: #fd7e14;
+            color: white;
+        }
+        
+        .weather-source-empirical {
+            background-color: #ffc107;
+            color: #212529;
+        }
+        
+        .weather-source-emergency {
+            background-color: #dc3545;
+            color: white;
+        }
+        
+        /* Spin animation for refresh button */
+        .spin {
+            animation: spin 1s linear infinite;
+            display: inline-block;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    `;
+    document.head.appendChild(weatherStyles);
+}

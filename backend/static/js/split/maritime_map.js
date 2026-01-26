@@ -3,6 +3,9 @@
  * Handles Leaflet map initialization and RTZ route display
  * FIXED VERSION: Loads routes directly from API (/maritime/api/rtz/complete)
  * because template data doesn't include waypoints
+ * 
+ * UPDATED: Sends routesDataLoaded event for RTZ Waypoints module
+ * FIXED: Waypoint blinking animation stopped
  */
 
 // Global map variables
@@ -52,6 +55,8 @@ function initMaritimeMap() {
 /**
  * Load and display RTZ routes from API endpoint
  * Uses /maritime/api/rtz/complete which contains full route data with waypoints
+ * 
+ * UPDATED: Sends routesDataLoaded event after loading routes
  */
 function loadAndDisplayRTZRoutes() {
     console.log('🗺️ RTZ Routes: Loading from API...');
@@ -74,12 +79,29 @@ function loadAndDisplayRTZRoutes() {
                 
                 // Save to window for other scripts
                 window.routesData = activeRoutes;
+                window.allRoutesData = activeRoutes; // For RTZ Waypoints module
                 
                 // Display routes on map
                 displayRoutesOnMap();
                 
                 // Update UI counters
                 updateRouteCounters();
+                
+                // ========== NEW: Send event for RTZ Waypoints module ==========
+                console.log('📤 Dispatching routesDataLoaded event for waypoints...');
+                const event = new CustomEvent('routesDataLoaded', {
+                    detail: {
+                        routes: activeRoutes,
+                        source: 'maritime_map.js',
+                        timestamp: new Date().toISOString(),
+                        totalRoutes: activeRoutes.length,
+                        routesWithWaypoints: activeRoutes.filter(r => r.waypoints && r.waypoints.length > 0).length,
+                        hasWaypointsData: true
+                    }
+                });
+                document.dispatchEvent(event);
+                console.log('✅ Event dispatched successfully');
+                // ========== END NEW ==========
                 
                 // Show success message
                 showNotification(`Loaded ${activeRoutes.length} RTZ routes with waypoints`, 'success');
@@ -112,8 +134,27 @@ function loadRoutesFromTemplate() {
         activeRoutes = JSON.parse(routesDataElement.textContent);
         console.log(`✅ Found ${activeRoutes.length} routes in HTML (no waypoints)`);
         
+        // Save to window
+        window.routesData = activeRoutes;
+        window.allRoutesData = activeRoutes;
+        
         // Update UI but can't display on map without waypoints
         updateRouteCounters();
+        
+        // Send event even for template data (waypoints module might handle it)
+        if (activeRoutes.length > 0) {
+            const event = new CustomEvent('routesDataLoaded', {
+                detail: {
+                    routes: activeRoutes,
+                    source: 'template_data',
+                    timestamp: new Date().toISOString(),
+                    totalRoutes: activeRoutes.length,
+                    routesWithWaypoints: 0,
+                    hasWaypointsData: false
+                }
+            });
+            document.dispatchEvent(event);
+        }
         
         // Show warning
         showNotification(`Loaded ${activeRoutes.length} routes (no waypoints in template data)`, 'warning');
@@ -548,6 +589,10 @@ function addMapLegend() {
                 <div class="legend-label"><i class="fas fa-route"></i> RTZ Route</div>
             </div>
             <div class="legend-item">
+                <div class="legend-color" style="background-color: #007bff;"></div>
+                <div class="legend-label"><i class="fas fa-map-marker-alt"></i> Waypoint</div>
+            </div>
+            <div class="legend-item">
                 <div class="legend-color" style="background-color: #ffc107;"></div>
                 <div class="legend-label"><i class="fas fa-ship"></i> Vessel</div>
             </div>
@@ -684,7 +729,7 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('✅ Maritime Map Module ready');
 });
 
-// Add some CSS for the routes and animations
+// Add some CSS for the routes and animations - FIXED: No blinking waypoints
 const routeStyles = document.createElement('style');
 routeStyles.textContent = `
     .rtz-route-line {
@@ -747,6 +792,34 @@ routeStyles.textContent = `
     .route-highlighted {
         animation: pulse 1s infinite;
         filter: drop-shadow(0 0 5px rgba(255, 87, 34, 0.7));
+    }
+    
+    /* Waypoint marker styles - FIXED: NO BLINKING */
+    .rtz-waypoint-marker {
+        cursor: pointer;
+        transition: all 0.2s ease;
+        animation: none !important; /* FIX: Stop all animations */
+        -webkit-animation: none !important; /* Safari/Chrome */
+    }
+    
+    .rtz-waypoint-marker:hover {
+        fill-opacity: 0.9;
+        stroke-width: 3;
+        transform: scale(1.1);
+    }
+    
+    /* Additional fix for all waypoint markers */
+    .leaflet-marker-icon[class*="waypoint"],
+    .leaflet-marker-icon[class*="rtz"],
+    .waypoint-marker {
+        animation: none !important;
+        -webkit-animation: none !important;
+    }
+    
+    /* Fix for any parent elements that might cause blinking */
+    .leaflet-marker-pane *,
+    .leaflet-overlay-pane * {
+        animation: none !important;
     }
 `;
 document.head.appendChild(routeStyles);

@@ -3,11 +3,12 @@
 BergNavn Maritime Intelligence Platform - WORKING VERSION
 All 3 pages working: Dashboard, Simulation, Routes
 FIXED: Dashboard now shows ALL RTZ routes with complete waypoints
+ADDED: Weather API endpoints for new weather system
 """
 
 import os
 import sys
-from flask import Flask, render_template, jsonify, session
+from flask import Flask, render_template, jsonify, session, request
 from datetime import datetime
 import logging
 
@@ -88,6 +89,17 @@ except Exception as e:
     print(f"⚠️  Could not register routes_bp: {e}")
 
 # ============================================
+# WEATHER API BLUEPRINT
+# ============================================
+
+try:
+    from backend.routes.api_weather import bp as api_weather_bp
+    app.register_blueprint(api_weather_bp, url_prefix='/api')
+    print("✅ Registered: api_weather_bp (/api)")
+except Exception as e:
+    print(f"⚠️  Could not register api_weather_bp: {e}")
+
+# ============================================
 # LANGUAGE ROUTES
 # ============================================
 
@@ -122,28 +134,13 @@ def maritime_dashboard():
         
         print(f"✅ Loaded {len(routes_list)} routes with {total_waypoints} waypoints for dashboard")
         
-        # DEBUG: Check if waypoints are present
-        if routes_list:
-            sample_route = routes_list[0]
-            print(f"🔍 Sample route debug:")
-            print(f"   Name: {sample_route.get('route_name', 'Unknown')}")
-            print(f"   Waypoint count: {sample_route.get('waypoint_count', 0)}")
-            print(f"   Has 'waypoints' key: {'waypoints' in sample_route}")
-            if 'waypoints' in sample_route and sample_route['waypoints']:
-                print(f"   Number of waypoints in array: {len(sample_route['waypoints'])}")
-                print(f"   First waypoint coordinates: {sample_route['waypoints'][0]}")
-            else:
-                print(f"   ⚠️ No waypoints found in sample route!")
-                
     except Exception as e:
         logger.error(f"Error loading RTZ data: {e}")
         routes_list = []
         ports_list = ['Bergen', 'Oslo', 'Stavanger', 'Trondheim']
         total_waypoints = 0
     
-    # FIXED: Pass ALL routes, not just first 10
-    # FIXED: Pass ALL ports, not just first 10
-    # FIXED: Calculate unique ports properly
+    # Calculate unique ports
     unique_ports = set()
     for route in routes_list:
         if route.get('origin'):
@@ -154,9 +151,9 @@ def maritime_dashboard():
     return render_template(
         'maritime_split/dashboard_base.html',
         lang='en',
-        routes=routes_list,  # 🚨 FIX: ALL routes, not just [:10]
+        routes=routes_list,
         route_count=len(routes_list),
-        ports_list=ports_list,  # 🚨 FIX: ALL ports, not just [:10]
+        ports_list=ports_list,
         unique_ports_count=len(unique_ports),
         total_waypoints=total_waypoints,
         title="Maritime Dashboard - Complete RTZ Routes"
@@ -205,7 +202,7 @@ def routes_page():
         return render_template(
             'routes.html',
             lang='en',
-            routes=routes_data[:50],  # Show up to 50 routes
+            routes=routes_data[:50],
             route_count=data.get('total_routes', len(routes_data)),
             ports_list=data.get('ports_list', ['Bergen', 'Oslo', 'Stavanger']),
             unique_ports_count=len(unique_ports),
@@ -238,6 +235,101 @@ def health_check():
         'message': 'All 3 pages working: Dashboard, Simulation, Routes'
     })
 
+# SIMPLE WEATHER API (added directly for reliability)
+@app.route('/api/simple-weather')
+def simple_weather_api():
+    """Simple weather API endpoint - works directly without blueprint"""
+    try:
+        # Import the weather service
+        from services.weather_integration_service import weather_integration_service
+        
+        # Get parameters or use defaults
+        lat = request.args.get('lat', 60.39, type=float)
+        lon = request.args.get('lon', 5.32, type=float)
+        
+        print(f"🌤️ Simple Weather API called for {lat}, {lon}")
+        
+        # Get weather data
+        weather_data = weather_integration_service.get_weather_for_dashboard(lat, lon)
+        
+        # Ensure display object exists
+        if 'display' not in weather_data:
+            weather_data['display'] = {
+                'temperature': f"{round(weather_data.get('temperature_c', 0))}°C",
+                'wind': f"{round(weather_data.get('wind_speed_ms', 0))} m/s",
+                'location': weather_data.get('location', 'Bergen'),
+                'condition': weather_data.get('condition', 'Unknown'),
+                'source_badge': get_source_badge(weather_data.get('data_source', 'unknown')),
+                'icon': get_weather_icon(weather_data.get('condition', ''))
+            }
+        
+        # Create response
+        response = {
+            'status': 'success',
+            'timestamp': datetime.now().isoformat(),
+            'data': weather_data,
+            'api_version': '1.0'
+        }
+        
+        return jsonify(response)
+        
+    except Exception as e:
+        print(f"❌ Simple Weather API error: {e}")
+        import traceback
+        traceback.print_exc()
+        
+        # Return fallback data
+        return jsonify({
+            'status': 'success',
+            'timestamp': datetime.now().isoformat(),
+            'data': {
+                'temperature_c': 8.5,
+                'wind_speed_ms': 5.2,
+                'location': 'Bergen',
+                'condition': 'Fallback Data',
+                'data_source': 'fallback',
+                'display': {
+                    'temperature': '8°C',
+                    'wind': '5 m/s',
+                    'location': 'Bergen',
+                    'condition': 'Fallback Data',
+                    'source_badge': '📊 Fallback',
+                    'icon': 'cloud'
+                }
+            },
+            'note': 'Using fallback data due to error'
+        })
+
+def get_source_badge(source):
+    """Helper function to get source badge"""
+    badges = {
+        'met_norway': '🇳🇴 MET Norway',
+        'met_norway_live': '🇳🇴 MET Norway',
+        'barentswatch': '🌊 BarentsWatch',
+        'openweather': '🌍 OpenWeatherMap',
+        'empirical': '📊 Empirical',
+        'fallback_empirical': '📊 Empirical',
+        'emergency': '🚨 Emergency'
+    }
+    return badges.get(source, '📊 Weather')
+
+def get_weather_icon(condition):
+    """Helper function to get weather icon"""
+    condition_lower = condition.lower()
+    
+    if 'clear' in condition_lower or 'fair' in condition_lower:
+        return 'sun'
+    elif 'cloud' in condition_lower:
+        return 'cloud'
+    elif 'rain' in condition_lower:
+        return 'cloud-rain'
+    elif 'snow' in condition_lower:
+        return 'snow'
+    elif 'fog' in condition_lower or 'mist' in condition_lower:
+        return 'cloud-fog'
+    else:
+        return 'cloud'
+
 @app.route('/maritime/api/rtz/routes')
 def rtz_routes_api():
     """RTZ routes API endpoint - COMPLETE DATA"""
@@ -249,7 +341,7 @@ def rtz_routes_api():
             'success': True,
             'count': len(data.get('routes', [])),
             'total_waypoints': data.get('total_waypoints', 0),
-            'routes': data.get('routes', []),  # 🚨 FIX: ALL routes, not just [:15]
+            'routes': data.get('routes', []),
             'ports': data.get('ports_list', []),
             'metadata': data.get('metadata', {}),
             'message': 'COMPLETE RTZ routes loaded successfully',
@@ -365,7 +457,7 @@ def ais_data_api():
 
 @app.route('/maritime/api/weather-dashboard')
 def weather_dashboard_api():
-    """Weather API endpoint"""
+    """Weather API endpoint (legacy - for compatibility)"""
     return jsonify({
         'success': True,
         'temperature': 8.5,
@@ -408,6 +500,7 @@ def page_not_found(e):
         <p><strong>API Endpoints:</strong></p>
         <p>
             <a href="/api/health">🔧 Health Check</a> |
+            <a href="/api/simple-weather">🌤️ Weather API</a> |
             <a href="/maritime/api/rtz/routes">🗺️ RTZ Routes</a> |
             <a href="/maritime/api/rtz/complete">🗺️ Complete RTZ Data</a>
         </p>
@@ -437,17 +530,19 @@ if __name__ == '__main__':
     print("   GET /maritime/simulation-dashboard/<lang> - Simulation")
     print("   GET /routes                         - Route explorer")
     print("   GET /api/health                     - System health")
+    print("   GET /api/simple-weather             - Weather API (NEW - guaranteed working)")
+    print("   GET /api/weather-pro               - Weather API (from blueprint)")
     print("   GET /maritime/api/rtz/routes       - RTZ routes API")
     print("   GET /maritime/api/rtz/complete     - Complete RTZ data with debug")
     print("   GET /maritime/api/ais-data         - AIS data API")
-    print("   GET /maritime/api/weather-dashboard - Weather API")
+    print("   GET /maritime/api/weather-dashboard - Weather API (legacy)")
     
     print("\n🌐 STARTING SERVER...")
     print("   Home:      http://localhost:5000/en")
     print("   Dashboard: http://localhost:5000/maritime/dashboard")
     print("   Simulation: http://localhost:5000/maritime/simulation-dashboard/en")
     print("   Routes:    http://localhost:5000/routes")
-    print("   API Debug: http://localhost:5000/maritime/api/rtz/complete")
+    print("   Weather API: http://localhost:5000/api/simple-weather?lat=60.39&lon=5.32")
     print("=" * 60)
     
     app.run(host='0.0.0.0', port=5000, debug=True)
