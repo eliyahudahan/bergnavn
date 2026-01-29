@@ -1,342 +1,287 @@
 /* backend/static/css/split/map.css */
-/* Enhanced route styling for maritime dashboard */
+/* Enhanced Maritime Map Styles - Clear route visualization */
 
-/* ===== Route Lines ===== */
-.route-line {
-    transition: all 0.3s ease;
-    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.2));
-}
-
-.route-line:hover {
-    filter: brightness(1.2) drop-shadow(0 3px 5px rgba(0, 0, 0, 0.3));
-    weight: 5 !important;
-    cursor: pointer;
-}
-
-.route-line.highlighted {
-    animation: route-pulse 1s infinite alternate;
-    weight: 6 !important;
-    z-index: 1000 !important;
-}
-
-@keyframes route-pulse {
-    0% { opacity: 0.8; }
-    100% { opacity: 1; }
-}
-
-/* ===== Route Markers ===== */
-.route-start-marker {
-    filter: drop-shadow(0 2px 3px rgba(0, 100, 0, 0.4));
-    animation: start-pulse 2s infinite;
-}
-
-.route-end-marker {
-    filter: drop-shadow(0 2px 3px rgba(255, 0, 0, 0.4));
-    animation: end-pulse 2s infinite;
-}
-
-@keyframes start-pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-    100% { transform: scale(1); }
-}
-
-@keyframes end-pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.2); }
-    100% { transform: scale(1); }
-}
-
-/* ===== Route Control Panel ===== */
-.route-control-panel {
-    background: white;
-    padding: 15px;
-    border-radius: 12px;
-    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
-    max-height: 70vh;
-    overflow-y: auto;
-    min-width: 320px;
-    border: 2px solid #e0e7ff;
-    font-family: 'Inter', system-ui, sans-serif;
-}
-
-.route-control-panel h4 {
-    color: #1a2980;
-    margin-bottom: 15px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #e0e7ff;
-    font-weight: 700;
-}
-
-/* ===== Route Items ===== */
-.route-item {
-    display: flex;
-    align-items: center;
-    padding: 10px 12px;
-    margin: 6px 0;
-    border-radius: 8px;
-    transition: all 0.2s ease;
-    cursor: pointer;
-    background: #f8f9fa;
-    border: 1px solid transparent;
-}
-
-.route-item:hover {
-    background: #e9ecef;
-    border-color: #1a2980;
-    transform: translateX(3px);
-}
-
-.route-item.active {
-    background: linear-gradient(90deg, rgba(26, 41, 128, 0.1) 0%, rgba(38, 208, 206, 0.1) 100%);
-    border-color: #26d0ce;
-    box-shadow: 0 2px 8px rgba(38, 208, 206, 0.2);
-}
-
-.color-dot {
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    margin-right: 12px;
-    border: 2px solid white;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    flex-shrink: 0;
-}
-
-.route-name {
-    flex: 1;
-    font-weight: 600;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    color: #333;
-    font-size: 0.95rem;
-}
-
-.route-distance {
-    font-size: 0.85rem;
-    color: #666;
-    margin: 0 10px;
-    font-weight: 500;
-    background: #f1f3f5;
-    padding: 3px 8px;
-    border-radius: 12px;
-}
-
-/* ===== Route Buttons ===== */
-.btn-zoom, .btn-toggle {
-    background: white;
-    border: 1px solid #dee2e6;
-    border-radius: 6px;
-    padding: 6px 10px;
-    margin-left: 4px;
-    cursor: pointer;
-    font-size: 0.85rem;
-    transition: all 0.2s ease;
-    color: #495057;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-}
-
-.btn-zoom:hover {
-    background: #e3f2fd;
-    border-color: #3498db;
-    color: #2980b9;
-    transform: scale(1.1);
-}
-
-.btn-toggle:hover {
-    background: #f3e5f5;
-    border-color: #9b59b6;
-    color: #8e44ad;
-    transform: scale(1.1);
-}
-
-/* ===== Route Filter ===== */
-.route-filter input {
+/* ===== Base Map Container ===== */
+#maritime-map {
     width: 100%;
-    padding: 10px 12px;
-    margin-bottom: 15px;
-    border: 2px solid #e0e7ff;
-    border-radius: 8px;
-    font-size: 0.9rem;
-    transition: all 0.3s ease;
+    height: 550px;
     background: #f8f9fa;
-}
-
-.route-filter input:focus {
-    outline: none;
-    border-color: #26d0ce;
-    box-shadow: 0 0 0 3px rgba(38, 208, 206, 0.1);
-    background: white;
-}
-
-/* ===== Route Stats ===== */
-.route-stats {
-    margin-top: 20px;
-    padding-top: 15px;
-    border-top: 2px solid #e0e7ff;
-    font-size: 0.9rem;
-    color: #555;
-    background: #f8f9fa;
-    padding: 12px;
     border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #dee2e6;
+    position: relative;
 }
 
-.route-stats p {
-    margin: 5px 0;
-    display: flex;
-    justify-content: space-between;
+/* ===== RTZ Route Lines - ENHANCED ===== */
+/* Base route line with unique colors per route */
+.rtz-route-line {
+    stroke-width: 4;
+    stroke-opacity: 0.9;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
+    transition: stroke-width 0.3s ease, stroke-opacity 0.3s ease;
 }
 
-.route-stats strong {
-    color: #1a2980;
+/* Distinct colors for different routes - NO BLINKING */
+.rtz-route-1 { stroke: #3498db; }  /* Blue */
+.rtz-route-2 { stroke: #2ecc71; }  /* Green */
+.rtz-route-3 { stroke: #e74c3c; }  /* Red */
+.rtz-route-4 { stroke: #f39c12; }  /* Orange */
+.rtz-route-5 { stroke: #9b59b6; }  /* Purple */
+.rtz-route-6 { stroke: #1abc9c; }  /* Teal */
+.rtz-route-7 { stroke: #d35400; }  /* Dark Orange */
+.rtz-route-8 { stroke: #27ae60; }  /* Dark Green */
+.rtz-route-9 { stroke: #8e44ad; }  /* Violet */
+.rtz-route-10 { stroke: #16a085; } /* Sea Green */
+
+/* Hover effect - smooth, no blinking */
+.rtz-route-line:hover {
+    stroke-width: 6;
+    stroke-opacity: 1;
+    filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.2));
+    cursor: pointer;
+}
+
+/* Selected route - clear highlight without blinking */
+.rtz-route-line.selected {
+    stroke-width: 7;
+    stroke-dasharray: 8, 4;
+    stroke-opacity: 1;
+    filter: drop-shadow(0 0 8px rgba(52, 152, 219, 0.4));
+}
+
+/* ===== Waypoint Markers - NO BLINKING, PERMANENT VISIBILITY ===== */
+/* Start Point - ALWAYS VISIBLE, NO ANIMATION */
+.rtz-start-marker {
+    fill: #2ecc71 !important;
+    stroke: white !important;
+    stroke-width: 3 !important;
+    r: 10 !important;
+    filter: drop-shadow(0 0 5px rgba(46, 204, 113, 0.8));
+}
+
+/* End Point - ALWAYS VISIBLE, NO ANIMATION */
+.rtz-end-marker {
+    fill: #e74c3c !important;
+    stroke: white !important;
+    stroke-width: 3 !important;
+    r: 10 !important;
+    filter: drop-shadow(0 0 5px rgba(231, 76, 60, 0.8));
+}
+
+/* Important waypoints (turns, hazards) - NO BLINKING */
+.rtz-waypoint-important {
+    fill: #f39c12 !important;
+    stroke: white !important;
+    stroke-width: 2 !important;
+    r: 8 !important;
+    filter: drop-shadow(0 0 3px rgba(243, 156, 18, 0.6));
+}
+
+/* Regular waypoints - NO BLINKING */
+.rtz-waypoint-regular {
+    fill: #95a5a6 !important;
+    stroke: white !important;
+    stroke-width: 1.5 !important;
+    r: 6 !important;
+}
+
+/* Waypoint hover effect - NO BLINKING, smooth transition */
+.rtz-waypoint-marker:hover {
+    transform: scale(1.4);
+    stroke-width: 3 !important;
+    cursor: pointer;
+    z-index: 2000 !important;
+    filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.3));
+    transition: transform 0.2s ease, stroke-width 0.2s ease;
 }
 
 /* ===== Route Labels ===== */
-.route-label-container {
-    background: transparent !important;
-    border: none !important;
-}
-
 .route-label {
-    padding: 6px 12px;
-    border-radius: 8px;
-    font-size: 0.85rem;
+    font-family: 'Inter', sans-serif;
     font-weight: 700;
-    white-space: nowrap;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(4px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-    transform: translateY(-2px);
+    font-size: 12px;
+    fill: white;
+    text-anchor: middle;
+    dominant-baseline: central;
+    paint-order: stroke;
+    stroke: rgba(0, 0, 0, 0.7);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    pointer-events: none;
 }
 
-/* ===== Route Popup ===== */
-.route-popup {
-    min-width: 250px;
-    font-family: 'Inter', system-ui, sans-serif;
+.route-label-bg {
+    fill: rgba(0, 0, 0, 0.75);
+    stroke: rgba(255, 255, 255, 0.2);
+    stroke-width: 1;
+    rx: 4px;
+    ry: 4px;
+    padding: 2px 6px;
 }
 
-.route-popup h4 {
-    color: #1a2980;
-    margin-bottom: 10px;
-    padding-bottom: 8px;
-    border-bottom: 2px solid #e0e7ff;
-    font-weight: 700;
+/* ===== Route Highlighting ===== */
+.route-highlight-overlay {
+    fill: rgba(52, 152, 219, 0.1);
+    stroke: rgba(52, 152, 219, 0.2);
+    stroke-width: 2;
+    stroke-dasharray: 5, 5;
 }
 
-.route-popup p {
-    margin: 8px 0;
-    font-size: 0.9rem;
-}
-
-.route-popup strong {
-    color: #333;
-    font-weight: 600;
-}
-
-.route-popup .color-indicator {
-    width: 100%;
-    height: 5px;
-    margin-top: 12px;
-    border-radius: 3px;
-    background: linear-gradient(90deg, var(--route-color, #3498db) 0%, transparent 100%);
-}
-
-/* ===== Route Legend ===== */
-.leaflet-control-legend {
+/* ===== Map Controls ===== */
+.route-controls {
+    position: absolute;
+    top: 10px;
+    right: 10px;
     background: white;
-    padding: 12px;
-    border-radius: 10px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
-    border: 2px solid #e0e7ff;
-    min-width: 200px;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    max-width: 250px;
 }
 
-.legend-title {
-    font-weight: 700;
-    color: #1a2980;
-    margin-bottom: 12px;
-    font-size: 1rem;
+.route-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 10px;
 }
 
 .legend-item {
     display: flex;
     align-items: center;
-    margin: 8px 0;
-    padding: 4px 0;
+    font-size: 12px;
+    color: #333;
 }
 
 .legend-color {
-    width: 24px;
-    height: 4px;
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
     margin-right: 10px;
-    border-radius: 2px;
-    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
+    border: 1px solid #ddd;
 }
 
-.legend-label {
-    font-size: 0.9rem;
-    color: #555;
-    flex: 1;
+/* ===== Enhanced Popups ===== */
+.route-popup {
+    min-width: 250px;
+    max-width: 350px;
 }
 
-.legend-count {
-    font-size: 0.8rem;
-    color: #888;
-    background: #f1f3f5;
-    padding: 2px 6px;
-    border-radius: 8px;
-    margin-left: 8px;
+.route-popup-header {
+    background: linear-gradient(90deg, #3498db, #2980b9);
+    color: white;
+    padding: 10px 15px;
+    border-radius: 8px 8px 0 0;
+    font-weight: 700;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.route-popup-body {
+    padding: 15px;
+    background: white;
+    border-radius: 0 0 8px 8px;
+}
+
+.route-info-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #ecf0f1;
+}
+
+.route-info-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.route-info-label {
+    font-weight: 600;
+    color: #7f8c8d;
+}
+
+.route-info-value {
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+/* ===== Route Differentiation ===== */
+.route-differentiation-layer {
+    opacity: 0.95;
+    mix-blend-mode: multiply;
+}
+
+/* ===== Route Group Styling ===== */
+.route-group-bergen {
+    stroke: #3498db;
+}
+
+.route-group-oslo {
+    stroke: #2ecc71;
+}
+
+.route-group-trondheim {
+    stroke: #e74c3c;
+}
+
+.route-group-stavanger {
+    stroke: #f39c12;
+}
+
+.route-group-alesund {
+    stroke: #9b59b6;
+}
+
+.route-group-kristiansand {
+    stroke: #1abc9c;
 }
 
 /* ===== Responsive Design ===== */
 @media (max-width: 768px) {
-    .route-control-panel {
-        min-width: 280px;
-        padding: 12px;
-        right: 10px !important;
-        top: 120px !important;
+    .route-controls {
+        top: 5px;
+        right: 5px;
+        max-width: 200px;
+        padding: 8px;
     }
     
-    .route-item {
-        padding: 8px 10px;
-        font-size: 0.9rem;
-    }
-    
-    .route-name {
-        font-size: 0.85rem;
-    }
-    
-    .route-distance {
-        font-size: 0.8rem;
-        padding: 2px 6px;
-    }
-    
-    .btn-zoom, .btn-toggle {
-        width: 32px;
-        height: 32px;
-        padding: 5px;
-    }
-    
-    .leaflet-control-legend {
-        min-width: 180px;
-        font-size: 0.85rem;
+    .rtz-start-marker,
+    .rtz-end-marker {
+        r: 8 !important;
     }
 }
 
-/* ===== Route Selection Animation ===== */
-@keyframes route-select {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
-}
-
-.route-selected {
-    animation: route-select 0.3s ease;
-    box-shadow: 0 0 0 3px rgba(38, 208, 206, 0.5);
+/* ===== Dark Mode Support ===== */
+@media (prefers-color-scheme: dark) {
+    .rtz-route-line {
+        stroke-opacity: 0.85;
+    }
+    
+    .route-popup-body {
+        background: #2c3e50;
+        color: white;
+    }
+    
+    .route-info-label {
+        color: #bdc3c7;
+    }
+    
+    .route-info-value {
+        color: white;
+    }
+    
+    .route-controls {
+        background: #2c3e50;
+        color: white;
+    }
+    
+    .legend-item {
+        color: white;
+    }
 }

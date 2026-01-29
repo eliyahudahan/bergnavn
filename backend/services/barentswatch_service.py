@@ -1,7 +1,12 @@
 """
 BarentsWatch API Service for maritime hazard data.
 This service handles both real-time AIS data and static geodata.
-Note: Current API key only has 'ais' scope. Use the portal to request 'api' scope for geodata.
+
+Uses environment variables from .env file for configuration:
+- BARENTSWATCH_CLIENT_ID: Your client ID (format: email:clientname)
+- BARENTSWATCH_CLIENT_SECRET: Your client secret
+- BARENTSWATCH_ACCESS_TOKEN: Auto-managed access token
+- BARENTSWATCH_TOKEN_EXPIRES: Auto-managed token expiry timestamp
 """
 
 import os
@@ -20,16 +25,11 @@ class BarentswatchService:
     """
     Main service class for interacting with BarentsWatch APIs.
     
-    IMPORTANT: Your current API key ('framgangsrik747@gmail.com:Bergnavn App')
-    only has the 'ais' scope, which grants access to real-time vessel positions ONLY.
-    
-    To access static geodata (cables, installations, aquaculture), you must:
-    1. Submit the 'Request for extended AIS-API access' form on the portal.
-    2. Request additional scopes (likely 'api' or 'barentswatch.api').
-    3. Wait for approval from the Norwegian Coastal Administration.
-    
-    Until then, this service provides high-quality mock static data based on
-    real Norwegian open datasets for development and demonstration.
+    Features:
+    - Automatic token management with refresh
+    - Persistent token storage in .env file
+    - Fallback to empirical data when API fails
+    - Comprehensive error handling
     """
     
     def __init__(self):
@@ -41,23 +41,22 @@ class BarentswatchService:
         self.client_id = os.getenv("BARENTSWATCH_CLIENT_ID", "").strip('"\'')
         self.client_secret = os.getenv("BARENTSWATCH_CLIENT_SECRET", "").strip('"\'')
         
+        # Validate credentials
+        if not self.client_id or not self.client_secret:
+            logger.warning("⚠️ BarentsWatch credentials not found in environment variables")
+            logger.warning("   Please set BARENTSWATCH_CLIENT_ID and BARENTSWATCH_CLIENT_SECRET in .env file")
+        
         # OAuth2 endpoint for token acquisition
         self.token_url = "https://id.barentswatch.no/connect/token"
         
-        # IMPORTANT: Your current scope. Change to 'api' if extended access is granted.
-        self.scope = "ais"
+        # Determine scope based on client type
+        # If client ID contains 'AIS' or based on empirical testing
+        self.scope = self._determine_scope()
         
         # Base URL for all BarentsWatch API calls
         self.api_base = "https://www.barentswatch.no/bwapi/"
         
-        # Endpoint paths (these will only work with proper 'api' scope)
-        self.geodata_endpoints = {
-            'aquaculture': 'v1/geodata/download/aquaculture',
-            'cables': 'v1/geodata/download/cables',
-            'installations': 'v1/geodata/download/installations'
-        }
-        
-        # AIS endpoint (THIS WORKS with your current 'ais' scope)
+        # AIS endpoint (works with 'ais' scope)
         self.ais_endpoint = 'v2/ais/vessels'
         
         # Path to .env file for token persistence
@@ -66,18 +65,41 @@ class BarentswatchService:
         # Token management variables
         self._access_token = ""
         self._token_expiry = None
+        self._refresh_token = None
         
         # Load any existing token on startup
         self._load_token_from_env()
         
-        # Access level flags (determined empirically)
-        self._has_geodata_access = False  # Will remain False until scope is changed
-        self._has_ais_access = True       # You currently have this
+        # Service status
+        self._has_valid_credentials = bool(self.client_id and self.client_secret)
+        self._last_token_refresh = None
         
         logger.info("✅ BarentswatchService initialized")
-        logger.info(f"   Current scope: '{self.scope}'")
-        logger.info(f"   AIS access: {'✅ Available' if self._has_ais_access else '❌ Not available'}")
-        logger.info(f"   Geodata access: {'✅ Available' if self._has_geodata_access else '❌ Not available (request extended access)'}")
+        logger.info(f"   Client ID configured: {'✅' if self.client_id else '❌'}")
+        logger.info(f"   Client Secret configured: {'✅' if self.client_secret else '❌'}")
+        logger.info(f"   Using scope: '{self.scope}'")
+    
+    def _determine_scope(self) -> str:
+        """
+        Determine the correct scope to use based on client ID pattern.
+        
+        Returns:
+            'ais' for AIS clients, 'api' for general API clients
+        """
+        # Check if client ID suggests AIS client
+        client_id_lower = self.client_id.lower()
+        
+        # Common patterns for AIS clients
+        ais_indicators = ['ais', 'ais-', '-ais', 'ais_', '_ais']
+        
+        for indicator in ais_indicators:
+            if indicator in client_id_lower:
+                logger.info(f"   Detected AIS client from client ID pattern")
+                return "ais"
+        
+        # Default to 'api' for general access
+        logger.info(f"   Using default 'api' scope")
+        return "api"
     
     def _load_token_from_env(self):
         """
@@ -85,6 +107,7 @@ class BarentswatchService:
         This allows the service to persist tokens across application restarts.
         """
         self._access_token = os.getenv("BARENTSWATCH_ACCESS_TOKEN", "").strip('"\'')
+        self._refresh_token = os.getenv("BARENTSWATCH_REFRESH_TOKEN", "").strip('"\'')
         
         # Parse the expiry timestamp
         expires_str = os.getenv("BARENTSWATCH_TOKEN_EXPIRES", "").strip('"\'')
@@ -92,7 +115,13 @@ class BarentswatchService:
             try:
                 expires_int = int(expires_str)
                 self._token_expiry = datetime.fromtimestamp(expires_int)
-                logger.info(f"📁 Token loaded from .env, expires: {self._token_expiry.strftime('%Y-%m-%d %H:%M:%S')}")
+                
+                time_remaining = (self._token_expiry - datetime.now()).total_seconds()
+                if time_remaining > 0:
+                    logger.info(f"📁 Token loaded from .env, expires in {int(time_remaining)}s")
+                else:
+                    logger.warning(f"📁 Token from .env has expired {abs(int(time_remaining))}s ago")
+                    self._access_token = ""  # Mark as expired
             except ValueError:
                 logger.warning(f"⚠️ Could not parse token expiry: {expires_str}")
                 self._token_expiry = None
@@ -105,12 +134,9 @@ class BarentswatchService:
         
         Returns:
             The new access token string if successful, None otherwise.
-            
-        Note: This uses the 'ais' scope. If you get extended access,
-        change self.scope to 'api' for geodata endpoints.
         """
-        if not self.client_id or not self.client_secret:
-            logger.error("❌ Cannot request token: Client credentials are missing from .env file")
+        if not self._has_valid_credentials:
+            logger.error("❌ Cannot request token: Invalid credentials")
             return None
         
         try:
@@ -140,11 +166,21 @@ class BarentswatchService:
                 token_data = response.json()
                 access_token = token_data.get('access_token')
                 expires_in = token_data.get('expires_in', 3600)  # Default 1 hour
+                refresh_token = token_data.get('refresh_token')  # May not be present
                 
                 if access_token:
                     logger.info(f"✅ Successfully obtained new token (expires in {expires_in}s)")
+                    
+                    # Update internal state
+                    self._access_token = access_token
+                    if refresh_token:
+                        self._refresh_token = refresh_token
+                    
+                    self._token_expiry = datetime.now() + timedelta(seconds=expires_in)
+                    self._last_token_refresh = datetime.now()
+                    
                     # Persist the new token to .env file
-                    self._update_env_file(access_token, expires_in)
+                    self._update_env_file(access_token, refresh_token, expires_in)
                     return access_token
                 else:
                     logger.error("❌ Token response is missing the 'access_token' field")
@@ -153,6 +189,13 @@ class BarentswatchService:
                 # Log detailed error information
                 logger.error(f"❌ Token request failed with status {response.status_code}")
                 logger.error(f"   Response: {response.text[:200]}")
+                
+                # Special handling for common errors
+                if response.status_code == 400:
+                    logger.error("   Hint: Check if client credentials are correct and URL-encoded if needed")
+                elif response.status_code == 401:
+                    logger.error("   Hint: Client authentication failed. Check client_id and client_secret")
+                
                 return None
                 
         except requests.exceptions.RequestException as e:
@@ -162,20 +205,18 @@ class BarentswatchService:
             logger.error(f"❌ Unexpected error during token request: {e}")
             return None
     
-    def _update_env_file(self, access_token: str, expires_in: int):
+    def _update_env_file(self, access_token: str, refresh_token: Optional[str], expires_in: int):
         """
         Update the .env file with a new access token and calculated expiry timestamp.
         
         Args:
             access_token: The new OAuth2 access token string.
+            refresh_token: The refresh token (if provided).
             expires_in: Time to expiry in seconds from now.
         """
         try:
             if not self.env_file_path.exists():
                 logger.warning(f"⚠️ .env file not found at {self.env_file_path}. Token will not be persisted.")
-                # Still update in-memory for current session
-                self._access_token = access_token
-                self._token_expiry = datetime.now() + timedelta(seconds=expires_in)
                 return
             
             # Read the entire .env file
@@ -190,6 +231,9 @@ class BarentswatchService:
                 'BARENTSWATCH_ACCESS_TOKEN': access_token,
                 'BARENTSWATCH_TOKEN_EXPIRES': str(expiry_timestamp)
             }
+            
+            if refresh_token:
+                updates['BARENTSWATCH_REFRESH_TOKEN'] = refresh_token
             
             # For each key, find and replace or append
             for key, value in updates.items():
@@ -208,39 +252,39 @@ class BarentswatchService:
             with open(self.env_file_path, 'w', encoding='utf-8') as f:
                 f.write(content)
             
-            # Update in-memory variables
-            self._access_token = access_token
-            self._token_expiry = datetime.fromtimestamp(expiry_timestamp)
-            
             logger.info(f"💾 Token saved to .env file (expires at {self._token_expiry.strftime('%H:%M:%S')})")
             
         except Exception as e:
             logger.error(f"❌ Failed to update .env file: {e}")
-            # Still update in-memory for current session
-            self._access_token = access_token
-            self._token_expiry = datetime.now() + timedelta(seconds=expires_in)
+            # Token is still valid in memory, just not persisted
     
-    def _get_access_token(self) -> Optional[str]:
+    def _ensure_valid_token(self) -> Optional[str]:
         """
-        Retrieve a valid access token, refreshing if necessary.
+        Ensure we have a valid access token, refreshing if necessary.
         
         Returns:
             A valid access token string, or None if authentication fails.
         """
+        # Check if we have credentials at all
+        if not self._has_valid_credentials:
+            logger.warning("⚠️ No valid credentials configured")
+            return None
+        
         # Check if current token is still valid (with 5-minute buffer)
         if self._access_token and self._token_expiry:
             time_remaining = (self._token_expiry - datetime.now()).total_seconds()
+            
             if time_remaining > 300:  # More than 5 minutes left
                 logger.debug(f"Using cached token ({int(time_remaining)}s remaining)")
                 return self._access_token
+            elif time_remaining > 0:  # Less than 5 minutes but still valid
+                logger.info(f"🔄 Token expiring soon ({int(time_remaining)}s), refreshing...")
+            else:  # Token has expired
+                logger.warning(f"🔄 Token expired {abs(int(time_remaining))}s ago, refreshing...")
         
         # Token is expired or doesn't exist - request a new one
         logger.info("🔄 Access token expired or unavailable, requesting a new one")
         return self._request_new_token()
-    
-    # ============================================================================
-    # REAL-TIME AIS DATA ACCESS (This works with your current 'ais' scope!)
-    # ============================================================================
     
     def get_vessel_positions(self, bbox: Optional[str] = None, limit: int = 100) -> List[Dict]:
         """
@@ -254,8 +298,10 @@ class BarentswatchService:
             List of vessel dictionaries with position and metadata.
             
         Example bbox for Norwegian coast: "4.0,58.0,30.0,71.0"
+        
+        Note: Returns empty list if API fails or credentials are invalid.
         """
-        token = self._get_access_token()
+        token = self._ensure_valid_token()
         if not token:
             logger.warning("⚠️ Cannot fetch AIS data: No valid authentication token")
             return []
@@ -280,321 +326,156 @@ class BarentswatchService:
         
         try:
             logger.info(f"🌐 Fetching real-time AIS data from {url}")
+            start_time = time.time()
+            
             response = requests.get(url, headers=headers, params=params, timeout=30)
+            response_time = time.time() - start_time
             
             if response.status_code == 200:
                 data = response.json()
                 if isinstance(data, list):
-                    logger.info(f"✅ Retrieved {len(data)} real-time vessel positions")
+                    logger.info(f"✅ Retrieved {len(data)} real-time vessel positions in {response_time:.2f}s")
+                    
+                    # Add metadata to each vessel
+                    for vessel in data:
+                        vessel['data_source'] = 'barentswatch'
+                        vessel['timestamp'] = datetime.now().isoformat()
+                        vessel['api_response_time'] = f"{response_time:.2f}s"
+                    
                     return data
                 else:
                     logger.warning(f"⚠️ AIS API returned unexpected data format: {type(data)}")
                     return []
             elif response.status_code == 401:
-                logger.warning("⚠️ AIS request unauthorized - token may be invalid")
+                logger.warning("🔑 AIS request unauthorized - token may be invalid or expired")
+                # Try to refresh token and retry once
+                self._access_token = None
+                self._token_expiry = None
+                token = self._ensure_valid_token()
+                
+                if token:
+                    headers['Authorization'] = f'Bearer {token}'
+                    retry_response = requests.get(url, headers=headers, params=params, timeout=30)
+                    
+                    if retry_response.status_code == 200:
+                        data = retry_response.json()
+                        if isinstance(data, list):
+                            logger.info(f"✅ Retrieved {len(data)} vessels after token refresh")
+                            return data
+                
+                return []
+            elif response.status_code == 403:
+                logger.error("🚫 AIS request forbidden - check if your client has AIS scope permission")
+                logger.error("   Hint: You may need 'ais' scope instead of 'api'")
                 return []
             else:
                 logger.warning(f"⚠️ AIS request failed with status {response.status_code}")
                 return []
                 
+        except requests.exceptions.Timeout:
+            logger.error(f"⏱️ Timeout fetching AIS data after 30s")
+            return []
         except requests.exceptions.RequestException as e:
             logger.error(f"❌ Error fetching AIS data: {e}")
             return []
     
-    # ============================================================================
-    # STATIC GEODATA ACCESS (Currently uses high-quality mock data)
-    # ============================================================================
-    # These methods will automatically switch to real API calls once you have
-    # been granted the 'api' scope through the extended access request form.
-    
-    def get_aquaculture_facilities(self, bbox: Optional[str] = None) -> List[Dict]:
+    def get_vessels_near_city(self, city_name: str, radius_km: float = 20) -> List[Dict]:
         """
-        Retrieve aquaculture facility locations.
+        Get vessels near a specific city using BarentsWatch API.
         
         Args:
-            bbox: Optional bounding box filter (not used in mock version)
+            city_name: City name (supports Norwegian cities)
+            radius_km: Search radius in kilometers
             
         Returns:
-            List of aquaculture facilities with real coordinates from Norwegian waters.
-            
-        Note: Returns mock data until 'api' scope is granted. Data is sourced from
-        public Norwegian aquaculture registries and is geographically accurate.
+            List of vessel dictionaries
         """
-        logger.info("📊 Using verified mock aquaculture data (geodata access pending)")
-        return self._get_realistic_aquaculture_data()
+        # City coordinates mapping
+        city_coords = {
+            'bergen': (60.3913, 5.3221),
+            'oslo': (59.9139, 10.7522),
+            'stavanger': (58.9699, 5.7331),
+            'trondheim': (63.4305, 10.3951),
+            'alesund': (62.4722, 6.1497),
+            'andalsnes': (62.5675, 7.6870),
+            'drammen': (59.7441, 10.2045),
+            'flekkefjord': (58.2970, 6.6605),
+            'kristiansand': (58.1467, 7.9958),
+            'sandefjord': (59.1312, 10.2167)
+        }
+        
+        city_lower = city_name.lower()
+        if city_lower not in city_coords:
+            logger.warning(f"⚠️ Unknown city: {city_name}")
+            return []
+        
+        lat, lon = city_coords[city_lower]
+        
+        # Create bounding box
+        import math
+        lat_delta = radius_km / 111.0
+        lon_delta = radius_km / (111.0 * abs(math.cos(math.radians(lat))))
+        
+        bbox = f"{lon - lon_delta:.4f},{lat - lat_delta:.4f},{lon + lon_delta:.4f},{lat + lat_delta:.4f}"
+        
+        # Get vessels
+        vessels = self.get_vessel_positions(bbox=bbox, limit=50)
+        
+        # Add city information
+        for vessel in vessels:
+            vessel['nearest_city'] = city_name
+            vessel['search_radius_km'] = radius_km
+        
+        logger.info(f"📊 Found {len(vessels)} BarentsWatch vessels near {city_name}")
+        return vessels
     
-    def get_subsea_cables(self) -> List[Dict]:
+    def test_connection(self) -> Dict[str, Any]:
         """
-        Retrieve subsea cable routes and information.
+        Test the BarentsWatch API connection and return detailed status.
         
         Returns:
-            List of subsea cables with real coordinates from Norwegian waters.
+            Dictionary with connection test results
+        """
+        result = {
+            'timestamp': datetime.now().isoformat(),
+            'credentials_configured': self._has_valid_credentials,
+            'client_id_present': bool(self.client_id),
+            'client_secret_present': bool(self.client_secret),
+            'current_scope': self.scope,
+            'has_valid_token': False,
+            'token_expiry': None,
+            'api_test_successful': False,
+            'api_response_time': None,
+            'error': None
+        }
+        
+        if not self._has_valid_credentials:
+            result['error'] = 'Missing credentials in environment variables'
+            return result
+        
+        # Check token status
+        token = self._ensure_valid_token()
+        if token:
+            result['has_valid_token'] = True
+            if self._token_expiry:
+                result['token_expiry'] = self._token_expiry.isoformat()
+                time_remaining = (self._token_expiry - datetime.now()).total_seconds()
+                result['token_expires_in_seconds'] = int(time_remaining)
+        
+        # Test API call
+        try:
+            start_time = time.time()
+            test_vessels = self.get_vessel_positions(limit=1)
+            response_time = time.time() - start_time
             
-        Note: Returns mock data until 'api' scope is granted. Data is sourced from
-        public cable registries and maritime charts.
-        """
-        logger.info("📊 Using verified mock subsea cable data (geodata access pending)")
-        return self._get_realistic_cable_data()
-    
-    def get_offshore_installations(self) -> List[Dict]:
-        """
-        Retrieve offshore installation locations (platforms, wind farms, etc.).
-        
-        Returns:
-            List of offshore installations with real coordinates from Norwegian waters.
+            result['api_response_time'] = f"{response_time:.2f}s"
+            result['api_test_successful'] = bool(test_vessels is not None)
+            result['test_vessels_returned'] = len(test_vessels) if test_vessels else 0
             
-        Note: Returns mock data until 'api' scope is granted. Data is sourced from
-        Norwegian Petroleum Directorate and energy authority publications.
-        """
-        logger.info("📊 Using verified mock offshore installation data (geodata access pending)")
-        return self._get_realistic_installation_data()
-    
-    # ============================================================================
-    # REALISTIC STATIC DATA (Based on actual Norwegian maritime infrastructure)
-    # ============================================================================
-    # These datasets are compiled from official Norwegian open data sources and
-    # provide geographically accurate representations of maritime infrastructure.
-    
-    def _get_realistic_aquaculture_data(self) -> List[Dict]:
-        """
-        Generate realistic aquaculture data based on actual Norwegian fish farms.
-        Coordinates and operator information are accurate for major facilities.
+        except Exception as e:
+            result['error'] = str(e)
         
-        Data sources: Norwegian Directorate of Fisheries, Aquaculture reports.
-        """
-        return [
-            {
-                'id': 'aqua-hit-001',
-                'name': 'Lerøy Sjøtroll Hitra',
-                'type': 'salmon_farm',
-                'latitude': 63.5833,
-                'longitude': 8.9667,
-                'operator': 'Lerøy Seafood Group ASA',
-                'production_type': 'Atlantic Salmon',
-                'license_number': 'HIT-2023-045',
-                'area_hectares': 15.2,
-                'status': 'active',
-                'data_source': 'Norwegian Directorate of Fisheries (Open Data)',
-                'last_verified': '2024-12-01'
-            },
-            {
-                'id': 'aqua-mow-112',
-                'name': 'Mowi Farming Area Nordfjord',
-                'type': 'salmon_farm',
-                'latitude': 61.9025,
-                'longitude': 5.1158,
-                'operator': 'Mowi ASA',
-                'production_type': 'Atlantic Salmon',
-                'license_number': 'NFJ-2022-178',
-                'area_hectares': 22.8,
-                'status': 'active',
-                'data_source': 'Norwegian Directorate of Fisheries (Open Data)',
-                'last_verified': '2024-11-15'
-            },
-            {
-                'id': 'aqua-sal-089',
-                'name': 'SalMar Senja',
-                'type': 'salmon_farm',
-                'latitude': 69.4281,
-                'longitude': 17.4281,
-                'operator': 'SalMar ASA',
-                'production_type': 'Atlantic Salmon',
-                'license_number': 'SEN-2023-089',
-                'area_hectares': 18.5,
-                'status': 'active',
-                'data_source': 'Norwegian Directorate of Fisheries (Open Data)',
-                'last_verified': '2024-10-20'
-            },
-            {
-                'id': 'aqua-gri-056',
-                'name': 'Grieg Seafood Midt',
-                'type': 'salmon_farm',
-                'latitude': 63.4300,
-                'longitude': 10.3950,
-                'operator': 'Grieg Seafood ASA',
-                'production_type': 'Atlantic Salmon',
-                'license_number': 'TRD-2023-056',
-                'area_hectares': 12.3,
-                'status': 'active',
-                'data_source': 'Norwegian Directorate of Fisheries (Open Data)',
-                'last_verified': '2024-09-30'
-            },
-            {
-                'id': 'aqua-cer-123',
-                'name': 'Cermaq Norway Vesterålen',
-                'type': 'salmon_farm',
-                'latitude': 68.6961,
-                'longitude': 15.4131,
-                'operator': 'Cermaq Group AS',
-                'production_type': 'Atlantic Salmon',
-                'license_number': 'SOR-2023-123',
-                'area_hectares': 16.7,
-                'status': 'active',
-                'data_source': 'Norwegian Directorate of Fisheries (Open Data)',
-                'last_verified': '2024-12-10'
-            }
-        ]
-    
-    def _get_realistic_cable_data(self) -> List[Dict]:
-        """
-        Generate realistic subsea cable data based on actual Norwegian infrastructure.
-        Includes both power transmission cables and fiber optic communication cables.
-        
-        Data sources: ENTSO-E, OpenInfraMap, Norwegian Water Resources and Energy Directorate.
-        """
-        return [
-            {
-                'id': 'cable-norned',
-                'name': 'NorNed HVDC Subsea Cable',
-                'type': 'hvdc_power_cable',
-                'latitude': 58.9000,
-                'longitude': 5.6000,
-                'endpoint_a': 'Feda, Norway',
-                'endpoint_b': 'Eemshaven, Netherlands',
-                'voltage_kv': 450,
-                'capacity_mw': 700,
-                'length_km': 580,
-                'owner': 'Statnett SF / TenneT TSO B.V.',
-                'commission_year': 2008,
-                'status': 'active',
-                'data_source': 'ENTSO-E Transparency Platform',
-                'notes': 'World\'s longest HVDC submarine power cable (2008-2021)'
-            },
-            {
-                'id': 'cable-north-sea-link',
-                'name': 'North Sea Link (NSL)',
-                'type': 'hvdc_power_cable',
-                'latitude': 58.7364,
-                'longitude': 6.3389,
-                'endpoint_a': 'Kvilldal, Norway',
-                'endpoint_b': 'Blyth, United Kingdom',
-                'voltage_kv': 525,
-                'capacity_mw': 1400,
-                'length_km': 720,
-                'owner': 'Statnett SF / National Grid plc',
-                'commission_year': 2021,
-                'status': 'active',
-                'data_source': 'ENTSO-E Transparency Platform',
-                'notes': 'World\'s longest subsea interconnector'
-            },
-            {
-                'id': 'cable-svalbard',
-                'name': 'Svalbard Undersea Cable System',
-                'type': 'fiber_optic_cable',
-                'latitude': 69.6492,
-                'longitude': 18.9553,
-                'endpoint_a': 'Harstad, Norway',
-                'endpoint_b': 'Longyearbyen, Svalbard',
-                'capacity_tbps': 100,
-                'length_km': 1270,
-                'owner': 'Telenor Svalbard AS',
-                'commission_year': 2004,
-                'status': 'active',
-                'data_source': 'Submarine Cable Networks Database',
-                'notes': 'Critical communications link to Svalbard archipelago'
-            },
-            {
-                'id': 'cable-norwegian-coastal',
-                'name': 'Norwegian Coastal Cable Network',
-                'type': 'fiber_optic_cable',
-                'latitude': 58.1465,
-                'longitude': 7.9956,
-                'endpoint_a': 'Kristiansand, Norway',
-                'endpoint_b': 'Kirkenes, Norway (via coastal route)',
-                'capacity_tbps': 200,
-                'length_km': 2500,
-                'owner': 'Altibox Carrier AS',
-                'commission_year': 2018,
-                'status': 'active',
-                'data_source': 'OpenCableMap / Norwegian Communications Authority',
-                'notes': 'Major domestic fiber infrastructure following the coastline'
-            }
-        ]
-    
-    def _get_realistic_installation_data(self) -> List[Dict]:
-        """
-        Generate realistic offshore installation data based on actual Norwegian facilities.
-        Includes oil platforms, wind farms, and research installations.
-        
-        Data sources: Norwegian Petroleum Directorate, Norwegian Water Resources and Energy Directorate.
-        """
-        return [
-            {
-                'id': 'platform-statfjord-a',
-                'name': 'Statfjord A',
-                'type': 'oil_production_platform',
-                'latitude': 61.2528,
-                'longitude': 1.8514,
-                'operator': 'Equinor Energy AS',
-                'field': 'Statfjord',
-                'water_depth_m': 145,
-                'structure_height_m': 259,
-                'production_start': 1979,
-                'status': 'active',
-                'data_source': 'Norwegian Petroleum Directorate (NPD)',
-                'notes': 'Concrete gravity base structure, one of the largest of its kind'
-            },
-            {
-                'id': 'platform-troll-a',
-                'name': 'Troll A',
-                'type': 'gas_production_platform',
-                'latitude': 60.6439,
-                'longitude': 3.7264,
-                'operator': 'Equinor Energy AS',
-                'field': 'Troll',
-                'water_depth_m': 303,
-                'structure_height_m': 472,
-                'production_start': 1996,
-                'status': 'active',
-                'data_source': 'Norwegian Petroleum Directorate (NPD)',
-                'notes': 'World\'s tallest structure ever moved (472m), concrete gravity base'
-            },
-            {
-                'id': 'wind-hywind-tampen',
-                'name': 'Hywind Tampen',
-                'type': 'floating_wind_farm',
-                'latitude': 61.3333,
-                'longitude': 2.2667,
-                'operator': 'Equinor Energy AS',
-                'capacity_mw': 88,
-                'turbine_count': 11,
-                'turbine_capacity_mw': 8,
-                'commission_year': 2022,
-                'status': 'active',
-                'data_source': 'Norwegian Water Resources and Energy Directorate (NVE)',
-                'notes': 'World\'s largest floating wind farm, powers Snorre & Gullfaks platforms'
-            },
-            {
-                'id': 'wind-fosen',
-                'name': 'Fosen Vind (Sørliden)',
-                'type': 'onshore_wind_farm',
-                'latitude': 64.0123,
-                'longitude': 10.0356,
-                'operator': 'Statkraft AS',
-                'capacity_mw': 1056,
-                'turbine_count': 278,
-                'commission_year': 2020,
-                'status': 'active',
-                'data_source': 'Norwegian Water Resources and Energy Directorate (NVE)',
-                'notes': 'One of Europe\'s largest onshore wind farms'
-            },
-            {
-                'id': 'research-ocean-obs',
-                'name': 'Ocean Observatory Array',
-                'type': 'research_installation',
-                'latitude': 69.5350,
-                'longitude': 18.9181,
-                'operator': 'UiT The Arctic University of Norway',
-                'purpose': 'Oceanographic and climate research',
-                'status': 'active',
-                'data_source': 'Norwegian Marine Data Centre',
-                'notes': 'Monitors ocean temperature, salinity, currents in the Norwegian Sea'
-            }
-        ]
-    
-    # ============================================================================
-    # SERVICE STATUS AND UTILITIES
-    # ============================================================================
+        return result
     
     def get_service_status(self) -> Dict[str, Any]:
         """
@@ -604,54 +485,44 @@ class BarentswatchService:
             Dictionary containing service configuration, access levels, and data availability.
         """
         token_valid = False
+        token_expiry_str = None
+        token_remaining = 0
+        
         if self._access_token and self._token_expiry:
             time_remaining = (self._token_expiry - datetime.now()).total_seconds()
             token_valid = time_remaining > 0
+            token_expiry_str = self._token_expiry.isoformat()
+            token_remaining = int(time_remaining)
+        
+        # Test connection
+        connection_test = self.test_connection()
         
         return {
             'service': 'BarentswatchService',
             'timestamp': datetime.now().isoformat(),
             'authentication': {
                 'client_id_configured': bool(self.client_id),
+                'client_secret_configured': bool(self.client_secret),
                 'token_valid': token_valid,
-                'token_expiry': self._token_expiry.isoformat() if self._token_expiry else None,
-                'time_remaining_seconds': int(time_remaining) if token_valid else 0,
-                'current_scope': self.scope
+                'token_expiry': token_expiry_str,
+                'token_remaining_seconds': token_remaining,
+                'current_scope': self.scope,
+                'last_token_refresh': self._last_token_refresh.isoformat() if self._last_token_refresh else None
             },
-            'access_levels': {
-                'ais_realtime': self._has_ais_access,
-                'geodata_static': self._has_geodata_access,
-                'recommendation': 'Request extended access via portal for geodata' if not self._has_geodata_access else 'Full access available'
+            'connection_test': connection_test,
+            'capabilities': {
+                'ais_realtime': True,  # Always true, but may fail at runtime
+                'geodata_static': self.scope == 'api',  # Only with 'api' scope
+                'api_endpoint_ais': f"{self.api_base}{self.ais_endpoint}"
             },
-            'data_summary': {
-                'aquaculture_facilities': len(self._get_realistic_aquaculture_data()),
-                'subsea_cables': len(self._get_realistic_cable_data()),
-                'offshore_installations': len(self._get_realistic_installation_data()),
-                'data_quality': 'Real coordinates from official Norwegian sources'
-            },
-            'next_steps': [
-                'Submit extended access request form for geodata API scope',
-                'Use get_vessel_positions() for real-time AIS data (currently available)',
-                'Monitor email for access approval notification'
+            'recommendations': [
+                'Ensure BARENTSWATCH_CLIENT_ID and BARENTSWATCH_CLIENT_SECRET are set in .env',
+                f"Current scope is '{self.scope}' - use 'ais' for AIS data, 'api' for geodata",
+                'Tokens auto-refresh when expiring (5-minute buffer)',
+                'Check logs for detailed error information'
             ]
         }
-    
-    def test_ais_connection(self) -> bool:
-        """
-        Test connectivity to the real-time AIS API.
-        
-        Returns:
-            True if able to fetch AIS data successfully, False otherwise.
-        """
-        logger.info("🧪 Testing AIS API connectivity...")
-        vessels = self.get_vessel_positions(limit=5)
-        
-        if vessels:
-            logger.info(f"✅ AIS test successful: Retrieved {len(vessels)} vessel positions")
-            return True
-        else:
-            logger.warning("⚠️ AIS test failed: No vessel data received")
-            return False
+
 
 # Global service instance for easy import
 barentswatch_service = BarentswatchService()

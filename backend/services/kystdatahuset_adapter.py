@@ -2,6 +2,8 @@
 Kystdatahuset API Adapter for real-time Norwegian AIS data.
 Complete implementation with error handling, caching, and all 10 cities support.
 Empirical data source for scientific maritime research.
+
+Uses environment variables from .env file for configuration.
 """
 
 import os
@@ -20,6 +22,10 @@ class KystdatahusetAdapter:
     """
     Complete adapter for Kystdatahuset open Norwegian AIS API.
     Provides empirical vessel data for all 10 Norwegian cities in your project.
+    
+    Configuration is loaded from environment variables:
+    - USE_KYSTDATAHUSET_AIS: Enable/disable this service
+    - KYSTDATAHUSET_USER_AGENT: User-Agent string for API requests
     """
     
     BASE_URL = "https://www.kystdatahuset.no/api/v1/ais"
@@ -49,11 +55,25 @@ class KystdatahusetAdapter:
         self.timeout = timeout
         self.max_retries = max_retries
         
-        # Load User-Agent from .env or use default
-        user_agent = os.getenv(
-            "KYSTDATAHUSET_USER_AGENT", 
-            "BergNavnMaritimeResearch/2.0 (scientific@berg-navn.no)"
-        )
+        # Check if service is enabled via environment variable
+        self.enabled = os.getenv("USE_KYSTDATAHUSET_AIS", "true").lower() == "true"
+        
+        if not self.enabled:
+            logger.warning("⚠️ KystdatahusetAdapter is disabled via USE_KYSTDATAHUSET_AIS environment variable")
+            return
+        
+        # Load User-Agent from .env - using the actual environment variable
+        user_agent = os.getenv("KYSTDATAHUSET_USER_AGENT", "").strip()
+        
+        if not user_agent:
+            # If not provided, use a comprehensive default that should work
+            user_agent = (
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 "
+                "BergNavn-Maritime-Dashboard/2.0 (https://berg-navn.no; "
+                "contact@berg-navn.no)"
+            )
+            logger.info("📝 Using default User-Agent for Kystdatahuset")
         
         # Create a session with proper headers for Norwegian API
         self.session = requests.Session()
@@ -61,7 +81,9 @@ class KystdatahusetAdapter:
             'User-Agent': user_agent,
             'Accept': 'application/json',
             'Accept-Language': 'no, en;q=0.9',
-            'Cache-Control': 'no-cache'
+            'Cache-Control': 'no-cache',
+            'Referer': 'https://berg-navn.no/',
+            'Origin': 'https://berg-navn.no'
         })
         
         # Simple cache to avoid redundant API calls (5 minutes TTL)
@@ -74,7 +96,37 @@ class KystdatahusetAdapter:
         self.last_request_time = None
         
         logger.info(f"✅ KystdatahusetAdapter initialized for {len(self.NORWEGIAN_CITIES)} Norwegian cities")
-        logger.info(f"📡 User-Agent: {user_agent[:50]}...")
+        logger.info(f"📡 Service enabled: {self.enabled}")
+        logger.info(f"📡 User-Agent configured: {user_agent[:60]}...")
+        
+        # Test connection on startup
+        self._test_initial_connection()
+    
+    def _test_initial_connection(self):
+        """Test API connection on initialization."""
+        if not self.enabled:
+            return
+            
+        logger.info("🧪 Testing initial connection to Kystdatahuset API...")
+        try:
+            # Test with a small Bergen area
+            test_bbox = self._create_bounding_box(60.3913, 5.3221, 5)  # 5km around Bergen
+            test_response = self.session.get(
+                f"{self.BASE_URL}/vessels",
+                params={'bbox': test_bbox},
+                timeout=10
+            )
+            
+            if test_response.status_code == 200:
+                logger.info(f"✅ Initial connection test successful (Status: {test_response.status_code})")
+            elif test_response.status_code == 406:
+                logger.warning(f"⚠️ API returned 406 - Check User-Agent configuration")
+                logger.warning(f"   Current User-Agent: {self.session.headers.get('User-Agent')[:80]}...")
+            else:
+                logger.warning(f"⚠️ API returned status {test_response.status_code}")
+                
+        except Exception as e:
+            logger.warning(f"⚠️ Initial connection test failed: {e}")
     
     def get_vessels_in_bergen_region(self) -> List[Dict]:
         """
@@ -82,7 +134,13 @@ class KystdatahusetAdapter:
         
         Returns:
             List of vessel data dictionaries with city enrichment
+            
+        Note: Returns empty list if service is disabled.
         """
+        if not self.enabled:
+            logger.debug("Kystdatahuset service disabled, returning empty list")
+            return []
+        
         # Use the entire Norwegian coast bounding box that covers all 10 cities
         # Norway roughly from 58°N to 64°N, 4°E to 12°E covers all your cities
         norway_coast_bbox = "4.0,58.0,12.0,64.0"
@@ -102,7 +160,13 @@ class KystdatahusetAdapter:
             
         Raises:
             ValueError: If city_name is not in the list of 10 cities
+            
+        Note: Returns empty list if service is disabled.
         """
+        if not self.enabled:
+            logger.debug("Kystdatahuset service disabled, returning empty list")
+            return []
+        
         # Validate city name
         city_name_lower = city_name.lower()
         if city_name_lower not in self.NORWEGIAN_CITIES:
@@ -137,7 +201,13 @@ class KystdatahusetAdapter:
             
         Returns:
             List of vessels potentially on the route
+            
+        Note: Returns empty list if service is disabled.
         """
+        if not self.enabled:
+            logger.debug("Kystdatahuset service disabled, returning empty list")
+            return []
+        
         # Validate both cities
         if start_city.lower() not in self.NORWEGIAN_CITIES:
             raise ValueError(f"Unknown start city: '{start_city}'")
@@ -198,7 +268,13 @@ class KystdatahusetAdapter:
             
         Returns:
             Vessel data if found, None otherwise
+            
+        Note: Returns None if service is disabled.
         """
+        if not self.enabled:
+            logger.debug("Kystdatahuset service disabled, returning None")
+            return None
+        
         # First check cache
         cache_key = f"vessel_{mmsi}"
         if cache_key in self._cache:
@@ -230,7 +306,13 @@ class KystdatahusetAdapter:
             
         Returns:
             Dictionary with city names as keys and vessel lists as values
+            
+        Note: Returns empty dict if service is disabled.
         """
+        if not self.enabled:
+            logger.debug("Kystdatahuset service disabled, returning empty dict")
+            return {}
+        
         all_vessels = {}
         
         for city_name in self.NORWEGIAN_CITIES:
@@ -266,6 +348,9 @@ class KystdatahusetAdapter:
         Returns:
             List of vessel data dictionaries
         """
+        if not self.enabled:
+            return []
+        
         # Check cache first
         cache_key = f"bbox_{bbox}"
         if cache_key in self._cache:
@@ -281,6 +366,8 @@ class KystdatahusetAdapter:
                 self.last_request_time = datetime.now(timezone.utc)
                 
                 params = {'bbox': bbox}
+                logger.debug(f"📤 Requesting vessels with bbox: {bbox} (attempt {attempt + 1}/{self.max_retries})")
+                
                 response = self.session.get(
                     f"{self.BASE_URL}/vessels",
                     params=params,
@@ -294,17 +381,25 @@ class KystdatahusetAdapter:
                     # Cache the result
                     self._cache[cache_key] = (datetime.now(timezone.utc), vessels)
                     
-                    logger.debug(f"API request successful: {len(vessels)} vessels")
+                    logger.debug(f"✅ API request successful: {len(vessels)} vessels")
                     return vessels
+                    
+                elif response.status_code == 406:  # Not Acceptable
+                    logger.error(f"❌ API returned 406 Not Acceptable")
+                    logger.error(f"   Headers sent: {dict(self.session.headers)}")
+                    logger.error(f"   Response: {response.text[:200]}")
+                    break  # Don't retry 406 errors
                     
                 elif response.status_code == 429:  # Too Many Requests
                     wait_time = (attempt + 1) * 2  # Exponential backoff
-                    logger.warning(f"Rate limited, waiting {wait_time}s (attempt {attempt + 1}/{self.max_retries})")
+                    logger.warning(f"⚠️ Rate limited, waiting {wait_time}s (attempt {attempt + 1}/{self.max_retries})")
                     time.sleep(wait_time)
                     continue
                     
                 else:
-                    logger.warning(f"API returned status {response.status_code} (attempt {attempt + 1}/{self.max_retries})")
+                    logger.warning(f"⚠️ API returned status {response.status_code} (attempt {attempt + 1}/{self.max_retries})")
+                    logger.debug(f"   Response: {response.text[:100]}")
+                    
                     if attempt < self.max_retries - 1:
                         time.sleep(1)  # Wait before retry
                         continue
@@ -312,7 +407,7 @@ class KystdatahusetAdapter:
                         return []
                         
             except requests.exceptions.Timeout:
-                logger.warning(f"Request timeout (attempt {attempt + 1}/{self.max_retries})")
+                logger.warning(f"⚠️ Request timeout (attempt {attempt + 1}/{self.max_retries})")
                 if attempt < self.max_retries - 1:
                     time.sleep(1)
                     continue
@@ -320,7 +415,7 @@ class KystdatahusetAdapter:
                     return []
                     
             except requests.exceptions.RequestException as e:
-                logger.error(f"Network error: {e} (attempt {attempt + 1}/{self.max_retries})")
+                logger.error(f"❌ Network error: {e} (attempt {attempt + 1}/{self.max_retries})")
                 if attempt < self.max_retries - 1:
                     time.sleep(1)
                     continue
@@ -397,6 +492,7 @@ class KystdatahusetAdapter:
         enriched['data_source'] = 'kystdatahuset'
         enriched['source_url'] = self.BASE_URL
         enriched['is_empirical'] = True
+        enriched['service_enabled'] = self.enabled
         
         return enriched
     
@@ -456,7 +552,6 @@ class KystdatahusetAdapter:
         # Normalize to 0-360
         return (bearing_deg + 360) % 360
     
-    
     def get_latest_positions(self, force_refresh: bool = False):
         """
         Get latest vessel positions.
@@ -482,28 +577,29 @@ class KystdatahusetAdapter:
             List of vessel dictionaries
         """
         return self.get_vessels_in_bergen_region()
-def get_service_status(self) -> Dict[str, any]:
+    
+    def get_service_status(self) -> Dict[str, any]:
         """
         Get comprehensive service status and statistics.
         
         Returns:
             Dictionary with service status information
         """
-        user_agent = os.getenv(
-            "KYSTDATAHUSET_USER_AGENT", 
-            "BergNavnMaritimeResearch/2.0 (scientific@berg-navn.no)"
-        )
+        user_agent = self.session.headers.get('User-Agent', 'Not configured')
         
         status = {
             'service': 'KystdatahusetAdapter',
             'timestamp': datetime.now(timezone.utc).isoformat(),
+            'enabled': self.enabled,
             'api_endpoint': self.BASE_URL,
             'configuration': {
                 'timeout_seconds': self.timeout,
                 'max_retries': self.max_retries,
-                'user_agent': user_agent[:50] + '...' if len(user_agent) > 50 else user_agent,
+                'user_agent': user_agent[:80] + '...' if len(user_agent) > 80 else user_agent,
                 'supported_cities': list(self.NORWEGIAN_CITIES.keys()),
-                'city_count': len(self.NORWEGIAN_CITIES)
+                'city_count': len(self.NORWEGIAN_CITIES),
+                'env_use_kystdatahuset': os.getenv("USE_KYSTDATAHUSET_AIS", "Not set"),
+                'env_user_agent_set': bool(os.getenv("KYSTDATAHUSET_USER_AGENT", "").strip())
             },
             'request_statistics': {
                 'total_requests': self.request_count,
@@ -524,20 +620,31 @@ def get_service_status(self) -> Dict[str, any]:
             }
         }
         
-        # Test current connectivity
-        try:
-            test_bbox = self._create_bounding_box(60.3913, 5.3221, 10)  # Bergen area
-            test_vessels = self._get_vessels_with_retry(test_bbox)
+        # Test current connectivity if enabled
+        if self.enabled:
+            try:
+                test_bbox = self._create_bounding_box(60.3913, 5.3221, 5)  # 5km around Bergen
+                test_response = self.session.get(
+                    f"{self.BASE_URL}/vessels",
+                    params={'bbox': test_bbox},
+                    timeout=5
+                )
+                
+                status['connectivity_test'] = {
+                    'status': 'success' if test_response.status_code == 200 else 'failed',
+                    'status_code': test_response.status_code,
+                    'test_area': 'Bergen (5km radius)',
+                    'response_time': 'tested'
+                }
+            except Exception as e:
+                status['connectivity_test'] = {
+                    'status': 'error',
+                    'error': str(e)
+                }
+        else:
             status['connectivity_test'] = {
-                'status': 'success',
-                'vessels_found': len(test_vessels),
-                'test_area': 'Bergen (10km radius)',
-                'api_response': 'OK' if test_vessels is not None else 'No data'
-            }
-        except Exception as e:
-            status['connectivity_test'] = {
-                'status': 'failed',
-                'error': str(e)
+                'status': 'disabled',
+                'reason': 'Service disabled via USE_KYSTDATAHUSET_AIS'
             }
         
         return status

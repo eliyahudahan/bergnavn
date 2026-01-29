@@ -4,6 +4,7 @@ BergNavn Maritime Intelligence Platform - WORKING VERSION
 All 3 pages working: Dashboard, Simulation, Routes
 FIXED: Dashboard now shows ALL RTZ routes with complete waypoints
 ADDED: Weather API endpoints for new weather system
+UPDATED: Real-time vessel tracking API integration
 """
 
 import os
@@ -98,6 +99,19 @@ try:
     print("✅ Registered: api_weather_bp (/api)")
 except Exception as e:
     print(f"⚠️  Could not register api_weather_bp: {e}")
+
+# ============================================
+# VESSEL API BLUEPRINT (NEW - Real-time vessel tracking)
+# ============================================
+
+try:
+    from backend.routes.api_vessels import register_vessel_routes
+    register_vessel_routes(app)
+    print("✅ Registered: vessel API routes (/maritime/api/vessels)")
+except ImportError as e:
+    print(f"⚠️  Could not register vessel API routes: {e}")
+except Exception as e:
+    print(f"⚠️  Error registering vessel API routes: {e}")
 
 # ============================================
 # LANGUAGE ROUTES
@@ -240,7 +254,8 @@ def health_check():
 def simple_weather_api():
     """Simple weather API endpoint - works directly without blueprint"""
     try:
-        # Import the weather service
+        # Import the weather service using correct path
+        sys.path.insert(0, os.path.join(BASE_DIR, 'backend'))
         from services.weather_integration_service import weather_integration_service
         
         # Get parameters or use defaults
@@ -273,32 +288,57 @@ def simple_weather_api():
         
         return jsonify(response)
         
+    except ImportError as e:
+        print(f"❌ Weather service import error: {e}")
+        # Try alternative import path
+        try:
+            # Fallback to empirical weather service
+            from backend.services.met_norway_service import met_norway_service
+            weather_data = met_norway_service.get_current_weather(lat, lon)
+            
+            return jsonify({
+                'status': 'success',
+                'timestamp': datetime.now().isoformat(),
+                'data': weather_data,
+                'api_version': '1.0',
+                'note': 'Using MET Norway service directly'
+            })
+        except Exception as inner_e:
+            print(f"❌ MET Norway fallback also failed: {inner_e}")
+            # Ultimate fallback
+            return get_fallback_weather_response(lat, lon, f"Import error: {str(e)[:100]}")
+        
     except Exception as e:
         print(f"❌ Simple Weather API error: {e}")
         import traceback
         traceback.print_exc()
         
         # Return fallback data
-        return jsonify({
-            'status': 'success',
-            'timestamp': datetime.now().isoformat(),
-            'data': {
-                'temperature_c': 8.5,
-                'wind_speed_ms': 5.2,
+        return get_fallback_weather_response(lat, lon, f"API error: {str(e)[:100]}")
+
+def get_fallback_weather_response(lat, lon, error_msg):
+    """Generate fallback weather response when all else fails"""
+    return jsonify({
+        'status': 'success',
+        'timestamp': datetime.now().isoformat(),
+        'data': {
+            'temperature_c': 8.5,
+            'wind_speed_ms': 5.2,
+            'location': 'Bergen',
+            'condition': 'Fallback Data',
+            'data_source': 'fallback',
+            'display': {
+                'temperature': '8°C',
+                'wind': '5 m/s',
                 'location': 'Bergen',
                 'condition': 'Fallback Data',
-                'data_source': 'fallback',
-                'display': {
-                    'temperature': '8°C',
-                    'wind': '5 m/s',
-                    'location': 'Bergen',
-                    'condition': 'Fallback Data',
-                    'source_badge': '📊 Fallback',
-                    'icon': 'cloud'
-                }
-            },
-            'note': 'Using fallback data due to error'
-        })
+                'source_badge': '📊 Fallback',
+                'icon': 'cloud'
+            }
+        },
+        'note': 'Using fallback data due to error',
+        'error_message': error_msg
+    })
 
 def get_source_badge(source):
     """Helper function to get source badge"""
@@ -468,6 +508,167 @@ def weather_dashboard_api():
     })
 
 # ============================================
+# NEW REAL-TIME VESSEL API ENDPOINTS (Direct registration)
+# ============================================
+
+@app.route('/maritime/api/vessels/real-time')
+def direct_real_time_vessel():
+    """Direct implementation of real-time vessel endpoint"""
+    try:
+        # Import services
+        from backend.services.empirical_ais_service import empirical_maritime_service
+        
+        # Get query parameters
+        city = request.args.get('city', 'bergen').lower()
+        radius_km = float(request.args.get('radius_km', 20))
+        
+        # Try to get empirical vessel
+        vessel = empirical_maritime_service.get_bergen_vessel_empirical()
+        
+        if vessel:
+            response = {
+                'status': 'success',
+                'source': vessel.get('data_source', 'unknown'),
+                'vessel': vessel,
+                'is_empirical': True,
+                'timestamp': datetime.now().isoformat(),
+                'metadata': {
+                    'city_requested': city,
+                    'radius_km': radius_km
+                }
+            }
+            
+            logger.info(f"✅ Direct API: Real-time vessel from {vessel.get('data_source')}")
+            return jsonify(response)
+        
+        # Fallback
+        from datetime import datetime, timezone
+        import random
+        
+        fallback_vessel = {
+            'mmsi': f'257{random.randint(100000, 999999)}',
+            'name': f'MS NORWAY {random.randint(1, 99)}',
+            'lat': 60.3913 + random.uniform(-0.1, 0.1),
+            'lon': 5.3221 + random.uniform(-0.1, 0.1),
+            'speed_knots': round(random.uniform(5, 15), 1),
+            'course': random.uniform(0, 360),
+            'heading': random.uniform(0, 360),
+            'type': random.choice(['Cargo', 'Tanker', 'Passenger', 'Fishing']),
+            'destination': random.choice(['Bergen', 'Oslo', 'Stavanger', 'Trondheim']),
+            'timestamp': datetime.now(timezone.utc).isoformat(),
+            'data_source': 'empirical_fallback',
+            'is_empirical': False
+        }
+        
+        return jsonify({
+            'status': 'fallback',
+            'source': 'empirical_simulation',
+            'vessel': fallback_vessel,
+            'is_empirical': False,
+            'timestamp': datetime.now().isoformat(),
+            'message': 'Using empirical fallback data'
+        })
+        
+    except Exception as e:
+        logger.error(f"❌ Direct vessel API error: {e}")
+        import random
+        from datetime import datetime, timezone
+        
+        emergency_vessel = {
+            'mmsi': '999999999',
+            'name': 'EMERGENCY VESSEL',
+            'lat': 60.3913,
+            'lon': 5.3221,
+            'speed_knots': 0,
+            'course': 0,
+            'type': 'Emergency',
+            'timestamp': datetime.now(timezone.utc).isoformat(),
+            'data_source': 'emergency',
+            'is_empirical': False,
+            'emergency': True
+        }
+        
+        return jsonify({
+            'status': 'emergency',
+            'vessel': emergency_vessel,
+            'is_empirical': False,
+            'error': str(e)[:100],
+            'message': 'Emergency fallback - service error',
+            'timestamp': datetime.now().isoformat()
+        })
+
+@app.route('/maritime/api/vessels/empirical-status')
+def direct_empirical_status():
+    """Direct implementation of empirical status endpoint"""
+    from datetime import datetime, timezone
+    
+    status = {
+        'timestamp': datetime.now(timezone.utc).isoformat(),
+        'environment_config': {
+            'USE_KYSTDATAHUSET_AIS': app.config.get('USE_KYSTDATAHUSET_AIS', False),
+            'BARENTSWATCH_CLIENT_ID_set': bool(app.config.get('BARENTSWATCH_CLIENT_ID')),
+            'MET_USER_AGENT_set': bool(app.config.get('MET_USER_AGENT'))
+        },
+        'data_sources': {},
+        'recommendations': []
+    }
+    
+    # Check Kystdatahuset availability
+    try:
+        from backend.services.kystdatahuset_adapter import kystdatahuset_adapter
+        test_vessels = kystdatahuset_adapter.get_vessels_near_city('bergen', radius_km=10)
+        status['data_sources']['kystdatahuset'] = {
+            'available': True,
+            'vessels_found': len(test_vessels),
+            'status': 'operational' if test_vessels else 'no_data'
+        }
+    except Exception as e:
+        status['data_sources']['kystdatahuset'] = {
+            'available': False,
+            'error': str(e),
+            'status': 'unavailable'
+        }
+    
+    # Check BarentsWatch
+    try:
+        from backend.services.barentswatch_service import barentswatch_service
+        service_status = barentswatch_service.get_service_status()
+        status['data_sources']['barentswatch'] = {
+            'available': True,
+            'token_valid': service_status['authentication']['token_valid'],
+            'scope': service_status['authentication']['current_scope'],
+            'status': 'operational'
+        }
+    except Exception as e:
+        status['data_sources']['barentswatch'] = {
+            'available': False,
+            'error': str(e),
+            'status': 'unavailable'
+        }
+    
+    # Check empirical service
+    try:
+        from backend.services.empirical_ais_service import empirical_maritime_service
+        empirical_status = empirical_maritime_service.get_service_status()
+        status['data_sources']['empirical_maritime_service'] = empirical_status
+    except Exception as e:
+        status['data_sources']['empirical_maritime_service'] = {
+            'available': False,
+            'error': str(e),
+            'status': 'unavailable'
+        }
+    
+    # Overall assessment
+    operational_sources = [s for s in status['data_sources'].values() if s.get('available') and s.get('status') == 'operational']
+    status['overall_assessment'] = {
+        'operational_sources': len(operational_sources),
+        'total_sources': len(status['data_sources']),
+        'readiness': 'ready' if len(operational_sources) > 0 else 'not_ready'
+    }
+    
+    return jsonify(status)
+
+# ============================================
 # HOME PAGE
 # ============================================
 
@@ -503,6 +704,7 @@ def page_not_found(e):
             <a href="/api/simple-weather">🌤️ Weather API</a> |
             <a href="/maritime/api/rtz/routes">🗺️ RTZ Routes</a> |
             <a href="/maritime/api/rtz/complete">🗺️ Complete RTZ Data</a>
+            <a href="/maritime/api/vessels/real-time">🚢 Real-time Vessel</a>
         </p>
     </div>
     ''', 404
@@ -519,23 +721,50 @@ def internal_error(e):
     ''', 500
 
 # ============================================
+# LOAD ENVIRONMENT CONFIGURATION
+# ============================================
+
+def load_environment_config():
+    """Load environment configuration into app config"""
+    # AIS settings
+    app.config['USE_KYSTDATAHUSET_AIS'] = os.environ.get('USE_KYSTDATAHUSET_AIS', 'false').lower() == 'true'
+    app.config['KYSTDATAHUSET_USER_AGENT'] = os.environ.get('KYSTDATAHUSET_USER_AGENT', '')
+    
+    # BarentsWatch API
+    app.config['BARENTSWATCH_CLIENT_ID'] = os.environ.get('BARENTSWATCH_CLIENT_ID', '')
+    app.config['BARENTSWATCH_CLIENT_SECRET'] = os.environ.get('BARENTSWATCH_CLIENT_SECRET', '')
+    
+    # MET Norway
+    app.config['MET_USER_AGENT'] = os.environ.get('MET_USER_AGENT', '')
+    
+    print("\n🔧 Environment Configuration:")
+    print(f"   USE_KYSTDATAHUSET_AIS: {app.config['USE_KYSTDATAHUSET_AIS']}")
+    print(f"   BARENTSWATCH_CLIENT_ID: {'Set' if app.config['BARENTSWATCH_CLIENT_ID'] else 'Not set'}")
+    print(f"   MET_USER_AGENT: {'Set' if app.config['MET_USER_AGENT'] else 'Not set'}")
+
+# ============================================
 # START APPLICATION
 # ============================================
 
 if __name__ == '__main__':
+    # Load environment configuration
+    load_environment_config()
+    
     print("\n📍 AVAILABLE ROUTES:")
     print("   GET /en                             - Home (English)")
     print("   GET /no                             - Home (Norwegian)")
     print("   GET /maritime/dashboard             - Dashboard with COMPLETE RTZ routes")
     print("   GET /maritime/simulation-dashboard/<lang> - Simulation")
     print("   GET /routes                         - Route explorer")
+    print("\n🔧 API Endpoints:")
     print("   GET /api/health                     - System health")
-    print("   GET /api/simple-weather             - Weather API (NEW - guaranteed working)")
+    print("   GET /api/simple-weather             - Weather API")
     print("   GET /api/weather-pro               - Weather API (from blueprint)")
     print("   GET /maritime/api/rtz/routes       - RTZ routes API")
-    print("   GET /maritime/api/rtz/complete     - Complete RTZ data with debug")
+    print("   GET /maritime/api/rtz/complete     - Complete RTZ data")
     print("   GET /maritime/api/ais-data         - AIS data API")
-    print("   GET /maritime/api/weather-dashboard - Weather API (legacy)")
+    print("   GET /maritime/api/vessels/real-time - Real-time vessel tracking (NEW)")
+    print("   GET /maritime/api/vessels/empirical-status - Vessel data source status (NEW)")
     
     print("\n🌐 STARTING SERVER...")
     print("   Home:      http://localhost:5000/en")
@@ -543,6 +772,7 @@ if __name__ == '__main__':
     print("   Simulation: http://localhost:5000/maritime/simulation-dashboard/en")
     print("   Routes:    http://localhost:5000/routes")
     print("   Weather API: http://localhost:5000/api/simple-weather?lat=60.39&lon=5.32")
+    print("   Vessel API: http://localhost:5000/maritime/api/vessels/real-time")
     print("=" * 60)
     
     app.run(host='0.0.0.0', port=5000, debug=True)

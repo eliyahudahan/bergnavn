@@ -1,21 +1,23 @@
-/* backend/static/js/split/ais_realtime.js */
+// backend/static/js/split/ais_realtime.js
 /**
- * Real-time AIS Data Module for BergNavn Maritime Dashboard - FIXED VERSION
- * Fetches and displays real vessel data from BarentsWatch API
- * FIXED: Optimized update intervals to prevent map flickering/refreshing
+ * Real-time AIS Data Module for BergNavn Maritime Dashboard - SECURE VERSION
+ * Uses environment variables securely via Flask backend
+ * Priority: Bergen real-time → Commercial vessels → Empirical fallback (ONE vessel only)
  */
 
 window.aisManager = {
     realtimeVessels: [],
     aisMarkers: null,
     updateInterval: null,
-    isUpdating: false, // FIXED: Add update lock to prevent concurrent updates
+    isUpdating: false,
+    lastUpdateTime: null,
+    updateLock: false, // Prevents concurrent API calls
     
     /**
-     * Initialize AIS real-time monitoring
+     * Initialize AIS real-time monitoring - SECURE VERSION
      */
     init: function() {
-        console.log('🚢 AIS Manager initialized (Optimized Version)');
+        console.log('🚢 AIS Manager initialized (Secure Bergen Priority)');
         
         // Create marker layer for vessels
         this.aisMarkers = L.layerGroup();
@@ -33,176 +35,353 @@ window.aisManager = {
     
     /**
      * Optimize map performance settings
-     * FIXED: Prevents unnecessary map refreshes
      */
     optimizeMapPerformance: function() {
         if (!window.map) return;
         
-        // Disable some Leaflet animations that might cause flickering
+        // Disable unnecessary animations
         try {
-            // Reduce animation intensity
-            if (map.options.zoomAnimation) {
-                map.options.zoomAnimation = false;
-            }
-            
-            // Limit marker clustering animations
-            if (map._layers) {
-                Object.values(map._layers).forEach(layer => {
-                    if (layer._animation && typeof layer._animation === 'function') {
-                        // Disable animation on path updates
-                        layer.options.smoothFactor = 1.0; // Less smoothing
-                    }
-                });
-            }
+            window.map.options.zoomAnimation = false;
+            window.map.options.fadeAnimation = false;
+            window.map.options.markerZoomAnimation = false;
         } catch (e) {
-            console.log('Map optimization applied:', e.message);
+            console.log('Map optimization applied');
         }
     },
     
     /**
-     * Start real-time AIS updates with optimized intervals
-     * FIXED: Longer interval and better state management
+     * Start real-time AIS updates with Bergen priority
      */
     startRealTimeUpdates: function() {
-        console.log('Starting AIS real-time updates (Optimized)');
+        console.log('🚢 Starting AIS updates (Bergen Priority System)');
         
-        // Initial load with delay to let map settle
-        setTimeout(() => {
-            this.fetchRealTimeVessels();
-        }, 2000);
+        // Initial load
+        this.fetchRealTimeVessels();
         
-        // FIXED: Set up optimized periodic updates (every 2 minutes instead of 1)
-        // Prevents constant map refreshing
+        // Set up periodic updates (every 2 minutes)
         this.updateInterval = setInterval(() => {
-            // Only update if map is visible and user is active
             if (this.shouldUpdate()) {
                 this.fetchRealTimeVessels();
-            } else {
-                console.log('🕒 Skipping AIS update (inactive tab/map)');
             }
-        }, 120000); // 120000ms = 2 minutes (was 60000ms)
+        }, 120000);
         
         return this;
     },
     
     /**
-     * Check if we should update based on user activity
-     * FIXED: Prevents updates when not needed
+     * Check if we should update
      */
     shouldUpdate: function() {
-        // Don't update if already updating
         if (this.isUpdating) return false;
-        
-        // Don't update if tab is not visible
         if (document.hidden) return false;
-        
-        // Don't update if map is not visible
-        const mapElement = document.getElementById('maritime-map');
-        if (!mapElement || mapElement.offsetParent === null) return false;
-        
-        // Don't update if AIS layer is not visible
-        if (window.map && this.aisMarkers && !window.map.hasLayer(this.aisMarkers)) {
-            return false;
-        }
+        if (!window.map || !window.map.hasLayer(this.aisMarkers)) return false;
         
         return true;
     },
     
     /**
-     * Fetch real-time vessel data from backend API
-     * FIXED: Added timeout and better error handling
+     * Fetch real-time vessel data with Bergen priority
+     * SECURE: All credentials handled by Flask backend
      */
     fetchRealTimeVessels: async function() {
         // Prevent concurrent updates
-        if (this.isUpdating) {
-            console.log('⚠️ AIS update already in progress, skipping...');
+        if (this.updateLock) {
+            console.log('⚠️ AIS update locked, skipping...');
             return;
         }
         
+        this.updateLock = true;
         this.isUpdating = true;
-        console.log('📡 Fetching real-time AIS data...');
+        
+        console.log('📡 Fetching AIS data (Bergen Priority System)...');
         
         try {
-            // Add timeout to prevent hanging requests
+            // Use AbortController for timeout
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+            const timeoutId = setTimeout(() => controller.abort(), 15000);
             
+            // Call our secure backend API
             const response = await fetch('/maritime/api/ais/realtime', {
                 signal: controller.signal,
                 headers: {
                     'Cache-Control': 'no-cache',
-                    'Pragma': 'no-cache'
+                    'Pragma': 'no-cache',
+                    'X-Requested-With': 'XMLHttpRequest'
                 }
             });
             
             clearTimeout(timeoutId);
+            
+            if (!response.ok) {
+                throw new Error(`API error: ${response.status}`);
+            }
+            
             const data = await response.json();
             
             if (data.status === 'success' && data.vessels) {
-                // FIXED: Use requestAnimationFrame for smoother updates
+                // Apply Bergen priority filter
+                const filteredVessels = this.applyBergenPriority(data.vessels);
+                
                 requestAnimationFrame(() => {
-                    this.realtimeVessels = data.vessels;
+                    this.realtimeVessels = filteredVessels;
                     this.updateVesselDisplay();
+                    this.updateUICounters(filteredVessels);
                     
-                    // Update UI counters with minimal DOM operations
-                    this.updateUICounters(data.vessels);
+                    console.log(`✅ AIS: ${filteredVessels.length} vessels (Bergen priority applied)`);
+                    console.log(`📊 Source: ${data.source || 'unknown'}`);
                     
-                    console.log(`✅ Loaded ${data.vessels.length} real-time vessels`);
+                    // Update API status
+                    this.updateAPIStatus(data.source || 'unknown', true);
                 });
             } else {
-                console.warn('AIS API returned unexpected format:', data);
-            }
-        } catch (error) {
-            if (error.name === 'AbortError') {
-                console.warn('AIS request timed out');
-            } else {
-                console.error('Failed to fetch AIS data:', error);
+                console.warn('AIS API returned unexpected format');
+                this.fallbackToEmpirical();
             }
             
-            // Update status with fallback
-            document.getElementById('ais-status').textContent = 'Offline';
-            document.getElementById('ais-status').className = 'text-danger';
+        } catch (error) {
+            console.error('AIS fetch failed:', error.name, error.message);
+            this.fallbackToEmpirical();
         } finally {
+            this.updateLock = false;
             this.isUpdating = false;
             this.lastUpdateTime = new Date();
         }
     },
     
     /**
-     * Update UI counters efficiently
-     * FIXED: Minimizes DOM operations
+     * Apply Bergen priority filter to vessels
+     * Priority: Bergen → Commercial → Others → Empirical fallback
      */
-    updateUICounters: function(vessels) {
-        const vesselCount = vessels.length;
-        
-        // Update count elements in one batch
-        const countElement = document.getElementById('vessel-count');
-        const activeElement = document.getElementById('active-vessels');
-        
-        if (countElement && countElement.textContent !== vesselCount.toString()) {
-            countElement.textContent = vesselCount;
+    applyBergenPriority: function(vessels) {
+        if (!vessels || vessels.length === 0) {
+            return this.createEmpiricalFallback();
         }
         
-        if (activeElement && activeElement.textContent !== vesselCount.toString()) {
-            activeElement.textContent = vesselCount;
+        const bergenArea = {
+            latMin: 60.38, latMax: 60.40,
+            lonMin: 5.30, lonMax: 5.34
+        };
+        
+        // Categorize vessels
+        const categories = {
+            bergen: [],    // Vessels in Bergen area
+            commercial: [], // Commercial vessels elsewhere
+            other: []      // All other vessels
+        };
+        
+        vessels.forEach(vessel => {
+            const lat = vessel.latitude || vessel.lat;
+            const lon = vessel.longitude || vessel.lon;
+            
+            if (!lat || !lon) return;
+            
+            // Check if vessel is in Bergen area
+            const isInBergen = (
+                lat >= bergenArea.latMin && lat <= bergenArea.latMax &&
+                lon >= bergenArea.lonMin && lon <= bergenArea.lonMax
+            );
+            
+            // Check if vessel is commercial (Cargo, Tanker, etc.)
+            const vesselType = vessel.ship_type || vessel.type || '';
+            const isCommercial = [
+                'Cargo', 'Tanker', 'Container', 'Bulk Carrier',
+                'Chemical Tanker', 'Oil Tanker', 'Gas Carrier'
+            ].some(type => vesselType.includes(type));
+            
+            // Categorize
+            if (isInBergen) {
+                categories.bergen.push(vessel);
+            } else if (isCommercial) {
+                categories.commercial.push(vessel);
+            } else {
+                categories.other.push(vessel);
+            }
+        });
+        
+        // Build priority list (max 10 vessels total)
+        const priorityVessels = [];
+        
+        // 1. Bergen vessels (up to 3)
+        priorityVessels.push(...categories.bergen.slice(0, 3));
+        
+        // 2. Commercial vessels (up to 4)
+        if (priorityVessels.length < 7) {
+            priorityVessels.push(...categories.commercial.slice(0, 7 - priorityVessels.length));
         }
         
-        // Update vessel type summary (only if changed)
-        const vesselTypes = this.countVesselTypes(vessels);
-        const typeSummary = this.formatVesselTypes(vesselTypes);
-        const typeElement = document.getElementById('vessel-type');
-        
-        if (typeElement && typeElement.textContent !== typeSummary) {
-            typeElement.textContent = typeSummary;
+        // 3. Other vessels (fill up to 10)
+        if (priorityVessels.length < 10) {
+            priorityVessels.push(...categories.other.slice(0, 10 - priorityVessels.length));
         }
         
-        // Update AIS status
-        document.getElementById('ais-status').textContent = 'Live';
-        document.getElementById('ais-status').className = 'text-success';
+        // If we have no vessels at all, use empirical fallback
+        if (priorityVessels.length === 0) {
+            return this.createEmpiricalFallback();
+        }
+        
+        return priorityVessels;
     },
     
     /**
-     * Count vessel types for display
+     * Create empirical fallback - ONE vessel in Bergen
+     * This is the last resort fallback
+     */
+    // שורה 145 בקובץ ais_realtime.js
+// במקום זה:
+createEmpiricalFallback: function() {
+    console.log('🔄 Using empirical fallback (Bergen simulation)');
+    
+    const fallbackVessel = {
+        mmsi: '259123000',
+        name: 'MS BERGEN FJORD',
+        ship_type: 'Passenger',
+        type: 'Passenger Ship',
+        latitude: 60.3929,  // Bergen Port - IN THE WATER!
+        longitude: 5.3242,  // Bergen Port - IN THE WATER!
+        speed: 12.5,
+        course: 45,
+        heading: 50,
+        status: 'Under way using engine',
+        destination: 'BERGEN',
+        eta: new Date().toISOString(),
+        draught: 6.5,
+        length: 120,
+        width: 18,
+        timestamp: new Date().toISOString(),
+        is_empirical: true
+    };
+    
+    return [fallbackVessel];
+},
+
+createEmpiricalFallback: function() {
+    console.log('🔄 Using empirical fallback (Realistic Bergen simulation)');
+    
+    // REALISTIC POSITIONS IN THE WATER - NOT ON LAND!
+    const realisticVessels = [
+        {
+            mmsi: '259123000',
+            name: 'MS BERGEN FJORD',
+            ship_type: 'Passenger',
+            type: 'Passenger Ship',
+            latitude: 60.3991,  // Bergen Port - IN THE FJORD!
+            longitude: 5.3167,  // Bergen Port - IN THE FJORD!
+            speed: 12.5,
+            course: 280,
+            heading: 275,
+            status: 'Under way using engine',
+            destination: 'BERGEN',
+            eta: new Date(Date.now() + 3600000).toISOString(), // 1 hour from now
+            draught: 6.5,
+            length: 120,
+            width: 18,
+            timestamp: new Date().toISOString(),
+            is_empirical: true
+        },
+        {
+            mmsi: '258123456',
+            name: 'F/V SØRØY',
+            ship_type: 'Fishing',
+            type: 'Fishing Vessel',
+            latitude: 60.405,  // OUTSIDE Bergen - IN THE WATER
+            longitude: 5.285,  // OUTSIDE Bergen - IN THE WATER
+            speed: 8.2,
+            course: 190,
+            heading: 195,
+            status: 'Under way fishing',
+            destination: 'FISKE',
+            eta: new Date(Date.now() + 7200000).toISOString(), // 2 hours from now
+            draught: 4.2,
+            length: 45,
+            width: 10,
+            timestamp: new Date().toISOString(),
+            is_empirical: true
+        }
+    ];
+    
+    return realisticVessels;
+},
+    
+    /**
+     * Fallback to empirical data when all else fails
+     */
+    fallbackToEmpirical: function() {
+        console.log('⚠️ Falling back to empirical data');
+        
+        const empiricalVessels = this.createEmpiricalFallback();
+        
+        requestAnimationFrame(() => {
+            this.realtimeVessels = empiricalVessels;
+            this.updateVesselDisplay();
+            this.updateUICounters(empiricalVessels);
+            this.updateAPIStatus('empirical', false);
+        });
+    },
+    
+    /**
+     * Update API status display
+     */
+    updateAPIStatus: function(source, isLive) {
+        const statusElement = document.getElementById('ais-api-status');
+        const qualityElement = document.getElementById('ais-data-quality');
+        
+        if (!statusElement || !qualityElement) return;
+        
+        const sourceMap = {
+            'kystverket': { text: 'Kystverket Live', class: 'success' },
+            'barentswatch': { text: 'BarentsWatch Live', class: 'success' },
+            'kystdatahuset': { text: 'Kystdatahuset', class: 'info' },
+            'empirical': { text: 'Empirical Fallback', class: 'warning' },
+            'unknown': { text: 'Unknown Source', class: 'warning' }
+        };
+        
+        const sourceInfo = sourceMap[source] || sourceMap['unknown'];
+        
+        // Update status badge
+        statusElement.textContent = sourceInfo.text;
+        statusElement.className = `badge bg-${isLive ? sourceInfo.class : 'warning'}`;
+        
+        // Update data quality indicator
+        qualityElement.innerHTML = `
+            <i class="fas fa-ship me-1"></i>
+            AIS: ${isLive ? 'Live' : 'Fallback'} (${source})
+        `;
+        qualityElement.className = `data-quality-indicator ${
+            isLive ? 'data-quality-high' : 'data-quality-low'
+        }`;
+    },
+    
+    /**
+     * Update UI counters efficiently
+     */
+    updateUICounters: function(vessels) {
+        if (!vessels || vessels.length === 0) return;
+        
+        const vesselCount = vessels.length;
+        
+        // Update count elements
+        ['vessel-count', 'active-vessels'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = vesselCount;
+        });
+        
+        // Update vessel type
+        const typeElement = document.getElementById('vessel-type');
+        if (typeElement) {
+            const types = this.countVesselTypes(vessels);
+            typeElement.textContent = this.formatVesselTypes(types);
+        }
+        
+        // Update freshness timestamp
+        const freshnessElement = document.getElementById('vessels-updated');
+        if (freshnessElement) {
+            const now = new Date();
+            freshnessElement.textContent = `Updated: ${now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+        }
+    },
+    
+    /**
+     * Count vessel types
      */
     countVesselTypes: function(vessels) {
         const types = {};
@@ -219,212 +398,149 @@ window.aisManager = {
      * Format vessel types for display
      */
     formatVesselTypes: function(types) {
-        const mainTypes = ['Cargo', 'Tanker', 'Passenger', 'Fishing', 'Tug'];
-        const result = [];
+        const entries = Object.entries(types);
+        if (entries.length === 0) return 'No vessels';
         
-        mainTypes.forEach(type => {
-            if (types[type]) {
-                result.push(`${types[type]} ${type}`);
+        return entries.map(([type, count]) => `${count} ${type}`).join(', ');
+    },
+    
+    /**
+     * Update vessel display on map
+     */
+    updateVesselDisplay: function() {
+        if (!window.map || !this.aisMarkers) return;
+        
+        // Clear existing markers
+        this.aisMarkers.clearLayers();
+        
+        // Add new markers for each vessel
+        this.realtimeVessels.forEach(vessel => {
+            const lat = vessel.latitude || vessel.lat;
+            const lon = vessel.longitude || vessel.lon;
+            
+            if (lat && lon) {
+                const icon = this.createVesselIcon(vessel);
+                const marker = L.marker([lat, lon], { 
+                    icon: icon,
+                    zIndexOffset: vessel.is_empirical ? -1000 : 1000 // Empirical vessels behind real ones
+                }).bindPopup(this.createVesselPopup(vessel));
+                
+                this.aisMarkers.addLayer(marker);
             }
         });
         
-        // Add "Other" if there are remaining types
-        const otherCount = Object.values(types).reduce((a, b) => a + b, 0) -
-                         result.reduce((sum, item) => sum + parseInt(item), 0);
-        
-        if (otherCount > 0) {
-            result.push(`${otherCount} Other`);
+        // Ensure layer is on map if we have vessels
+        if (this.realtimeVessels.length > 0 && !window.map.hasLayer(this.aisMarkers)) {
+            window.map.addLayer(this.aisMarkers);
         }
-        
-        return result.length > 0 ? result.join(', ') : 'No vessels';
     },
     
     /**
-     * Update vessel display on map and UI
-     * FIXED: Optimized to prevent map flickering
-     */
-    updateVesselDisplay: function() {
-        if (!window.map || !this.aisMarkers) {
-            console.warn('Map or AIS markers not initialized');
-            return;
-        }
-        
-        // FIXED: Use debounced update to prevent rapid re-renders
-        if (this._updateTimeout) {
-            clearTimeout(this._updateTimeout);
-        }
-        
-        this._updateTimeout = setTimeout(() => {
-            // Clear existing markers
-            this.aisMarkers.clearLayers();
-            
-            // Add new markers for each vessel
-            this.realtimeVessels.forEach(vessel => {
-                const lat = vessel.latitude || vessel.lat;
-                const lon = vessel.longitude || vessel.lon;
-                
-                if (lat && lon) {
-                    // Create custom vessel icon based on type
-                    const icon = this.createVesselIcon(vessel);
-                    
-                    // Create marker with popup
-                    const marker = L.marker([lat, lon], { 
-                        icon: icon,
-                        // FIXED: Disable animation for markers
-                        animate: false
-                    }).bindPopup(this.createVesselPopup(vessel));
-                    
-                    this.aisMarkers.addLayer(marker);
-                }
-            });
-            
-            console.log(`🔄 Updated ${this.realtimeVessels.length} vessel markers`);
-        }, 100); // 100ms debounce
-    },
-    
-    /**
-     * Create custom Leaflet icon for vessel
+     * Create custom vessel icon
      */
     createVesselIcon: function(vessel) {
         const vesselType = vessel.ship_type || vessel.type || 'Unknown';
-        let iconClass = 'bi-question-circle'; // Default icon
+        const isEmpirical = vessel.is_empirical || false;
         
-        // Map vessel types to icons
-        const iconMap = {
-            'Cargo': 'bi-box',
-            'Tanker': 'bi-droplet',
-            'Passenger': 'bi-people',
-            'Fishing': 'bi-fish',
-            'Tug': 'bi-truck',
-            'Pilot': 'bi-compass',
-            'Search and Rescue': 'bi-life-preserver',
-            'Military': 'bi-shield'
-        };
+        // Different icons for different types
+        let iconClass = 'fas fa-ship'; // Default
         
-        // Find matching icon
-        for (const [type, icon] of Object.entries(iconMap)) {
-            if (vesselType.toLowerCase().includes(type.toLowerCase())) {
-                iconClass = icon;
-                break;
-            }
+        if (vesselType.includes('Cargo') || vesselType.includes('Container')) {
+            iconClass = 'fas fa-box';
+        } else if (vesselType.includes('Tanker')) {
+            iconClass = 'fas fa-gas-pump';
+        } else if (vesselType.includes('Passenger')) {
+            iconClass = 'fas fa-users';
+        } else if (vesselType.includes('Fishing')) {
+            iconClass = 'fas fa-fish';
+        } else if (vesselType.includes('Tug')) {
+            iconClass = 'fas fa-anchor';
         }
         
+        // Empirical vessels have different styling
+        const color = isEmpirical ? '#6c757d' : '#007bff';
+        const size = isEmpirical ? '18px' : '22px';
+        
         return L.divIcon({
-            className: 'vessel-marker',
-            html: `<i class="bi ${iconClass}"></i>`,
+            className: `vessel-marker ${isEmpirical ? 'empirical' : 'live'}`,
+            html: `<i class="${iconClass}" style="color: ${color}; font-size: ${size};"></i>`,
             iconSize: [24, 24],
             iconAnchor: [12, 12]
         });
     },
     
     /**
-     * Create HTML popup for vessel
+     * Create vessel popup
      */
     createVesselPopup: function(vessel) {
+        const isEmpirical = vessel.is_empirical || false;
+        const source = isEmpirical ? 'Empirical Simulation' : 'Real-time AIS';
+        
         return `
-            <div class="vessel-popup">
-                <strong>${vessel.name || 'Unknown Vessel'}</strong><br>
+            <div class="vessel-popup ${isEmpirical ? 'empirical' : ''}">
+                <strong>${vessel.name || 'Unknown Vessel'}</strong>
+                ${isEmpirical ? '<span class="badge bg-warning ms-1">SIM</span>' : ''}
+                <br>
                 <small class="text-muted">MMSI: ${vessel.mmsi || 'N/A'}</small><br>
                 Type: ${vessel.ship_type || vessel.type || 'Unknown'}<br>
+                Position: ${(vessel.latitude || vessel.lat).toFixed(4)}°, ${(vessel.longitude || vessel.lon).toFixed(4)}°<br>
                 Speed: ${vessel.speed || 0} knots<br>
                 Course: ${vessel.course || 0}°<br>
+                ${vessel.destination ? `Destination: ${vessel.destination}<br>` : ''}
+                <small>Source: ${source}</small><br>
                 <small>Updated: ${new Date().toLocaleTimeString()}</small>
             </div>
         `;
     },
     
     /**
-     * Show/hide real-time vessels on map
-     */
-    showRealtimeVessels: function() {
-        if (!window.map || !this.aisMarkers) {
-            console.error('Map or AIS markers not available');
-            return;
-        }
-        
-        if (window.map.hasLayer(this.aisMarkers)) {
-            window.map.removeLayer(this.aisMarkers);
-            console.log('Real-time vessels hidden');
-            
-            // FIXED: Stop updates when layer is hidden
-            this.stopRealTimeUpdates();
-        } else {
-            window.map.addLayer(this.aisMarkers);
-            console.log('Real-time vessels shown');
-            
-            // Restart updates when layer is shown
-            this.startRealTimeUpdates();
-            
-            // If no vessels loaded yet, fetch them
-            if (this.realtimeVessels.length === 0) {
-                this.fetchRealTimeVessels();
-            }
-        }
-    },
-    
-    /**
-     * Toggle AIS layer visibility without affecting updates
-     * FIXED: Separate visibility from update logic
+     * Toggle AIS visibility
      */
     toggleAISVisibility: function() {
-        if (!window.map || !this.aisMarkers) return;
+        if (!window.map || !this.aisMarkers) return false;
         
         const isVisible = window.map.hasLayer(this.aisMarkers);
         
         if (isVisible) {
             window.map.removeLayer(this.aisMarkers);
+            this.stopRealTimeUpdates();
+            console.log('AIS layer hidden');
         } else {
             window.map.addLayer(this.aisMarkers);
+            this.startRealTimeUpdates();
+            console.log('AIS layer shown');
         }
         
         return !isVisible;
     },
     
     /**
-     * Stop real-time updates
+     * Stop updates
      */
     stopRealTimeUpdates: function() {
         if (this.updateInterval) {
             clearInterval(this.updateInterval);
             this.updateInterval = null;
-            console.log('AIS real-time updates stopped');
-        }
-        
-        // Clear any pending timeouts
-        if (this._updateTimeout) {
-            clearTimeout(this._updateTimeout);
-            this._updateTimeout = null;
         }
     },
     
     /**
-     * Clean up resources
+     * Clean up
      */
     destroy: function() {
         this.stopRealTimeUpdates();
-        
         if (this.aisMarkers) {
             this.aisMarkers.clearLayers();
-            if (window.map && window.map.hasLayer(this.aisMarkers)) {
-                window.map.removeLayer(this.aisMarkers);
-            }
         }
-        
-        console.log('AIS Manager cleaned up');
     }
 };
 
-// Auto-initialize when DOM is ready with optimization
+// Auto-initialize
 document.addEventListener('DOMContentLoaded', function() {
-    // Wait a bit for map to fully initialize
     setTimeout(() => {
-        if (typeof L !== 'undefined' && window.map) {
+        if (window.map) {
             window.aisManager.init();
-            
-            // FIXED: Don't auto-start updates, let user control
-            // window.aisManager.startRealTimeUpdates(); // Commented out
-            
-            console.log('✅ AIS Manager ready (manual start required)');
+            console.log('✅ AIS Manager ready (Bergen Priority System)');
         }
-    }, 1000);
+    }, 1500);
 });
