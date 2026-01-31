@@ -33,6 +33,20 @@ body {
     min-height: 100vh;
 }
 
+/* EMERGENCY FOOTER FIX */
+footer {
+    background: linear-gradient(135deg, #0a1931 0%, #1a5f7a 100%) !important;
+    color: white !important;
+    padding: 2rem 0 !important;
+    margin-top: 3rem !important;
+}
+
+footer * {
+    color: white !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
 /* ===== Navigation Bar ===== */
 .maritime-nav {
     background: linear-gradient(90deg, var(--primary-blue) 0%, var(--primary-blue-light) 100%);

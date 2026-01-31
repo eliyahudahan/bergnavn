@@ -427,7 +427,7 @@
                                     {% if city_name == "Alesund" %}{% set city_name = "Ålesund" %}{% endif %}
                                     {% if city_name == "Andalsnes" %}{% set city_name = "Åndalsnes" %}{% endif %}
                                     
-                                    <tr class="route-row" data-route-id="{{ route.route_id or loop.index }}" data-city="{{ city_name|lower if city_name else '' }}">
+                                    <tr class="route-row" data-route-index="{{ loop.index0 }}" data-route-id="{{ route.route_id or loop.index }}" data-city="{{ city_name|lower if city_name else '' }}">
                                         <td class="text-muted fw-semibold">{{ loop.index }}</td>
                                         <td>
                                             <div class="d-flex align-items-center">
@@ -496,7 +496,7 @@
                                                     <i class="fas fa-eye"></i>
                                                 </button>
                                                 <button class="btn btn-outline-info highlight-route-btn" 
-                                                        data-route-id="{{ route.route_id or loop.index }}"
+                                                        data-route-id="{{ loop.index0 }}"
                                                         title="Highlight route">
                                                     <i class="fas fa-map-marker-alt"></i>
                                                 </button>
