@@ -1,8 +1,8 @@
 // backend/static/js/split/rtz_waypoints.js
 /**
- * RTZ Waypoints Display Module
- * Shows all waypoints for RTZ routes on the map
- * ENHANCED VERSION: Clear start/end points, no blinking, proper route differentiation
+ * RTZ Waypoints Display Module - Enhanced Integration Version
+ * Shows all waypoints for RTZ routes on the map with dashboard controls integration
+ * Features: Clear start/end points, route highlighting, proper integration with dashboard
  */
 
 class RTZWaypoints {
@@ -13,7 +13,8 @@ class RTZWaypoints {
         this.isVisible = true;
         this.waypointMarkers = {};
         this.routeLines = {};
-        console.log('📍 RTZ Waypoints module initialized - NO BLINKING VERSION');
+        this.waypointsData = {}; // Store waypoints for external access
+        console.log('📍 RTZ Waypoints module initialized - Enhanced Integration Version');
         
         // Define color groups for different source cities
         this.routeColorMap = {
@@ -42,6 +43,9 @@ class RTZWaypoints {
         }
         
         console.log(`📍 Drawing complete route ${routeId} with ${route.waypoints.length} waypoints`);
+        
+        // Store waypoints data for external access
+        this.waypointsData[routeId] = route.waypoints;
         
         // Get route color based on source city
         const routeColor = this.getRouteColor(route);
@@ -95,6 +99,9 @@ class RTZWaypoints {
         
         // Store reference
         this.routeLines[routeId] = polyline;
+        
+        // Store original color for resetting highlights
+        polyline.options.originalColor = color;
         
         // Add popup with route info
         this.addRoutePopup(polyline, route, routeId, color);
@@ -295,44 +302,173 @@ class RTZWaypoints {
     }
     
     /**
-     * Highlight a specific route
+     * Highlight a specific route by ID - DASHBOARD INTEGRATION METHOD
      */
     highlightRoute(routeId) {
+        console.log(`🔦 rtzWaypoints.highlightRoute called for: ${routeId}`);
+        
         // Reset all routes to normal
         Object.values(this.routeLines).forEach(line => {
             line.setStyle({
                 weight: 4,
-                opacity: 0.85
+                opacity: 0.85,
+                color: line.options.originalColor || line.options.color
             });
         });
         
         // Highlight the selected route
         if (this.routeLines[routeId]) {
             this.routeLines[routeId].setStyle({
-                weight: 7,
+                weight: 8,
                 opacity: 1,
-                className: this.routeLines[routeId].options.className + ' selected'
+                color: '#FFD700', // Gold color for highlighting
+                className: 'rtz-route-highlighted'
             });
             
             // Fit bounds to show the entire route
             const bounds = this.routeLines[routeId].getBounds();
             if (bounds.isValid()) {
-                this.map.fitBounds(bounds, { padding: [50, 50] });
+                this.map.fitBounds(bounds, { 
+                    padding: [50, 50],
+                    animate: true,
+                    duration: 1
+                });
             }
             
-            // Show notification
-            if (window.showNotification) {
-                window.showNotification(`Highlighted route: ${routeId}`, 'success');
-            }
+            console.log(`✅ Highlighted route: ${routeId}`);
+            return true;
+        } else {
+            console.log(`❌ Route not found: ${routeId}`);
+            console.log(`Available routes:`, Object.keys(this.routeLines));
+            return false;
         }
+    }
+    
+    /**
+     * Clear all routes highlighting
+     */
+    clearAllHighlights() {
+        Object.values(this.routeLines).forEach(line => {
+            line.setStyle({
+                weight: 4,
+                opacity: 0.85,
+                color: line.options.originalColor || line.options.color
+            });
+        });
+        console.log('🧹 Cleared all route highlights');
+    }
+    
+    /**
+     * Get waypoints data for a specific route - FOR DASHBOARD INTEGRATION
+     */
+    getWaypointsData(routeId) {
+        // Return stored waypoints if available
+        if (this.waypointsData[routeId]) {
+            return this.waypointsData[routeId];
+        }
+        
+        // If we have markers for this route, extract coordinates
+        if (this.waypointMarkers[routeId]) {
+            const waypoints = this.waypointMarkers[routeId].map(marker => {
+                const latLng = marker.getLatLng();
+                return {
+                    lat: latLng.lat,
+                    lon: latLng.lng,
+                    name: marker._tooltip ? marker._tooltip._content : 'Waypoint'
+                };
+            });
+            
+            // Store in cache
+            this.waypointsData[routeId] = waypoints;
+            return waypoints;
+        }
+        
+        return [];
+    }
+    
+    /**
+     * Clear all routes (dashboard integration method)
+     */
+    clearAllRoutes() {
+        this.clearAllWaypoints();
+        console.log('🧹 Cleared all RTZ routes (dashboard integration)');
     }
     
     /**
      * Show route details panel
      */
     showRouteDetails(route, routeId, color) {
-        // Implementation for route details panel
-        // ... (existing code)
+        // Create detailed route information panel
+        const waypointCount = route.waypoints ? route.waypoints.length : 0;
+        const routeName = this.getRouteDisplayName(route, routeId);
+        
+        const detailsContent = `
+            <div style="min-width: 300px; max-width: 400px; padding: 15px;">
+                <h4 style="margin-top: 0; color: ${color};">
+                    <i class="fas fa-route"></i> ${routeName}
+                </h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+                    <div>
+                        <strong>Origin:</strong><br>
+                        <span>${route.origin || 'Unknown'}</span>
+                    </div>
+                    <div>
+                        <strong>Destination:</strong><br>
+                        <span>${route.destination || 'Unknown'}</span>
+                    </div>
+                    <div>
+                        <strong>Waypoints:</strong><br>
+                        <span>${waypointCount}</span>
+                    </div>
+                    <div>
+                        <strong>Distance:</strong><br>
+                        <span>${route.total_distance_nm ? route.total_distance_nm.toFixed(1) + ' NM' : 'N/A'}</span>
+                    </div>
+                </div>
+                ${route.description ? `
+                <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #eee;">
+                    <strong>Description:</strong><br>
+                    <small>${route.description}</small>
+                </div>
+                ` : ''}
+                <div style="margin-top: 15px; text-align: center;">
+                    <button onclick="window.rtzWaypoints.zoomToRoute('${routeId}')" 
+                            style="background: ${color}; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-right: 10px;">
+                        <i class="fas fa-search"></i> Zoom to Route
+                    </button>
+                    <button onclick="window.rtzWaypoints.highlightRoute('${routeId}')" 
+                            style="background: #FFD700; color: #000; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
+                        <i class="fas fa-star"></i> Highlight
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        L.popup()
+            .setLatLng(this.routeLines[routeId] ? this.routeLines[routeId].getBounds().getCenter() : [60, 10])
+            .setContent(detailsContent)
+            .openOn(this.map);
+    }
+    
+    /**
+     * Zoom to specific route
+     */
+    zoomToRoute(routeId) {
+        if (this.routeLines[routeId]) {
+            const bounds = this.routeLines[routeId].getBounds();
+            if (bounds.isValid()) {
+                this.map.fitBounds(bounds, {
+                    padding: [100, 100],
+                    maxZoom: 12,
+                    animate: true,
+                    duration: 1
+                });
+                console.log(`✅ Zoomed to route: ${routeId}`);
+                return true;
+            }
+        }
+        console.log(`❌ Could not zoom to route: ${routeId}`);
+        return false;
     }
     
     /**
@@ -454,6 +590,7 @@ class RTZWaypoints {
         this.routesLayer.clearLayers();
         this.waypointMarkers = {};
         this.routeLines = {};
+        this.waypointsData = {};
         console.log('🧹 All waypoints and routes cleared');
     }
     
@@ -471,6 +608,10 @@ class RTZWaypoints {
         if (this.routeLines[routeId]) {
             this.routesLayer.removeLayer(this.routeLines[routeId]);
             delete this.routeLines[routeId];
+        }
+        
+        if (this.waypointsData[routeId]) {
+            delete this.waypointsData[routeId];
         }
         
         console.log(`🧹 Cleared route ${routeId}`);
@@ -507,6 +648,23 @@ class RTZWaypoints {
             console.log(`🔦 Highlighted waypoint ${waypointIndex + 1} for route ${routeId}`);
         }
     }
+    
+    /**
+     * Debug method to show available routes
+     */
+    debugRoutes() {
+        console.log('=== 🔧 RTZ WAYPOINTS DEBUG ===');
+        console.log('Total routes drawn:', Object.keys(this.routeLines).length);
+        console.log('Available route IDs:', Object.keys(this.routeLines));
+        console.log('Waypoints data stored for:', Object.keys(this.waypointsData).length, 'routes');
+        
+        if (Object.keys(this.waypointsData).length > 0) {
+            const firstRouteId = Object.keys(this.waypointsData)[0];
+            console.log(`Sample route "${firstRouteId}" has:`, 
+                this.waypointsData[firstRouteId].length, 'waypoints');
+        }
+        console.log('=== END DEBUG ===');
+    }
 }
 
 // Initialize when DOM is loaded
@@ -517,12 +675,12 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Initialize waypoints module
             window.rtzWaypoints = new RTZWaypoints(window.map);
-            console.log('✅ RTZ Waypoints module ready (No Blinking Version)');
+            console.log('✅ RTZ Waypoints module ready (Enhanced Integration Version)');
             
             // Listen for routes data
             document.addEventListener('routesDataLoaded', function(e) {
                 if (e.detail && e.detail.routes) {
-                    console.log('🎯 Got routes data, drawing routes with clear differentiation...');
+                    console.log('🎯 Got routes data, drawing routes...');
                     window.rtzWaypoints.drawMultipleRoutes(e.detail.routes);
                 }
             });

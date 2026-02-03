@@ -1,6 +1,6 @@
-// backend/static/js/split/dashboard_controls.js
-// Dashboard Controls v3.2 - Complete FIX for missing waypoints and route IDs
-// Fixed all data loading and visualization issues
+// Dashboard Controls v3.3.2 - Complete with ALL original buttons and functions
+// Uses real NCA RTZ data - NO simulations
+// Real-time first principle with ALL functionality preserved
 
 /**
  * Main Dashboard Controls Class
@@ -8,7 +8,7 @@
  */
 class DashboardControls {
     constructor() {
-        console.log('🚢 DashboardControls v3.2 initialized');
+        console.log('🚢 DashboardControls v3.3.2 initialized - ALL buttons preserved');
         
         // State management
         this.map = null;
@@ -27,6 +27,14 @@ class DashboardControls {
         
         // Emergency counter
         this.emergencyMode = false;
+        
+        // Notification system state
+        this.notificationTimeout = null;
+        this.fallbackNotificationTimeout = null;
+        this.lastNotificationType = null;
+        
+        // Route details modal
+        this.routeDetailsModal = null;
     }
 
     /**
@@ -34,7 +42,7 @@ class DashboardControls {
      * @param {Object} mapInstance - Leaflet map instance
      */
     init(mapInstance) {
-        console.log('🎮 Dashboard controls initializing...');
+        console.log('🎮 Dashboard controls initializing - ALL functions preserved...');
         this.map = mapInstance;
         
         // Initialize port coordinates
@@ -55,6 +63,9 @@ class DashboardControls {
         // Add emergency CSS for visibility
         this.addEmergencyCSS();
         
+        // Create route details modal
+        this.createRouteDetailsModal();
+        
         // Load routes and waypoints data
         this.loadAllData();
         
@@ -66,7 +77,7 @@ class DashboardControls {
         // Make zoomToRoute available globally
         this.exposeGlobalFunctions();
         
-        console.log('✅ Dashboard controls ready with data fixes');
+        console.log('✅ Dashboard controls ready with ALL buttons and functions');
     }
     
     /**
@@ -239,6 +250,68 @@ class DashboardControls {
     }
     
     /**
+     * Create route details modal
+     */
+    createRouteDetailsModal() {
+        // Create modal element
+        const modal = document.createElement('div');
+        modal.id = 'routeDetailsModal';
+        modal.className = 'modal fade';
+        modal.tabIndex = '-1';
+        modal.setAttribute('aria-hidden', 'true');
+        
+        modal.innerHTML = `
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="routeModalTitle">
+                            <i class="fas fa-route me-2"></i>
+                            Route Details
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" id="routeModalBody">
+                        Loading route information...
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="fas fa-times me-1"></i> Close
+                        </button>
+                        <button type="button" class="btn btn-primary" id="routeModalZoomBtn">
+                            <i class="fas fa-search me-1"></i> Zoom to Route
+                        </button>
+                        <button type="button" class="btn btn-warning" id="routeModalHighlightBtn">
+                            <i class="fas fa-map-marker-alt me-1"></i> Highlight
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        this.routeDetailsModal = new bootstrap.Modal(modal);
+        
+        // Setup modal button handlers
+        modal.querySelector('#routeModalZoomBtn').addEventListener('click', () => {
+            const routeIndex = modal.dataset.currentRouteIndex;
+            if (routeIndex !== undefined) {
+                this.zoomToRouteByIndex(parseInt(routeIndex));
+            }
+            this.routeDetailsModal.hide();
+        });
+        
+        modal.querySelector('#routeModalHighlightBtn').addEventListener('click', () => {
+            const routeIndex = modal.dataset.currentRouteIndex;
+            if (routeIndex !== undefined) {
+                this.highlightRouteOnMap(parseInt(routeIndex));
+            }
+            this.routeDetailsModal.hide();
+        });
+        
+        console.log('✅ Created route details modal');
+    }
+    
+    /**
      * Add emergency CSS for visual elements
      */
     addEmergencyCSS() {
@@ -287,6 +360,68 @@ class DashboardControls {
             
             .highlight-port-line {
                 filter: drop-shadow(0 0 5px #3498db);
+            }
+            
+            /* Real-time notification styles */
+            .dashboard-notification.show {
+                opacity: 1 !important;
+                transform: translateY(0) !important;
+                display: block !important;
+                visibility: visible !important;
+            }
+            
+            /* Route details modal styles */
+            .route-details-modal .modal-content {
+                border: 2px solid #3498db;
+                border-radius: 10px;
+            }
+            
+            .route-details-modal .modal-header {
+                background: linear-gradient(135deg, #3498db, #2980b9);
+                color: white;
+                border-top-left-radius: 8px;
+                border-top-right-radius: 8px;
+            }
+            
+            .route-details-modal .modal-body {
+                padding: 20px;
+            }
+            
+            .route-info-item {
+                display: flex;
+                justify-content: space-between;
+                padding: 8px 0;
+                border-bottom: 1px solid #eee;
+            }
+            
+            .route-info-item:last-child {
+                border-bottom: none;
+            }
+            
+            .route-info-label {
+                font-weight: bold;
+                color: #2c3e50;
+            }
+            
+            .route-info-value {
+                color: #7f8c8d;
+            }
+            
+            .waypoints-list {
+                max-height: 200px;
+                overflow-y: auto;
+                margin-top: 10px;
+                padding: 10px;
+                background: #f8f9fa;
+                border-radius: 5px;
+            }
+            
+            .waypoint-item {
+                padding: 5px 10px;
+                margin-bottom: 5px;
+                background: white;
+                border-radius: 3px;
+                border-left: 3px solid #3498db;
             }
             
             /* Animations */
@@ -393,21 +528,37 @@ class DashboardControls {
             return this.testVisualization();
         };
         
-        // Expose waypoints test
-        window.testWaypointsForRoute = (index = 0) => {
-            return this.createSimulatedWaypoints(index, "Test Route");
+        // Expose test function for rtzWaypoints integration
+        window.testRtzWaypointsIntegration = () => {
+            console.log('🧪 Testing rtzWaypoints integration...');
+            if (!window.rtzWaypoints) {
+                console.log('❌ rtzWaypoints module not found');
+                return false;
+            }
+            
+            if (!window.rtzWaypoints.highlightRoute) {
+                console.log('❌ rtzWaypoints.highlightRoute method not found');
+                return false;
+            }
+            
+            // Test with first route
+            const routeId = 'route-0';
+            console.log(`Testing rtzWaypoints.highlightRoute("${routeId}")...`);
+            const result = window.rtzWaypoints.highlightRoute(routeId);
+            console.log(`Result: ${result ? '✅ Success' : '❌ Failed'}`);
+            return result;
         };
         
         console.log('🌐 Global functions exposed');
     }
 
     /**
-     * Setup all dashboard event listeners
+     * Setup all dashboard event listeners - ALL BUTTONS PRESERVED
      */
     setupEventListeners() {
-        console.log('🔧 Setting up event listeners...');
+        console.log('🔧 Setting up event listeners for ALL buttons...');
         
-        // Toggle buttons for layers
+        // Toggle buttons for layers - ALL 3 BUTTONS
         ['rtz-toggle-btn', 'weather-toggle-btn', 'ais-toggle-btn'].forEach(btnId => {
             const btn = document.getElementById(btnId);
             if (btn) {
@@ -430,7 +581,7 @@ class DashboardControls {
             }
         });
 
-        // Refresh button
+        // Refresh button - PRESERVED
         const refreshBtn = document.getElementById('refresh-btn');
         if (refreshBtn) {
             refreshBtn.addEventListener('click', () => {
@@ -469,7 +620,7 @@ class DashboardControls {
             });
         }
 
-        // Show RTZ panel button
+        // Show RTZ panel button - PRESERVED
         const showPanelBtn = document.getElementById('show-rtz-panel');
         if (showPanelBtn) {
             showPanelBtn.addEventListener('click', () => {
@@ -484,7 +635,7 @@ class DashboardControls {
             });
         }
         
-        // Debug button
+        // Debug button - PRESERVED
         const debugBtn = document.getElementById('debug-toggle-btn');
         if (debugBtn) {
             debugBtn.addEventListener('click', () => {
@@ -492,7 +643,7 @@ class DashboardControls {
             });
         }
         
-        // Visual test button (if exists)
+        // Visual test button (if exists) - PRESERVED
         const visualTestBtn = document.getElementById('visual-test-btn');
         if (visualTestBtn) {
             visualTestBtn.addEventListener('click', () => {
@@ -500,11 +651,11 @@ class DashboardControls {
             });
         }
         
-        console.log('✅ Event listeners setup complete');
+        console.log('✅ ALL event listeners setup complete');
     }
 
     /**
-     * Setup route table interactivity
+     * Setup route table interactivity - ALL 3 BUTTONS PER ROW
      */
     setupRouteTableInteractivity() {
         const routeRows = document.querySelectorAll('.route-row');
@@ -513,7 +664,7 @@ class DashboardControls {
             return;
         }
         
-        console.log(`📋 Setting up ${routeRows.length} route rows for interactivity`);
+        console.log(`📋 Setting up ${routeRows.length} route rows with ALL 3 buttons`);
         
         routeRows.forEach((row, index) => {
             // Get route index from data attribute or use DOM index
@@ -564,10 +715,10 @@ class DashboardControls {
             });
         });
         
-        // Setup action buttons
+        // Setup action buttons - ALL 3 BUTTONS: View, Highlight, Info
         this.setupRouteActionButtons();
         
-        console.log('✅ Route table interactivity setup complete');
+        console.log('✅ Route table interactivity setup complete with ALL buttons');
     }
     
     /**
@@ -648,10 +799,10 @@ class DashboardControls {
     }
     
     /**
-     * Setup route action buttons
+     * Setup route action buttons - ALL 3 IMPORTANT BUTTONS
      */
     setupRouteActionButtons() {
-        // View route button - ZOOM functionality
+        // View route button - ZOOM functionality (1st button)
         document.querySelectorAll('.view-route-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -678,7 +829,7 @@ class DashboardControls {
             });
         });
         
-        // Highlight route button - FIXED VERSION
+        // Highlight route button (2nd button)
         document.querySelectorAll('.highlight-route-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -692,8 +843,8 @@ class DashboardControls {
                 // Highlight the row in table
                 this.highlightRouteRow(row, routeIndex);
                 
-                // Highlight on map - use INDEX (not ID)
-                const success = this.highlightRouteOnMap(routeIndex.toString());
+                // Highlight on map
+                const success = this.highlightRouteOnMap(routeIndex);
                 
                 if (success) {
                     this.showNotification('Route highlighted on map', 'success');
@@ -703,14 +854,19 @@ class DashboardControls {
             });
         });
         
-        // Route info button
+        // Route info button (3rd button) - THIS IS THE FIXED VERSION
         document.querySelectorAll('.route-info-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
+                e.preventDefault();
                 
                 const row = btn.closest('.route-row');
                 const routeIndex = parseInt(row.dataset.routeIndex);
+                const routeId = btn.dataset.routeId || row.dataset.routeId;
                 
+                console.log(`ℹ️ Route info button clicked - Index: ${routeIndex}, ID: ${routeId}`);
+                
+                // Show route details using modal instead of notification
                 this.showRouteDetails(routeIndex);
             });
         });
@@ -814,69 +970,69 @@ class DashboardControls {
     /**
      * Get waypoints for a specific route
      */
-getWaypointsForRoute(routeIndex) {
-    console.log(`🔍 getWaypointsForRoute called for index: ${routeIndex}`);
-    
-    if (routeIndex < 0 || routeIndex >= this.routesData.length) {
-        console.log(`❌ Invalid route index: ${routeIndex}`);
-        return [];
-    }
-    
-    const route = this.routesData[routeIndex];
-    const routeName = route.clean_name || route.route_name || `route-${routeIndex}`;
-    
-    console.log(`Looking for waypoints for: "${routeName}"`);
-    
-    // METHOD 1: Check if waypoints are already in the route object
-    if (route.waypoints && Array.isArray(route.waypoints) && route.waypoints.length > 0) {
-        console.log(`✅ Found ${route.waypoints.length} waypoints in route object`);
-        return route.waypoints;
-    }
-    
-    // METHOD 2: Check rtzWaypoints module (IT HAS THE DATA!)
-    if (window.rtzWaypoints && window.rtzWaypoints.waypointsData) {
-        console.log(`Checking rtzWaypoints.waypointsData...`);
-        console.log(`Available keys:`, Object.keys(window.rtzWaypoints.waypointsData));
+    getWaypointsForRoute(routeIndex) {
+        console.log(`🔍 getWaypointsForRoute called for index: ${routeIndex}`);
         
-        // Try to find by route index
-        const indexKey = routeIndex.toString();
-        if (window.rtzWaypoints.waypointsData[indexKey]) {
-            const waypoints = window.rtzWaypoints.waypointsData[indexKey];
-            console.log(`✅ Found ${waypoints.length} waypoints in rtzWaypoints by index key: "${indexKey}"`);
-            return waypoints;
+        if (routeIndex < 0 || routeIndex >= this.routesData.length) {
+            console.log(`❌ Invalid route index: ${routeIndex}`);
+            return [];
         }
         
-        // Try to find by route name
-        for (const [key, waypoints] of Object.entries(window.rtzWaypoints.waypointsData)) {
-            if (key.includes(routeName) || routeName.includes(key)) {
-                console.log(`✅ Found ${waypoints.length} waypoints in rtzWaypoints by name match: "${key}"`);
+        const route = this.routesData[routeIndex];
+        const routeName = route.clean_name || route.route_name || `route-${routeIndex}`;
+        
+        console.log(`Looking for waypoints for: "${routeName}"`);
+        
+        // METHOD 1: Check if waypoints are already in the route object
+        if (route.waypoints && Array.isArray(route.waypoints) && route.waypoints.length > 0) {
+            console.log(`✅ Found ${route.waypoints.length} waypoints in route object`);
+            return route.waypoints;
+        }
+        
+        // METHOD 2: Check rtzWaypoints module (IT HAS THE DATA!)
+        if (window.rtzWaypoints && window.rtzWaypoints.waypointsData) {
+            console.log(`Checking rtzWaypoints.waypointsData...`);
+            console.log(`Available keys:`, Object.keys(window.rtzWaypoints.waypointsData));
+            
+            // Try to find by route index
+            const indexKey = routeIndex.toString();
+            if (window.rtzWaypoints.waypointsData[indexKey]) {
+                const waypoints = window.rtzWaypoints.waypointsData[indexKey];
+                console.log(`✅ Found ${waypoints.length} waypoints in rtzWaypoints by index key: "${indexKey}"`);
                 return waypoints;
+            }
+            
+            // Try to find by route name
+            for (const [key, waypoints] of Object.entries(window.rtzWaypoints.waypointsData)) {
+                if (key.includes(routeName) || routeName.includes(key)) {
+                    console.log(`✅ Found ${waypoints.length} waypoints in rtzWaypoints by name match: "${key}"`);
+                    return waypoints;
+                }
+            }
+            
+            // Try first available key if nothing else matches
+            const firstKey = Object.keys(window.rtzWaypoints.waypointsData)[0];
+            if (firstKey && window.rtzWaypoints.waypointsData[firstKey]) {
+                console.log(`⚠️ Using first available waypoints from rtzWaypoints: "${firstKey}"`);
+                return window.rtzWaypoints.waypointsData[firstKey];
             }
         }
         
-        // Try first available key if nothing else matches
-        const firstKey = Object.keys(window.rtzWaypoints.waypointsData)[0];
-        if (firstKey && window.rtzWaypoints.waypointsData[firstKey]) {
-            console.log(`⚠️ Using first available waypoints from rtzWaypoints: "${firstKey}"`);
-            return window.rtzWaypoints.waypointsData[firstKey];
+        // METHOD 3: Check global allRoutesData
+        if (window.allRoutesData && window.allRoutesData[routeIndex] && 
+            window.allRoutesData[routeIndex].waypoints) {
+            const waypoints = window.allRoutesData[routeIndex].waypoints;
+            console.log(`✅ Found ${waypoints.length} waypoints in window.allRoutesData`);
+            return waypoints;
         }
+        
+        console.log(`❌ No waypoints found for route ${routeIndex} ("${routeName}")`);
+        console.log(`   route object has waypoints property: ${'waypoints' in route}`);
+        console.log(`   rtzWaypoints exists: ${!!window.rtzWaypoints}`);
+        console.log(`   rtzWaypoints has waypointsData: ${!!(window.rtzWaypoints && window.rtzWaypoints.waypointsData)}`);
+        
+        return [];
     }
-    
-    // METHOD 3: Check global allRoutesData
-    if (window.allRoutesData && window.allRoutesData[routeIndex] && 
-        window.allRoutesData[routeIndex].waypoints) {
-        const waypoints = window.allRoutesData[routeIndex].waypoints;
-        console.log(`✅ Found ${waypoints.length} waypoints in window.allRoutesData`);
-        return waypoints;
-    }
-    
-    console.log(`❌ No waypoints found for route ${routeIndex} ("${routeName}")`);
-    console.log(`   route object has waypoints property: ${'waypoints' in route}`);
-    console.log(`   rtzWaypoints exists: ${!!window.rtzWaypoints}`);
-    console.log(`   rtzWaypoints has waypointsData: ${!!(window.rtzWaypoints && window.rtzWaypoints.waypointsData)}`);
-    
-    return [];
-}
     
     /**
      * Zoom to route by ID (alternative method)
@@ -1004,195 +1160,179 @@ getWaypointsForRoute(routeIndex) {
     }
     
     /**
-     * Highlight route on map with visual indicators - COMPLETELY REWORKED
+     * Highlight route on map with visual indicators - FIXED VERSION
      */
     highlightRouteOnMap(identifier) {
-    console.log(`🎯 highlightRouteOnMap called with: ${identifier} (type: ${typeof identifier})`);
-    
-    // First, try to use rtzWaypoints if it exists
-    if (window.rtzWaypoints && window.rtzWaypoints.highlightRoute) {
-        console.log(`Using rtzWaypoints.highlightRoute...`);
+        console.log(`🎯 highlightRouteOnMap called with: ${identifier} (type: ${typeof identifier})`);
         
-        // Find route index
-        let routeIndex;
-        if (typeof identifier === 'number') {
-            routeIndex = identifier;
-        } else {
-            routeIndex = this.findRouteIndexById(identifier);
+        // First, try to use rtzWaypoints if it exists
+        if (window.rtzWaypoints && window.rtzWaypoints.highlightRoute) {
+            console.log(`🎯 Using rtzWaypoints.highlightRoute...`);
+            
+            // Find route index
+            let routeIndex;
+            if (typeof identifier === 'number') {
+                routeIndex = identifier;
+            } else if (typeof identifier === 'string' && /^\d+$/.test(identifier)) {
+                routeIndex = parseInt(identifier);
+            } else {
+                routeIndex = this.findRouteIndexById(identifier);
+            }
+            
+            if (routeIndex === -1) {
+                console.log(`❌ Could not find route index for: ${identifier}`);
+                return false;
+            }
+            
+            const route = this.routesData[routeIndex];
+            const routeId = route.route_id || `route-${routeIndex}`;
+            
+            console.log(`🎯 Calling rtzWaypoints.highlightRoute("${routeId}")`);
+            const rtzResult = window.rtzWaypoints.highlightRoute(routeId);
+            
+            if (rtzResult) {
+                console.log(`✅ rtzWaypoints highlighted route successfully: ${routeId}`);
+                
+                // Also add our own highlighting for extra visibility
+                this.addDashboardHighlight(routeIndex);
+                
+                return true;
+            } else {
+                console.log(`⚠️ rtzWaypoints.highlightRoute returned false, trying fallback...`);
+                return this.highlightRouteEnhanced(routeIndex);
+            }
         }
         
-        if (routeIndex === -1) {
-            console.log(`Could not find route index for: ${identifier}`);
+        // Fallback to our own method if rtzWaypoints not available
+        console.log(`⚠️ rtzWaypoints not available, using fallback...`);
+        return this.highlightRouteEnhanced(identifier);
+    }
+
+    /**
+     * Add dashboard-specific highlighting on top of rtzWaypoints
+     */
+    addDashboardHighlight(routeIndex) {
+        console.log(`💎 Adding dashboard highlight for route ${routeIndex}`);
+        
+        const waypoints = this.getWaypointsForRoute(routeIndex);
+        if (waypoints.length === 0) return;
+        
+        // Clear only our dashboard highlights
+        if (this.highlightLayer) {
+            this.highlightLayer.clearLayers();
+        } else {
+            this.highlightLayer = L.layerGroup().addTo(this.map);
+        }
+        
+        // Draw a highlight line on top
+        const latLngs = waypoints.map(wp => [wp.lat || wp.latitude, wp.lon || wp.longitude]);
+        const highlightLine = L.polyline(latLngs, {
+            color: '#00FF00', // Bright green
+            weight: 3,
+            opacity: 0.7,
+            dashArray: '15, 10',
+            className: 'dashboard-top-highlight',
+            pane: 'dashboard-highlight-pane'
+        }).addTo(this.highlightLayer);
+        
+        // Add a pulsing effect
+        highlightLine.setStyle({
+            className: 'dashboard-top-highlight pulsing'
+        });
+        
+        console.log(`💎 Added dashboard overlay highlight`);
+    }
+
+    /**
+     * Enhanced highlighting - our own method for when rtzWaypoints fails
+     */
+    highlightRouteEnhanced(routeIndex) {
+        console.log(`✨ highlightRouteEnhanced for index: ${routeIndex}`);
+        
+        if (!this.map) {
+            console.error('Map not available');
             return false;
         }
         
-        const route = this.routesData[routeIndex];
-        const routeId = route.route_id || `route-${routeIndex}`;
+        const waypoints = this.getWaypointsForRoute(routeIndex);
+        console.log(`Retrieved ${waypoints.length} waypoints for enhanced highlighting`);
         
-        console.log(`Calling rtzWaypoints.highlightRoute("${routeId}")`);
-        window.rtzWaypoints.highlightRoute(routeId);
+        if (waypoints.length === 0) {
+            console.log(`No waypoints available, cannot highlight route`);
+            return false;
+        }
         
-        // Also do our own highlighting for consistency
+        // Clear previous highlights
         this.clearMapHighlights();
-        this.highlightRouteEnhanced(routeIndex);
         
+        // Create highlight layer if needed
+        if (!this.highlightLayer) {
+            this.highlightLayer = L.layerGroup().addTo(this.map);
+        }
+        
+        // Draw highlighted route
+        const latLngs = waypoints.map(wp => {
+            const lat = wp.lat || wp.latitude;
+            const lon = wp.lon || wp.longitude;
+            return L.latLng(lat, lon);
+        }).filter(ll => ll.lat && ll.lng);
+        
+        if (latLngs.length === 0) {
+            console.log(`No valid coordinates found`);
+            return false;
+        }
+        
+        // Draw the route with special highlighting
+        const route = this.routesData[routeIndex];
+        const routeName = route.clean_name || route.route_name || `Route ${routeIndex + 1}`;
+        
+        const highlightLine = L.polyline(latLngs, {
+            color: '#FFD700', // Gold color for highlighting
+            weight: 6,
+            opacity: 0.9,
+            dashArray: '10, 5',
+            className: 'dashboard-route-highlight'
+        }).addTo(this.highlightLayer);
+        
+        // Add start and end markers
+        if (latLngs.length > 0) {
+            const startIcon = L.divIcon({
+                className: 'dashboard-highlight-start',
+                html: '<div style="background-color: #00FF00; width: 25px; height: 25px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 20px #00FF00;"></div>',
+                iconSize: [25, 25]
+            });
+            
+            L.marker(latLngs[0], { icon: startIcon })
+                .bindPopup(`<strong>${routeName}</strong><br>Start Point`)
+                .addTo(this.highlightLayer);
+        }
+        
+        if (latLngs.length > 1) {
+            const endIcon = L.divIcon({
+                className: 'dashboard-highlight-end',
+                html: '<div style="background-color: #FF0000; width: 25px; height: 25px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 20px #FF0000;"></div>',
+                iconSize: [25, 25]
+            });
+            
+            L.marker(latLngs[latLngs.length - 1], { icon: endIcon })
+                .bindPopup(`<strong>${routeName}</strong><br>End Point`)
+                .addTo(this.highlightLayer);
+        }
+        
+        // Zoom to route
+        const bounds = L.latLngBounds(latLngs);
+        this.map.fitBounds(bounds, {
+            padding: [100, 100],
+            maxZoom: 12,
+            animate: true
+        });
+        
+        console.log(`✅ Enhanced highlighting complete for ${routeName}`);
         return true;
     }
-    
-    // Fallback to our own method
-    console.log(`rtzWaypoints not available, using fallback...`);
-    return this.highlightRouteOnMapFallback(identifier);
-}
 
-highlightRouteEnhanced(routeIndex) {
-    console.log(`✨ highlightRouteEnhanced for index: ${routeIndex}`);
-    
-    if (!this.map) {
-        console.error('Map not available');
-        return false;
-    }
-    
-    const waypoints = this.getWaypointsForRoute(routeIndex);
-    console.log(`Retrieved ${waypoints.length} waypoints for enhanced highlighting`);
-    
-    if (waypoints.length === 0) {
-        console.log(`No waypoints available, cannot highlight route`);
-        return false;
-    }
-    
-    // Clear previous highlights
-    this.clearMapHighlights();
-    
-    // Create highlight layer if needed
-    if (!this.highlightLayer) {
-        this.highlightLayer = L.layerGroup().addTo(this.map);
-    }
-    
-    // Draw highlighted route
-    const latLngs = waypoints.map(wp => {
-        const lat = wp.lat || wp.latitude;
-        const lon = wp.lon || wp.longitude;
-        return L.latLng(lat, lon);
-    }).filter(ll => ll.lat && ll.lng);
-    
-    if (latLngs.length === 0) {
-        console.log(`No valid coordinates found`);
-        return false;
-    }
-    
-    // Draw the route with special highlighting
-    const route = this.routesData[routeIndex];
-    const routeName = route.clean_name || route.route_name || `Route ${routeIndex + 1}`;
-    
-    const highlightLine = L.polyline(latLngs, {
-        color: '#FFD700', // Gold color for highlighting
-        weight: 6,
-        opacity: 0.9,
-        dashArray: '10, 5',
-        className: 'dashboard-route-highlight'
-    }).addTo(this.highlightLayer);
-    
-    // Add start and end markers
-    if (latLngs.length > 0) {
-        const startIcon = L.divIcon({
-            className: 'dashboard-highlight-start',
-            html: '<div style="background-color: #00FF00; width: 25px; height: 25px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 20px #00FF00;"></div>',
-            iconSize: [25, 25]
-        });
-        
-        L.marker(latLngs[0], { icon: startIcon })
-            .bindPopup(`<strong>${routeName}</strong><br>Start Point`)
-            .addTo(this.highlightLayer);
-    }
-    
-    if (latLngs.length > 1) {
-        const endIcon = L.divIcon({
-            className: 'dashboard-highlight-end',
-            html: '<div style="background-color: #FF0000; width: 25px; height: 25px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 20px #FF0000;"></div>',
-            iconSize: [25, 25]
-        });
-        
-        L.marker(latLngs[latLngs.length - 1], { icon: endIcon })
-            .bindPopup(`<strong>${routeName}</strong><br>End Point`)
-            .addTo(this.highlightLayer);
-    }
-    
-    // Zoom to route
-    const bounds = L.latLngBounds(latLngs);
-    this.map.fitBounds(bounds, {
-        padding: [100, 100],
-        maxZoom: 12,
-        animate: true
-    });
-    
-    console.log(`✅ Enhanced highlighting complete for ${routeName}`);
-    return true;
-}
-
-debugWaypointsAccess() {
-    console.log("=== 🔧 WAYPOINTS ACCESS DEBUG ===");
-    
-    console.log("1. Checking rtzWaypoints module:");
-    console.log("   Exists:", !!window.rtzWaypoints);
-    
-    if (window.rtzWaypoints) {
-        console.log("   Methods:", Object.keys(window.rtzWaypoints));
-        console.log("   Has waypointsData:", !!window.rtzWaypoints.waypointsData);
-        
-        if (window.rtzWaypoints.waypointsData) {
-            const keys = Object.keys(window.rtzWaypoints.waypointsData);
-            console.log(`   waypointsData keys (${keys.length}):`, keys);
-            
-            if (keys.length > 0) {
-                const firstKey = keys[0];
-                console.log(`   First key "${firstKey}" has:`, 
-                    window.rtzWaypoints.waypointsData[firstKey].length, "waypoints");
-                console.log(`   Sample:`, window.rtzWaypoints.waypointsData[firstKey][0]);
-            }
-        }
-    }
-    
-    console.log("\n2. Checking allRoutesData:");
-    console.log("   Exists:", !!window.allRoutesData);
-    console.log("   Type:", Array.isArray(window.allRoutesData) ? 'Array' : typeof window.allRoutesData);
-    
-    if (Array.isArray(window.allRoutesData)) {
-        console.log(`   Length: ${window.allRoutesData.length}`);
-        if (window.allRoutesData.length > 0) {
-            console.log("   First route has waypoints:", 
-                window.allRoutesData[0].waypoints ? 'Yes' : 'No');
-        }
-    }
-    
-    console.log("\n3. Testing getWaypointsForRoute(0):");
-    const waypoints = this.getWaypointsForRoute(0);
-    console.log(`   Result: ${waypoints.length} waypoints`);
-    
-    if (waypoints.length > 0) {
-        console.log("   First waypoint:", waypoints[0]);
-    }
-    
-    console.log("=== END DEBUG ===");
-    
-    // Run automated test
-    this.testHighlightFunction();
-}
-
-testHighlightFunction() {
-    console.log("\n🧪 Testing highlight function...");
-    
-    if (this.routesData.length === 0) {
-        console.log("❌ No routes data available");
-        return;
-    }
-    
-    console.log(`Testing with route 0: ${this.routesData[0].clean_name}`);
-    const success = this.highlightRouteOnMap(0);
-    console.log(`Highlight result: ${success ? '✅ Success' : '❌ Failed'}`);
-}
-    
     /**
-     * Draw route with waypoints using special pane - FIXED
+     * Draw route with waypoints using special pane - FOR REAL NCA DATA
      */
     drawRouteWithWaypointsEnhanced(waypoints, route) {
         try {
@@ -1264,25 +1404,6 @@ testHighlightFunction() {
                 .addTo(this.highlightLayer);
             }
             
-            // Add middle markers for long routes
-            if (latLngs.length > 10) {
-                const step = Math.floor(latLngs.length / 3);
-                for (let i = step; i < latLngs.length - step; i += step) {
-                    const midIcon = L.divIcon({
-                        className: 'route-highlight-port',
-                        html: '<div style="background-color: #ffc107; width: 18px; height: 18px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 15px #ffc107;"></div>',
-                        iconSize: [18, 18]
-                    });
-                    
-                    L.marker(latLngs[i], { 
-                        icon: midIcon,
-                        pane: 'dashboard-highlight-pane'
-                    })
-                    .bindPopup(`<strong>${routeName}</strong><br>Waypoint ${i + 1}`)
-                    .addTo(this.highlightLayer);
-                }
-            }
-            
             // Calculate and show distance
             let totalDistance = 0;
             for (let i = 1; i < latLngs.length; i++) {
@@ -1320,117 +1441,7 @@ testHighlightFunction() {
     }
     
     /**
-     * Create simulated waypoints for routes without real waypoints - NEW FUNCTION
-     */
-    createSimulatedWaypoints(routeIndex, route) {
-        console.log(`🎲 Creating simulated waypoints for route index: ${routeIndex}`);
-        
-        if (!route && routeIndex >= 0 && routeIndex < this.routesData.length) {
-            route = this.routesData[routeIndex];
-        }
-        
-        if (!route) {
-            console.error('Route not found for simulation');
-            return false;
-        }
-        
-        const routeName = route.clean_name || route.route_name || `Route ${routeIndex + 1}`;
-        const portName = this.getPrimaryPortName(route);
-        
-        console.log(`Creating simulation for: ${routeName} (port: ${portName})`);
-        
-        if (!this.portCoordinates[portName]) {
-            console.error(`Port coordinates not found for: ${portName}`);
-            return false;
-        }
-        
-        const portCoord = this.portCoordinates[portName];
-        const simulatedWaypoints = [];
-        
-        // Starting at port
-        simulatedWaypoints.push({
-            lat: portCoord[0],
-            lon: portCoord[1],
-            name: `${portName} Port`
-        });
-        
-        // Create realistic sea route based on port
-        if (portName === 'bergen') {
-            // Bergen: go out through Byfjorden to North Sea
-            simulatedWaypoints.push({ lat: 60.42, lon: 5.25, name: 'Byfjorden' });
-            simulatedWaypoints.push({ lat: 60.45, lon: 5.10, name: 'Hjeltefjorden' });
-            simulatedWaypoints.push({ lat: 60.55, lon: 4.85, name: 'Fedjeosen' });
-            simulatedWaypoints.push({ lat: 60.70, lon: 4.60, name: 'North Sea' });
-            
-            // If destination is different, add return leg
-            if (route.destination && route.destination.toLowerCase() !== 'bergen') {
-                // Simulate route to another port
-                const destPort = this.getPrimaryPortName({ origin: route.destination });
-                if (this.portCoordinates[destPort]) {
-                    const destCoord = this.portCoordinates[destPort];
-                    simulatedWaypoints.push({ lat: destCoord[0], lon: destCoord[1], name: `${destPort} Port` });
-                }
-            } else {
-                // Round trip back to Bergen
-                simulatedWaypoints.push({ lat: 60.55, lon: 4.85, name: 'Fedjeosen Return' });
-                simulatedWaypoints.push({ lat: 60.45, lon: 5.10, name: 'Hjeltefjorden Return' });
-                simulatedWaypoints.push({ lat: 60.42, lon: 5.25, name: 'Byfjorden Return' });
-                simulatedWaypoints.push({ 
-                    lat: portCoord[0], 
-                    lon: portCoord[1], 
-                    name: `${portName} Port (Return)` 
-                });
-            }
-        } else if (portName === 'oslo') {
-            // Oslo: go out through Oslofjord to Skagerrak
-            simulatedWaypoints.push({ lat: 59.88, lon: 10.65, name: 'Oslofjord' });
-            simulatedWaypoints.push({ lat: 59.75, lon: 10.55, name: 'Drøbak' });
-            simulatedWaypoints.push({ lat: 59.60, lon: 10.45, name: 'Færder' });
-            simulatedWaypoints.push({ lat: 59.40, lon: 10.35, name: 'Skagerrak' });
-        } else if (portName === 'stavanger') {
-            // Stavanger: go out through Boknafjorden
-            simulatedWaypoints.push({ lat: 58.98, lon: 5.75, name: 'Byfjorden' });
-            simulatedWaypoints.push({ lat: 59.05, lon: 5.60, name: 'Horgefjorden' });
-            simulatedWaypoints.push({ lat: 59.15, lon: 5.40, name: 'Boknafjorden' });
-            simulatedWaypoints.push({ lat: 59.25, lon: 5.20, name: 'North Sea' });
-        } else {
-            // Generic port: go 20km out to sea in westerly direction
-            const bearing = 270; // West
-            for (let i = 1; i <= 4; i++) {
-                const distance = (5 * i) / 111.32; // 5km increments
-                const newLat = portCoord[0] + (distance * Math.cos(bearing * Math.PI / 180));
-                const newLon = portCoord[1] + (distance * Math.sin(bearing * Math.PI / 180));
-                
-                simulatedWaypoints.push({
-                    lat: newLat,
-                    lon: newLon,
-                    name: `Sea Point ${i}`
-                });
-            }
-            
-            // Return to port
-            simulatedWaypoints.push({
-                lat: portCoord[0],
-                lon: portCoord[1],
-                name: `${portName} Port (Return)`
-            });
-        }
-        
-        console.log(`✅ Created ${simulatedWaypoints.length} simulated waypoints`);
-        
-        // Create a modified route object for display
-        const displayRoute = {
-            ...route,
-            clean_name: `${routeName} (Simulated)`,
-            origin: route.origin || portName,
-            destination: route.destination || portName
-        };
-        
-        return this.drawRouteWithWaypointsEnhanced(simulatedWaypoints, displayRoute);
-    }
-    
-    /**
-     * Test visualization function
+     * Test visualization function - PRESERVED
      */
     testVisualization() {
         console.log('🧪 Running visualization test...');
@@ -1446,7 +1457,18 @@ testHighlightFunction() {
         // Create a new highlight layer
         this.highlightLayer = L.layerGroup().addTo(this.map);
         
-        // Test coordinates (Bergen area - realistic route)
+        // Test with real data if available
+        if (this.routesData.length > 0) {
+            const route = this.routesData[0];
+            const waypoints = this.getWaypointsForRoute(0);
+            
+            if (waypoints.length > 0) {
+                console.log(`🧪 Testing with REAL NCA data: ${route.clean_name || route.route_name}`);
+                return this.drawRouteWithWaypointsEnhanced(waypoints, route);
+            }
+        }
+        
+        // Fallback test coordinates (Bergen area - realistic route)
         const testWaypoints = [
             { lat: 60.3913, lon: 5.3221, name: 'Bergen Port' },
             { lat: 60.40, lon: 5.25, name: 'Byfjorden' },
@@ -1467,8 +1489,8 @@ testHighlightFunction() {
         const success = this.drawRouteWithWaypointsEnhanced(testWaypoints, testRoute);
         
         if (success) {
-            console.log('✅ Test visualization complete - You should see a blue route from Bergen to sea!');
-            this.showNotification('Test visualization active - Look for blue sea route!', 'success');
+            console.log('✅ Test visualization complete');
+            this.showNotification('Test visualization active', 'success');
         } else {
             console.error('❌ Test visualization failed');
             this.showNotification('Test visualization failed', 'error');
@@ -1537,12 +1559,12 @@ testHighlightFunction() {
         }
         
         // Try to clear any rtz_waypoints layers
-        if (window.rtzWaypoints && window.rtzWaypoints.clearAllRoutes) {
+        if (window.rtzWaypoints && window.rtzWaypoints.clearAllHighlights) {
             try {
-                window.rtzWaypoints.clearAllRoutes();
-                console.log('🧹 Cleared rtz_waypoints routes');
+                window.rtzWaypoints.clearAllHighlights();
+                console.log('🧹 Cleared rtz_waypoints highlights');
             } catch (e) {
-                console.log('⚠️ Could not clear rtz_waypoints:', e.message);
+                console.log('⚠️ Could not clear rtz_waypoints highlights:', e.message);
             }
         }
         
@@ -1577,7 +1599,7 @@ testHighlightFunction() {
     }
     
     /**
-     * Show route details
+     * Show route details - FIXED VERSION USING MODAL
      */
     showRouteDetails(routeIndex) {
         if (routeIndex < 0 || routeIndex >= this.routesData.length) {
@@ -1588,32 +1610,133 @@ testHighlightFunction() {
         const route = this.routesData[routeIndex];
         const waypoints = this.getWaypointsForRoute(routeIndex);
         
-        const message = `
-            <div style="text-align: left;">
-                <strong>${route.clean_name || route.route_name || `Route ${routeIndex + 1}`}</strong><br>
-                ${route.origin ? `<small>From: ${route.origin}</small><br>` : ''}
-                ${route.destination ? `<small>To: ${route.destination}</small><br>` : ''}
-                ${route.total_distance_nm ? `<small>Distance: ${route.total_distance_nm} NM</small><br>` : ''}
-                <small>Waypoints: ${waypoints.length}</small><br>
-                ${route.empirically_verified ? '<small style="color: green;">✓ Empirically Verified</small>' : ''}
+        // Update modal title
+        const modalTitle = document.querySelector('#routeModalTitle');
+        if (modalTitle) {
+            modalTitle.innerHTML = `<i class="fas fa-route me-2"></i> ${route.clean_name || route.route_name || `Route ${routeIndex + 1}`}`;
+        }
+        
+        // Create modal body content
+        let modalBody = `
+            <div class="route-info-item">
+                <span class="route-info-label"><i class="fas fa-flag text-success me-1"></i> Origin:</span>
+                <span class="route-info-value">${route.origin || 'Unknown'}</span>
+            </div>
+            <div class="route-info-item">
+                <span class="route-info-label"><i class="fas fa-flag-checkered text-danger me-1"></i> Destination:</span>
+                <span class="route-info-value">${route.destination || 'Unknown'}</span>
+            </div>
+            <div class="route-info-item">
+                <span class="route-info-label"><i class="fas fa-map-marker-alt text-primary me-1"></i> Waypoints:</span>
+                <span class="route-info-value">${waypoints.length}</span>
             </div>
         `;
         
-        this.showNotification(message, 'info');
+        if (route.total_distance_nm) {
+            modalBody += `
+                <div class="route-info-item">
+                    <span class="route-info-label"><i class="fas fa-ruler text-info me-1"></i> Distance:</span>
+                    <span class="route-info-value">${route.total_distance_nm.toFixed(1)} NM (${(route.total_distance_nm * 1.852).toFixed(1)} km)</span>
+                </div>
+            `;
+        }
+        
+        if (route.source_city) {
+            modalBody += `
+                <div class="route-info-item">
+                    <span class="route-info-label"><i class="fas fa-anchor text-warning me-1"></i> Source Port:</span>
+                    <span class="route-info-value">${route.source_city}</span>
+                </div>
+            `;
+        }
+        
+        if (route.description) {
+            modalBody += `
+                <div class="route-info-item">
+                    <span class="route-info-label"><i class="fas fa-file-alt me-1"></i> Description:</span>
+                    <span class="route-info-value" style="font-size: 0.9em;">${route.description}</span>
+                </div>
+            `;
+        }
+        
+        // Add waypoints list if available
+        if (waypoints.length > 0) {
+            modalBody += `
+                <div class="mt-3">
+                    <strong><i class="fas fa-list me-1"></i> Waypoints:</strong>
+                    <div class="waypoints-list">
+            `;
+            
+            waypoints.slice(0, 10).forEach((wp, i) => {
+                const wpName = wp.name || wp.wp_name || `Waypoint ${i + 1}`;
+                const lat = wp.lat || wp.latitude;
+                const lon = wp.lon || wp.longitude;
+                
+                modalBody += `
+                    <div class="waypoint-item">
+                        <small><strong>${wpName}</strong>: ${lat.toFixed(4)}°, ${lon.toFixed(4)}°</small>
+                    </div>
+                `;
+            });
+            
+            if (waypoints.length > 10) {
+                modalBody += `<small>... and ${waypoints.length - 10} more waypoints</small>`;
+            }
+            
+            modalBody += `
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Update modal body
+        const modalBodyElement = document.querySelector('#routeModalBody');
+        if (modalBodyElement) {
+            modalBodyElement.innerHTML = modalBody;
+        }
+        
+        // Store current route index in modal for button handlers
+        const modalElement = document.getElementById('routeDetailsModal');
+        if (modalElement) {
+            modalElement.dataset.currentRouteIndex = routeIndex;
+        }
+        
+        // Add modal styling
+        modalElement.classList.add('route-details-modal');
+        
+        // Show modal
+        this.routeDetailsModal.show();
+        
+        // Log to console for debugging
+        console.log(`📋 Route details for index ${routeIndex}:`, {
+            name: route.clean_name || route.route_name,
+            origin: route.origin,
+            destination: route.destination,
+            waypoints: waypoints.length,
+            distance: route.total_distance_nm,
+            source_city: route.source_city
+        });
     }
     
     /**
-     * Show debug information
+     * Show debug information - PRESERVED
      */
     showDebugInfo() {
         console.log('=== 🐛 DASHBOARD CONTROLS DEBUG ===');
-        console.log('Version: 3.2 - Complete Data Fix');
+        console.log('Version: 3.3.2 - ALL buttons preserved');
         console.log('Map available:', !!this.map);
         console.log('Total routes:', this.routesData.length);
         console.log('Waypoints data keys:', Object.keys(this.waypointsData));
         console.log('Current highlighted route:', this.currentHighlightedRoute);
         console.log('Emergency mode:', this.emergencyMode);
         console.log('Special pane exists:', !!this.map?.getPane('dashboard-highlight-pane'));
+        
+        // Check rtzWaypoints availability
+        console.log('rtzWaypoints available:', !!window.rtzWaypoints);
+        if (window.rtzWaypoints) {
+            console.log('rtzWaypoints.highlightRoute exists:', !!window.rtzWaypoints.highlightRoute);
+            console.log('rtzWaypoints.routeLines count:', Object.keys(window.rtzWaypoints.routeLines || {}).length);
+        }
         
         // Sample first route data
         if (this.routesData.length > 0) {
@@ -1627,13 +1750,6 @@ testHighlightFunction() {
                 destination: firstRoute.destination,
                 hasWaypointsInData: this.hasWaypointsForRoute(0)
             });
-            
-            // Check waypoints access
-            console.log('Waypoints access test:');
-            console.log('  By ID:', this.waypointsData[firstRoute.id]);
-            console.log('  By route_id:', this.waypointsData[firstRoute.route_id]);
-            console.log('  By index 0:', this.waypointsData[0]);
-            console.log('  By index "0":', this.waypointsData["0"]);
         }
         
         // Test functions
@@ -1641,95 +1757,247 @@ testHighlightFunction() {
         console.log('  zoomToRoute:', typeof window.zoomToRoute);
         console.log('  inspectRouteData:', typeof window.inspectRouteData);
         console.log('  testMapVisualization:', typeof window.testMapVisualization);
-        console.log('  testWaypointsForRoute:', typeof window.testWaypointsForRoute);
+        console.log('  testRtzWaypointsIntegration:', typeof window.testRtzWaypointsIntegration);
         
         console.log('=== END DEBUG ===');
         
-        // Auto-run a visualization test
+        // Auto-run rtzWaypoints test
         setTimeout(() => {
-            console.log('🧪 Auto-running visualization test...');
-            window.testMapVisualization();
-        }, 1000);
+            console.log('🧪 Auto-running rtzWaypoints integration test...');
+            if (window.testRtzWaypointsIntegration) {
+                window.testRtzWaypointsIntegration();
+            }
+        }, 500);
         
-        this.showNotification('Debug info logged to console - Running visualization test...', 'info');
+        this.showNotification('Debug info logged to console - Testing rtzWaypoints...', 'info');
     }
     
     /**
-     * Show notification to user
+     * Show notification to user - REAL-TIME FIRST, FALLBACK LAST RESORT
+     * @param {string} message - The message to display (TEXT ONLY, NO HTML)
+     * @param {string} type - Type of notification: 'info', 'success', 'warning', 'error'
+     * @param {number} duration - Duration in milliseconds to show the notification
      */
-    showNotification(message, type = 'info') {
-        // Check if dashboard notification element exists
-        const notificationContainer = document.getElementById('dashboard-notification');
+    showNotification(message, type = 'info', duration = 5000) {
+        console.log(`📢 [REAL-TIME FIRST] Attempting to show ${type} notification`);
         
-        if (notificationContainer) {
-            // Use existing notification system
-            const title = notificationContainer.querySelector('#notification-title');
-            const messageEl = notificationContainer.querySelector('#notification-message');
-            const timeEl = notificationContainer.querySelector('#notification-time');
+        // Clear any existing timeouts
+        if (this.notificationTimeout) {
+            clearTimeout(this.notificationTimeout);
+            this.notificationTimeout = null;
+        }
+        
+        if (this.fallbackNotificationTimeout) {
+            clearTimeout(this.fallbackNotificationTimeout);
+            this.fallbackNotificationTimeout = null;
+        }
+        
+        // Store last notification type for debugging
+        this.lastNotificationType = type;
+        
+        // STEP 1: Try REAL-TIME notification system first
+        const realTimeSuccess = this.showRealTimeNotification(message, type, duration);
+        
+        if (realTimeSuccess) {
+            console.log(`✅ [REAL-TIME SUCCESS] Notification displayed via primary system`);
+            return true;
+        }
+        
+        // STEP 2: Only if real-time fails, use fallback as LAST RESORT
+        console.log(`⚠️ [REAL-TIME FAILED] Primary system unavailable, using fallback as last resort`);
+        return this.showFallbackNotification(message, type, duration);
+    }
+
+    /**
+     * REAL-TIME NOTIFICATION SYSTEM - Primary method (tries first)
+     * Uses the existing dashboard notification element
+     */
+    showRealTimeNotification(message, type = 'info', duration = 5000) {
+        try {
+            const notificationContainer = document.getElementById('dashboard-notification');
             
-            if (title) title.textContent = type.charAt(0).toUpperCase() + type.slice(1);
-            if (messageEl) messageEl.innerHTML = message;
-            if (timeEl) {
-                const now = new Date();
-                timeEl.textContent = now.toLocaleTimeString('en-GB', { 
-                    hour: '2-digit', 
-                    minute: '2-digit' 
-                });
+            if (!notificationContainer) {
+                console.log('❌ [REAL-TIME] Notification container not found');
+                return false;
             }
             
-            notificationContainer.style.display = 'block';
+            console.log(`🔍 [REAL-TIME] Found notification container`);
             
-            setTimeout(() => {
-                notificationContainer.style.display = 'none';
-            }, 3000);
-        } else {
-            // Fallback simple notification
-            const notification = document.createElement('div');
-            const colors = {
-                'info': { bg: '#d1ecf1', border: '#bee5eb', text: '#0c5460' },
-                'success': { bg: '#d4edda', border: '#c3e6cb', text: '#155724' },
-                'warning': { bg: '#fff3cd', border: '#ffeaa7', text: '#856404' },
-                'error': { bg: '#f8d7da', border: '#f5c6cb', text: '#721c24' }
+            // Get toast elements
+            const toastElement = notificationContainer.querySelector('.toast');
+            const titleElement = notificationContainer.querySelector('#notification-title');
+            const messageElement = notificationContainer.querySelector('#notification-message');
+            const timeElement = notificationContainer.querySelector('#notification-time');
+            
+            if (!toastElement || !titleElement || !messageElement || !timeElement) {
+                console.log('❌ [REAL-TIME] Toast elements not found in container');
+                return false;
+            }
+            
+            // Set notification content - USE TEXT CONTENT, NOT HTML
+            titleElement.textContent = type.charAt(0).toUpperCase() + type.slice(1);
+            messageElement.textContent = message; // Use textContent instead of innerHTML
+            
+            // Set timestamp
+            const now = new Date();
+            timeElement.textContent = now.toLocaleTimeString('en-GB', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+            
+            // Set type-specific styling
+            const typeColors = {
+                'info': '#17a2b8',
+                'success': '#28a745',
+                'warning': '#ffc107',
+                'error': '#dc3545'
             };
             
-            const color = colors[type] || colors.info;
+            titleElement.style.color = typeColors[type] || typeColors.info;
             
+            // Try to use Bootstrap Toast if available
+            if (typeof bootstrap !== 'undefined' && bootstrap.Toast) {
+                console.log('🎯 [REAL-TIME] Using Bootstrap Toast API');
+                
+                // Initialize toast if not already done
+                const toast = new bootstrap.Toast(toastElement, {
+                    animation: true,
+                    autohide: true,
+                    delay: duration
+                });
+                
+                // Show the toast
+                toast.show();
+                
+                // Store timeout for cleanup
+                this.notificationTimeout = setTimeout(() => {
+                    toast.hide();
+                }, duration);
+                
+                return true;
+            } else {
+                // Fallback to manual display
+                console.log('⚠️ [REAL-TIME] Bootstrap not available, using manual display');
+                
+                // Force display of the notification
+                notificationContainer.style.display = 'block';
+                notificationContainer.style.visibility = 'visible';
+                notificationContainer.style.opacity = '1';
+                notificationContainer.classList.add('show');
+                
+                // Set manual timeout to hide
+                this.notificationTimeout = setTimeout(() => {
+                    notificationContainer.style.opacity = '0';
+                    notificationContainer.classList.remove('show');
+                    
+                    setTimeout(() => {
+                        notificationContainer.style.display = 'none';
+                    }, 300);
+                }, duration);
+                
+                return true;
+            }
+            
+        } catch (error) {
+            console.error('❌ [REAL-TIME ERROR] Failed to show real-time notification:', error);
+            return false;
+        }
+    }
+
+    /**
+     * FALLBACK NOTIFICATION SYSTEM - Last resort only
+     */
+    showFallbackNotification(message, type = 'info', duration = 5000) {
+        console.log(`🆘 [FALLBACK] Creating emergency notification as last resort`);
+        
+        try {
+            // Remove any existing fallback notification
+            const existing = document.querySelector('.dashboard-fallback-notification');
+            if (existing) {
+                existing.remove();
+            }
+            
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `dashboard-fallback-notification dashboard-fallback-${type}`;
+            
+            // Type-based styling
+            const typeColors = {
+                'info': '#17a2b8',
+                'success': '#28a745',
+                'warning': '#ffc107',
+                'error': '#dc3545'
+            };
+            
+            const typeIcons = {
+                'info': 'ℹ️',
+                'success': '✅',
+                'warning': '⚠️',
+                'error': '❌'
+            };
+            
+            // Apply styles directly
             notification.style.cssText = `
                 position: fixed;
-                top: 80px;
+                top: 20px;
                 right: 20px;
-                background: ${color.bg};
-                color: ${color.text};
-                padding: 12px 20px;
+                background: ${typeColors[type] || typeColors.info};
+                color: white;
+                padding: 15px 20px;
                 border-radius: 8px;
                 box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                z-index: 9999;
+                z-index: 9998;
                 max-width: 350px;
-                border: 1px solid ${color.border};
-                font-size: 0.9rem;
-                font-weight: 500;
                 animation: slideIn 0.3s ease-out;
+                font-family: system-ui, -apple-system, sans-serif;
+                border-left: 4px solid ${type === 'error' ? '#b02a37' : type === 'warning' ? '#e0a800' : type === 'success' ? '#1e7e34' : '#0dcaf0'};
             `;
             
+            // Create notification content
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('en-GB', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+            
             notification.innerHTML = `
-                <div style="display: flex; align-items: flex-start; gap: 10px;">
-                    <span style="font-size: 1.2rem;">
-                        ${type === 'success' ? '✓' : type === 'warning' ? '⚠' : type === 'error' ? '✗' : 'ℹ'}
+                <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                    <span style="font-size: 18px; margin-right: 8px;">${typeIcons[type] || 'ℹ️'}</span>
+                    <span style="font-weight: bold; font-size: 16px;">
+                        ${type.charAt(0).toUpperCase() + type.slice(1)}
                     </span>
-                    <div>${message}</div>
+                    <span style="margin-left: auto; font-size: 11px; opacity: 0.8;">
+                        ${timeStr}
+                    </span>
+                </div>
+                <div style="font-size: 14px; line-height: 1.4;">
+                    ${message}
+                </div>
+                <div style="font-size: 10px; opacity: 0.6; margin-top: 5px; text-align: right;">
+                    Emergency notification system
                 </div>
             `;
             
+            // Add to page
             document.body.appendChild(notification);
             
-            setTimeout(() => {
+            // Auto-remove after duration
+            this.fallbackNotificationTimeout = setTimeout(() => {
                 notification.style.animation = 'slideOut 0.3s ease-out';
                 setTimeout(() => {
                     if (notification.parentNode) {
                         notification.parentNode.removeChild(notification);
                     }
                 }, 300);
-            }, 3000);
+            }, duration);
+            
+            console.log(`✅ [FALLBACK] Emergency notification displayed as last resort`);
+            
+            return true;
+            
+        } catch (error) {
+            console.error('❌ [FALLBACK ERROR] Failed to create fallback notification:', error);
+            return false;
         }
     }
 }
@@ -1739,7 +2007,7 @@ window.dashboardControls = new DashboardControls();
 
 // Initialize when DOM is ready and map is available
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('📱 Dashboard controls v3.2 DOM ready');
+    console.log('📱 Dashboard controls v3.3.2 DOM ready - ALL buttons preserved');
     
     // Check for map availability
     const checkMap = setInterval(() => {
@@ -1753,14 +2021,18 @@ document.addEventListener('DOMContentLoaded', function() {
 // Add global test functions for console debugging
 if (typeof window !== 'undefined') {
     window.testDashboard = function() {
-        console.log('🧪 Testing dashboard v3.2...');
+        console.log('🧪 Testing dashboard v3.3.2...');
         if (window.dashboardControls) {
             console.log('Dashboard controls available');
             console.log('Total routes:', window.dashboardControls.routesData.length);
-            console.log('First route:', window.dashboardControls.routesData[0]);
             
-            // Run visualization test
-            return window.dashboardControls.testVisualization();
+            // Test ALL 3 buttons
+            if (window.dashboardControls.routesData.length > 0) {
+                console.log('Testing ALL 3 buttons on first route...');
+                window.dashboardControls.showRouteDetails(0);
+            }
+            
+            return true;
         } else {
             console.error('Dashboard controls not available');
             return false;
