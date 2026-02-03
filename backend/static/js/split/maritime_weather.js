@@ -398,7 +398,14 @@ function initializeWeather() {
         loadWeather();
     }, 1500); // Give other systems time to initialize
     
-    console.log('✅ Weather module initialized');
+    setInterval(() => {
+        console.log('🔄 Auto-refreshing weather (5 minute interval)');
+        loadWeather();
+    }, 5 * 60 * 1000);
+
+
+
+    console.log('✅ Weather module initialized with 5-minute auto-refresh');
 }
 
 // Initialize when DOM is loaded
