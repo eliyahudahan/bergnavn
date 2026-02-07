@@ -1,2321 +1,1453 @@
-.pytest_cache
-  v
-    cache
-.vscode
-backend
-  .pytest_cache
-    v
-      cache
-  assets
-    ais_data
-    barentswatch_cache
-    fuel_models
-    route_data
-      processed
-    routeinfo_routes
-      _final_organized
-      alesund
-      andalsnes
-      bergen
-      drammen
-      flekkefjord
-      kristiansand
-      oslo
-      sandefjord
-      stavanger
-      trondheim
-    weather_data
-  config
-  controllers
-  middleware
-  ml
-  models
-  routes
-  services
-  simulation
-  static
-    css
-      split
-    data
-    images
-    js
-      split
-  templates
-    maritime
-    maritime_split
-  tests
-    .pytest_cache
-      v
-  translations
-    en
-      LC_MESSAGES
-    no
-      LC_MESSAGES
-  utils
-    utils
-backups
-  template_backup_20260118_145308
-data
-database
-  seeders
-docs
-export_chunks
-frontend
-  components
-  hooks
-  node_modules
-    .bin
-    @alloc
-      quick-lru
-    @ampproject
-      remapping
-    @babel
-      code-frame
-      compat-data
-      core
-      eslint-parser
-      generator
-      helper-annotate-as-pure
-      helper-compilation-targets
-      helper-create-class-features-plugin
-      helper-create-regexp-features-plugin
-      helper-define-polyfill-provider
-      helper-member-expression-to-functions
-      helper-module-imports
-      helper-module-transforms
-      helper-optimise-call-expression
-      helper-plugin-utils
-      helper-remap-async-to-generator
-      helper-replace-supers
-      helper-skip-transparent-expression-wrappers
-      helper-string-parser
-      helper-validator-identifier
-      helper-validator-option
-      helper-wrap-function
-      helpers
-      parser
-      plugin-bugfix-firefox-class-in-computed-class-key
-      plugin-bugfix-safari-class-field-initializer-scope
-      plugin-bugfix-safari-id-destructuring-collision-in-function-expression
-      plugin-bugfix-v8-spread-parameters-in-optional-chaining
-      plugin-bugfix-v8-static-class-fields-redefine-readonly
-      plugin-proposal-class-properties
-      plugin-proposal-decorators
-      plugin-proposal-nullish-coalescing-operator
-      plugin-proposal-numeric-separator
-      plugin-proposal-optional-chaining
-      plugin-proposal-private-methods
-      plugin-proposal-private-property-in-object
-      plugin-syntax-async-generators
-      plugin-syntax-bigint
-      plugin-syntax-class-properties
-      plugin-syntax-class-static-block
-      plugin-syntax-decorators
-      plugin-syntax-flow
-      plugin-syntax-import-assertions
-      plugin-syntax-import-attributes
-      plugin-syntax-import-meta
-      plugin-syntax-json-strings
-      plugin-syntax-jsx
-      plugin-syntax-logical-assignment-operators
-      plugin-syntax-nullish-coalescing-operator
-      plugin-syntax-numeric-separator
-      plugin-syntax-object-rest-spread
-      plugin-syntax-optional-catch-binding
-      plugin-syntax-optional-chaining
-      plugin-syntax-private-property-in-object
-      plugin-syntax-top-level-await
-      plugin-syntax-typescript
-      plugin-syntax-unicode-sets-regex
-      plugin-transform-arrow-functions
-      plugin-transform-async-generator-functions
-      plugin-transform-async-to-generator
-      plugin-transform-block-scoped-functions
-      plugin-transform-block-scoping
-      plugin-transform-class-properties
-      plugin-transform-class-static-block
-      plugin-transform-classes
-      plugin-transform-computed-properties
-      plugin-transform-destructuring
-      plugin-transform-dotall-regex
-      plugin-transform-duplicate-keys
-      plugin-transform-duplicate-named-capturing-groups-regex
-      plugin-transform-dynamic-import
-      plugin-transform-exponentiation-operator
-      plugin-transform-export-namespace-from
-      plugin-transform-flow-strip-types
-      plugin-transform-for-of
-      plugin-transform-function-name
-      plugin-transform-json-strings
-      plugin-transform-literals
-      plugin-transform-logical-assignment-operators
-      plugin-transform-member-expression-literals
-      plugin-transform-modules-amd
-      plugin-transform-modules-commonjs
-      plugin-transform-modules-systemjs
-      plugin-transform-modules-umd
-      plugin-transform-named-capturing-groups-regex
-      plugin-transform-new-target
-      plugin-transform-nullish-coalescing-operator
-      plugin-transform-numeric-separator
-      plugin-transform-object-rest-spread
-      plugin-transform-object-super
-      plugin-transform-optional-catch-binding
-      plugin-transform-optional-chaining
-      plugin-transform-parameters
-      plugin-transform-private-methods
-      plugin-transform-private-property-in-object
-      plugin-transform-property-literals
-      plugin-transform-react-constant-elements
-      plugin-transform-react-display-name
-      plugin-transform-react-jsx
-      plugin-transform-react-jsx-development
-      plugin-transform-react-pure-annotations
-      plugin-transform-regenerator
-      plugin-transform-regexp-modifiers
-      plugin-transform-reserved-words
-      plugin-transform-runtime
-      plugin-transform-shorthand-properties
-      plugin-transform-spread
-      plugin-transform-sticky-regex
-      plugin-transform-template-literals
-      plugin-transform-typeof-symbol
-      plugin-transform-typescript
-      plugin-transform-unicode-escapes
-      plugin-transform-unicode-property-regex
-      plugin-transform-unicode-regex
-      plugin-transform-unicode-sets-regex
-      preset-env
-      preset-modules
-      preset-react
-      preset-typescript
-      runtime
-      template
-      traverse
-      types
-    @bcoe
-      v8-coverage
-    @csstools
-      normalize.css
-      postcss-cascade-layers
-      postcss-color-function
-      postcss-font-format-keywords
-      postcss-hwb-function
-      postcss-ic-unit
-      postcss-is-pseudo-class
-      postcss-nested-calc
-      postcss-normalize-display-values
-      postcss-oklab-function
-      postcss-progressive-custom-properties
-      postcss-stepped-value-functions
-      postcss-text-decoration-shorthand
-      postcss-trigonometric-functions
-      postcss-unset-value
-      selector-specificity
-    @eslint
-      eslintrc
-      js
-    @eslint-community
-      eslint-utils
-      regexpp
-    @humanwhocodes
-      config-array
-      module-importer
-      object-schema
-    @isaacs
-      cliui
-    @istanbuljs
-      load-nyc-config
-      schema
-    @jest
-      console
-      core
-      environment
-      fake-timers
-      globals
-      reporters
-      schemas
-      source-map
-      test-result
-      test-sequencer
-      transform
-      types
-    @jridgewell
-      gen-mapping
-      resolve-uri
-      set-array
-      source-map
-      sourcemap-codec
-      trace-mapping
-    @leichtgewicht
-      ip-codec
-    @nicolo-ribaudo
-      eslint-scope-5-internals
-    @nodelib
-      fs.scandir
-      fs.stat
-      fs.walk
-    @pkgjs
-      parseargs
-    @pmmmwh
-      react-refresh-webpack-plugin
-    @rollup
-      plugin-babel
-      plugin-node-resolve
-      plugin-replace
-      pluginutils
-    @rtsao
-      scc
-    @rushstack
-      eslint-patch
-    @sinclair
-      typebox
-    @sinonjs
-      commons
-      fake-timers
-    @surma
-      rollup-plugin-off-main-thread
-    @svgr
-      babel-plugin-add-jsx-attribute
-      babel-plugin-remove-jsx-attribute
-      babel-plugin-remove-jsx-empty-expression
-      babel-plugin-replace-jsx-attribute-value
-      babel-plugin-svg-dynamic-title
-      babel-plugin-svg-em-dimensions
-      babel-plugin-transform-react-native-svg
-      babel-plugin-transform-svg-component
-      babel-preset
-      core
-      hast-util-to-babel-ast
-      plugin-jsx
-      plugin-svgo
-      webpack
-    @tootallnate
-      once
-    @trysound
-      sax
-    @types
-      babel__core
-      babel__generator
-      babel__template
-      babel__traverse
-      body-parser
-      bonjour
-      connect
-      connect-history-api-fallback
-      eslint
-      eslint-scope
-      estree
-      express
-      express-serve-static-core
-      graceful-fs
-      html-minifier-terser
-      http-errors
-      http-proxy
-      istanbul-lib-coverage
-      istanbul-lib-report
-      istanbul-reports
-      json-schema
-      json5
-      mime
-      node
-      node-forge
-      parse-json
-      prettier
-      q
-      qs
-      range-parser
-      resolve
-      retry
-      semver
-      send
-      serve-index
-      serve-static
-      sockjs
-      stack-utils
-      trusted-types
-      ws
-      yargs
-      yargs-parser
-    @typescript-eslint
-      eslint-plugin
-      experimental-utils
-      parser
-      scope-manager
-      type-utils
-      types
-      typescript-estree
-      utils
-      visitor-keys
-    @ungap
-      structured-clone
-    @webassemblyjs
-      ast
-      floating-point-hex-parser
-      helper-api-error
-      helper-buffer
-      helper-numbers
-      helper-wasm-bytecode
-      helper-wasm-section
-      ieee754
-      leb128
-      utf8
-      wasm-edit
-      wasm-gen
-      wasm-opt
-      wasm-parser
-      wast-printer
-    @xtuc
-      ieee754
-      long
-    abab
-      lib
-    accepts
-      node_modules
-    acorn
-      bin
-      dist
-    acorn-globals
-      node_modules
-    acorn-jsx
-    acorn-walk
-      dist
-    address
-      lib
-    adjust-sourcemap-loader
-      codec
-      lib
-    agent-base
-      dist
-      src
-    ajv
-      dist
-      lib
-      scripts
-    ajv-formats
-      dist
-      node_modules
-      src
-    ajv-keywords
-      keywords
-    ansi-escapes
-    ansi-html
-      bin
-    ansi-html-community
-      bin
-    ansi-regex
-    ansi-styles
-    any-promise
-      register
-    anymatch
-    arg
-    argparse
-      lib
-    aria-query
-      lib
-    array-buffer-byte-length
-      .github
-      test
-    array-flatten
-    array-includes
-      .github
-      test
-    array-union
-    array.prototype.findlast
-      .github
-      test
-    array.prototype.findlastindex
-      .github
-      test
-    array.prototype.flat
-      .github
-      test
-    array.prototype.flatmap
-      .github
-      test
-    array.prototype.reduce
-      test
-    array.prototype.tosorted
-      .github
-      test
-    arraybuffer.prototype.slice
-      test
-    asap
-    ast-types-flow
-      lib
-    async
-      dist
-      internal
-    async-function
-      .github
-      test
-    asynckit
-      lib
-    at-least-node
-    autoprefixer
-      bin
-      data
-      lib
-    available-typed-arrays
-      .github
-      test
-    axe-core
-      locales
-    axobject-query
-      lib
-    babel-jest
-      build
-    babel-loader
-      lib
-      node_modules
-    babel-plugin-istanbul
-      lib
-    babel-plugin-jest-hoist
-      build
-    babel-plugin-macros
-      dist
-    babel-plugin-named-asset-import
-    babel-plugin-polyfill-corejs2
-      esm
-      lib
-      node_modules
-    babel-plugin-polyfill-corejs3
-      core-js-compat
-      esm
-      lib
-    babel-plugin-polyfill-regenerator
-      esm
-      lib
-    babel-plugin-transform-react-remove-prop-types
-      lib
-      src
-    babel-preset-current-node-syntax
-      .github
-      src
-    babel-preset-jest
-    babel-preset-react-app
-      node_modules
-    balanced-match
-      .github
-    batch
-    bfj
-      src
-      test
-    big.js
-    binary-extensions
-    bluebird
-      js
-    body-parser
-      lib
-      node_modules
-    bonjour-service
-      dist
-      types
-    boolbase
-    brace-expansion
-    braces
-      lib
-    browser-process-hrtime
-    browserslist
-    bser
-    buffer-from
-    builtin-modules
-    bytes
-    call-bind
-      .github
-      test
-    call-bind-apply-helpers
-      .github
-      test
-    call-bound
-      .github
-      test
-    callsites
-    camel-case
-      dist
-      dist.es2015
-    camelcase
-    camelcase-css
-    caniuse-api
-      dist
-    caniuse-lite
-      data
-      dist
-    case-sensitive-paths-webpack-plugin
-    chalk
-      source
-    char-regex
-    check-types
-      src
-    chokidar
-      lib
-      node_modules
-      types
-    chrome-trace-event
-      dist
-    ci-info
-    cjs-module-lexer
-      dist
-    clean-css
-      lib
-      node_modules
-    cliui
-      build
-    co
-    coa
-      lib
-      node_modules
-    collect-v8-coverage
-    color-convert
-    color-name
-    colord
-      plugins
-    colorette
-    combined-stream
-      lib
-    commander
-      lib
-      typings
-    common-tags
-      dist
-      es
-      lib
-    commondir
-      example
-      test
-    compressible
-    compression
-      node_modules
-    concat-map
-      example
-      test
-    confusing-browser-globals
-    connect-history-api-fallback
-      lib
-    content-disposition
-    content-type
-    convert-source-map
-    cookie
-    cookie-signature
-    core-js
-      actual
-      es
-      features
-      full
-      internals
-      modules
-      proposals
-      stable
-      stage
-      web
-    core-js-compat
-    core-js-pure
-      actual
-      es
-      features
-      full
-      internals
-      modules
-      proposals
-      stable
-      stage
-      web
-    core-util-is
-      lib
-    cosmiconfig
-      dist
-    cross-spawn
-      lib
-    crypto-random-string
-    css-blank-pseudo
-      dist
-    css-declaration-sorter
-      dist
-      orders
-      src
-    css-has-pseudo
-      dist
-    css-loader
-      dist
-    css-minimizer-webpack-plugin
-      dist
-      node_modules
-      types
-    css-prefers-color-scheme
-      dist
-    css-select
-      lib
-    css-select-base-adapter
-      test
-    css-tree
-      data
-      dist
-      lib
-      node_modules
-    css-what
-      lib
-    cssdb
-    cssesc
-      bin
-      man
-    cssnano
-      src
-      types
-    cssnano-preset-default
-      src
-      types
-    cssnano-utils
-      src
-      types
-    csso
-      dist
-      lib
-      node_modules
-    cssom
-      lib
-    cssstyle
-      lib
-      node_modules
-    damerau-levenshtein
-      scripts
-      test
-    data-urls
-      lib
-    data-view-buffer
-      .github
-      test
-    data-view-byte-length
-      .github
-      test
-    data-view-byte-offset
-      .github
-      test
-    debug
-      src
-    decimal.js
-    dedent
-      dist
-    deep-is
-      example
-      test
-    deepmerge
-      dist
-    default-gateway
-    define-data-property
-      .github
-      test
-    define-lazy-prop
-    define-properties
-      .github
-    delayed-stream
-      lib
-    depd
-      lib
-    destroy
-    detect-newline
-    detect-node
-    detect-port-alt
-      .vscode
-      bin
-      lib
-      node_modules
-    didyoumean
-    diff-sequences
-      build
-      perf
-    dir-glob
-    dlv
-      dist
-    dns-packet
-    doctrine
-      lib
-    dom-converter
-      lib
-    dom-serializer
-      lib
-    domelementtype
-      lib
-    domexception
-      lib
-      node_modules
-    domhandler
-      lib
-    domutils
-      lib
-    dot-case
-      dist
-      dist.es2015
-    dotenv
-      lib
-      types
-    dotenv-expand
-      lib
-    dunder-proto
-      .github
-      test
-    duplexer
-      test
-    eastasianwidth
-    ee-first
-    ejs
-      bin
-      lib
-    electron-to-chromium
-    emittery
-    emoji-regex
-      es2015
-    emojis-list
-    encodeurl
-    enhanced-resolve
-      lib
-    entities
-      lib
-    error-ex
-    error-stack-parser
-      dist
-    es-abstract
-      2015
-      2016
-      2017
-      2018
-      2019
-      2020
-      2021
-      2022
-      2023
-      2024
-      5
-      helpers
-      operations
-    es-array-method-boxes-properly
-      .github
-      test
-    es-define-property
-      .github
-      test
-    es-errors
-      .github
-      test
-    es-iterator-helpers
-      .github
-      Iterator
-      Iterator.concat
-      Iterator.from
-      Iterator.prototype
-      Iterator.prototype.constructor
-      Iterator.prototype.drop
-      Iterator.prototype.every
-      Iterator.prototype.filter
-      Iterator.prototype.find
-      Iterator.prototype.flatMap
-      Iterator.prototype.forEach
-      Iterator.prototype.map
-      Iterator.prototype.reduce
-      Iterator.prototype.some
-      Iterator.prototype.take
-      Iterator.prototype.toArray
-      Iterator.zip
-      Iterator.zipKeyed
-      IteratorHelperPrototype
-      WrapForValidIteratorPrototype
-      aos
-      test
-    es-module-lexer
-      dist
-      types
-    es-object-atoms
-      .github
-      test
-    es-set-tostringtag
-      test
-    es-shim-unscopables
-      .github
-      test
-    es-to-primitive
-      .github
-      helpers
-      test
-    escalade
-      dist
-      sync
-    escape-html
-    escape-string-regexp
-    escodegen
-      bin
-      node_modules
-    eslint
-      bin
-      conf
-      lib
-      messages
-      node_modules
-    eslint-config-react-app
-    eslint-import-resolver-node
-      node_modules
-    eslint-module-utils
-      node_modules
-    eslint-plugin-flowtype
-      dist
-    eslint-plugin-import
-      config
-      docs
-      lib
-      memo-parser
-      node_modules
-    eslint-plugin-jest
-      docs
-      lib
-    eslint-plugin-jsx-a11y
-      __mocks__
-      __tests__
-      docs
-      lib
-    eslint-plugin-react
-      configs
-      lib
-      node_modules
-    eslint-plugin-react-hooks
-      cjs
-    eslint-plugin-testing-library
-      configs
-      create-testing-library-rule
-      node-utils
-      rules
-      utils
-    eslint-scope
-      dist
-      lib
-    eslint-visitor-keys
-      dist
-      lib
-    eslint-webpack-plugin
-      dist
-      node_modules
-      types
-    espree
-      dist
-      lib
-    esprima
-      bin
-      dist
-    esquery
-      dist
-    esrecurse
-    estraverse
-    estree-walker
-      dist
-      src
-      types
-    esutils
-      lib
-    etag
-    eventemitter3
-      umd
-    events
-      .github
-      tests
-    execa
-      lib
-    exit
-      lib
-      test
-    expect
-      build
-    express
-      lib
-      node_modules
-    fast-deep-equal
-      es6
-    fast-glob
-      node_modules
-      out
-    fast-json-stable-stringify
-      .github
-      benchmark
-      example
-      test
-    fast-levenshtein
-    fast-uri
-      .github
-      lib
-      test
-      types
-    fastq
-      .github
-      test
-    faye-websocket
-      lib
-    fb-watchman
-    file-entry-cache
-    file-loader
-      dist
-      node_modules
-    filelist
-      node_modules
-    filesize
-      lib
-    fill-range
-    finalhandler
-      node_modules
-    find-cache-dir
-    find-up
-    flat-cache
-      src
-    flatted
-      cjs
-      esm
-      php
-      python
-      types
-    follow-redirects
-    for-each
-      .github
-      test
-    foreground-child
-      dist
-      node_modules
-    fork-ts-checker-webpack-plugin
-      lib
-      node_modules
-    form-data
-      lib
-    forwarded
-    fraction.js
-    fresh
-    fs-extra
-      lib
-    fs-monkey
-      docs
-      lib
-    fs.realpath
-    function-bind
-      .github
-      test
-    function.prototype.name
-      .github
-      helpers
-      test
-    functions-have-names
-      .github
-      test
-    gensync
-      test
-    get-caller-file
-    get-intrinsic
-      .github
-      test
-    get-own-enumerable-property-symbols
-      lib
-    get-package-type
-    get-proto
-      .github
-      test
-    get-stream
-    get-symbol-description
-      .github
-      test
-    glob
-    glob-parent
-    glob-to-regexp
-    global-modules
-    global-prefix
-      node_modules
-    globals
-    globalthis
-      test
-    globby
-    gopd
-      .github
-      test
-    graceful-fs
-    graphemer
-      lib
-    gzip-size
-    handle-thing
-      lib
-      test
-    harmony-reflect
-    has-bigints
-      .github
-      test
-    has-flag
-    has-property-descriptors
-      .github
-      test
-    has-proto
-      .github
-      test
-    has-symbols
-      .github
-      test
-    has-tostringtag
-      .github
-      test
-    hasown
-      .github
-    he
-      bin
-      man
-    hoopy
-    hpack.js
-      bin
-      lib
-      node_modules
-      test
-      tools
-    html-encoding-sniffer
-      lib
-    html-entities
-      dist
-      src
-    html-escaper
-      cjs
-      esm
-      test
-    html-minifier-terser
-      src
-    html-webpack-plugin
-      lib
-    htmlparser2
-      lib
-    http-deceiver
-      lib
-      test
-    http-errors
-    http-parser-js
-    http-proxy
-      lib
-    http-proxy-agent
-      dist
-    http-proxy-middleware
-      dist
-    https-proxy-agent
-      dist
-    human-signals
-      build
-    iconv-lite
-      .github
-      .idea
-      encodings
-      lib
-    icss-utils
-      src
-    idb
-      build
-    identity-obj-proxy
-      src
-    ignore
-    immer
-      compat
-      dist
-      src
-    import-fresh
-      node_modules
-    import-local
-      fixtures
-    imurmurhash
-    inflight
-    inherits
-    ini
-    internal-slot
-      .github
-      test
-    ipaddr.js
-      lib
-    is-array-buffer
-      .github
-      test
-    is-arrayish
-    is-async-function
-      test
-    is-bigint
-      .github
-      test
-    is-binary-path
-    is-boolean-object
-      .github
-      test
-    is-callable
-      .github
-      test
-    is-core-module
-      test
-    is-data-view
-      .github
-      test
-    is-date-object
-      .github
-      test
-    is-docker
-    is-extglob
-    is-finalizationregistry
-      .github
-      test
-    is-fullwidth-code-point
-    is-generator-fn
-    is-generator-function
-      test
-    is-glob
-    is-map
-      .github
-      test
-    is-module
-    is-number
-    is-number-object
-      .github
-      test
-    is-obj
-    is-path-inside
-    is-plain-obj
-    is-potential-custom-element-name
-    is-regex
-      test
-    is-regexp
-    is-root
-    is-set
-      .github
-      test
-    is-shared-array-buffer
-      .github
-      test
-    is-stream
-    is-string
-      .github
-      test
-    is-symbol
-      .github
-      test
-    is-typed-array
-      .github
-      test
-    is-typedarray
-    is-weakmap
-      .github
-      test
-    is-weakref
-      .github
-      test
-    is-weakset
-      .github
-      test
-    is-wsl
-    isarray
-    isexe
-      test
-    istanbul-lib-coverage
-      lib
-    istanbul-lib-instrument
-      node_modules
-      src
-    istanbul-lib-report
-      lib
-      node_modules
-    istanbul-lib-source-maps
-      lib
-      node_modules
-    istanbul-reports
-      lib
-    iterator.prototype
-      .github
-      test
-    jackspeak
-      dist
-    jake
-      bin
-      lib
-      test
-    jest
-      bin
-      build
-    jest-changed-files
-      build
-    jest-circus
-      build
-    jest-cli
-      bin
-      build
-    jest-config
-      build
-    jest-diff
-      build
-    jest-docblock
-      build
-    jest-each
-      build
-    jest-environment-jsdom
-      build
-    jest-environment-node
-      build
-    jest-get-type
-      build
-    jest-haste-map
-      build
-    jest-jasmine2
-      build
-    jest-leak-detector
-      build
-    jest-matcher-utils
-      build
-    jest-message-util
-      build
-    jest-mock
-      build
-    jest-pnp-resolver
-    jest-regex-util
-      build
-    jest-resolve
-      build
-    jest-resolve-dependencies
-      build
-    jest-runner
-      build
-    jest-runtime
-      build
-    jest-serializer
-      build
-    jest-snapshot
-      build
-    jest-util
-      build
-    jest-validate
-      build
-    jest-watch-typeahead
-      build
-      node_modules
-    jest-watcher
-      build
-    jest-worker
-      build
-      node_modules
-    jiti
-      bin
-      dist
-      lib
-    js-tokens
-    js-yaml
-      bin
-      dist
-      lib
-    jsdom
-      lib
-    jsesc
-      bin
-      man
-    json-buffer
-      test
-    json-parse-even-better-errors
-    json-schema
-      lib
-    json-schema-traverse
-      spec
-    json-stable-stringify-without-jsonify
-      example
-      test
-    json5
-      dist
-      lib
-    jsonfile
-    jsonpath
-      bin
-      generated
-      include
-      lib
-      node_modules
-      test
-    jsonpointer
-    jsx-ast-utils
-      .github
-      __tests__
-      lib
-      src
-    keyv
-      src
-    kind-of
-    kleur
-    klona
-      dist
-      full
-      json
-      lite
-    language-subtag-registry
-      data
-    language-tags
-      lib
-    launch-editor
-      editor-info
-    leven
-    levn
-      lib
-    lilconfig
-      dist
-    lines-and-columns
-      build
-    loader-runner
-      lib
-    loader-utils
-      lib
-    locate-path
-    lodash
-      fp
-    lodash.debounce
-    lodash.memoize
-    lodash.merge
-    lodash.sortby
-    lodash.uniq
-    loose-envify
-    lower-case
-      dist
-      dist.es2015
-    lru-cache
-    magic-string
-      dist
-    make-dir
-      node_modules
-    makeerror
-      lib
-    math-intrinsics
-      .github
-      constants
-      test
-    mdn-data
-      api
-      css
-      l10n
-    media-typer
-    memfs
-      lib
-    merge-descriptors
-    merge-stream
-    merge2
-    methods
-    micromatch
-    mime
-      src
-    mime-db
-    mime-types
-    mimic-fn
-    mini-css-extract-plugin
-      dist
-      types
-    minimalistic-assert
-    minimatch
-    minimist
-      .github
-      example
-      test
-    minipass
-      dist
-    mkdirp
-      bin
-    ms
-    multicast-dns
-    mz
-    nanoid
-      async
-      bin
-      non-secure
-      url-alphabet
-    natural-compare
-    natural-compare-lite
-    negotiator
-      lib
-    neo-async
-    no-case
-      dist
-      dist.es2015
-    node-forge
-      dist
-      flash
-      lib
-    node-int64
-    node-releases
-      data
-    normalize-path
-    normalize-range
-    normalize-url
-    npm-run-path
-    nth-check
-      lib
-    nwsapi
-      dist
-      src
-    object-assign
-    object-hash
-      dist
-    object-inspect
-      .github
-      example
-      test
-    object-keys
-      test
-    object.assign
-      .github
-      dist
-      test
-    object.entries
-      test
-    object.fromentries
-      test
-    object.getownpropertydescriptors
-      test
-    object.groupby
-      .github
-      test
-    object.values
-      test
-    obuf
-      test
-    on-finished
-    on-headers
-    once
-    onetime
-    open
-    optionator
-      lib
-    own-keys
-      .github
-      test
-    p-limit
-    p-locate
-    p-retry
-    p-try
-    package-json-from-dist
-      dist
-    param-case
-      dist
-      dist.es2015
-    parent-module
-    parse-json
-    parse5
-      lib
-    parseurl
-    pascal-case
-      dist
-      dist.es2015
-    path-exists
-    path-is-absolute
-    path-key
-    path-parse
-    path-scurry
-      dist
-      node_modules
-    path-to-regexp
-    path-type
-    performance-now
-      lib
-      src
-      test
-    picocolors
-    picomatch
-      lib
-    pify
-    pirates
-      lib
-    pkg-dir
-    pkg-up
-      node_modules
-    possible-typed-array-names
-      .github
-      test
-    postcss
-      lib
-    postcss-attribute-case-insensitive
-      dist
-    postcss-browser-comments
-    postcss-calc
-      src
-      types
-    postcss-clamp
-    postcss-color-functional-notation
-      dist
-    postcss-color-hex-alpha
-      dist
-    postcss-color-rebeccapurple
-      dist
-    postcss-colormin
-      src
-      types
-    postcss-convert-values
-      src
-      types
-    postcss-custom-media
-      dist
-    postcss-custom-properties
-      dist
-    postcss-custom-selectors
-      dist
-    postcss-dir-pseudo-class
-      dist
-    postcss-discard-comments
-      src
-      types
-    postcss-discard-duplicates
-      src
-      types
-    postcss-discard-empty
-      src
-      types
-    postcss-discard-overridden
-      src
-    postcss-double-position-gradients
-      dist
-    postcss-env-function
-      dist
-    postcss-flexbugs-fixes
-      bugs
-    postcss-focus-visible
-      dist
-    postcss-focus-within
-      dist
-    postcss-font-variant
-    postcss-gap-properties
-      dist
-    postcss-image-set-function
-      dist
-    postcss-import
-      lib
-    postcss-initial
-      .github
-      .vscode
-      lib
-      ~
-    postcss-js
-    postcss-lab-function
-      dist
-    postcss-load-config
-      node_modules
-      src
-    postcss-loader
-      dist
-    postcss-logical
-      dist
-    postcss-media-minmax
-    postcss-merge-longhand
-      src
-      types
-    postcss-merge-rules
-      src
-      types
-    postcss-minify-font-values
-      src
-      types
-    postcss-minify-gradients
-      src
-      types
-    postcss-minify-params
-      src
-      types
-    postcss-minify-selectors
-      src
-      types
-    postcss-modules-extract-imports
-      src
-    postcss-modules-local-by-default
-      node_modules
-      src
-    postcss-modules-scope
-      node_modules
-      src
-    postcss-modules-values
-      src
-    postcss-nested
-    postcss-nesting
-      dist
-    postcss-normalize
-    postcss-normalize-charset
-      src
-      types
-    postcss-normalize-display-values
-      src
-      types
-    postcss-normalize-positions
-      src
-      types
-    postcss-normalize-repeat-style
-      src
-      types
-    postcss-normalize-string
-      src
-      types
-    postcss-normalize-timing-functions
-      src
-      types
-    postcss-normalize-unicode
-      src
-      types
-    postcss-normalize-url
-      src
-      types
-    postcss-normalize-whitespace
-      src
-      types
-    postcss-opacity-percentage
-    postcss-ordered-values
-      src
-      types
-    postcss-overflow-shorthand
-      dist
-    postcss-page-break
-    postcss-place
-      dist
-    postcss-preset-env
-      dist
-    postcss-pseudo-class-any-link
-      dist
-    postcss-reduce-initial
-      src
-      types
-    postcss-reduce-transforms
-      src
-      types
-    postcss-replace-overflow-wrap
-    postcss-selector-not
-      dist
-    postcss-selector-parser
-      dist
-    postcss-svgo
-      node_modules
-      src
-      types
-    postcss-unique-selectors
-      src
-      types
-    postcss-value-parser
-      lib
-    prelude-ls
-      lib
-    pretty-bytes
-    pretty-error
-      .github
-      lib
-      src
-      test
-    pretty-format
-      build
-      node_modules
-    process-nextick-args
-    promise
-      domains
-      lib
-      setimmediate
-      src
-    prompts
-      dist
-      lib
-    prop-types
-      lib
-      node_modules
-    proxy-addr
-      node_modules
-    psl
-      data
-      dist
-      types
-    punycode
-    q
-    qs
-      .github
-      dist
-      lib
-      test
-    querystringify
-    queue-microtask
-    raf
-    randombytes
-    range-parser
-    raw-body
-      node_modules
-    react
-      cjs
-      umd
-    react-app-polyfill
-      node_modules
-    react-dev-utils
-      node_modules
-    react-dom
-      cjs
-      umd
-    react-error-overlay
-      lib
-    react-is
-      cjs
-      umd
-    react-refresh
-      cjs
-    react-router
-      dist
-      node_modules
-    react-router-dom
-      dist
-    react-scripts
-      bin
-      config
-      lib
-      scripts
-      template
-      template-typescript
-    read-cache
-    readable-stream
-      lib
-    readdirp
-    recursive-readdir
-    reflect.getprototypeof
-      test
-    regenerate
-    regenerate-unicode-properties
-      Binary_Property
-      General_Category
-      Property_of_Strings
-      Script
-      Script_Extensions
-    regenerator-runtime
-    regenerator-transform
-      lib
-      src
-    regex-parser
-      lib
-    regexp.prototype.flags
-      test
-    regexpu-core
-      data
-    regjsgen
-    regjsparser
-      bin
-      node_modules
-    relateurl
-      lib
-    renderkid
-      docs
-      lib
-    require-directory
-    require-from-string
-    requires-port
-    resolve
-      .github
-      bin
-      example
-      lib
-      test
-    resolve-cwd
-    resolve-from
-    resolve-url-loader
-      docs
-      lib
-      node_modules
-    resolve.exports
-      dist
-    retry
-      example
-      lib
-    reusify
-      .github
-      benchmarks
-    rimraf
-    rollup
-      dist
-    rollup-plugin-terser
-      node_modules
-    run-parallel
-    safe-array-concat
-      .github
-      test
-    safe-buffer
-    safe-push-apply
-      .github
-      test
-    safe-regex-test
-      .github
-      test
-    safer-buffer
-    sanitize.css
-    sass-loader
-      dist
-    sax
-      lib
-    saxes
-    scheduler
-      cjs
-      umd
-    schema-utils
-      declarations
-      dist
-      node_modules
-    select-hose
-      lib
-      test
-    selfsigned
-      test
-    semver
-      bin
-      classes
-      functions
-      internal
-      ranges
-    send
-      node_modules
-    serialize-javascript
-    serve-index
-      node_modules
-      public
-    serve-static
-    set-cookie-parser
-      lib
-    set-function-length
-      .github
-    set-function-name
-      .github
-    set-proto
-      .github
-      test
-    setprototypeof
-      test
-    shebang-command
-    shebang-regex
-    shell-quote
-      .github
-      test
-    side-channel
-      .github
-      test
-    side-channel-list
-      .github
-      test
-    side-channel-map
-      .github
-      test
-    side-channel-weakmap
-      .github
-      test
-    signal-exit
-    sisteransi
-      src
-    slash
-    sockjs
-      lib
-    source-list-map
-      lib
-    source-map
-      dist
-      lib
-    source-map-js
-      lib
-    source-map-loader
-      dist
-    source-map-support
-      node_modules
-    sourcemap-codec
-      dist
-    spdy
-      lib
-      test
-    spdy-transport
-      lib
-    sprintf-js
-      demo
-      dist
-      src
-      test
-    stable
-    stack-utils
-      node_modules
-    stackframe
-      dist
-    static-eval
-      example
-      node_modules
-      test
-    statuses
-    string-length
-    string-natural-compare
-    string-width
-      node_modules
-    string-width-cjs
-      node_modules
-    string.prototype.includes
-      .github
-      tests
-    string.prototype.matchall
-      .github
-      test
-    string.prototype.repeat
-      tests
-    string.prototype.trim
-      test
-    string.prototype.trimend
-      test
-    string.prototype.trimstart
-      test
-    string_decoder
-      lib
-    stringify-object
-    strip-ansi
-    strip-ansi-cjs
-    strip-bom
-    strip-comments
-      lib
-    strip-final-newline
-    strip-json-comments
-    style-loader
-      dist
-    stylehacks
-      src
-      types
-    sucrase
-      bin
-      dist
-      node_modules
-      register
-      ts-node-plugin
-    supports-color
-    supports-hyperlinks
-    supports-preserve-symlinks-flag
-      .github
-      test
-    svg-parser
-      dist
-    svgo
-      bin
-      lib
-      node_modules
-      plugins
-    symbol-tree
-      lib
-    tailwindcss
-      lib
-      nesting
-      node_modules
-      peers
-      scripts
-      src
-      stubs
-      types
-    tapable
-      lib
-    temp-dir
-    tempy
-      node_modules
-    terminal-link
-    terser
-      bin
-      dist
-      lib
-      node_modules
-      tools
-    terser-webpack-plugin
-      dist
-      types
-    test-exclude
-    text-table
-      example
-      test
-    thenify
-    thenify-all
-    throat
-    thunky
-    tmpl
-      lib
-    to-regex-range
-    toidentifier
-    tough-cookie
-      lib
-      node_modules
-    tr46
-      lib
-    tryer
-      lib
-      src
-      test
-    ts-interface-checker
-      dist
-    tsconfig-paths
-      lib
-      node_modules
-      src
-    tslib
-      modules
-    tsutils
-      node_modules
-      typeguard
-      util
-    turbo-stream
-      dist
-    type-check
-      lib
-    type-detect
-    type-fest
-      source
-      ts41
-    type-is
-    typed-array-buffer
-      .github
-      test
-    typed-array-byte-length
-      .github
-      test
-    typed-array-byte-offset
-      .github
-      test
-    typed-array-length
-      .github
-      test
-    typedarray-to-buffer
-      test
-    typescript
-      bin
-      lib
-    unbox-primitive
-      .github
-      test
-    underscore
-      amd
-      cjs
-      modules
-    undici-types
-    unicode-canonical-property-names-ecmascript
-    unicode-match-property-ecmascript
-    unicode-match-property-value-ecmascript
-      data
-    unicode-property-aliases-ecmascript
-    unique-string
-    universalify
-    unpipe
-    unquote
-    upath
-      build
-    update-browserslist-db
-    uri-js
-      dist
-    url-parse
-      dist
-    util-deprecate
-    util.promisify
-      .github
-    utila
-      lib
-      test
-    utils-merge
-    uuid
-      dist
-    v8-to-istanbul
-      lib
-      node_modules
-    vary
-    w3c-hr-time
-      lib
-    w3c-xmlserializer
-      lib
-    walker
-      lib
-    watchpack
-      lib
-    wbuf
-      test
-    webidl-conversions
-      lib
-    webpack
-      bin
-      hot
-      lib
-      node_modules
-      schemas
-    webpack-dev-middleware
-      dist
-      types
-    webpack-dev-server
-      bin
-      client
-      lib
-      node_modules
-      types
-    webpack-manifest-plugin
-      dist
-      node_modules
-    webpack-sources
-      lib
-    websocket-driver
-      lib
-    websocket-extensions
-      lib
-    whatwg-encoding
-      lib
-      node_modules
-    whatwg-fetch
-      dist
-    whatwg-mimetype
-      lib
-    whatwg-url
-      dist
-    which
-      bin
-    which-boxed-primitive
-      .github
-      test
-    which-builtin-type
-      test
-    which-collection
-      .github
-      test
-    which-typed-array
-      .github
-      test
-    word-wrap
-    workbox-background-sync
-      build
-      lib
-      src
-    workbox-broadcast-update
-      build
-      src
-      utils
-    workbox-build
-      build
-      node_modules
-      src
-    workbox-cacheable-response
-      build
-      src
-    workbox-core
-      _private
-      build
-      models
-      src
-      utils
-    workbox-expiration
-      build
-      models
-      src
-    workbox-google-analytics
-      build
-      src
-      utils
-    workbox-navigation-preload
-      build
-      src
-    workbox-precaching
-      build
-      src
-      utils
-    workbox-range-requests
-      build
-      src
-      utils
-    workbox-recipes
-      build
-      src
-    workbox-routing
-      build
-      src
-      utils
-    workbox-strategies
-      build
-      plugins
-      src
-      utils
-    workbox-streams
-      build
-      src
-      utils
-    workbox-sw
-      build
-      controllers
-    workbox-webpack-plugin
-      build
-      node_modules
-      src
-    workbox-window
-      build
-      src
-      utils
-    wrap-ansi
-    wrap-ansi-cjs
-    wrappy
-    write-file-atomic
-    ws
-      lib
-    xml-name-validator
-      lib
-    xmlchars
-      xml
-      xmlns
-    y18n
-      build
-    yallist
-    yaml
-      browser
-      dist
-      types
-    yargs
-      build
-      helpers
-      lib
-      locales
-    yargs-parser
-      build
-    yocto-queue
-  pages
-  public
-  src
-  styles
-htmlcov
-instance
-js
-migrations
-  versions
-models
-myenv
-  bin
-  etc
-    jupyter
-      jupyter_notebook_config.d
-      jupyter_server_config.d
-      nbconfig
-  include
-    python3.12
-    site
-      python3.12
-  lib
-    python3.12
-      site-packages
-  lib64
-    python3.12
-      site-packages
-  share
-    applications
-    icons
-      hicolor
-    jupyter
-      kernels
-      lab
-      labextensions
-      nbconvert
-      nbextensions
-    man
-      man1
-    xyzservices
-notebooks
-progress
-  backups
-    tracking_backup_2025-12-29
-    tracking_backup_2025-12-30
-    tracking_backup_2025-12-31
-  daily_summaries
-  learnings
-  metrics
-progress_tracking
-scripts
-static
-  js
-    split
-tools
-venv
-  bin
-  include
-    python3.12
-    site
-      python3.12
-  lib
-    python3.12
-      site-packages
-  lib64
-    python3.12
-      site-packages
+============================================================
+PROJECT STRUCTURE
+Generated: 2026-02-07 22:16:45
+============================================================
+
+📄 .env
+📄 .env.example
+📁 .pytest_cache/
+  📁 v/
+    📁 cache/
+📁 .vscode/
+  📄 settings.json
+📄 activate_rtz_now.py
+📄 activate_rtz_routes.py
+📄 add_missing_endpoints.py
+📄 add_routes_to_map.py
+📄 add_turbine_alerts.py
+📄 app.py
+📄 app.py.backup_blueprints_20260118_151627
+📄 app.py.backup_indent
+📄 app_clean.py
+📄 app_minimal_backup.py
+📁 backend/
+  📁 .pytest_cache/
+    📁 v/
+      📁 cache/
+  📄 __init__.py
+  📄 app.js
+  📁 assets/
+    📁 ais_data/
+    📁 barentswatch_cache/
+    📁 fuel_models/
+    📁 route_data/
+      📁 processed/
+        📄 all_routes_data.json
+        📄 processing_stats.json
+    📁 routeinfo_routes/
+      📁 _final_organized/
+        📁 alesund/
+        📁 andalsnes/
+        📁 bergen/
+        📁 drammen/
+        📁 flekkefjord/
+        📁 kristiansand/
+        📁 oslo/
+        📁 sandefjord/
+        📁 stavanger/
+        📁 trondheim/
+      📁 alesund/
+        📁 extracted/
+        📁 raw/
+      📁 andalsnes/
+        📁 extracted/
+        📁 raw/
+      📁 bergen/
+        📁 extracted/
+        📁 raw/
+      📁 drammen/
+        📁 extracted/
+        📁 raw/
+      📁 flekkefjord/
+        📁 extracted/
+        📁 raw/
+      📁 kristiansand/
+        📁 extracted/
+        📁 raw/
+      📁 oslo/
+        📁 extracted/
+        📁 raw/
+      📁 sandefjord/
+        📁 extracted/
+        📁 raw/
+      📁 stavanger/
+        📁 extracted/
+        📁 raw/
+      📁 trondheim/
+        📁 extracted/
+        📁 raw/
+    📁 weather_data/
+  📄 check_system_status.py
+  📁 config/
+    📄 config.py
+    📄 flags.py
+  📁 controllers/
+    📄 __init__.py
+    📄 cruise_controller.py
+    📄 maritime_controller.py
+    📄 route_controller.py
+    📄 route_leg_controller.py
+  📄 dashboard_fix.py
+  📄 dashboard_route_final.py
+  📄 emergency_rtz_route.py
+  📄 extensions.py
+  📄 fixed_dashboard_route.py
+  📁 middleware/
+    📄 api_key_auth.py
+    📄 request_id.py
+  📁 ml/
+    📄 __init__.py
+    📄 eem_roi_analyzer.py
+    📄 enhanced_fuel_optimizer.py
+    📄 recommendation_engine.py
+    📄 route_analysis.py
+    📄 validation_engine.py
+  📁 models/
+    📄 __init__.py
+    📄 base_route.py
+    📄 clock.py
+    📄 cruise.py
+    📄 fuel_efficiency.py
+    📄 hazard_zone.py
+    📄 locations.py
+    📄 maritime_route.py
+    📄 port.py
+    📄 route.py
+    📄 route_file.py
+    📄 route_leg.py
+    📄 ship.py
+    📄 ship_coefficients.py
+    📄 voyage_leg.py
+    📄 waypoint.py
+    📄 weather_status.py
+  📄 package.json
+  📁 routes/
+    📄 __init__.py
+    📄 analytics_routes.py
+    📄 api_analytics.py
+    📄 api_vessels.py
+    📄 api_weather.py
+    📄 cruise_routes.py
+    📄 empirical_analysis_routes.py
+    📄 main_routes.py
+    📄 maritime_api.py 
+    📄 maritime_routes.py
+    📄 maritime_routes.py.ais_fix_backup
+    📄 maritime_routes.py.backup
+    📄 maritime_routes.py.backup_final
+    📄 maritime_routes.py.backup_pre_fix
+    📄 maritime_routes.py.backup_redirect_fix
+    📄 maritime_routes.py.endpoints_backup
+    📄 maritime_routes.py.final_backup
+    📄 ml_routes.py
+    📄 nca_routes.py
+    📄 recommendation_routes.py
+    📄 route_routes.py
+    📄 rtz_data_api.py
+    📄 scientific_api.py
+    📄 simulation_routes.py
+    📄 system_dashboard.py
+    📄 system_routes.py
+    📄 turbine_api.py
+    📄 weather_forecast.py
+    📄 weather_routes.py
+    📄 weather_simple.py
+  📄 rtz_loader_fixed.py
+  📁 services/
+    📄 __init__.py
+    📄 ais_service.py
+    📄 alerts_service.py
+    📄 async_executor.py
+    📄 barentswatch_service.py
+    📄 cleanup.py
+    📄 cruise_service.py
+    📄 data_integration_service.py
+    📄 empirical_ais_service.py
+    📄 empirical_data_analyzer.py
+    📄 empirical_visualization.py
+    📄 empirical_weather.py
+    📄 fuel_optimizer_service.py
+    📄 fuel_service.py
+    📄 geocode_service.py
+    📄 hazard_service.py
+    📄 kystdatahuset_adapter.py
+    📄 kystdatahuset_adapter.py.complete_backup
+    📄 kystverket_ais_service.py
+    📄 maritime_service.py
+    📄 met_norway_service.py
+    📄 port_service.py
+    📄 recommendation_engine.py
+    📄 risk_engine.py
+    📄 route_evaluator.py
+    📄 route_leg_service.py
+    📄 route_service.py
+    📄 rtz_generator.py
+    📄 rtz_integration.py
+    📄 rtz_loader_fixed.py
+    📄 rtz_parser.py
+    📄 schedule_service.py
+    📄 scientific_truth_service.py
+    📄 sea_depth_service.py
+    📄 smart_weather_service.py
+    📄 timezone_service.py
+    📄 validation_service.py
+    📄 vessel_capture_service.py
+    📄 weather_dl.py
+    📄 weather_integration_service.py
+    📄 weather_service.py
+    📄 weather_sync.py
+  📁 simulation/
+    📄 __init__.py
+    📄 bergen_simulator.py
+    📄 integrated_simulator.py
+    📄 realtime_simulator.py
+  📁 static/
+    📁 css/
+      📄 dashboard.css
+      📁 split/
+        📄 map.css
+        📄 nca_routes.css
+        📄 simulation.css
+      📄 styles.css
+    📁 data/
+      📄 empirical_report.json
+      📄 frontend_rtz_data.json
+      📄 rtz_detailed_summary.json
+      📄 rtz_empirical_stats.json
+    📁 images/
+    📁 js/
+      📄 dashboard.js
+      📄 maritime.js
+      📁 split/
+        📄 ais_performance.js
+        📄 ais_realtime.js
+        📄 dashboard_controls.js
+        📄 dashboard_routes.js
+        📄 dashboard_utils.js 
+        📄 empirical_route_map.js
+        📄 enhanced_dashboard_buttons.js
+        📄 fix_dancing_markers.js
+        📄 hazard_data.js
+        📄 init_routes.js:
+        📄 maritime_analytics.js
+        📄 maritime_core.js
+        📄 maritime_map.js
+        📄 maritime_map.js.backup
+        📄 maritime_map.js.routes_backup
+        📄 maritime_weather.js
+        📄 nca_routes.js
+        📄 routes_on_map.js
+        📄 rtz_routes.js
+        📄 rtz_routes_enhanced.js
+        📄 rtz_routes_fixed.js
+        📄 rtz_waypoints.js
+        📄 scientific_norwegian_routes.js
+        📄 simple_route_map.js
+        📄 simulation_core.js
+        📄 simulation_core.js.backup
+        📄 simulation_enhanced.js
+        📄 system_health.js
+        📄 system_monitoring.js
+        📄 tanker_monitoring.js
+        📄 turbine_alerts.js
+        📄 wind_turbines_realtime.js
+      📄 test_rtz_data.js
+  📁 templates/
+    📄 base.html
+    📄 error.html
+    📄 home.html
+    📄 legal.html
+    📁 maritime/
+      📄 home.html
+      📄 ports.html
+      📄 vessels.html
+    📁 maritime_split/
+      📄 alerts_block.html
+      📄 dashboard_base.html
+      📄 dashboard_base.html.backup
+      📄 dashboard_base.html.backup_pre_fix
+      📄 realtime_simulation.html
+      📄 realtime_simulation.html.backup
+      📄 realtime_simulation.html.backup_20260118_134159
+      📄 realtime_simulation.html.backup_20260118_134748
+      📄 realtime_simulation.html.backup_20260118_140244
+      📄 realtime_simulation.html.complete_fix_20260118_142914
+      📄 realtime_simulation.html.error_fix_20260118_141601
+      📄 realtime_simulation.html.fast_search_backup_20260118_141050
+      📄 realtime_simulation.html.loading_fix_20260118_141401
+      📄 simulation_integration.html
+    📄 routes.html
+    📄 view.html 
+  📄 test_dashboard_route.py
+  📁 tests/
+    📄  test_integration.py
+    📁 .pytest_cache/
+      📁 v/
+        📁 cache/
+    📄 conftest.py
+    📄 conftest_sqlite.py
+    📄 test_barentswatch.py
+    📄 test_basic_models.py
+    📄 test_cruise.py
+    📄 test_cruise_service.py
+    📄 test_i18n.py
+    📄 test_route_evaluator.py
+    📄 test_rtz_parser.py
+    📄 test_translations.py
+    📄 test_user.py
+  📁 translations/
+    📁 en/
+      📁 LC_MESSAGES/
+    📁 no/
+      📁 LC_MESSAGES/
+  📁 utils/
+    📄 __init__.py
+    📄 distance_utils.py
+    📄 empirical_rtz_data.py
+    📄 helpers.py
+    📄 port_coordinates.py
+    📄 route_deduplicator.py
+    📄 rtz_filename_parser.py
+    📄 rtz_loader.py
+    📄 translations.py
+    📁 utils/
+      📄 db_check.py
+📁 backups/
+  📁 template_backup_20260118_145308/
+    📄 realtime_simulation.html
+📄 barentswatch_test_20251225_115245.json
+📄 check_config.py
+📄 check_dashboard.py
+📄 check_dashboard_data.py
+📄 check_database_reality.py
+📄 check_migration_health.py
+📄 check_real_routes.py
+📄 check_reality.py
+📄 check_results.py
+📄 check_routes.py
+📄 check_rtz_format.py
+📄 check_secret.py
+📄 complete_port_fix.py
+📄 comprehensive_test.py
+📄 correct_api_test.py
+📄 create_data_inventory.py
+📁 data/
+📁 database/
+  📄 models.py
+  📁 seeders/
+    📄 seed_baltic_routes.py
+📄 debug_health_endpoint.py
+📄 debug_server.py
+📄 debug_simulation.js
+📄 dev_check.py
+📄 diagnose_rtz_issue.py
+📁 docs/
+📄 example.env
+📁 export_chunks/
+📄 export_structure.py
+📄 final_complete_fix.py
+📄 final_fix.py
+📄 final_rtz_reorganization.py
+📄 final_system_test.py
+📄 find_real_count.py
+📄 fix_ais_adapter.py
+📄 fix_ais_api.py
+📄 fix_ais_complete.py
+📄 fix_all_issues_final.py
+📄 fix_and_activate_rtz.py
+📄 fix_clock_and_map.py
+📄 fix_dashboard_complete.py
+📄 fix_dashboard_final.py
+📄 fix_dashboard_routes.py
+📄 fix_duplicate.py
+📄 fix_duplicates.py
+📄 fix_exact_route.py
+📄 fix_final_issues.py
+📄 fix_health_endpoint.py
+📄 fix_indentation.py
+📄 fix_map_conflict.py
+📄 fix_map_routes_display.py
+📄 fix_maritime_routes_now.py
+📄 fix_maritime_simulation.py
+📄 fix_maritime_system.py
+📄 fix_port_names.py
+📄 fix_route_realistic.py
+📄 fix_route_with_actual_data.py
+📄 fix_rtz_duplicates.py
+📄 fix_rtz_integration.py
+📄 fix_rtz_integration_smart.py
+📄 fix_rtz_properly.py
+📄 fix_rtz_routes.py
+📄 fix_rtz_structure.py
+📄 fix_simulation.py
+📄 fix_simulation_conflict.py
+📄 fix_simulation_issues.py
+📄 fix_simulation_loading.py
+📄 fix_simulation_now.py
+📄 fix_simulation_priority.py
+📄 fix_simulation_redirect.py
+📄 fix_simulation_template.py
+📄 fix_slow_search.py
+📄 fix_template_completely.py
+📄 fix_template_error.py
+📄 fix_vessel_movement.py
+📄 fix_xml_encoding.py
+📁 frontend/
+  📄 app.js
+  📁 components/
+  📁 hooks/
+    📄 useMaritimeData.js
+  📄 package-lock.json
+  📄 package.json
+  📁 pages/
+    📄 cruise_page.js
+    📄 home.js
+  📁 public/
+    📄 index_dev.html
+  📁 src/
+    📄 app.js
+    📄 index.js
+  📁 styles/
+📄 full_system_check.py
+📄 git_progress_tracker.py
+📁 htmlcov/
+  📄 class_index.html
+  📄 coverage_html_cb_6fb7b396.js
+  📄 function_index.html
+  📄 index.html
+  📄 status.json
+  📄 style_cb_6b508a39.css
+  📄 z_01dd67fa7b8b55fc_config_py.html
+  📄 z_32d2f3d4ade576b8___init___py.html
+  📄 z_32d2f3d4ade576b8_cruise_controller_py.html
+  📄 z_32d2f3d4ade576b8_route_controller_py.html
+  📄 z_32d2f3d4ade576b8_route_leg_controller_py.html
+  📄 z_9b5d3c41184f4a9e_conftest_py.html
+  📄 z_9b5d3c41184f4a9e_test_basic_models_py.html
+  📄 z_9b5d3c41184f4a9e_test_cruise_py.html
+  📄 z_9b5d3c41184f4a9e_test_cruise_service_py.html
+  📄 z_9b5d3c41184f4a9e_test_i18n_py.html
+  📄 z_9b5d3c41184f4a9e_test_route_evaluator_py.html
+  📄 z_9b5d3c41184f4a9e_test_rtz_parser_py.html
+  📄 z_9b5d3c41184f4a9e_test_translations_py.html
+  📄 z_9b5d3c41184f4a9e_test_user_py.html
+  📄 z_9bac48a786dfeb07_distance_utils_py.html
+  📄 z_9bac48a786dfeb07_helpers_py.html
+  📄 z_9bac48a786dfeb07_translations_py.html
+  📄 z_aba382f251737ef1_enhanced_fuel_optimizer_py.html
+  📄 z_aba382f251737ef1_recommendation_engine_py.html
+  📄 z_b1f7975383736f06_api_key_auth_py.html
+  📄 z_b30b2a2b489f4b9c___init___py.html
+  📄 z_b30b2a2b489f4b9c_analytics_routes_py.html
+  📄 z_b30b2a2b489f4b9c_cruise_routes_py.html
+  📄 z_b30b2a2b489f4b9c_dashboard_routes_py.html
+  📄 z_b30b2a2b489f4b9c_main_routes_py.html
+  📄 z_b30b2a2b489f4b9c_maritime_routes_py.html
+  📄 z_b30b2a2b489f4b9c_ml_routes_py.html
+  📄 z_b30b2a2b489f4b9c_route_routes_py.html
+  📄 z_b30b2a2b489f4b9c_system_routes_py.html
+  📄 z_b30b2a2b489f4b9c_weather_routes_py.html
+  📄 z_bc41b973ac597a35___init___py.html
+  📄 z_bc41b973ac597a35_base_route_py.html
+  📄 z_bc41b973ac597a35_clock_py.html
+  📄 z_bc41b973ac597a35_cruise_py.html
+  📄 z_bc41b973ac597a35_fuel_efficiency_py.html
+  📄 z_bc41b973ac597a35_hazard_zone_py.html
+  📄 z_bc41b973ac597a35_locations_py.html
+  📄 z_bc41b973ac597a35_port_py.html
+  📄 z_bc41b973ac597a35_route_file_py.html
+  📄 z_bc41b973ac597a35_route_leg_py.html
+  📄 z_bc41b973ac597a35_route_py.html
+  📄 z_bc41b973ac597a35_ship_coefficients_py.html
+  📄 z_bc41b973ac597a35_ship_py.html
+  📄 z_bc41b973ac597a35_voyage_leg_py.html
+  📄 z_bc41b973ac597a35_waypoint_py.html
+  📄 z_bc41b973ac597a35_weather_status_py.html
+  📄 z_d0e9dd6af06f5f6e_async_executor_py.html
+  📄 z_d0e9dd6af06f5f6e_cleanup_py.html
+  📄 z_d0e9dd6af06f5f6e_cruise_service_py.html
+  📄 z_d0e9dd6af06f5f6e_fuel_optimizer_service_py.html
+  📄 z_d0e9dd6af06f5f6e_geocode_service_py.html
+  📄 z_d0e9dd6af06f5f6e_port_service_py.html
+  📄 z_d0e9dd6af06f5f6e_route_evaluator_py.html
+  📄 z_d0e9dd6af06f5f6e_route_leg_service_py.html
+  📄 z_d0e9dd6af06f5f6e_rtz_parser_py.html
+  📄 z_d0e9dd6af06f5f6e_timezone_service_py.html
+  📄 z_e17dcb4e28158375___init___py.html
+  📄 z_e17dcb4e28158375_extensions_py.html
+📄 init_db.py
+📁 instance/
+📁 js/
+📄 migration_check.py
+📁 migrations/
+  📄 env.py
+  📄 script.py.mako
+  📁 versions/
+    📄 0b4f4042af4f_תיאור_השינוי_שלך_למשל_add_round_trip_.py
+    📄 1994cf7c86ef_add_is_active_to_voyage_legs.py
+    📄 1ee0ff605ab8_add_rtz_columns_to_routes_table.py
+    📄 30ae1c7fcabc_add_rtz_columns_to_routes_table_final_.py
+    📄 3355c0cd0f82_safe_migrate_ports_and_voyage_legs.py
+    📄 3652ea3139e5_add_missing_rtz_columns_to_routes_table.py
+    📄 3652ea3139e5_add_missing_rtz_columns_to_routes_table.py.save
+    📄 3719a673908a_safe_migrate_ports_and_voyage_legs_with_.py
+    📄 42a73ecc6ca6_add_ships_and_fuel_efficiency_tables_.py
+    📄 43f4e680661d_add_country_field_to_ports_and_update_.py
+    📄 446506ff1f1c_add_ships_table_with_methanol_support.py
+    📄 446d55e96113_merge_heads_to_resolve_conflicts.py
+    📄 453d5441d5c5_add_origin_and_capacity_to_cruises.py
+    📄 47e13818c202_add_geo_fields_to_cruises_and_voyage_.py
+    📄 47e53f867723_safe_migration_fix_duplicate_columns.py
+    📄 4cb5b0079192_add_routes_and_route_legs_tables.py
+    📄 4f8d4be9d672_safe_migrate_ports_and_voyage_legs.py
+    📄 4fc5d623bb68_add_route_id_to_voyage_legs.py
+    📄 56456e05a868_add_ship_coefficients_and_enhance_ships.py
+    📄 5b8991110124_add_weather_statuses_table.py
+    📄 5c1c13b2b6b7_safe_migrate_voyage_legs_ports_foreign_.py
+    📄 5e69322f5e60_merge_all_heads_before_adding_port_id_.py
+    📄 5eeab2e5bad5_add_distance_nm_to_voyage_legs.py
+    📄 631b182f345c_safely_add_port_foreign_keys_with_.py
+    📄 68429fc567a8_.py
+    📄 6a6bc2167b89_restore_locations_and_related_changes.py
+    📄 6ee84f482a42_add_origin_destination_to_routes.py
+    📄 6fbb0ab73f2a_add_ship_models_fuel_efficiency_and_fix_.py
+    📄 71ffae1c4569_update_voyage_leg_and_base_routes.py
+    📄 722cef555736_real_unified_maritime_model.py
+    📄 7c647aadeec2_add_country_column_to_port.py
+    📄 7dcdbb4940dc_add_clock_model_and_relationship_to_.py
+    📄 8a9851ba6148_remove_user_id_and_cruise_id_from_.py
+    📄 8dc99e5c91de_add_dummy_users_table.py
+    📄 8ed5e3acc939_make_cruise_id_nullable_in_voyage_legs.py
+    📄 968f83e64475_add_route_and_hazard_tables.py
+    📄 9e1084ea028f_populate_ship_coefficients_with_maersk_.py
+    📄 a2668fb2c079_safe_add_ports_and_voyage_legs_foreign_.py
+    📄 a9200514a6ca_remove_unused_user_and_payment_models.py
+    📄 aa24f01c8ce5_add_columns_to_payments_table.py
+    📄 aebb30329dab_merge_conflicting_heads.py
+    📄 af55ca751c7c_merge_multiple_heads.py
+    📄 b4b712744049_add_rtz_fields_to_route_model.py
+    📄 bbee1932f444_add_ship_models_fuel_efficiency_fixed.py
+    📄 bfd27dfe1413_add_extended_fields_to_dummy_users.py
+    📄 c51fcc0031b7_safe_migrate_ports_and_voyage_legs_with_.py
+    📄 c5c31d9b5b15_add_nullable_departure_port_id_and_.py
+    📄 ced888ac2536_add_weather_statuses_table.py
+    📄 da8da60a714f_add_voyage_legs_table.py
+    📄 dbc244ec5744_add_cleaned_title_to_cruises.py
+    📄 dff0bc311b7c_add_nullable_departure_port_id_and_.py
+    📄 e6bf137bbda9_add_origin_to_cruises.py
+    📄 fe317af4dac5_add_is_active_to_weather_statuses.py
+    📄 rtz_final_fix_add_rtz_columns_to_routes_fixed_version.py
+    📄 rtz_sql_fix_add_rtz_columns_to_routes_manual_sql.py
+📁 models/
+📁 myenv/
+  📁 bin/
+  📁 etc/
+    📁 jupyter/
+      📁 jupyter_notebook_config.d/
+        📄 jupyterlab.json
+      📁 jupyter_server_config.d/
+        📄 jupyter-lsp-jupyter-server.json
+        📄 jupyter_server_terminals.json
+        📄 jupyterlab.json
+        📄 notebook.json
+        📄 notebook_shim.json
+      📁 nbconfig/
+        📁 notebook.d/
+  📁 include/
+    📁 python3.12/
+    📁 site/
+      📁 python3.12/
+        📁 greenlet/
+  📁 lib/
+    📁 python3.12/
+      📁 site-packages/
+        📁 APScheduler-3.11.0.dist-info/
+        📁 Flask_Migrate-3.1.0.dist-info/
+        📁 GeoAlchemy2-0.13.0.dist-info/
+        📁 IPython/
+        📁 MarkupSafe-3.0.2.dist-info/
+        📁 PIL/
+        📁 _argon2_cffi_bindings/
+        📁 _distutils_hack/
+        📁 _pytest/
+        📁 _yaml/
+        📁 absl/
+        📁 absl_py-2.3.1.dist-info/
+        📁 affine/
+        📁 affine-2.4.0.dist-info/
+        📁 alembic/
+        📁 alembic-1.15.2.dist-info/
+        📁 anyio/
+        📁 anyio-4.12.0.dist-info/
+        📁 apscheduler/
+        📁 argon2/
+        📁 argon2_cffi-25.1.0.dist-info/
+        📁 argon2_cffi_bindings-25.1.0.dist-info/
+        📁 arrow/
+        📁 arrow-1.4.0.dist-info/
+        📁 asttokens/
+        📁 asttokens-3.0.1.dist-info/
+        📁 astunparse/
+        📁 astunparse-1.6.3.dist-info/
+        📁 async_lru/
+        📁 async_lru-2.0.5.dist-info/
+        📁 attr/
+        📁 attrs/
+        📁 attrs-25.4.0.dist-info/
+        📁 babel/
+        📁 babel-2.17.0.dist-info/
+        📁 beautifulsoup4-4.14.3.dist-info/
+        📁 bitarray/
+        📁 bitarray-3.8.0.dist-info/
+        📁 bleach/
+        📁 bleach-6.3.0.dist-info/
+        📁 blinker/
+        📁 blinker-1.9.0.dist-info/
+        📁 branca/
+        📁 branca-0.8.2.dist-info/
+        📁 bs4/
+        📁 certifi/
+        📁 certifi-2025.6.15.dist-info/
+        📁 cffi/
+        📁 cffi-1.17.1.dist-info/
+        📁 charset_normalizer/
+        📁 charset_normalizer-3.4.2.dist-info/
+        📁 clang/
+        📁 click/
+        📁 click-8.1.8.dist-info/
+        📁 click_plugins/
+        📁 click_plugins-1.1.1.2.dist-info/
+        📄 click_plugins.py
+        📁 cligj/
+        📁 cligj-0.7.2.dist-info/
+        📁 comm/
+        📁 comm-0.2.3.dist-info/
+        📁 contourpy/
+        📁 contourpy-1.3.3.dist-info/
+        📁 coverage/
+        📁 coverage-7.10.6.dist-info/
+        📁 cycler/
+        📁 cycler-0.12.1.dist-info/
+        📁 dateutil/
+        📁 debugpy/
+        📁 debugpy-1.8.19.dist-info/
+        📁 decorator-5.2.1.dist-info/
+        📄 decorator.py
+        📁 defusedxml/
+        📁 defusedxml-0.7.1.dist-info/
+        📁 dotenv/
+        📁 executing/
+        📁 executing-2.2.1.dist-info/
+        📁 fastjsonschema/
+        📁 fastjsonschema-2.21.2.dist-info/
+        📁 filelock/
+        📁 filelock-3.20.0.dist-info/
+        📁 flask/
+        📁 flask-3.1.0.dist-info/
+        📁 flask_apscheduler/
+        📁 flask_apscheduler-1.13.1.dist-info/
+        📁 flask_babel/
+        📁 flask_babel-4.0.0.dist-info/
+        📁 flask_cors/
+        📁 flask_cors-6.0.2.dist-info/
+        📁 flask_login/
+        📁 flask_mail/
+        📁 flask_mail-0.10.0.dist-info/
+        📁 flask_migrate/
+        📁 flask_sqlalchemy/
+        📁 flask_sqlalchemy-3.1.1.dist-info/
+        📁 flatbuffers/
+        📁 flatbuffers-25.9.23.dist-info/
+        📁 folium/
+        📁 folium-0.20.0.dist-info/
+        📁 fontTools/
+        📁 fonttools-4.61.1.dist-info/
+        📁 fqdn/
+        📁 fqdn-1.5.1.dist-info/
+        📁 fsspec/
+        📁 fsspec-2025.12.0.dist-info/
+        📁 functorch/
+        📁 gast/
+        📁 gast-0.7.0.dist-info/
+        📁 geoalchemy2/
+        📁 geographiclib/
+        📁 geographiclib-2.0.dist-info/
+        📁 geopy/
+        📁 geopy-2.4.1.dist-info/
+        📁 google/
+        📁 google_pasta-0.2.0.dist-info/
+        📁 greenlet/
+        📁 greenlet-3.1.1.dist-info/
+        📁 grpc/
+        📁 grpcio-1.76.0.dist-info/
+        📁 h11/
+        📁 h11-0.16.0.dist-info/
+        📁 h3/
+        📁 h3-4.2.2.dist-info/
+        📁 h5py/
+        📁 h5py-3.15.1.dist-info/
+        📁 h5py.libs/
+        📁 httpcore/
+        📁 httpcore-1.0.9.dist-info/
+        📁 httpx/
+        📁 httpx-0.28.1.dist-info/
+        📁 idna/
+        📁 idna-3.10.dist-info/
+        📁 include/
+        📁 iniconfig/
+        📁 iniconfig-2.1.0.dist-info/
+        📁 ipykernel/
+        📁 ipykernel-7.1.0.dist-info/
+        📄 ipykernel_launcher.py
+        📁 ipython-9.8.0.dist-info/
+        📁 ipython_pygments_lexers-1.1.1.dist-info/
+        📄 ipython_pygments_lexers.py
+        📁 ipywidgets/
+        📁 ipywidgets-8.1.8.dist-info/
+        📁 isoduration/
+        📁 isoduration-20.11.0.dist-info/
+        📄 isympy.py
+        📁 itsdangerous/
+        📁 itsdangerous-2.2.0.dist-info/
+        📁 jedi/
+        📁 jedi-0.19.2.dist-info/
+        📁 jinja2/
+        📁 jinja2-3.1.6.dist-info/
+        📁 joblib/
+        📁 joblib-1.5.1.dist-info/
+        📁 json5/
+        📁 json5-0.12.1.dist-info/
+        📁 jsonpointer-3.0.0.dist-info/
+        📄 jsonpointer.py
+        📁 jsonschema/
+        📁 jsonschema-4.25.1.dist-info/
+        📁 jsonschema_specifications/
+        📁 jsonschema_specifications-2025.9.1.dist-info/
+        📁 jupyter-1.1.1.dist-info/
+        📄 jupyter.py
+        📁 jupyter_client/
+        📁 jupyter_client-8.7.0.dist-info/
+        📁 jupyter_console/
+        📁 jupyter_console-6.6.3.dist-info/
+        📁 jupyter_core/
+        📁 jupyter_core-5.9.1.dist-info/
+        📁 jupyter_events/
+        📁 jupyter_events-0.12.0.dist-info/
+        📁 jupyter_lsp/
+        📁 jupyter_lsp-2.3.0.dist-info/
+        📁 jupyter_server/
+        📁 jupyter_server-2.17.0.dist-info/
+        📁 jupyter_server_terminals/
+        📁 jupyter_server_terminals-0.5.3.dist-info/
+        📁 jupyterlab/
+        📁 jupyterlab-4.5.1.dist-info/
+        📁 jupyterlab_pygments/
+        📁 jupyterlab_pygments-0.3.0.dist-info/
+        📁 jupyterlab_server/
+        📁 jupyterlab_server-2.28.0.dist-info/
+        📁 jupyterlab_widgets/
+        📁 jupyterlab_widgets-3.0.16.dist-info/
+        📁 keras/
+        📁 keras-3.12.0.dist-info/
+        📁 kiwisolver/
+        📁 kiwisolver-1.4.9.dist-info/
+        📁 lark/
+        📁 lark-1.3.1.dist-info/
+        📁 lib64/
+        📁 libclang-18.1.1.dist-info/
+        📁 lxml/
+        📁 lxml-6.0.1.dist-info/
+        📁 mako/
+        📁 mako-1.3.10.dist-info/
+        📁 markdown/
+        📁 markdown-3.10.dist-info/
+        📁 markdown_it/
+        📁 markdown_it_py-4.0.0.dist-info/
+        📁 markupsafe/
+        📁 matplotlib/
+        📁 matplotlib-3.10.8.dist-info/
+        📁 matplotlib_inline/
+        📁 matplotlib_inline-0.2.1.dist-info/
+        📁 mdurl/
+        📁 mdurl-0.1.2.dist-info/
+        📁 mistune/
+        📁 mistune-3.2.0.dist-info/
+        📁 ml_dtypes/
+        📁 ml_dtypes-0.5.4.dist-info/
+        📁 mpl_toolkits/
+        📁 mpmath/
+        📁 mpmath-1.3.0.dist-info/
+        📁 namex/
+        📁 namex-0.1.0.dist-info/
+        📁 nbclient/
+        📁 nbclient-0.10.4.dist-info/
+        📁 nbconvert/
+        📁 nbconvert-7.16.6.dist-info/
+        📁 nbformat/
+        📁 nbformat-5.10.4.dist-info/
+        📁 nest_asyncio-1.6.0.dist-info/
+        📄 nest_asyncio.py
+        📁 networkx/
+        📁 networkx-3.6.1.dist-info/
+        📁 notebook/
+        📁 notebook-7.5.1.dist-info/
+        📁 notebook_shim/
+        📁 notebook_shim-0.2.4.dist-info/
+        📁 numpy/
+        📁 numpy-2.2.4.dist-info/
+        📁 numpy.libs/
+        📁 opt_einsum/
+        📁 opt_einsum-3.4.0.dist-info/
+        📁 optree/
+        📁 optree-0.18.0.dist-info/
+        📁 packaging/
+        📁 packaging-25.0.dist-info/
+        📁 pandas/
+        📁 pandas-2.2.3.dist-info/
+        📁 pandocfilters-1.5.1.dist-info/
+        📄 pandocfilters.py
+        📁 parso/
+        📁 parso-0.8.5.dist-info/
+        📁 pasta/
+        📁 pexpect/
+        📁 pexpect-4.9.0.dist-info/
+        📁 pillow-12.0.0.dist-info/
+        📁 pillow.libs/
+        📁 pip/
+        📁 pip-25.3.dist-info/
+        📁 pkg_resources/
+        📁 platformdirs/
+        📁 platformdirs-4.5.1.dist-info/
+        📁 pluggy/
+        📁 pluggy-1.6.0.dist-info/
+        📁 prometheus_client/
+        📁 prometheus_client-0.23.1.dist-info/
+        📁 prompt_toolkit/
+        📁 prompt_toolkit-3.0.52.dist-info/
+        📁 protobuf-6.33.2.dist-info/
+        📁 psutil/
+        📁 psutil-7.2.1.dist-info/
+        📁 psycopg2/
+        📁 psycopg2_binary-2.9.10.dist-info/
+        📁 psycopg2_binary.libs/
+        📁 ptyprocess/
+        📁 ptyprocess-0.7.0.dist-info/
+        📁 pure_eval/
+        📁 pure_eval-0.2.3.dist-info/
+        📄 py.py
+        📁 pyais/
+        📁 pyais-2.14.0.dist-info/
+        📁 pycparser/
+        📁 pycparser-2.22.dist-info/
+        📁 pygments/
+        📁 pygments-2.19.2.dist-info/
+        📄 pylab.py
+        📁 pyparsing/
+        📁 pyparsing-3.2.5.dist-info/
+        📁 pyproj/
+        📁 pyproj-3.7.2.dist-info/
+        📁 pyproj.libs/
+        📁 pytest/
+        📁 pytest-7.4.2.dist-info/
+        📁 pytest_cov/
+        📁 pytest_cov-5.0.0.dist-info/
+        📁 pytest_mock/
+        📁 pytest_mock-3.14.1.dist-info/
+        📁 python_dateutil-2.9.0.post0.dist-info/
+        📁 python_dotenv-1.1.0.dist-info/
+        📁 python_json_logger-4.0.0.dist-info/
+        📁 pythonjsonlogger/
+        📁 pytz/
+        📁 pytz-2025.2.dist-info/
+        📁 pyyaml-6.0.3.dist-info/
+        📁 pyzmq-27.1.0.dist-info/
+        📁 pyzmq.libs/
+        📁 rasterio/
+        📁 rasterio-1.4.3.dist-info/
+        📁 rasterio.libs/
+        📁 referencing/
+        📁 referencing-0.37.0.dist-info/
+        📁 requests/
+        📁 requests-2.32.4.dist-info/
+        📁 rfc3339_validator-0.1.4.dist-info/
+        📄 rfc3339_validator.py
+        📁 rfc3986_validator-0.1.1.dist-info/
+        📄 rfc3986_validator.py
+        📁 rfc3987_syntax/
+        📁 rfc3987_syntax-1.1.0.dist-info/
+        📁 rich/
+        📁 rich-14.2.0.dist-info/
+        📁 rpds/
+        📁 rpds_py-0.30.0.dist-info/
+        📁 scikit_learn-1.4.2.dist-info/
+        📁 scikit_learn.libs/
+        📁 scipy/
+        📁 scipy-1.16.0.dist-info/
+        📁 scipy.libs/
+        📁 seaborn/
+        📁 seaborn-0.13.2.dist-info/
+        📁 send2trash/
+        📁 send2trash-2.0.0.dist-info/
+        📁 setuptools/
+        📁 setuptools-80.9.0.dist-info/
+        📁 six-1.17.0.dist-info/
+        📄 six.py
+        📁 sklearn/
+        📁 soupsieve/
+        📁 soupsieve-2.8.1.dist-info/
+        📁 sqlalchemy/
+        📁 sqlalchemy-2.0.40.dist-info/
+        📁 stack_data/
+        📁 stack_data-0.6.3.dist-info/
+        📁 sympy/
+        📁 sympy-1.14.0.dist-info/
+        📁 tensorboard/
+        📁 tensorboard-2.20.0.dist-info/
+        📁 tensorboard_data_server/
+        📁 tensorboard_data_server-0.7.2.dist-info/
+        📁 tensorflow/
+        📁 tensorflow-2.20.0.dist-info/
+        📁 termcolor/
+        📁 termcolor-3.2.0.dist-info/
+        📁 terminado/
+        📁 terminado-0.18.1.dist-info/
+        📁 threadpoolctl-3.6.0.dist-info/
+        📄 threadpoolctl.py
+        📁 timezonefinder/
+        📁 timezonefinder-6.5.9.dist-info/
+        📁 tinycss2/
+        📁 tinycss2-1.4.0.dist-info/
+        📁 torch/
+        📁 torch-2.9.1+cpu.dist-info/
+        📁 torchgen/
+        📁 tornado/
+        📁 tornado-6.5.4.dist-info/
+        📁 traitlets/
+        📁 traitlets-5.14.3.dist-info/
+        📁 typing_extensions-4.13.0.dist-info/
+        📄 typing_extensions.py
+        📁 tzdata/
+        📁 tzdata-2025.2.dist-info/
+        📁 tzlocal/
+        📁 tzlocal-5.3.1.dist-info/
+        📁 uri_template/
+        📁 uri_template-1.3.0.dist-info/
+        📁 urllib3/
+        📁 urllib3-2.5.0.dist-info/
+        📁 wcwidth/
+        📁 wcwidth-0.2.14.dist-info/
+        📁 webcolors/
+        📁 webcolors-25.10.0.dist-info/
+        📁 webencodings/
+        📁 webencodings-0.5.1.dist-info/
+        📁 websocket/
+        📁 websocket_client-1.9.0.dist-info/
+        📁 werkzeug/
+        📁 werkzeug-3.1.3.dist-info/
+        📁 wheel/
+        📁 wheel-0.45.1.dist-info/
+        📁 widgetsnbextension/
+        📁 widgetsnbextension-4.0.15.dist-info/
+        📁 wrapt/
+        📁 wrapt-2.0.1.dist-info/
+        📁 xyzservices/
+        📁 xyzservices-2025.11.0.dist-info/
+        📁 yaml/
+        📁 zmq/
+  📁 lib64/
+    📁 python3.12/
+      📁 site-packages/
+        📁 APScheduler-3.11.0.dist-info/
+        📁 Flask_Migrate-3.1.0.dist-info/
+        📁 GeoAlchemy2-0.13.0.dist-info/
+        📁 IPython/
+        📁 MarkupSafe-3.0.2.dist-info/
+        📁 PIL/
+        📁 _argon2_cffi_bindings/
+        📁 _distutils_hack/
+        📁 _pytest/
+        📁 _yaml/
+        📁 absl/
+        📁 absl_py-2.3.1.dist-info/
+        📁 affine/
+        📁 affine-2.4.0.dist-info/
+        📁 alembic/
+        📁 alembic-1.15.2.dist-info/
+        📁 anyio/
+        📁 anyio-4.12.0.dist-info/
+        📁 apscheduler/
+        📁 argon2/
+        📁 argon2_cffi-25.1.0.dist-info/
+        📁 argon2_cffi_bindings-25.1.0.dist-info/
+        📁 arrow/
+        📁 arrow-1.4.0.dist-info/
+        📁 asttokens/
+        📁 asttokens-3.0.1.dist-info/
+        📁 astunparse/
+        📁 astunparse-1.6.3.dist-info/
+        📁 async_lru/
+        📁 async_lru-2.0.5.dist-info/
+        📁 attr/
+        📁 attrs/
+        📁 attrs-25.4.0.dist-info/
+        📁 babel/
+        📁 babel-2.17.0.dist-info/
+        📁 beautifulsoup4-4.14.3.dist-info/
+        📁 bitarray/
+        📁 bitarray-3.8.0.dist-info/
+        📁 bleach/
+        📁 bleach-6.3.0.dist-info/
+        📁 blinker/
+        📁 blinker-1.9.0.dist-info/
+        📁 branca/
+        📁 branca-0.8.2.dist-info/
+        📁 bs4/
+        📁 certifi/
+        📁 certifi-2025.6.15.dist-info/
+        📁 cffi/
+        📁 cffi-1.17.1.dist-info/
+        📁 charset_normalizer/
+        📁 charset_normalizer-3.4.2.dist-info/
+        📁 clang/
+        📁 click/
+        📁 click-8.1.8.dist-info/
+        📁 click_plugins/
+        📁 click_plugins-1.1.1.2.dist-info/
+        📄 click_plugins.py
+        📁 cligj/
+        📁 cligj-0.7.2.dist-info/
+        📁 comm/
+        📁 comm-0.2.3.dist-info/
+        📁 contourpy/
+        📁 contourpy-1.3.3.dist-info/
+        📁 coverage/
+        📁 coverage-7.10.6.dist-info/
+        📁 cycler/
+        📁 cycler-0.12.1.dist-info/
+        📁 dateutil/
+        📁 debugpy/
+        📁 debugpy-1.8.19.dist-info/
+        📁 decorator-5.2.1.dist-info/
+        📄 decorator.py
+        📁 defusedxml/
+        📁 defusedxml-0.7.1.dist-info/
+        📁 dotenv/
+        📁 executing/
+        📁 executing-2.2.1.dist-info/
+        📁 fastjsonschema/
+        📁 fastjsonschema-2.21.2.dist-info/
+        📁 filelock/
+        📁 filelock-3.20.0.dist-info/
+        📁 flask/
+        📁 flask-3.1.0.dist-info/
+        📁 flask_apscheduler/
+        📁 flask_apscheduler-1.13.1.dist-info/
+        📁 flask_babel/
+        📁 flask_babel-4.0.0.dist-info/
+        📁 flask_cors/
+        📁 flask_cors-6.0.2.dist-info/
+        📁 flask_login/
+        📁 flask_mail/
+        📁 flask_mail-0.10.0.dist-info/
+        📁 flask_migrate/
+        📁 flask_sqlalchemy/
+        📁 flask_sqlalchemy-3.1.1.dist-info/
+        📁 flatbuffers/
+        📁 flatbuffers-25.9.23.dist-info/
+        📁 folium/
+        📁 folium-0.20.0.dist-info/
+        📁 fontTools/
+        📁 fonttools-4.61.1.dist-info/
+        📁 fqdn/
+        📁 fqdn-1.5.1.dist-info/
+        📁 fsspec/
+        📁 fsspec-2025.12.0.dist-info/
+        📁 functorch/
+        📁 gast/
+        📁 gast-0.7.0.dist-info/
+        📁 geoalchemy2/
+        📁 geographiclib/
+        📁 geographiclib-2.0.dist-info/
+        📁 geopy/
+        📁 geopy-2.4.1.dist-info/
+        📁 google/
+        📁 google_pasta-0.2.0.dist-info/
+        📁 greenlet/
+        📁 greenlet-3.1.1.dist-info/
+        📁 grpc/
+        📁 grpcio-1.76.0.dist-info/
+        📁 h11/
+        📁 h11-0.16.0.dist-info/
+        📁 h3/
+        📁 h3-4.2.2.dist-info/
+        📁 h5py/
+        📁 h5py-3.15.1.dist-info/
+        📁 h5py.libs/
+        📁 httpcore/
+        📁 httpcore-1.0.9.dist-info/
+        📁 httpx/
+        📁 httpx-0.28.1.dist-info/
+        📁 idna/
+        📁 idna-3.10.dist-info/
+        📁 include/
+        📁 iniconfig/
+        📁 iniconfig-2.1.0.dist-info/
+        📁 ipykernel/
+        📁 ipykernel-7.1.0.dist-info/
+        📄 ipykernel_launcher.py
+        📁 ipython-9.8.0.dist-info/
+        📁 ipython_pygments_lexers-1.1.1.dist-info/
+        📄 ipython_pygments_lexers.py
+        📁 ipywidgets/
+        📁 ipywidgets-8.1.8.dist-info/
+        📁 isoduration/
+        📁 isoduration-20.11.0.dist-info/
+        📄 isympy.py
+        📁 itsdangerous/
+        📁 itsdangerous-2.2.0.dist-info/
+        📁 jedi/
+        📁 jedi-0.19.2.dist-info/
+        📁 jinja2/
+        📁 jinja2-3.1.6.dist-info/
+        📁 joblib/
+        📁 joblib-1.5.1.dist-info/
+        📁 json5/
+        📁 json5-0.12.1.dist-info/
+        📁 jsonpointer-3.0.0.dist-info/
+        📄 jsonpointer.py
+        📁 jsonschema/
+        📁 jsonschema-4.25.1.dist-info/
+        📁 jsonschema_specifications/
+        📁 jsonschema_specifications-2025.9.1.dist-info/
+        📁 jupyter-1.1.1.dist-info/
+        📄 jupyter.py
+        📁 jupyter_client/
+        📁 jupyter_client-8.7.0.dist-info/
+        📁 jupyter_console/
+        📁 jupyter_console-6.6.3.dist-info/
+        📁 jupyter_core/
+        📁 jupyter_core-5.9.1.dist-info/
+        📁 jupyter_events/
+        📁 jupyter_events-0.12.0.dist-info/
+        📁 jupyter_lsp/
+        📁 jupyter_lsp-2.3.0.dist-info/
+        📁 jupyter_server/
+        📁 jupyter_server-2.17.0.dist-info/
+        📁 jupyter_server_terminals/
+        📁 jupyter_server_terminals-0.5.3.dist-info/
+        📁 jupyterlab/
+        📁 jupyterlab-4.5.1.dist-info/
+        📁 jupyterlab_pygments/
+        📁 jupyterlab_pygments-0.3.0.dist-info/
+        📁 jupyterlab_server/
+        📁 jupyterlab_server-2.28.0.dist-info/
+        📁 jupyterlab_widgets/
+        📁 jupyterlab_widgets-3.0.16.dist-info/
+        📁 keras/
+        📁 keras-3.12.0.dist-info/
+        📁 kiwisolver/
+        📁 kiwisolver-1.4.9.dist-info/
+        📁 lark/
+        📁 lark-1.3.1.dist-info/
+        📁 lib64/
+        📁 libclang-18.1.1.dist-info/
+        📁 lxml/
+        📁 lxml-6.0.1.dist-info/
+        📁 mako/
+        📁 mako-1.3.10.dist-info/
+        📁 markdown/
+        📁 markdown-3.10.dist-info/
+        📁 markdown_it/
+        📁 markdown_it_py-4.0.0.dist-info/
+        📁 markupsafe/
+        📁 matplotlib/
+        📁 matplotlib-3.10.8.dist-info/
+        📁 matplotlib_inline/
+        📁 matplotlib_inline-0.2.1.dist-info/
+        📁 mdurl/
+        📁 mdurl-0.1.2.dist-info/
+        📁 mistune/
+        📁 mistune-3.2.0.dist-info/
+        📁 ml_dtypes/
+        📁 ml_dtypes-0.5.4.dist-info/
+        📁 mpl_toolkits/
+        📁 mpmath/
+        📁 mpmath-1.3.0.dist-info/
+        📁 namex/
+        📁 namex-0.1.0.dist-info/
+        📁 nbclient/
+        📁 nbclient-0.10.4.dist-info/
+        📁 nbconvert/
+        📁 nbconvert-7.16.6.dist-info/
+        📁 nbformat/
+        📁 nbformat-5.10.4.dist-info/
+        📁 nest_asyncio-1.6.0.dist-info/
+        📄 nest_asyncio.py
+        📁 networkx/
+        📁 networkx-3.6.1.dist-info/
+        📁 notebook/
+        📁 notebook-7.5.1.dist-info/
+        📁 notebook_shim/
+        📁 notebook_shim-0.2.4.dist-info/
+        📁 numpy/
+        📁 numpy-2.2.4.dist-info/
+        📁 numpy.libs/
+        📁 opt_einsum/
+        📁 opt_einsum-3.4.0.dist-info/
+        📁 optree/
+        📁 optree-0.18.0.dist-info/
+        📁 packaging/
+        📁 packaging-25.0.dist-info/
+        📁 pandas/
+        📁 pandas-2.2.3.dist-info/
+        📁 pandocfilters-1.5.1.dist-info/
+        📄 pandocfilters.py
+        📁 parso/
+        📁 parso-0.8.5.dist-info/
+        📁 pasta/
+        📁 pexpect/
+        📁 pexpect-4.9.0.dist-info/
+        📁 pillow-12.0.0.dist-info/
+        📁 pillow.libs/
+        📁 pip/
+        📁 pip-25.3.dist-info/
+        📁 pkg_resources/
+        📁 platformdirs/
+        📁 platformdirs-4.5.1.dist-info/
+        📁 pluggy/
+        📁 pluggy-1.6.0.dist-info/
+        📁 prometheus_client/
+        📁 prometheus_client-0.23.1.dist-info/
+        📁 prompt_toolkit/
+        📁 prompt_toolkit-3.0.52.dist-info/
+        📁 protobuf-6.33.2.dist-info/
+        📁 psutil/
+        📁 psutil-7.2.1.dist-info/
+        📁 psycopg2/
+        📁 psycopg2_binary-2.9.10.dist-info/
+        📁 psycopg2_binary.libs/
+        📁 ptyprocess/
+        📁 ptyprocess-0.7.0.dist-info/
+        📁 pure_eval/
+        📁 pure_eval-0.2.3.dist-info/
+        📄 py.py
+        📁 pyais/
+        📁 pyais-2.14.0.dist-info/
+        📁 pycparser/
+        📁 pycparser-2.22.dist-info/
+        📁 pygments/
+        📁 pygments-2.19.2.dist-info/
+        📄 pylab.py
+        📁 pyparsing/
+        📁 pyparsing-3.2.5.dist-info/
+        📁 pyproj/
+        📁 pyproj-3.7.2.dist-info/
+        📁 pyproj.libs/
+        📁 pytest/
+        📁 pytest-7.4.2.dist-info/
+        📁 pytest_cov/
+        📁 pytest_cov-5.0.0.dist-info/
+        📁 pytest_mock/
+        📁 pytest_mock-3.14.1.dist-info/
+        📁 python_dateutil-2.9.0.post0.dist-info/
+        📁 python_dotenv-1.1.0.dist-info/
+        📁 python_json_logger-4.0.0.dist-info/
+        📁 pythonjsonlogger/
+        📁 pytz/
+        📁 pytz-2025.2.dist-info/
+        📁 pyyaml-6.0.3.dist-info/
+        📁 pyzmq-27.1.0.dist-info/
+        📁 pyzmq.libs/
+        📁 rasterio/
+        📁 rasterio-1.4.3.dist-info/
+        📁 rasterio.libs/
+        📁 referencing/
+        📁 referencing-0.37.0.dist-info/
+        📁 requests/
+        📁 requests-2.32.4.dist-info/
+        📁 rfc3339_validator-0.1.4.dist-info/
+        📄 rfc3339_validator.py
+        📁 rfc3986_validator-0.1.1.dist-info/
+        📄 rfc3986_validator.py
+        📁 rfc3987_syntax/
+        📁 rfc3987_syntax-1.1.0.dist-info/
+        📁 rich/
+        📁 rich-14.2.0.dist-info/
+        📁 rpds/
+        📁 rpds_py-0.30.0.dist-info/
+        📁 scikit_learn-1.4.2.dist-info/
+        📁 scikit_learn.libs/
+        📁 scipy/
+        📁 scipy-1.16.0.dist-info/
+        📁 scipy.libs/
+        📁 seaborn/
+        📁 seaborn-0.13.2.dist-info/
+        📁 send2trash/
+        📁 send2trash-2.0.0.dist-info/
+        📁 setuptools/
+        📁 setuptools-80.9.0.dist-info/
+        📁 six-1.17.0.dist-info/
+        📄 six.py
+        📁 sklearn/
+        📁 soupsieve/
+        📁 soupsieve-2.8.1.dist-info/
+        📁 sqlalchemy/
+        📁 sqlalchemy-2.0.40.dist-info/
+        📁 stack_data/
+        📁 stack_data-0.6.3.dist-info/
+        📁 sympy/
+        📁 sympy-1.14.0.dist-info/
+        📁 tensorboard/
+        📁 tensorboard-2.20.0.dist-info/
+        📁 tensorboard_data_server/
+        📁 tensorboard_data_server-0.7.2.dist-info/
+        📁 tensorflow/
+        📁 tensorflow-2.20.0.dist-info/
+        📁 termcolor/
+        📁 termcolor-3.2.0.dist-info/
+        📁 terminado/
+        📁 terminado-0.18.1.dist-info/
+        📁 threadpoolctl-3.6.0.dist-info/
+        📄 threadpoolctl.py
+        📁 timezonefinder/
+        📁 timezonefinder-6.5.9.dist-info/
+        📁 tinycss2/
+        📁 tinycss2-1.4.0.dist-info/
+        📁 torch/
+        📁 torch-2.9.1+cpu.dist-info/
+        📁 torchgen/
+        📁 tornado/
+        📁 tornado-6.5.4.dist-info/
+        📁 traitlets/
+        📁 traitlets-5.14.3.dist-info/
+        📁 typing_extensions-4.13.0.dist-info/
+        📄 typing_extensions.py
+        📁 tzdata/
+        📁 tzdata-2025.2.dist-info/
+        📁 tzlocal/
+        📁 tzlocal-5.3.1.dist-info/
+        📁 uri_template/
+        📁 uri_template-1.3.0.dist-info/
+        📁 urllib3/
+        📁 urllib3-2.5.0.dist-info/
+        📁 wcwidth/
+        📁 wcwidth-0.2.14.dist-info/
+        📁 webcolors/
+        📁 webcolors-25.10.0.dist-info/
+        📁 webencodings/
+        📁 webencodings-0.5.1.dist-info/
+        📁 websocket/
+        📁 websocket_client-1.9.0.dist-info/
+        📁 werkzeug/
+        📁 werkzeug-3.1.3.dist-info/
+        📁 wheel/
+        📁 wheel-0.45.1.dist-info/
+        📁 widgetsnbextension/
+        📁 widgetsnbextension-4.0.15.dist-info/
+        📁 wrapt/
+        📁 wrapt-2.0.1.dist-info/
+        📁 xyzservices/
+        📁 xyzservices-2025.11.0.dist-info/
+        📁 yaml/
+        📁 zmq/
+  📁 share/
+    📁 applications/
+    📁 icons/
+      📁 hicolor/
+        📁 scalable/
+    📁 jupyter/
+      📁 kernels/
+        📁 python3/
+      📁 lab/
+        📁 schemas/
+        📁 static/
+        📁 themes/
+      📁 labextensions/
+        📁 @jupyter-notebook/
+        📁 @jupyter-widgets/
+        📁 jupyterlab_pygments/
+      📁 nbconvert/
+        📁 templates/
+      📁 nbextensions/
+        📁 jupyter-js-widgets/
+    📁 man/
+      📁 man1/
+    📁 xyzservices/
+      📄 providers.json
+📁 notebooks/
+📄 performance_test.py
+📁 progress/
+  📁 backups/
+    📁 tracking_backup_2025-12-29/
+      📄 backup_summary.json
+    📁 tracking_backup_2025-12-30/
+      📄 backup_summary.json
+    📁 tracking_backup_2025-12-31/
+      📄 backup_summary.json
+  📁 daily_summaries/
+    📄 summary_2025-12-29.json
+    📄 summary_2025-12-30.json
+    📄 summary_2025-12-31.json
+  📁 learnings/
+  📁 metrics/
+    📄 metrics_2025-12-29.json
+    📄 metrics_2025-12-30.json
+    📄 metrics_2025-12-31.json
+📁 progress_tracking/
+  📄 auto_backup.py
+  📄 daily_summary.py
+  📄 git_history_analyzer.py
+  📄 learning_extractor.py
+  📄 report_generator.py
+  📄 tracker_config.py
+📄 proper_api_test.py
+📄 real_norwegian_coastal_routes.py
+📄 real_route_discovery.json
+📄 rtz_zip_fixer.py
+📄 rtz_zip_fixer_final.py
+📄 run_and_test.py
+📄 run_with_debug.py
+📄 safe_migrate.py
+📄 safe_test.py
+📁 scripts/
+  📄 __init__.py
+  📄 download_weather_history.py
+  📄 export_project.py
+  📄 integration_script.py
+  📄 populate_origin_destination.py
+  📄 train_weather_lstm.py
+📄 split_files.py
+📁 static/
+  📁 js/
+    📁 split/
+📄 switch_to_nca_api.py
+📄 system_check.py
+📄 test_api_endpoints.py
+📄 test_api_fixed.py
+📄 test_barentswatch_api.py
+📄 test_barentswatch_auth.py
+📄 test_barentswatch_fixed.py
+📄 test_route_fix.py
+📄 test_rtz.py
+📄 test_rtz_final.py
+📄 test_rtz_integration.py
+📄 test_simple.py
+📄 test_simple_health.py
+📁 tools/
+  📄 convert_and_patch_rtz.py
+  📄 convert_rtz_to_json.py
+  📄 extract_rtz_archives.py
+  📄 patch_rtz_json.py
+  📄 patch_waypoint.py
+  📄 verify_rtz_json.py
+  📄 verify_waypoints.py
+📄 update_dashboard_buttons.py
+📄 validate_config.py
+📄 validate_models.py
+📄 verify_fix.py
+📄 verify_fixes.py
+📄 verify_health_fix.py
+
+============================================================
+END OF STRUCTURE
+============================================================

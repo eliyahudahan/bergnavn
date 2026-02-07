@@ -106,6 +106,143 @@ def _get_empirical_vessel_from_services():
         return None
 
 
+@vessels_bp.route('/capture-vessel', methods=['POST'])
+def capture_vessel():
+    """
+    Capture a vessel for real-time tracking
+    POST /maritime/api/vessels/capture-vessel
+    """
+    try:
+        data = request.get_json()
+        mmsi = data.get('mmsi')
+        lat = float(data.get('lat', 60.3913))
+        lon = float(data.get('lon', 5.3221))
+        
+        try:
+            from backend.services.vessel_capture_service import vessel_capture_service
+        except ImportError as e:
+            logger.error(f"Vessel capture service not available: {e}")
+            # Fallback
+            fallback_vessel = _create_fallback_vessel(lat, lon)
+            fallback_vessel['capture_start'] = datetime.now(timezone.utc).isoformat()
+            
+            return jsonify({
+                'status': 'fallback',
+                'message': 'Vessel capture service not available, using fallback',
+                'capture': fallback_vessel,
+                'timestamp': datetime.now(timezone.utc).isoformat()
+            })
+        
+        capture = vessel_capture_service.capture_vessel(mmsi, lat, lon)
+        
+        if capture:
+            return jsonify({
+                'status': 'success',
+                'message': 'Vessel captured successfully',
+                'capture': capture.to_dict(),
+                'timestamp': datetime.now(timezone.utc).isoformat()
+            })
+        else:
+            return jsonify({
+                'status': 'error',
+                'message': 'Failed to capture vessel'
+            }), 404
+            
+    except Exception as e:
+        logger.error(f"Capture vessel error: {e}")
+        return jsonify({
+            'status': 'error',
+            'message': str(e)
+        }), 500
+
+
+@vessels_bp.route('/get-capture/<mmsi>', methods=['GET'])
+def get_capture(mmsi):
+    """Get current capture data and analysis"""
+    try:
+        from backend.services.vessel_capture_service import vessel_capture_service
+        
+        # Update position first
+        vessel_capture_service.update_vessel_position(mmsi)
+        
+        # Get analysis
+        analysis = vessel_capture_service.get_vessel_analysis(mmsi)
+        
+        # Get capture data
+        captures = vessel_capture_service.get_active_captures()
+        capture = captures.get(mmsi)
+        
+        if capture:
+            return jsonify({
+                'status': 'success',
+                'capture': capture,
+                'analysis': analysis,
+                'timestamp': datetime.now(timezone.utc).isoformat()
+            })
+        else:
+            return jsonify({
+                'status': 'error',
+                'message': 'Vessel not found in active captures'
+            }), 404
+            
+    except Exception as e:
+        logger.error(f"Get capture error: {e}")
+        return jsonify({
+            'status': 'error',
+            'message': str(e)
+        }), 500
+
+
+@vessels_bp.route('/stop-capture/<mmsi>', methods=['POST'])
+def stop_capture(mmsi):
+    """Stop capturing a vessel"""
+    try:
+        from backend.services.vessel_capture_service import vessel_capture_service
+        
+        success = vessel_capture_service.stop_capture(mmsi)
+        
+        if success:
+            return jsonify({
+                'status': 'success',
+                'message': 'Capture stopped successfully'
+            })
+        else:
+            return jsonify({
+                'status': 'error',
+                'message': 'Vessel not found in active captures'
+            }), 404
+            
+    except Exception as e:
+        logger.error(f"Stop capture error: {e}")
+        return jsonify({
+            'status': 'error',
+            'message': str(e)
+        }), 500
+
+
+@vessels_bp.route('/active-captures', methods=['GET'])
+def get_active_captures():
+    """Get all active captures"""
+    try:
+        from backend.services.vessel_capture_service import vessel_capture_service
+        
+        captures = vessel_capture_service.get_active_captures()
+        
+        return jsonify({
+            'status': 'success',
+            'captures': captures,
+            'count': len(captures),
+            'timestamp': datetime.now(timezone.utc).isoformat()
+        })
+        
+    except Exception as e:
+        logger.error(f"Get active captures error: {e}")
+        return jsonify({
+            'status': 'error',
+            'message': str(e)
+        }), 500
+
+
 @vessels_bp.route('/kystverket', methods=['GET'])
 def get_kystverket_vessels():
     """
