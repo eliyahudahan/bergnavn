@@ -31,17 +31,18 @@ class KystdatahusetAdapter:
     BASE_URL = "https://www.kystdatahuset.no/api/v1/ais"
     
     # Your 10 Norwegian cities with accurate coordinates
+    # IMPORTANT: Use English names without special characters for API compatibility
     NORWEGIAN_CITIES = {
-        'alesund': {'lat': 62.4722, 'lon': 6.1497, 'name': 'Ålesund', 'region': 'Møre og Romsdal'},
-        'andalsnes': {'lat': 62.5675, 'lon': 7.6870, 'name': 'Åndalsnes', 'region': 'Møre og Romsdal'},
-        'bergen': {'lat': 60.3913, 'lon': 5.3221, 'name': 'Bergen', 'region': 'Vestland'},
-        'drammen': {'lat': 59.7441, 'lon': 10.2045, 'name': 'Drammen', 'region': 'Viken'},
-        'flekkefjord': {'lat': 58.2970, 'lon': 6.6605, 'name': 'Flekkefjord', 'region': 'Agder'},
-        'kristiansand': {'lat': 58.1467, 'lon': 7.9958, 'name': 'Kristiansand', 'region': 'Agder'},
-        'oslo': {'lat': 59.9139, 'lon': 10.7522, 'name': 'Oslo', 'region': 'Oslo'},
-        'sandefjord': {'lat': 59.1312, 'lon': 10.2167, 'name': 'Sandefjord', 'region': 'Vestfold og Telemark'},
-        'stavanger': {'lat': 58.9699, 'lon': 5.7331, 'name': 'Stavanger', 'region': 'Rogaland'},
-        'trondheim': {'lat': 63.4305, 'lon': 10.3951, 'name': 'Trondheim', 'region': 'Trøndelag'}
+        'alesund': {'lat': 62.4722, 'lon': 6.1497, 'name': 'Alesund', 'display_name': 'Ålesund', 'region': 'Møre og Romsdal'},
+        'andalsnes': {'lat': 62.5675, 'lon': 7.6870, 'name': 'Andalsnes', 'display_name': 'Åndalsnes', 'region': 'Møre og Romsdal'},
+        'bergen': {'lat': 60.3913, 'lon': 5.3221, 'name': 'Bergen', 'display_name': 'Bergen', 'region': 'Vestland'},
+        'drammen': {'lat': 59.7441, 'lon': 10.2045, 'name': 'Drammen', 'display_name': 'Drammen', 'region': 'Viken'},
+        'flekkefjord': {'lat': 58.2970, 'lon': 6.6605, 'name': 'Flekkefjord', 'display_name': 'Flekkefjord', 'region': 'Agder'},
+        'kristiansand': {'lat': 58.1467, 'lon': 7.9958, 'name': 'Kristiansand', 'display_name': 'Kristiansand', 'region': 'Agder'},
+        'oslo': {'lat': 59.9139, 'lon': 10.7522, 'name': 'Oslo', 'display_name': 'Oslo', 'region': 'Oslo'},
+        'sandefjord': {'lat': 59.1312, 'lon': 10.2167, 'name': 'Sandefjord', 'display_name': 'Sandefjord', 'region': 'Vestfold og Telemark'},
+        'stavanger': {'lat': 58.9699, 'lon': 5.7331, 'name': 'Stavanger', 'display_name': 'Stavanger', 'region': 'Rogaland'},
+        'trondheim': {'lat': 63.4305, 'lon': 10.3951, 'name': 'Trondheim', 'display_name': 'Trondheim', 'region': 'Trøndelag'}
     }
     
     def __init__(self, timeout: int = 15, max_retries: int = 3):
@@ -66,24 +67,23 @@ class KystdatahusetAdapter:
         user_agent = os.getenv("KYSTDATAHUSET_USER_AGENT", "").strip()
         
         if not user_agent:
-            # If not provided, use a comprehensive default that should work
+            # Use a browser-like User-Agent to avoid 406 errors
             user_agent = (
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-                "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 "
-                "BergNavn-Maritime-Dashboard/2.0 (https://berg-navn.no; "
-                "contact@berg-navn.no)"
+                "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
             )
-            logger.info("📝 Using default User-Agent for Kystdatahuset")
+            logger.info("📝 Using browser-like User-Agent for Kystdatahuset to avoid 406 errors")
+        else:
+            logger.info(f"📝 Using configured User-Agent: {user_agent[:60]}...")
         
         # Create a session with proper headers for Norwegian API
         self.session = requests.Session()
         self.session.headers.update({
             'User-Agent': user_agent,
             'Accept': 'application/json',
-            'Accept-Language': 'no, en;q=0.9',
+            'Accept-Language': 'en-US,en;q=0.9,no;q=0.8',
             'Cache-Control': 'no-cache',
-            'Referer': 'https://berg-navn.no/',
-            'Origin': 'https://berg-navn.no'
+            'Connection': 'keep-alive'
         })
         
         # Simple cache to avoid redundant API calls (5 minutes TTL)
@@ -119,40 +119,31 @@ class KystdatahusetAdapter:
             
             if test_response.status_code == 200:
                 logger.info(f"✅ Initial connection test successful (Status: {test_response.status_code})")
+                data = test_response.json()
+                logger.info(f"   Found {len(data)} vessels in test area")
             elif test_response.status_code == 406:
-                logger.warning(f"⚠️ API returned 406 - Check User-Agent configuration")
-                logger.warning(f"   Current User-Agent: {self.session.headers.get('User-Agent')[:80]}...")
+                logger.warning(f"⚠️ API returned 406 - Trying alternative endpoint...")
+                # Try alternative endpoint format
+                alt_response = self.session.get(
+                    f"{self.BASE_URL}/positions",
+                    params={'bbox': test_bbox},
+                    timeout=10
+                )
+                if alt_response.status_code == 200:
+                    logger.info(f"✅ Alternative endpoint /positions works")
             else:
                 logger.warning(f"⚠️ API returned status {test_response.status_code}")
+                logger.debug(f"   Response: {test_response.text[:200]}")
                 
         except Exception as e:
             logger.warning(f"⚠️ Initial connection test failed: {e}")
-    
-    def get_vessels_in_bergen_region(self) -> List[Dict]:
-        """
-        Get all vessels in the Bergen region (covers your 10 cities area).
-        
-        Returns:
-            List of vessel data dictionaries with city enrichment
-            
-        Note: Returns empty list if service is disabled.
-        """
-        if not self.enabled:
-            logger.debug("Kystdatahuset service disabled, returning empty list")
-            return []
-        
-        # Use the entire Norwegian coast bounding box that covers all 10 cities
-        # Norway roughly from 58°N to 64°N, 4°E to 12°E covers all your cities
-        norway_coast_bbox = "4.0,58.0,12.0,64.0"
-        
-        return self._get_vessels_with_retry(norway_coast_bbox)
     
     def get_vessels_near_city(self, city_name: str, radius_km: float = 20) -> List[Dict]:
         """
         Get vessels near a specific Norwegian city.
         
         Args:
-            city_name: One of your 10 Norwegian cities
+            city_name: One of your 10 Norwegian cities (case insensitive)
             radius_km: Search radius in kilometers (default: 20km)
             
         Returns:
@@ -167,14 +158,35 @@ class KystdatahusetAdapter:
             logger.debug("Kystdatahuset service disabled, returning empty list")
             return []
         
-        # Validate city name
-        city_name_lower = city_name.lower()
-        if city_name_lower not in self.NORWEGIAN_CITIES:
-            valid_cities = ", ".join(self.NORWEGIAN_CITIES.keys())
-            raise ValueError(f"Unknown city: '{city_name}'. Valid cities: {valid_cities}")
+        # Normalize city name - remove special characters for lookup
+        city_key = city_name.lower().replace('å', 'a').replace('ø', 'o').replace('æ', 'ae')
         
-        city_data = self.NORWEGIAN_CITIES[city_name_lower]
+        # Map common variations
+        city_mappings = {
+            'alesund': 'alesund',
+            'aalesund': 'alesund',
+            'andalsnes': 'andalsnes',
+            'aandalsnes': 'andalsnes',
+            'bergen': 'bergen',
+            'drammen': 'drammen',
+            'flekkefjord': 'flekkefjord',
+            'kristiansand': 'kristiansand',
+            'oslo': 'oslo',
+            'sandefjord': 'sandefjord',
+            'stavanger': 'stavanger',
+            'trondheim': 'trondheim'
+        }
+        
+        mapped_city = city_mappings.get(city_key)
+        if not mapped_city or mapped_city not in self.NORWEGIAN_CITIES:
+            valid_cities = ", ".join(self.NORWEGIAN_CITIES.keys())
+            logger.warning(f"Unknown city: '{city_name}'. Valid cities: {valid_cities}")
+            return []
+        
+        city_data = self.NORWEGIAN_CITIES[mapped_city]
         lat, lon = city_data['lat'], city_data['lon']
+        
+        logger.info(f"🔍 Searching near {city_data['display_name']} ({lat:.4f}, {lon:.4f})")
         
         # Create bounding box for the area around the city
         bbox = self._create_bounding_box(lat, lon, radius_km)
@@ -184,159 +196,11 @@ class KystdatahusetAdapter:
         enriched_vessels = []
         
         for vessel in vessels:
-            enriched = self._enrich_vessel_with_city_data(vessel, city_name_lower)
+            enriched = self._enrich_vessel_with_city_data(vessel, mapped_city)
             enriched_vessels.append(enriched)
         
-        logger.info(f"📊 Found {len(enriched_vessels)} vessels near {city_data['name']} (radius: {radius_km}km)")
+        logger.info(f"📊 Found {len(enriched_vessels)} vessels near {city_data['display_name']} (radius: {radius_km}km)")
         return enriched_vessels
-    
-    def get_vessels_on_route(self, start_city: str, end_city: str, corridor_width_km: float = 30) -> List[Dict]:
-        """
-        Get vessels that appear to be traveling between two cities.
-        
-        Args:
-            start_city: Departure city name
-            end_city: Destination city name
-            corridor_width_km: Width of the search corridor in kilometers
-            
-        Returns:
-            List of vessels potentially on the route
-            
-        Note: Returns empty list if service is disabled.
-        """
-        if not self.enabled:
-            logger.debug("Kystdatahuset service disabled, returning empty list")
-            return []
-        
-        # Validate both cities
-        if start_city.lower() not in self.NORWEGIAN_CITIES:
-            raise ValueError(f"Unknown start city: '{start_city}'")
-        if end_city.lower() not in self.NORWEGIAN_CITIES:
-            raise ValueError(f"Unknown end city: '{end_city}'")
-        
-        start_data = self.NORWEGIAN_CITIES[start_city.lower()]
-        end_data = self.NORWEGIAN_CITIES[end_city.lower()]
-        
-        # Calculate midpoint and distance
-        mid_lat = (start_data['lat'] + end_data['lat']) / 2
-        mid_lon = (start_data['lon'] + end_data['lon']) / 2
-        distance = self._calculate_distance_km(
-            start_data['lat'], start_data['lon'],
-            end_data['lat'], end_data['lon']
-        )
-        
-        # Create a bounding box that covers the route corridor
-        # Use distance between cities + corridor width as radius
-        search_radius = (distance / 2) + corridor_width_km
-        bbox = self._create_bounding_box(mid_lat, mid_lon, search_radius)
-        
-        # Get all vessels in the area
-        all_vessels = self._get_vessels_with_retry(bbox)
-        
-        # Calculate route bearing
-        route_bearing = self._calculate_bearing(
-            start_data['lat'], start_data['lon'],
-            end_data['lat'], end_data['lon']
-        )
-        
-        # Filter vessels by course alignment with route
-        route_vessels = []
-        for vessel in all_vessels:
-            vessel_course = vessel.get('course', 0)
-            
-            # Calculate difference between vessel course and route bearing
-            course_diff = abs(vessel_course - route_bearing) % 360
-            course_diff = min(course_diff, 360 - course_diff)
-            
-            # If vessel is roughly aligned with route (within 60 degrees)
-            if course_diff < 60:
-                enriched = vessel.copy()
-                enriched['route_alignment'] = round(course_diff, 1)
-                enriched['estimated_route'] = f"{start_city}→{end_city}"
-                route_vessels.append(enriched)
-        
-        logger.info(f"🛣️ Found {len(route_vessels)} vessels potentially on route {start_city}→{end_city}")
-        return route_vessels
-    
-    def get_vessel_by_mmsi(self, mmsi: str, search_radius_km: float = 100) -> Optional[Dict]:
-        """
-        Find a specific vessel by MMSI across all 10 cities.
-        
-        Args:
-            mmsi: Vessel MMSI identifier (string)
-            search_radius_km: Search radius around each city
-            
-        Returns:
-            Vessel data if found, None otherwise
-            
-        Note: Returns None if service is disabled.
-        """
-        if not self.enabled:
-            logger.debug("Kystdatahuset service disabled, returning None")
-            return None
-        
-        # First check cache
-        cache_key = f"vessel_{mmsi}"
-        if cache_key in self._cache:
-            cached_time, cached_vessel = self._cache[cache_key]
-            if (datetime.now(timezone.utc) - cached_time).seconds < self._cache_ttl:
-                logger.info(f"📦 Found vessel {mmsi} in cache")
-                return cached_vessel
-        
-        # Search in each city
-        for city_name in self.NORWEGIAN_CITIES:
-            vessels = self.get_vessels_near_city(city_name, search_radius_km)
-            
-            for vessel in vessels:
-                if str(vessel.get('mmsi', '')) == str(mmsi):
-                    # Cache the result
-                    self._cache[cache_key] = (datetime.now(timezone.utc), vessel)
-                    logger.info(f"✅ Found vessel {mmsi} near {city_name}")
-                    return vessel
-        
-        logger.info(f"📭 Vessel {mmsi} not found in Norwegian coastal waters")
-        return None
-    
-    def get_all_vessels_in_norway(self, limit_per_city: int = 50) -> Dict[str, List[Dict]]:
-        """
-        Get vessels from all 10 cities (parallel simulation).
-        
-        Args:
-            limit_per_city: Maximum vessels to fetch per city
-            
-        Returns:
-            Dictionary with city names as keys and vessel lists as values
-            
-        Note: Returns empty dict if service is disabled.
-        """
-        if not self.enabled:
-            logger.debug("Kystdatahuset service disabled, returning empty dict")
-            return {}
-        
-        all_vessels = {}
-        
-        for city_name in self.NORWEGIAN_CITIES:
-            try:
-                vessels = self.get_vessels_near_city(city_name, radius_km=30)
-                
-                # Apply limit if specified
-                if limit_per_city and len(vessels) > limit_per_city:
-                    vessels = vessels[:limit_per_city]
-                
-                all_vessels[city_name] = vessels
-                logger.debug(f"  • {city_name}: {len(vessels)} vessels")
-                
-                # Small delay to avoid overloading the API
-                time.sleep(0.5)
-                
-            except Exception as e:
-                logger.error(f"Error fetching vessels for {city_name}: {e}")
-                all_vessels[city_name] = []
-        
-        total_vessels = sum(len(vessels) for vessels in all_vessels.values())
-        logger.info(f"🌍 Total vessels across all cities: {total_vessels}")
-        
-        return all_vessels
     
     def _get_vessels_with_retry(self, bbox: str) -> List[Dict]:
         """
@@ -384,11 +248,22 @@ class KystdatahusetAdapter:
                     logger.debug(f"✅ API request successful: {len(vessels)} vessels")
                     return vessels
                     
-                elif response.status_code == 406:  # Not Acceptable
-                    logger.error(f"❌ API returned 406 Not Acceptable")
-                    logger.error(f"   Headers sent: {dict(self.session.headers)}")
-                    logger.error(f"   Response: {response.text[:200]}")
-                    break  # Don't retry 406 errors
+                elif response.status_code == 406:
+                    logger.warning(f"⚠️ API returned 406 - Trying alternative endpoint /positions")
+                    
+                    # Try alternative endpoint
+                    alt_response = self.session.get(
+                        f"{self.BASE_URL}/positions",
+                        params=params,
+                        timeout=self.timeout
+                    )
+                    
+                    if alt_response.status_code == 200:
+                        vessels = alt_response.json()
+                        self.successful_requests += 1
+                        self._cache[cache_key] = (datetime.now(timezone.utc), vessels)
+                        logger.debug(f"✅ Alternative endpoint successful: {len(vessels)} vessels")
+                        return vessels
                     
                 elif response.status_code == 429:  # Too Many Requests
                     wait_time = (attempt + 1) * 2  # Exponential backoff
@@ -398,7 +273,6 @@ class KystdatahusetAdapter:
                     
                 else:
                     logger.warning(f"⚠️ API returned status {response.status_code} (attempt {attempt + 1}/{self.max_retries})")
-                    logger.debug(f"   Response: {response.text[:100]}")
                     
                     if attempt < self.max_retries - 1:
                         time.sleep(1)  # Wait before retry
@@ -455,13 +329,13 @@ class KystdatahusetAdapter:
         
         return f"{min_lon:.6f},{min_lat:.6f},{max_lon:.6f},{max_lat:.6f}"
     
-    def _enrich_vessel_with_city_data(self, vessel: Dict, target_city: str) -> Dict:
+    def _enrich_vessel_with_city_data(self, vessel: Dict, city_key: str) -> Dict:
         """
         Enrich vessel data with city-specific information.
         
         Args:
             vessel: Raw vessel data from API
-            target_city: The city this vessel was found near
+            city_key: The city key this vessel was found near
             
         Returns:
             Enriched vessel data
@@ -473,15 +347,24 @@ class KystdatahusetAdapter:
             enriched['timestamp'] = datetime.now(timezone.utc).isoformat()
         
         # Add city information
-        city_data = self.NORWEGIAN_CITIES[target_city]
-        enriched['nearest_city'] = city_data['name']
+        city_data = self.NORWEGIAN_CITIES[city_key]
+        enriched['nearest_city'] = city_data['display_name']
         enriched['city_region'] = city_data['region']
+        enriched['city_key'] = city_key
+        
+        # Extract standard fields (handle different naming conventions)
+        enriched['name'] = vessel.get('name', vessel.get('vessel_name', vessel.get('Name', 'Unknown')))
+        enriched['latitude'] = vessel.get('latitude', vessel.get('lat', vessel.get('Lat', 0)))
+        enriched['longitude'] = vessel.get('longitude', vessel.get('lon', vessel.get('Lon', 0)))
+        enriched['speed'] = vessel.get('speed', vessel.get('SOG', vessel.get('Speed', 0)))
+        enriched['course'] = vessel.get('course', vessel.get('COG', vessel.get('Course', 0)))
+        enriched['mmsi'] = vessel.get('mmsi', vessel.get('MMSI', ''))
         
         # Calculate distance to city center if we have coordinates
-        vessel_lat = vessel.get('latitude')
-        vessel_lon = vessel.get('longitude')
+        vessel_lat = enriched['latitude']
+        vessel_lon = enriched['longitude']
         
-        if vessel_lat and vessel_lon:
+        if vessel_lat and vessel_lon and vessel_lat != 0 and vessel_lon != 0:
             distance = self._calculate_distance_km(
                 vessel_lat, vessel_lon,
                 city_data['lat'], city_data['lon']
@@ -491,7 +374,7 @@ class KystdatahusetAdapter:
         # Add data source information
         enriched['data_source'] = 'kystdatahuset'
         enriched['source_url'] = self.BASE_URL
-        enriched['is_empirical'] = True
+        enriched['is_empirical'] = False  # This is real-time data
         enriched['service_enabled'] = self.enabled
         
         return enriched
@@ -524,59 +407,6 @@ class KystdatahusetAdapter:
         c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
         
         return R * c
-    
-    def _calculate_bearing(self, lat1: float, lon1: float, lat2: float, lon2: float) -> float:
-        """
-        Calculate initial bearing from point 1 to point 2.
-        
-        Args:
-            lat1, lon1: Starting point coordinates
-            lat2, lon2: Destination point coordinates
-            
-        Returns:
-            Bearing in degrees (0 = North, 90 = East, etc.)
-        """
-        lat1_rad = math.radians(lat1)
-        lon1_rad = math.radians(lon1)
-        lat2_rad = math.radians(lat2)
-        lon2_rad = math.radians(lon2)
-        
-        dlon = lon2_rad - lon1_rad
-        
-        x = math.sin(dlon) * math.cos(lat2_rad)
-        y = math.cos(lat1_rad) * math.sin(lat2_rad) - math.sin(lat1_rad) * math.cos(lat2_rad) * math.cos(dlon)
-        
-        bearing_rad = math.atan2(x, y)
-        bearing_deg = math.degrees(bearing_rad)
-        
-        # Normalize to 0-360
-        return (bearing_deg + 360) % 360
-    
-    def get_latest_positions(self, force_refresh: bool = False):
-        """
-        Get latest vessel positions.
-        Alias for get_vessels_in_bergen_region() for compatibility.
-        
-        Args:
-            force_refresh: Ignored, kept for API compatibility
-            
-        Returns:
-            List of vessel dictionaries
-        """
-        return self.get_vessels_in_bergen_region()
-
-    def get_real_time_vessels(self, force_refresh: bool = False):
-        """
-        Get latest vessel positions.
-        Alias for get_vessels_in_bergen_region() for compatibility.
-        
-        Args:
-            force_refresh: Ignored, kept for API compatibility
-            
-        Returns:
-            List of vessel dictionaries
-        """
-        return self.get_vessels_in_bergen_region()
     
     def get_service_status(self) -> Dict[str, any]:
         """

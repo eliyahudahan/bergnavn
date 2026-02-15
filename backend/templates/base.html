@@ -48,21 +48,12 @@
           </a>
         </li>
 
-        <!-- Simulation Dashboard Link -->
+        <!-- Simulation Dashboard Link - FIXED: Added missing '>' -->
         <li class="nav-item mx-1">
           <a class="nav-link d-flex align-items-center px-3 py-2"
              href="{{ url_for('maritime.simulation_dashboard', lang=lang) }}">
             <i class="bi bi-rocket-takeoff me-2 fs-6"></i>
             <span class="fw-semibold">Simulation</span>
-          </a>
-        </li>
-
-        <!-- Routes Link -->
-        <li class="nav-item mx-1">
-          <a class="nav-link d-flex align-items-center px-3 py-2" 
-             href="{{ url_for('routes_bp.view_routes', lang=lang) }}">
-            <i class="fas fa-route me-2 fs-6"></i>
-            <span class="fw-semibold">Routes</span>
           </a>
         </li>
 
@@ -120,7 +111,7 @@
         </div>
         <small class="d-block opacity-75">
           <i class="bi bi-geo-alt me-1"></i>
-          <span id="supported-ports">Norwegian Ports: Ålesund, Andalsnes, Bergen, Drammen, Flekkefjord, Kristiansand, Oslo, Sandefjord, Stavanger, Trondheim</span>
+          <span id="supported-ports">Norwegian Ports: Bergen, Oslo, Stavanger, Trondheim, Ålesund, Åndalsnes, Kristiansand, Drammen, Sandefjord, Flekkefjord</span>
         </small>
         <small class="d-block opacity-75 mt-1">
           <i class="bi bi-cpu me-1"></i>Flask • PostgreSQL • BarentsWatch API • MET Norway
@@ -153,7 +144,7 @@
         <small class="opacity-75">© 2025 BergNavn Maritime | Research & Development Platform</small>
         <small class="d-block opacity-75 mt-1">
           <i class="bi bi-shield-check me-1"></i>
-          Data sources: BarentsWatch AIS • MET Norway • Norwegian Coastal Admin
+          Data sources: BarentsWatch AIS • MET Norway • Norwegian Coastal Administration
         </small>
       </div>
       <div class="col-md-4 text-md-end">
@@ -194,7 +185,7 @@ function updateSystemStatus() {
         timestampElement.textContent = `Data updated: ${dateString} ${timeString}`;
     }
     
-    // Check API status - Use maritime.health_check endpoint
+    // Check API status - Use maritime.health endpoint
     fetch('/maritime/api/health')
         .then(response => {
             const apiStatusElement = document.getElementById('api-status');

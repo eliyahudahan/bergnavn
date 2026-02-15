@@ -18,6 +18,7 @@ from datetime import datetime, timedelta
 from typing import Dict, List, Any, Optional, Tuple
 import re
 import time
+import math
 
 logger = logging.getLogger(__name__)
 
@@ -30,12 +31,43 @@ class BarentswatchService:
     - Persistent token storage in .env file
     - Fallback to empirical data when API fails
     - Comprehensive error handling
+    - City mapping for all 10 Norwegian cities
     """
+    
+    # City coordinates mapping for all 10 Norwegian cities
+    CITY_COORDS = {
+        'bergen': (60.3913, 5.3221),
+        'oslo': (59.9139, 10.7522),
+        'stavanger': (58.9699, 5.7331),
+        'trondheim': (63.4305, 10.3951),
+        'alesund': (62.4722, 6.1497),
+        'andalsnes': (62.5675, 7.6870),
+        'drammen': (59.7441, 10.2045),
+        'flekkefjord': (58.2970, 6.6605),
+        'kristiansand': (58.1467, 7.9958),
+        'sandefjord': (59.1312, 10.2167)
+    }
+    
+    # City name mappings (handle special characters)
+    CITY_MAPPINGS = {
+        'alesund': 'alesund',
+        'aalesund': 'alesund',
+        'andalsnes': 'andalsnes',
+        'aandalsnes': 'andalsnes',
+        'bergen': 'bergen',
+        'drammen': 'drammen',
+        'flekkefjord': 'flekkefjord',
+        'kristiansand': 'kristiansand',
+        'oslo': 'oslo',
+        'sandefjord': 'sandefjord',
+        'stavanger': 'stavanger',
+        'trondheim': 'trondheim'
+    }
     
     def __init__(self):
         """
         Initialize the service with configuration from environment variables.
-        Automatically detects available access levels based on token scope.
+        Uses 'ais' scope for AIS data access.
         """
         # Load credentials from .env - strip any surrounding quotes
         self.client_id = os.getenv("BARENTSWATCH_CLIENT_ID", "").strip('"\'')
@@ -49,9 +81,9 @@ class BarentswatchService:
         # OAuth2 endpoint for token acquisition
         self.token_url = "https://id.barentswatch.no/connect/token"
         
-        # Determine scope based on client type
-        # If client ID contains 'AIS' or based on empirical testing
-        self.scope = self._determine_scope()
+        # Use 'ais' scope for AIS data access (FIXED: was 'api' causing invalid_scope error)
+        self.scope = "ais"
+        logger.info(f"✅ Using 'ais' scope for AIS data access")
         
         # Base URL for all BarentsWatch API calls
         self.api_base = "https://www.barentswatch.no/bwapi/"
@@ -77,29 +109,7 @@ class BarentswatchService:
         logger.info("✅ BarentswatchService initialized")
         logger.info(f"   Client ID configured: {'✅' if self.client_id else '❌'}")
         logger.info(f"   Client Secret configured: {'✅' if self.client_secret else '❌'}")
-        logger.info(f"   Using scope: '{self.scope}'")
-    
-    def _determine_scope(self) -> str:
-        """
-        Determine the correct scope to use based on client ID pattern.
-        
-        Returns:
-            'ais' for AIS clients, 'api' for general API clients
-        """
-        # Check if client ID suggests AIS client
-        client_id_lower = self.client_id.lower()
-        
-        # Common patterns for AIS clients
-        ais_indicators = ['ais', 'ais-', '-ais', 'ais_', '_ais']
-        
-        for indicator in ais_indicators:
-            if indicator in client_id_lower:
-                logger.info(f"   Detected AIS client from client ID pattern")
-                return "ais"
-        
-        # Default to 'api' for general access
-        logger.info(f"   Using default 'api' scope")
-        return "api"
+        logger.info(f"   Using scope: '{self.scope}' (for AIS data)")
     
     def _load_token_from_env(self):
         """
@@ -166,21 +176,17 @@ class BarentswatchService:
                 token_data = response.json()
                 access_token = token_data.get('access_token')
                 expires_in = token_data.get('expires_in', 3600)  # Default 1 hour
-                refresh_token = token_data.get('refresh_token')  # May not be present
                 
                 if access_token:
                     logger.info(f"✅ Successfully obtained new token (expires in {expires_in}s)")
                     
                     # Update internal state
                     self._access_token = access_token
-                    if refresh_token:
-                        self._refresh_token = refresh_token
-                    
                     self._token_expiry = datetime.now() + timedelta(seconds=expires_in)
                     self._last_token_refresh = datetime.now()
                     
                     # Persist the new token to .env file
-                    self._update_env_file(access_token, refresh_token, expires_in)
+                    self._update_env_file(access_token, expires_in)
                     return access_token
                 else:
                     logger.error("❌ Token response is missing the 'access_token' field")
@@ -192,7 +198,7 @@ class BarentswatchService:
                 
                 # Special handling for common errors
                 if response.status_code == 400:
-                    logger.error("   Hint: Check if client credentials are correct and URL-encoded if needed")
+                    logger.error("   Hint: Check if client credentials are correct and scope is valid")
                 elif response.status_code == 401:
                     logger.error("   Hint: Client authentication failed. Check client_id and client_secret")
                 
@@ -205,13 +211,12 @@ class BarentswatchService:
             logger.error(f"❌ Unexpected error during token request: {e}")
             return None
     
-    def _update_env_file(self, access_token: str, refresh_token: Optional[str], expires_in: int):
+    def _update_env_file(self, access_token: str, expires_in: int):
         """
         Update the .env file with a new access token and calculated expiry timestamp.
         
         Args:
             access_token: The new OAuth2 access token string.
-            refresh_token: The refresh token (if provided).
             expires_in: Time to expiry in seconds from now.
         """
         try:
@@ -231,9 +236,6 @@ class BarentswatchService:
                 'BARENTSWATCH_ACCESS_TOKEN': access_token,
                 'BARENTSWATCH_TOKEN_EXPIRES': str(expiry_timestamp)
             }
-            
-            if refresh_token:
-                updates['BARENTSWATCH_REFRESH_TOKEN'] = refresh_token
             
             # For each key, find and replace or append
             for key, value in updates.items():
@@ -315,10 +317,6 @@ class BarentswatchService:
         if limit:
             params['limit'] = str(limit)
         
-        # Add format parameter if no other params exist
-        if not params:
-            params['format'] = 'json'
-        
         headers = {
             'Authorization': f'Bearer {token}',
             'Accept': 'application/json'
@@ -366,7 +364,7 @@ class BarentswatchService:
                 return []
             elif response.status_code == 403:
                 logger.error("🚫 AIS request forbidden - check if your client has AIS scope permission")
-                logger.error("   Hint: You may need 'ais' scope instead of 'api'")
+                logger.error("   Hint: Using 'ais' scope (already configured)")
                 return []
             else:
                 logger.warning(f"⚠️ AIS request failed with status {response.status_code}")
@@ -384,35 +382,24 @@ class BarentswatchService:
         Get vessels near a specific city using BarentsWatch API.
         
         Args:
-            city_name: City name (supports Norwegian cities)
+            city_name: City name (supports Norwegian cities with special characters)
             radius_km: Search radius in kilometers
             
         Returns:
             List of vessel dictionaries
         """
-        # City coordinates mapping
-        city_coords = {
-            'bergen': (60.3913, 5.3221),
-            'oslo': (59.9139, 10.7522),
-            'stavanger': (58.9699, 5.7331),
-            'trondheim': (63.4305, 10.3951),
-            'alesund': (62.4722, 6.1497),
-            'andalsnes': (62.5675, 7.6870),
-            'drammen': (59.7441, 10.2045),
-            'flekkefjord': (58.2970, 6.6605),
-            'kristiansand': (58.1467, 7.9958),
-            'sandefjord': (59.1312, 10.2167)
-        }
+        # Normalize city name
+        city_key = city_name.lower().replace('å', 'a').replace('ø', 'o').replace('æ', 'ae')
+        mapped_city = self.CITY_MAPPINGS.get(city_key)
         
-        city_lower = city_name.lower()
-        if city_lower not in city_coords:
-            logger.warning(f"⚠️ Unknown city: {city_name}")
+        if not mapped_city or mapped_city not in self.CITY_COORDS:
+            valid_cities = ", ".join(self.CITY_COORDS.keys())
+            logger.warning(f"⚠️ Unknown city: {city_name}. Valid cities: {valid_cities}")
             return []
         
-        lat, lon = city_coords[city_lower]
+        lat, lon = self.CITY_COORDS[mapped_city]
         
         # Create bounding box
-        import math
         lat_delta = radius_km / 111.0
         lon_delta = radius_km / (111.0 * abs(math.cos(math.radians(lat))))
         
@@ -425,57 +412,15 @@ class BarentswatchService:
         for vessel in vessels:
             vessel['nearest_city'] = city_name
             vessel['search_radius_km'] = radius_km
+            # Ensure standard field names
+            vessel['name'] = vessel.get('name', vessel.get('Name', 'Unknown'))
+            vessel['latitude'] = vessel.get('latitude', vessel.get('lat', 0))
+            vessel['longitude'] = vessel.get('longitude', vessel.get('lon', 0))
+            vessel['speed'] = vessel.get('speed', vessel.get('SOG', 0))
+            vessel['course'] = vessel.get('course', vessel.get('COG', 0))
         
         logger.info(f"📊 Found {len(vessels)} BarentsWatch vessels near {city_name}")
         return vessels
-    
-    def test_connection(self) -> Dict[str, Any]:
-        """
-        Test the BarentsWatch API connection and return detailed status.
-        
-        Returns:
-            Dictionary with connection test results
-        """
-        result = {
-            'timestamp': datetime.now().isoformat(),
-            'credentials_configured': self._has_valid_credentials,
-            'client_id_present': bool(self.client_id),
-            'client_secret_present': bool(self.client_secret),
-            'current_scope': self.scope,
-            'has_valid_token': False,
-            'token_expiry': None,
-            'api_test_successful': False,
-            'api_response_time': None,
-            'error': None
-        }
-        
-        if not self._has_valid_credentials:
-            result['error'] = 'Missing credentials in environment variables'
-            return result
-        
-        # Check token status
-        token = self._ensure_valid_token()
-        if token:
-            result['has_valid_token'] = True
-            if self._token_expiry:
-                result['token_expiry'] = self._token_expiry.isoformat()
-                time_remaining = (self._token_expiry - datetime.now()).total_seconds()
-                result['token_expires_in_seconds'] = int(time_remaining)
-        
-        # Test API call
-        try:
-            start_time = time.time()
-            test_vessels = self.get_vessel_positions(limit=1)
-            response_time = time.time() - start_time
-            
-            result['api_response_time'] = f"{response_time:.2f}s"
-            result['api_test_successful'] = bool(test_vessels is not None)
-            result['test_vessels_returned'] = len(test_vessels) if test_vessels else 0
-            
-        except Exception as e:
-            result['error'] = str(e)
-        
-        return result
     
     def get_service_status(self) -> Dict[str, Any]:
         """
@@ -494,9 +439,6 @@ class BarentswatchService:
             token_expiry_str = self._token_expiry.isoformat()
             token_remaining = int(time_remaining)
         
-        # Test connection
-        connection_test = self.test_connection()
-        
         return {
             'service': 'BarentswatchService',
             'timestamp': datetime.now().isoformat(),
@@ -509,18 +451,12 @@ class BarentswatchService:
                 'current_scope': self.scope,
                 'last_token_refresh': self._last_token_refresh.isoformat() if self._last_token_refresh else None
             },
-            'connection_test': connection_test,
             'capabilities': {
-                'ais_realtime': True,  # Always true, but may fail at runtime
-                'geodata_static': self.scope == 'api',  # Only with 'api' scope
+                'ais_realtime': True,
+                'supported_cities': list(self.CITY_COORDS.keys()),
+                'city_count': len(self.CITY_COORDS),
                 'api_endpoint_ais': f"{self.api_base}{self.ais_endpoint}"
-            },
-            'recommendations': [
-                'Ensure BARENTSWATCH_CLIENT_ID and BARENTSWATCH_CLIENT_SECRET are set in .env',
-                f"Current scope is '{self.scope}' - use 'ais' for AIS data, 'api' for geodata",
-                'Tokens auto-refresh when expiring (5-minute buffer)',
-                'Check logs for detailed error information'
-            ]
+            }
         }
 
 

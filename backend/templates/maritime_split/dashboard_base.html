@@ -1,5 +1,8 @@
 <!-- backend/templates/maritime_split/dashboard_base.html -->
-<!-- REAL-TIME MARITIME DASHBOARD v4.0 - COMPLETE FIX -->
+<!-- REAL-TIME MARITIME DASHBOARD v5.0 - FINAL VERSION -->
+<!-- REAL-TIME FIRST: BarentsWatch + Kystverket, empirical LAST RESORT -->
+<!-- FIXED: Real vessel movement, live counter updates, empirical fallback -->
+<!-- FIXED: Port counts showing correctly -->
 {% extends "base.html" %}
 
 {% block title %}Maritime Dashboard | BergNavn{% endblock %}
@@ -18,7 +21,52 @@
 
 <!-- Critical inline styles -->
 <style>
-/* Ensure proper display of route counts */
+/* REAL-TIME INDICATORS */
+.realtime-badge {
+    background: linear-gradient(135deg, #00e676, #00c853);
+    color: white;
+    font-weight: 600;
+    font-size: 0.7rem;
+    padding: 4px 10px;
+    border-radius: 20px;
+    animation: pulse 2s infinite;
+}
+.empirical-badge {
+    background: linear-gradient(135deg, #ff9800, #f57c00);
+    color: white;
+    font-weight: 600;
+    font-size: 0.7rem;
+    padding: 4px 10px;
+    border-radius: 20px;
+}
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.8; }
+    100% { opacity: 1; }
+}
+
+/* Vessel marker animations */
+.vessel-marker {
+    transition: all 0.3s ease;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+.vessel-marker:hover {
+    transform: scale(1.2);
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));
+}
+.vessel-real-time {
+    animation: pulse-live 2s infinite;
+}
+.vessel-empirical {
+    opacity: 0.9;
+}
+@keyframes pulse-live {
+    0% { filter: drop-shadow(0 0 0 rgba(40, 167, 69, 0.7)); }
+    70% { filter: drop-shadow(0 0 10px rgba(40, 167, 69, 0.5)); }
+    100% { filter: drop-shadow(0 0 0 rgba(40, 167, 69, 0)); }
+}
+
+/* City badges */
 .city-badge .port-count {
     background: rgba(255, 255, 255, 0.3);
     color: white;
@@ -28,7 +76,6 @@
     margin-left: 4px;
 }
 
-/* Route table interactivity */
 .route-row-highlighted {
     background-color: rgba(52, 152, 219, 0.15) !important;
     border-left: 3px solid #3498db !important;
@@ -48,7 +95,6 @@
     color: white !important;
 }
 
-/* Empirical data indicator */
 .data-source-empirical {
     background-color: #17a2b8 !important;
     color: white !important;
@@ -58,7 +104,6 @@
     margin-left: 4px;
 }
 
-/* Weather accuracy note */
 .weather-accuracy-note {
     font-size: 0.7rem;
     opacity: 0.8;
@@ -67,6 +112,57 @@
     background: rgba(0,0,0,0.05);
     border-radius: 4px;
     border-left: 3px solid #17a2b8;
+}
+
+.dashboard-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    min-width: 300px;
+    display: none;
+}
+
+.maritime-dashboard-footer {
+    background: #2c3e50;
+    color: white;
+    padding: 40px 0;
+    margin-top: 40px;
+}
+.footer-heading {
+    color: white;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+.footer-text {
+    color: rgba(255,255,255,0.8);
+}
+.footer-link {
+    color: rgba(255,255,255,0.8);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+.footer-link:hover {
+    color: white;
+}
+.status-indicator {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 6px;
+}
+.status-operational {
+    background-color: #28a745;
+}
+.status-partial {
+    background-color: #ffc107;
+}
+.status-loading {
+    background-color: #6c757d;
+}
+.status-active {
+    color: #28a745;
 }
 </style>
 {% endblock %}
@@ -95,13 +191,15 @@
     <div class="container">
         <div class="row align-items-center">
             <div class="col-md-8">
-                <h1 class="h2 mb-2"><i class="fas fa-ship me-2"></i>Maritime Dashboard</h1>
+                <h1 class="h2 mb-2">
+                    <i class="fas fa-ship me-2"></i>Maritime Dashboard
+                </h1>
                 <p class="mb-1">Real-time vessel tracking & RTZ route management</p>
                 <div class="d-flex align-items-center mt-2">
                     <span class="status-indicator status-live"></span>
-                    <span class="fw-semibold text-success me-3">LIVE</span>
+                    <span class="fw-semibold text-success me-3" id="live-status-text">LIVE</span>
                     <span id="local-time-norway" class="local-time-norway">--:--:--</span>
-                    <span class="text-white-50 ms-2" id="norwegian-date">-- --- ----</span>
+                    <span class="ms-3 text-white-50" id="norwegian-date">-- --- ----</span>
                 </div>
             </div>
             <div class="col-md-4 text-md-end">
@@ -113,12 +211,23 @@
                     <span class="badge bg-success me-2">
                         <i class="fas fa-ship me-1"></i>
                         <span id="vessel-count">0</span> Vessels
-                        <span id="real-time-vessel-counter" class="fallback-mode">LOADING</span>
+                        <span id="real-time-vessel-counter" class="badge ms-1" style="display: none;"></span>
                     </span>
-                    <span class="badge bg-warning" id="weather-status-badge">
+                    <span class="badge bg-warning text-dark" id="weather-status-badge">
                         <i class="fas fa-wind me-1"></i>
                         <span id="weather-status-text">Loading...</span>
                     </span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Vessel Status Line -->
+        <div class="row mt-2">
+            <div class="col-12">
+                <div class="d-flex align-items-center">
+                    <span class="me-2 text-white-80">Vessel status:</span>
+                    <span id="vessel-status-text" class="text-white-80">No vessel detected</span>
+                    <span id="vessel-source-badge" class="badge ms-2" style="display: none;"></span>
                 </div>
             </div>
         </div>
@@ -195,19 +304,19 @@
                     </small>
                 </div>
                 <div class="btn-group btn-group-sm">
-                    <button class="control-btn" id="refresh-btn" title="Refresh all data">
+                    <button class="control-btn" id="refresh-btn" type="button" title="Refresh all data">
                         <i class="bi bi-arrow-clockwise me-1"></i> Refresh
                     </button>
-                    <button class="control-btn active" id="rtz-toggle-btn" title="Toggle RTZ Routes">
+                    <button class="control-btn active" id="rtz-toggle-btn" type="button" title="Toggle RTZ Routes">
                         <i class="fas fa-route me-1"></i> Routes
                     </button>
-                    <button class="control-btn active" id="weather-toggle-btn" title="Toggle Weather">
+                    <button class="control-btn active" id="weather-toggle-btn" type="button" title="Toggle Weather">
                         <i class="bi bi-cloud-sun me-1"></i> Weather
                     </button>
-                    <button class="control-btn active" id="ais-toggle-btn" title="Toggle AIS">
+                    <button class="control-btn active" id="ais-toggle-btn" type="button" title="Toggle AIS">
                         <i class="bi bi-ship me-1"></i> AIS
                     </button>
-                    <button class="control-btn" id="debug-toggle-btn" title="Debug Information">
+                    <button class="control-btn" id="debug-toggle-btn" type="button" title="Debug Information">
                         <i class="bi bi-bug me-1"></i> Debug
                     </button>
                 </div>
@@ -230,7 +339,7 @@
                             <input class="form-check-input" type="checkbox" id="auto-refresh-toggle" checked>
                             <label class="form-check-label" for="auto-refresh-toggle">Auto-refresh</label>
                         </div>
-                        <button class="btn btn-sm btn-outline-primary" id="show-rtz-panel">
+                        <button class="btn btn-sm btn-outline-primary" id="show-rtz-panel" type="button">
                             <i class="fas fa-list me-1"></i> Routes List
                         </button>
                     </div>
@@ -263,8 +372,12 @@
                             <span class="legend-label">Route Waypoint</span>
                         </div>
                         <div class="legend-item">
+                            <span class="legend-color" style="background-color: #28a745;"></span>
+                            <span class="legend-label" id="vessel-legend-text">Live Vessel (REAL-TIME)</span>
+                        </div>
+                        <div class="legend-item">
                             <span class="legend-color" style="background-color: #ffc107;"></span>
-                            <span class="legend-label" id="vessel-legend-text">Vessels (Live)</span>
+                            <span class="legend-label">Empirical Vessel (FALLBACK)</span>
                         </div>
                     </div>
                 </div>
@@ -307,19 +420,17 @@
                 <h6>
                     <i class="bi bi-ship me-2"></i>
                     Active Vessels
-                    <span id="vessel-source-indicator" class="data-source-badge data-source-empirical">
-                        EMPIRICAL
-                    </span>
+                    <span id="vessel-source-indicator" class="data-source-badge">WAITING</span>
                 </h6>
-                <h2 id="active-vessels" class="fw-bold">--</h2>
+                <h2 id="active-vessels" class="fw-bold">0</h2>
                 <div class="mb-2">
                     <small class="text-muted d-block" id="vessel-type">
                         <i class="fas fa-info-circle me-1"></i>
-                        Based on active AIS signals
+                        No vessel detected
                     </small>
-                    <small class="text-muted" id="vessel-range">Within 50km radius of center</small>
+                    <small class="text-muted" id="vessel-range"></small>
                 </div>
-                <small class="data-freshness" id="vessels-updated">Updating...</small>
+                <small class="data-freshness" id="vessels-updated">Waiting for signal...</small>
             </div>
         </div>
         
@@ -374,7 +485,7 @@
                         {% endif %}
                     </div>
                 </div>
-                <small class="text-muted" id="system-update-time">Last check: --:--</small>
+                <small class="text-muted" id="system-update-time">Last check: <span id="system-time">--:--</span></small>
             </div>
         </div>
     </div>
@@ -383,7 +494,7 @@
     <div class="row">
         <div class="col-12">
             <div class="dashboard-card">
-                <div class="card-header">
+                <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">
                         <i class="fas fa-route me-2"></i>
                         RTZ Routes Database
@@ -393,6 +504,9 @@
                             Norwegian Coastal Administration (Verified)
                         </small>
                     </h5>
+                    <div class="d-flex align-items-center">
+                        <input type="text" class="form-control form-control-sm" id="route-search" placeholder="Search routes..." style="width: 200px;">
+                    </div>
                 </div>
                 <div class="card-body">
                     {% if routes and routes|length > 0 %}
@@ -408,109 +522,117 @@
                         </div>
                         
                         <div class="route-table-container">
-                            <table class="table table-sm table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Route Name</th>
-                                        <th>Origin → Destination</th>
-                                        <th>Distance</th>
-                                        <th>Waypoints</th>
-                                        <th>Port</th>
-                                        <th>Status</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="routes-table-body">
-                                    {% for route in routes %}
-                                    {% set city_name = route.source_city if route.source_city else route.source_city_name if route.source_city_name else '' %}
-                                    {% if city_name == "Alesund" %}{% set city_name = "Ålesund" %}{% endif %}
-                                    {% if city_name == "Andalsnes" %}{% set city_name = "Åndalsnes" %}{% endif %}
-                                    
-                                    <tr class="route-row" data-route-index="{{ loop.index0 }}" data-route-id="{{ route.route_id or loop.index }}" data-city="{{ city_name|lower if city_name else '' }}">
-                                        <td class="text-muted fw-semibold">{{ loop.index }}</td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <span class="route-status-dot route-status-verified"></span>
-                                                <strong class="route-name-display">
-                                                    {% if route.clean_name %}
-                                                        {{ route.clean_name }}
-                                                    {% elif route.route_name %}
-                                                        {{ route.route_name|replace('NCA_', '')|replace('_2025', '')|replace('_', ' ')|title }}
-                                                    {% else %}
-                                                        Route {{ loop.index }}
-                                                    {% endif %}
-                                                </strong>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <span class="badge bg-success bg-opacity-25 me-1 px-2 py-1">
-                                                    {% if route.origin and route.origin != 'Unknown' %}
-                                                        {{ route.origin }}
-                                                    {% else %}
-                                                        <span class="text-muted">N/A</span>
-                                                    {% endif %}
-                                                </span>
-                                                <i class="fas fa-arrow-right mx-1 text-muted small"></i>
-                                                <span class="badge bg-danger bg-opacity-25 ms-1 px-2 py-1">
-                                                    {% if route.destination and route.destination != 'Unknown' %}
-                                                        {{ route.destination }}
-                                                    {% else %}
-                                                        <span class="text-muted">N/A</span>
-                                                    {% endif %}
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            {% if route.total_distance_nm %}
-                                                <span class="fw-bold">{{ "%.1f"|format(route.total_distance_nm) }}</span>
-                                                <small class="text-muted">NM</small>
-                                            {% else %}
-                                                <span class="text-muted">--</span>
-                                            {% endif %}
-                                        </td>
-                                        <td>
-                                            {% if route.waypoint_count %}
-                                                <span class="badge bg-info bg-opacity-25 px-2 py-1">{{ route.waypoint_count }}</span>
-                                            {% else %}
-                                                <span class="text-muted">--</span>
-                                            {% endif %}
-                                        </td>
-                                        <td>
-                                            {% if city_name %}
-                                                <span class="badge bg-primary bg-opacity-25 px-2 py-1">{{ city_name|title }}</span>
-                                            {% else %}
-                                                <span class="text-muted">--</span>
-                                            {% endif %}
-                                        </td>
-                                        <td>
-                                            <span class="badge bg-success bg-opacity-75">Verified</span>
-                                        </td>
-                                        <td>
-                                            <div class="btn-group btn-group-sm">
-                                                <button class="btn btn-outline-primary view-route-btn" 
-                                                        data-route-id="{{ route.route_id or loop.index }}" 
-                                                        data-has-waypoints="{{ 'true' if route.waypoint_count and route.waypoint_count > 0 else 'false' }}"
-                                                        title="Zoom to route on map">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
-                                                <button class="btn btn-outline-info highlight-route-btn" 
-                                                        data-route-id="{{ loop.index0 }}"
-                                                        title="Highlight route">
-                                                    <i class="fas fa-map-marker-alt"></i>
-                                                </button>
-                                                <button class="btn btn-outline-secondary route-info-btn" 
-                                                        data-route-id="{{ route.route_id or loop.index }}"
-                                                        title="Show route details">
-                                                    <i class="fas fa-info"></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
+                            <div class="table-responsive">
+                                <table class="table table-sm table-hover" id="routes-table">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Route Name</th>
+                                            <th>Origin → Destination</th>
+                                            <th>Distance</th>
+                                            <th>Waypoints</th>
+                                            <th>Port</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="routes-table-body">
+                                        {% for route in routes %}
+                                        {% set city_name = route.source_city if route.source_city else route.source_city_name if route.source_city_name else '' %}
+                                        {% if city_name == "Alesund" %}
+                                            {% set city_name = "Ålesund" %}
+                                        {% endif %}
+                                        {% if city_name == "Andalsnes" %}
+                                            {% set city_name = "Åndalsnes" %}
+                                        {% endif %}
+                                        
+                                        <tr class="route-row" data-route-index="{{ loop.index0 }}" data-city="{{ city_name|lower if city_name else '' }}">
+                                            <td class="text-muted fw-semibold">{{ loop.index }}</td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <span class="route-status-dot route-status-verified"></span>
+                                                    <strong class="route-name-display">
+                                                        {% if route.clean_name %}
+                                                            {{ route.clean_name }}
+                                                        {% elif route.route_name %}
+                                                            {{ route.route_name|replace('NCA_', '')|replace('_2025', '')|replace('_', ' ')|title }}
+                                                        {% else %}
+                                                            Route {{ loop.index }}
+                                                        {% endif %}
+                                                    </strong>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <span class="badge bg-success bg-opacity-25 me-1 px-2 py-1">
+                                                        {% if route.origin and route.origin != 'Unknown' %}
+                                                            {{ route.origin }}
+                                                        {% else %}
+                                                            <span class="text-muted">N/A</span>
+                                                        {% endif %}
+                                                    </span>
+                                                    <i class="fas fa-arrow-right mx-1 text-muted small"></i>
+                                                    <span class="badge bg-danger bg-opacity-25 ms-1 px-2 py-1">
+                                                        {% if route.destination and route.destination != 'Unknown' %}
+                                                            {{ route.destination }}
+                                                        {% else %}
+                                                            <span class="text-muted">N/A</span>
+                                                        {% endif %}
+                                                    </span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                {% if route.total_distance_nm %}
+                                                    <span class="fw-bold">{{ "%.1f"|format(route.total_distance_nm) }}</span>
+                                                    <small class="text-muted">NM</small>
+                                                {% else %}
+                                                    <span class="text-muted">--</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if route.waypoint_count %}
+                                                    <span class="badge bg-info bg-opacity-25 px-2 py-1">{{ route.waypoint_count }}</span>
+                                                {% else %}
+                                                    <span class="text-muted">--</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if city_name %}
+                                                    <span class="badge bg-primary bg-opacity-25 px-2 py-1">{{ city_name|title }}</span>
+                                                {% else %}
+                                                    <span class="text-muted">--</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-success bg-opacity-75">Verified</span>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm">
+                                                    <button class="btn btn-outline-primary view-route-btn" 
+                                                            data-route-index="{{ loop.index0 }}"
+                                                            type="button"
+                                                            title="Zoom to route on map">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                    <button class="btn btn-outline-info highlight-route-btn" 
+                                                            data-route-index="{{ loop.index0 }}"
+                                                            type="button"
+                                                            title="Highlight route">
+                                                        <i class="fas fa-map-marker-alt"></i>
+                                                    </button>
+                                                    <button class="btn btn-outline-secondary route-info-btn" 
+                                                            data-route-index="{{ loop.index0 }}"
+                                                            type="button"
+                                                            title="Show route details">
+                                                        <i class="fas fa-info"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                         
                         <div class="mt-3 pt-3 border-top">
@@ -552,7 +674,7 @@
                                 The system is loading 50+ NCA RTZ routes. This may take a moment.
                             </p>
                             <div class="d-flex justify-content-center gap-3">
-                                <button class="btn btn-outline-primary" onclick="window.location.reload()">
+                                <button class="btn btn-outline-primary" type="button" onclick="window.location.reload()">
                                     <i class="fas fa-sync-alt me-1"></i> Reload Dashboard
                                 </button>
                                 <a href="/maritime/api/rtz-status" target="_blank" class="btn btn-outline-info">
@@ -561,7 +683,7 @@
                             </div>
                             <div class="mt-4 small text-muted">
                                 <p>If this persists, ensure you're accessing: <code>/maritime/dashboard</code></p>
-                                <p>Current URL: <span id="current-url">{{ request.url }}</span></p>
+                                <p>Current URL: <span id="current-url">{{ request.url if request else '' }}</span></p>
                             </div>
                         </div>
                     {% endif %}
@@ -656,35 +778,45 @@
 {% endblock %}
 
 {% block scripts %}
-<!-- External libraries -->
+<!-- External libraries - CORRECT ORDER -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <!-- Dashboard JavaScript modules -->
 <script src="{{ url_for('static', filename='js/split/maritime_map.js') }}"></script>
 <script src="{{ url_for('static', filename='js/split/maritime_weather.js') }}"></script>
-<script src="{{ url_for('static', filename='js/split/ais_realtime.js') }}"></script>
 <script src="{{ url_for('static', filename='js/split/dashboard_controls.js') }}"></script>
 <script src="{{ url_for('static', filename='js/split/rtz_waypoints.js') }}"></script>
 
-<!-- Main dashboard initialization -->
+<!-- Main dashboard initialization with REAL-TIME vessel tracking -->
 <script>
 // Global data storage
 window.dashboardData = {
     routes: [],
     waypoints: {},
-    map: null
+    map: null,
+    vesselMarker: null,
+    vesselUpdateInterval: null,
+    vesselData: null,
+    dataSource: 'waiting'
 };
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚢 Dashboard v4.0 - Initializing');
+    console.log('🚢 Dashboard v5.0 FINAL - Initializing with REAL-TIME vessel tracking');
     
     // Load routes data
     try {
         const routesDataElement = document.getElementById('routes-data');
         if (routesDataElement && routesDataElement.textContent) {
             window.dashboardData.routes = JSON.parse(routesDataElement.textContent);
-            console.log(`📊 Loaded ${window.dashboardData.routes.length} routes`);
+            console.log(`📊 Loaded ${window.dashboardData.routes.length} routes from DOM`);
+            
+            // Dispatch event for other modules
+            const event = new CustomEvent('routesDataLoaded', { 
+                detail: { routes: window.dashboardData.routes }
+            });
+            document.dispatchEvent(event);
         }
     } catch (e) {
         console.error('Error loading routes:', e);
@@ -694,11 +826,16 @@ document.addEventListener('DOMContentLoaded', function() {
     updateNorwegianTime();
     setInterval(updateNorwegianTime, 1000);
     
-    // Initialize route buttons - FIXED VERSION
+    // Initialize route buttons
     initRouteButtons();
     
     // Initialize footer with live data
     updateFooterStatus();
+    
+    // Start REAL-TIME vessel tracking
+    setTimeout(() => {
+        startRealTimeVesselTracking();
+    }, 3000);
 });
 
 function updateNorwegianTime() {
@@ -737,7 +874,7 @@ function updateNorwegianTime() {
 }
 
 function initRouteButtons() {
-    // Handle view route button clicks - FIXED: Use row index instead of route ID
+    // Handle view route button clicks
     document.addEventListener('click', function(e) {
         if (e.target.closest('.view-route-btn')) {
             const button = e.target.closest('.view-route-btn');
@@ -752,7 +889,7 @@ function initRouteButtons() {
                 return;
             }
             
-            // Get all data rows (skip header if it exists)
+            // Get all data rows
             const tbody = row.closest('tbody');
             if (!tbody) {
                 console.error('❌ Could not find table body');
@@ -763,15 +900,14 @@ function initRouteButtons() {
             const allRows = Array.from(tbody.querySelectorAll('tr'));
             const routeIndex = allRows.indexOf(row);
             
-            console.log(`📊 Found route at row index: ${routeIndex} (total rows: ${allRows.length})`);
+            console.log(`📊 Found route at row index: ${routeIndex}`);
             
             if (routeIndex >= 0) {
-                // Try to zoom using window.zoomToRoute with the ROW INDEX
                 if (typeof window.zoomToRoute === 'function') {
                     const success = window.zoomToRoute(routeIndex);
                     
                     if (success) {
-                        // Highlight the row in the table
+                        // Highlight the row
                         document.querySelectorAll('.route-row-highlighted').forEach(r => {
                             r.classList.remove('route-row-highlighted');
                         });
@@ -780,7 +916,6 @@ function initRouteButtons() {
                         // Scroll the row into view
                         row.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                         
-                        // Show success notification
                         const routeName = row.querySelector('.route-name-display')?.textContent || `Route ${routeIndex + 1}`;
                         showNotification(`Zoomed to route: ${routeName}`, 'success');
                     } else {
@@ -795,6 +930,184 @@ function initRouteButtons() {
             }
         }
     });
+}
+
+// ============================================
+// REAL-TIME VESSEL TRACKING
+// ============================================
+
+function startRealTimeVesselTracking() {
+    console.log('🚢 Starting REAL-TIME vessel tracking...');
+    
+    // Initial fetch
+    fetchRealTimeVessel();
+    
+    // Update every 30 seconds
+    window.dashboardData.vesselUpdateInterval = setInterval(fetchRealTimeVessel, 30000);
+}
+
+async function fetchRealTimeVessel() {
+    try {
+        const response = await fetch('/maritime/api/vessels/real-time?city=bergen&radius_km=100');
+        const data = await response.json();
+        
+        if (data.vessels && data.vessels.length > 0) {
+            const vessel = data.vessels[0];
+            window.dashboardData.vesselData = vessel;
+            window.dashboardData.dataSource = data.source;
+            
+            // Update vessel count to 1
+            updateVesselCount(1, data.source);
+            
+            // Update vessel display
+            updateVesselOnMap(vessel, data.source);
+            
+            console.log(`✅ REAL-TIME vessel: ${vessel.name || 'Unknown'}, source: ${data.source}`);
+        } else {
+            console.log('No vessels found');
+            // Reset to 0 if no vessels
+            updateVesselCount(0, null);
+        }
+    } catch (error) {
+        console.error('Error fetching vessel:', error);
+        updateVesselCount(0, null);
+    }
+}
+
+function updateVesselOnMap(vessel, source) {
+    if (!window.map) return;
+    
+    // Remove old marker
+    if (window.dashboardData.vesselMarker) {
+        window.map.removeLayer(window.dashboardData.vesselMarker);
+    }
+    
+    const lat = vessel.latitude || vessel.lat;
+    const lon = vessel.longitude || vessel.lon;
+    
+    if (!lat || !lon) return;
+    
+    const isRealTime = source && source.includes('REAL-TIME');
+    const isEmpirical = source && source.includes('EMPIRICAL');
+    
+    // Create vessel icon
+    const vesselIcon = L.divIcon({
+        className: `vessel-marker ${isRealTime ? 'vessel-real-time' : 'vessel-empirical'}`,
+        html: '🚢',
+        iconSize: [40, 40],
+        iconAnchor: [20, 20]
+    });
+    
+    window.dashboardData.vesselMarker = L.marker([lat, lon], {
+        icon: vesselIcon,
+        zIndexOffset: 1000
+    }).addTo(window.map);
+    
+    // Create popup
+    const popupContent = `
+        <div style="min-width: 250px;">
+            <div style="background: ${isRealTime ? '#28a745' : '#ffc107'}; color: white; padding: 8px; border-radius: 5px 5px 0 0;">
+                <strong>${vessel.name || 'Commercial Vessel'}</strong>
+                <span class="badge bg-light text-dark float-end">${isRealTime ? '🚢 LIVE' : '📡 EMPIRICAL'}</span>
+            </div>
+            <div style="padding: 10px; background: white;">
+                <table style="width: 100%; font-size: 12px;">
+                    <tr><td>Speed:</td><td><strong>${vessel.speed || 0} knots</strong></td></tr>
+                    <tr><td>Type:</td><td>${vessel.type || 'Commercial'}</td></tr>
+                    <tr><td>Position:</td><td>${lat.toFixed(4)}°, ${lon.toFixed(4)}°</td></tr>
+                    <tr><td>Source:</td><td>${source || 'unknown'}</td></tr>
+                </table>
+            </div>
+        </div>
+    `;
+    
+    window.dashboardData.vesselMarker.bindPopup(popupContent);
+}
+
+function updateVesselCount(count, source) {
+    // Update vessel count
+    const vesselCountEl = document.getElementById('vessel-count');
+    const activeVesselsEl = document.getElementById('active-vessels');
+    const vesselSourceIndicator = document.getElementById('vessel-source-indicator');
+    const vesselStatusText = document.getElementById('vessel-status-text');
+    const vesselSourceBadge = document.getElementById('vessel-source-badge');
+    const liveStatusText = document.getElementById('live-status-text');
+    const realTimeCounter = document.getElementById('real-time-vessel-counter');
+    
+    if (vesselCountEl) vesselCountEl.textContent = count;
+    if (activeVesselsEl) activeVesselsEl.textContent = count;
+    
+    if (count > 0) {
+        const isRealTime = source && source.includes('REAL-TIME');
+        
+        // Update source indicator
+        if (vesselSourceIndicator) {
+            vesselSourceIndicator.className = `data-source-badge ${isRealTime ? 'data-source-live' : 'data-source-empirical'}`;
+            vesselSourceIndicator.textContent = isRealTime ? 'LIVE' : 'EMPIRICAL';
+        }
+        
+        // Update status text
+        if (vesselStatusText) {
+            vesselStatusText.textContent = `Tracking vessel - ${isRealTime ? 'Real-time AIS' : 'Empirical data'}`;
+        }
+        
+        // Update badge
+        if (vesselSourceBadge) {
+            vesselSourceBadge.className = `badge ${isRealTime ? 'realtime-badge' : 'empirical-badge'} ms-2`;
+            vesselSourceBadge.textContent = isRealTime ? 'LIVE' : 'EMPIRICAL';
+            vesselSourceBadge.style.display = 'inline-block';
+        }
+        
+        // Update live status text
+        if (liveStatusText) {
+            liveStatusText.textContent = isRealTime ? 'LIVE' : 'EMPIRICAL';
+            liveStatusText.className = `fw-semibold ${isRealTime ? 'text-success' : 'text-warning'} me-3`;
+        }
+        
+        // Update real-time counter
+        if (realTimeCounter) {
+            realTimeCounter.className = `badge ${isRealTime ? 'realtime-badge' : 'empirical-badge'} ms-1`;
+            realTimeCounter.textContent = isRealTime ? '🚢 LIVE' : '📡 EMPIRICAL';
+            realTimeCounter.style.display = 'inline-block';
+        }
+        
+        // Update vessel type
+        const vesselTypeEl = document.getElementById('vessel-type');
+        if (vesselTypeEl && window.dashboardData.vesselData) {
+            vesselTypeEl.innerHTML = `<i class="fas fa-info-circle me-1"></i> ${window.dashboardData.vesselData.name || 'Commercial vessel'}`;
+        }
+    } else {
+        // Reset to default
+        if (vesselSourceIndicator) {
+            vesselSourceIndicator.className = 'data-source-badge';
+            vesselSourceIndicator.textContent = 'WAITING';
+        }
+        if (vesselStatusText) {
+            vesselStatusText.textContent = 'No vessel detected';
+        }
+        if (vesselSourceBadge) {
+            vesselSourceBadge.style.display = 'none';
+        }
+        if (liveStatusText) {
+            liveStatusText.textContent = 'LIVE';
+            liveStatusText.className = 'fw-semibold text-success me-3';
+        }
+        if (realTimeCounter) {
+            realTimeCounter.style.display = 'none';
+        }
+        
+        const vesselTypeEl = document.getElementById('vessel-type');
+        if (vesselTypeEl) {
+            vesselTypeEl.innerHTML = `<i class="fas fa-info-circle me-1"></i> No vessel detected`;
+        }
+    }
+    
+    // Update freshness timestamp
+    const vesselsUpdated = document.getElementById('vessels-updated');
+    if (vesselsUpdated) {
+        const now = new Date();
+        vesselsUpdated.textContent = `Updated: ${now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+    }
 }
 
 function zoomToPort(route) {
@@ -822,7 +1135,6 @@ function zoomToPort(route) {
 }
 
 function updateFooterStatus() {
-    // Update system status based on routes
     const footerStatus = document.getElementById('footer-system-status');
     if (footerStatus) {
         if (window.dashboardData.routes.length > 0) {
@@ -832,11 +1144,10 @@ function updateFooterStatus() {
         }
     }
     
-    // Update API status
     const apiStatus = document.getElementById('footer-api-status');
     if (apiStatus) {
-        const hasWeather = document.querySelector('#weather-temp').textContent !== '--°C';
-        const hasVessels = document.querySelector('#active-vessels').textContent !== '--';
+        const hasWeather = document.querySelector('#weather-temp')?.textContent !== '--°C';
+        const hasVessels = window.dashboardData.vesselData !== null;
         
         if (hasWeather && hasVessels) {
             apiStatus.textContent = 'All APIs Active';
@@ -860,7 +1171,6 @@ function showNotification(message, type = 'info') {
         messageEl.textContent = message;
     }
     
-    // Set type styling
     const titleEl = notification.querySelector('#notification-title');
     if (titleEl) {
         const colors = {
@@ -873,7 +1183,6 @@ function showNotification(message, type = 'info') {
         titleEl.textContent = type.charAt(0).toUpperCase() + type.slice(1);
     }
     
-    // Set time
     const timeEl = notification.querySelector('#notification-time');
     if (timeEl) {
         const now = new Date();
@@ -883,21 +1192,29 @@ function showNotification(message, type = 'info') {
         });
     }
     
-    // Show
     notification.style.display = 'block';
     
-    // Auto-hide
     setTimeout(() => {
         notification.style.display = 'none';
     }, 3000);
 }
 
 // Debug button
-document.getElementById('debug-toggle-btn')?.addEventListener('click', function() {
-    console.log('=== DEBUG INFO ===');
-    console.log('Routes:', window.dashboardData.routes.length);
-    console.log('Map available:', !!window.map);
-    console.log('Footer element:', document.querySelector('.maritime-dashboard-footer'));
+document.addEventListener('DOMContentLoaded', function() {
+    const debugBtn = document.getElementById('debug-toggle-btn');
+    if (debugBtn) {
+        debugBtn.addEventListener('click', function() {
+            console.log('=== DEBUG INFO ===');
+            console.log('Routes:', window.dashboardData.routes.length);
+            console.log('Vessel:', window.dashboardData.vesselData);
+            console.log('Source:', window.dashboardData.dataSource);
+            console.log('Map available:', !!window.map);
+            
+            if (window.rtzWaypoints && window.rtzWaypoints.debugRoutes) {
+                window.rtzWaypoints.debugRoutes();
+            }
+        });
+    }
 });
 </script>
 {% endblock %}

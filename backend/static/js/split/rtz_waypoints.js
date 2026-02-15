@@ -3,6 +3,11 @@
  * RTZ Waypoints Display Module - Enhanced Integration Version
  * Shows all waypoints for RTZ routes on the map with dashboard controls integration
  * Features: Clear start/end points, route highlighting, proper integration with dashboard
+ * 
+ * FIXED: CRITICAL - Waypoints are stored with numeric keys (0,1,2...) not route-0
+ * FIXED: Proper detection of waypoints from DOM using route.index
+ * FIXED: Auto-drawing when data is loaded
+ * FIXED: getRouteColor handles undefined route.source_city and missing routeColorMap
  */
 
 class RTZWaypoints {
@@ -14,6 +19,8 @@ class RTZWaypoints {
         this.waypointMarkers = {};
         this.routeLines = {};
         this.waypointsData = {}; // Store waypoints for external access
+        this.routesData = []; // Store routes for external access
+        
         console.log('📍 RTZ Waypoints module initialized - Enhanced Integration Version');
         
         // Define color groups for different source cities
@@ -31,25 +38,141 @@ class RTZWaypoints {
         };
         
         this.defaultRouteColor = '#3498db';
+        
+        // Load waypoints from DOM
+        this.loadWaypointsFromDOM();
+        
+        // Load routes from dashboardData
+        this.loadRoutesFromDashboard();
+    }
+    
+    /**
+     * Load waypoints from DOM element
+     */
+    loadWaypointsFromDOM() {
+        const waypointsElement = document.getElementById('waypoints-data');
+        if (waypointsElement && waypointsElement.textContent) {
+            try {
+                const data = JSON.parse(waypointsElement.textContent);
+                console.log('📍 Loaded waypoints from DOM:', Object.keys(data).length, 'routes');
+                console.log('📍 Sample keys:', Object.keys(data).slice(0, 5));
+                
+                // Store directly - data has numeric keys (0, 1, 2...)
+                this.waypointsData = data;
+                
+                // Auto-draw if routes are already loaded
+                if (this.routesData.length > 0) {
+                    console.log('🎯 Auto-drawing with waypoints...');
+                    setTimeout(() => {
+                        this.drawMultipleRoutes(this.routesData);
+                    }, 500);
+                }
+                
+                return true;
+            } catch (e) {
+                console.error('❌ Failed to parse waypoints:', e);
+            }
+        }
+        console.log('⚠️ No waypoints found in DOM');
+        return false;
+    }
+    
+    /**
+     * Load routes from window.dashboardData
+     */
+    loadRoutesFromDashboard() {
+        if (window.dashboardData && window.dashboardData.routes) {
+            this.routesData = window.dashboardData.routes;
+            console.log(`📍 Loaded ${this.routesData.length} routes from dashboardData`);
+            
+            // Auto-draw if we have waypoints
+            if (this.routesData.length > 0 && Object.keys(this.waypointsData).length > 0) {
+                console.log('🎯 Auto-drawing routes with waypoints...');
+                this.drawMultipleRoutes(this.routesData);
+            }
+            return true;
+        }
+        
+        console.log('⚠️ No routes in dashboardData yet, waiting...');
+        
+        // Try again in a moment
+        setTimeout(() => {
+            if (window.dashboardData && window.dashboardData.routes && this.routesData.length === 0) {
+                this.routesData = window.dashboardData.routes;
+                console.log(`📍 Loaded ${this.routesData.length} routes from dashboardData (delayed)`);
+                
+                if (this.routesData.length > 0 && Object.keys(this.waypointsData).length > 0) {
+                    console.log('🎯 Auto-drawing routes from dashboardData (delayed)...');
+                    this.drawMultipleRoutes(this.routesData);
+                }
+            }
+        }, 1000);
+        
+        return false;
     }
     
     /**
      * Draw complete route with waypoints
      */
     drawCompleteRoute(route, routeId) {
-        if (!route.waypoints || !Array.isArray(route.waypoints)) {
-            console.log(`⚠️ No waypoints array for route ${routeId}`);
+        console.log(`🎨 Drawing route ${routeId}, index: ${route.index}`);
+        
+        // Try to get waypoints from various sources
+        let waypoints = [];
+        
+        // CRITICAL: The waypoints are stored with NUMERIC keys (0, 1, 2...)
+        // Source 1: Try by index from the routesData array (MOST RELIABLE)
+        if (route.index !== undefined && this.waypointsData[route.index] && 
+            Array.isArray(this.waypointsData[route.index]) && 
+            this.waypointsData[route.index].length > 0) {
+            waypoints = this.waypointsData[route.index];
+            console.log(`✅ Found waypoints at route.index ${route.index}: ${waypoints.length} waypoints`);
+        }
+        // Source 2: Try numeric key extracted from routeId
+        else {
+            const numericId = routeId.replace('route-', '');
+            if (this.waypointsData[numericId] && 
+                Array.isArray(this.waypointsData[numericId]) && 
+                this.waypointsData[numericId].length > 0) {
+                waypoints = this.waypointsData[numericId];
+                console.log(`✅ Found waypoints at key "${numericId}": ${waypoints.length} waypoints`);
+            }
+            // Source 3: Try original routeId as fallback
+            else if (this.waypointsData[routeId] && 
+                     Array.isArray(this.waypointsData[routeId]) && 
+                     this.waypointsData[routeId].length > 0) {
+                waypoints = this.waypointsData[routeId];
+                console.log(`✅ Found waypoints at key "${routeId}": ${waypoints.length} waypoints`);
+            }
+            // Source 4: Try route.waypoints
+            else if (route.waypoints && 
+                     Array.isArray(route.waypoints) && 
+                     route.waypoints.length > 0) {
+                waypoints = route.waypoints;
+                console.log(`✅ Using route.waypoints: ${waypoints.length} waypoints`);
+            }
+        }
+        
+        if (waypoints.length === 0) {
+            console.log(`⚠️ No waypoints found for route ${routeId} (index: ${route.index})`);
             return;
         }
         
-        console.log(`📍 Drawing complete route ${routeId} with ${route.waypoints.length} waypoints`);
+        console.log(`📍 Drawing route ${routeId} with ${waypoints.length} waypoints`);
         
         // Store waypoints data for external access
-        this.waypointsData[routeId] = route.waypoints;
+        this.waypointsData[routeId] = waypoints;
         
-        // Get route color based on source city
+        // Create a route object with waypoints
+        const routeWithWaypoints = {
+            ...route,
+            waypoints: waypoints
+        };
+        
+        // Get route color based on source city - with safety checks
         const routeColor = this.getRouteColor(route);
-        const sourceCity = (route.source_city || '').toLowerCase();
+        // Source city for CSS class - use empty string if missing
+        const sourceCity = route.source_city ? route.source_city.toLowerCase() : 'unknown';
         
         // Clear previous markers for this route
         this.clearRouteWaypoints(routeId);
@@ -58,12 +181,12 @@ class RTZWaypoints {
         this.waypointMarkers[routeId] = [];
         
         // Draw route line
-        this.drawRouteLine(route, routeId, routeColor, sourceCity);
+        this.drawRouteLine(routeWithWaypoints, routeId, routeColor, sourceCity);
         
         // Draw all waypoints
-        route.waypoints.forEach((waypoint, index) => {
+        waypoints.forEach((waypoint, index) => {
             if (waypoint && waypoint.lat !== undefined && waypoint.lon !== undefined) {
-                const marker = this.createWaypointMarker(waypoint, index, route, routeId, routeColor);
+                const marker = this.createWaypointMarker(waypoint, index, routeWithWaypoints, routeId, routeColor);
                 marker.addTo(this.waypointsLayer);
                 this.waypointMarkers[routeId].push(marker);
             }
@@ -280,15 +403,23 @@ class RTZWaypoints {
      * Draw multiple routes
      */
     drawMultipleRoutes(routesData) {
-        console.log(`📍 Drawing ${routesData.length} routes with clear differentiation`);
+        if (!routesData || routesData.length === 0) {
+            console.log('⚠️ No routes data to draw');
+            return;
+        }
         
-        // Clear existing layers
-        this.clearAllWaypoints();
+        console.log(`📍 Drawing ${routesData.length} routes with clear differentiation`);
+        console.log(`📍 Waypoints data available for ${Object.keys(this.waypointsData).length} routes`);
+        
+        // Clear layers but preserve waypointsData
+        this.clearAllWaypoints(true);
         this.routesLayer.clearLayers();
         
-        // Draw each route
+        // Draw each route - CRITICAL: Add index to route object
         routesData.forEach((route, index) => {
             const routeId = route.route_id || `route-${index}`;
+            // Add the index to the route object for waypoint lookup
+            route.index = index;
             this.drawCompleteRoute(route, routeId);
         });
         
@@ -299,6 +430,7 @@ class RTZWaypoints {
         }
         
         console.log(`✅ Drew ${routesData.length} routes with clear start/end points`);
+        console.log(`✅ Total route lines drawn: ${Object.keys(this.routeLines).length}`);
     }
     
     /**
@@ -506,8 +638,30 @@ class RTZWaypoints {
      * Helper methods
      */
     getRouteColor(route) {
-        const sourceCity = (route.source_city || '').toLowerCase();
-        return this.routeColorMap[sourceCity] || this.defaultRouteColor;
+        // Safety check - if routeColorMap is missing (should not happen), reinitialize
+        if (!this.routeColorMap) {
+            console.warn('⚠️ routeColorMap missing, reinitializing');
+            this.routeColorMap = {
+                'bergen': '#3498db', 'oslo': '#2ecc71', 'trondheim': '#e74c3c',
+                'stavanger': '#f39c12', 'alesund': '#9b59b6', 'kristiansand': '#1abc9c',
+                'drammen': '#d35400', 'sandefjord': '#27ae60', 'flekkefjord': '#8e44ad',
+                'andalsnes': '#16a085'
+            };
+        }
+        
+        // Safety check - if route is undefined, return default
+        if (!route) {
+            return this.defaultRouteColor;
+        }
+        
+        // If source_city exists and is a string, use it
+        if (route.source_city && typeof route.source_city === 'string') {
+            const sourceCity = route.source_city.toLowerCase();
+            return this.routeColorMap[sourceCity] || this.defaultRouteColor;
+        }
+        
+        // Default fallback
+        return this.defaultRouteColor;
     }
     
     isImportantWaypoint(index, totalWaypoints) {
@@ -585,13 +739,19 @@ class RTZWaypoints {
     /**
      * Clear all waypoints and routes
      */
-    clearAllWaypoints() {
+    clearAllWaypoints(preserveData = false) {
         this.waypointsLayer.clearLayers();
         this.routesLayer.clearLayers();
         this.waypointMarkers = {};
         this.routeLines = {};
-        this.waypointsData = {};
-        console.log('🧹 All waypoints and routes cleared');
+        
+        // Only clear waypointsData if not preserving
+        if (!preserveData) {
+            this.waypointsData = {};
+            console.log('🧹 All waypoints and routes cleared (including data)');
+        } else {
+            console.log('🧹 Cleared layers only, preserving waypointsData');
+        }
     }
     
     /**
@@ -659,10 +819,15 @@ class RTZWaypoints {
         console.log('Waypoints data stored for:', Object.keys(this.waypointsData).length, 'routes');
         
         if (Object.keys(this.waypointsData).length > 0) {
-            const firstRouteId = Object.keys(this.waypointsData)[0];
-            console.log(`Sample route "${firstRouteId}" has:`, 
-                this.waypointsData[firstRouteId].length, 'waypoints');
+            const firstKey = Object.keys(this.waypointsData)[0];
+            const data = this.waypointsData[firstKey];
+            console.log(`Sample route key "${firstKey}" has:`, data?.length || 0, 'waypoints');
+            if (data && data.length > 0) {
+                console.log('First waypoint:', data[0]);
+            }
         }
+        
+        console.log('Routes in dashboardData:', window.dashboardData?.routes?.length || 0);
         console.log('=== END DEBUG ===');
     }
 }
@@ -677,21 +842,10 @@ document.addEventListener('DOMContentLoaded', function() {
             window.rtzWaypoints = new RTZWaypoints(window.map);
             console.log('✅ RTZ Waypoints module ready (Enhanced Integration Version)');
             
-            // Listen for routes data
-            document.addEventListener('routesDataLoaded', function(e) {
-                if (e.detail && e.detail.routes) {
-                    console.log('🎯 Got routes data, drawing routes...');
-                    window.rtzWaypoints.drawMultipleRoutes(e.detail.routes);
-                }
-            });
-            
-            // Auto-load from window.allRoutesData if available
+            // Debug after 2 seconds
             setTimeout(() => {
-                if (window.allRoutesData && window.rtzWaypoints.waypointsLayer.getLayers().length === 0) {
-                    console.log('🌐 Auto-loading routes from window.allRoutesData...');
-                    window.rtzWaypoints.drawMultipleRoutes(window.allRoutesData);
-                }
-            }, 1000);
+                window.rtzWaypoints.debugRoutes();
+            }, 2000);
         }
     }, 100);
 });
