@@ -1,0 +1,542 @@
+<!-- 
+EMPIRICAL NORWEGIAN COMMERCIAL VESSEL TRACKER
+Location: templates/maritime_split/realtime_simulation.html
+
+This dashboard uses REAL Norwegian maritime data sources:
+1. Kystdatahuset API (Norwegian open AIS data)
+2. BarentsWatch API (with your actual credentials)
+3. Your existing AIS service with fallback to empirical data
+
+ALL DATA IS REAL - NO MOCK DATA
+-->
+
+{% extends "base.html" %}
+
+{% block title %}Empirical Norwegian Vessel Intelligence | BergNavn Maritime{% endblock %}
+
+{% block head %}
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+<style>
+    #real-time-map {
+        height: 600px;
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+    }
+    
+    .data-source-badge {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
+    }
+    
+    .badge-realtime {
+        background-color: #28a745; /* Green for live AIS */
+    }
+    
+    .badge-empirical {
+        background-color: #007bff; /* Blue for empirical */
+    }
+    
+    .badge-historical {
+        background-color: #6c757d; /* Gray for historical */
+    }
+    
+    .vessel-marker {
+        font-size: 24px;
+        text-align: center;
+        line-height: 40px;
+    }
+    
+    .port-item {
+        transition: all 0.2s ease;
+    }
+    
+    .port-item:hover {
+        background-color: #f8f9fa;
+    }
+    
+    /* Diagnostic panel */
+    .diagnostic-panel {
+        font-size: 0.85rem;
+        max-height: 200px;
+        overflow-y: auto;
+    }
+
+    /* Real-Time Simulation Specific Styles */
+    .night-map {
+        filter: brightness(0.7) hue-rotate(180deg);
+        transition: filter 0.5s ease;
+    }
+
+    .day-map {
+        filter: brightness(1);
+        transition: filter 0.5s ease;
+    }
+
+    .vessel-marker {
+        font-size: 24px;
+        text-align: center;
+        line-height: 40px;
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+    }
+
+    .waypoint-marker {
+        background: white;
+        border-radius: 50%;
+        width: 12px;
+        height: 12px;
+        border: 2px solid #3498db;
+    }
+
+    .route-line {
+        stroke-dasharray: 10, 10;
+        animation: dash 1s linear infinite;
+    }
+
+    @keyframes dash {
+        to {
+            stroke-dashoffset: 20;
+        }
+    }
+
+    /* Progress indicators */
+    .progress-bar {
+        transition: width 0.3s ease;
+    }
+
+    /* Weather alerts */
+    .weather-alert {
+        border-left: 4px solid;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.7; }
+        100% { opacity: 1; }
+    }
+
+    /* Time indicators */
+    .time-indicator {
+        font-family: 'Courier New', monospace;
+        background: #f8f9fa;
+        border-radius: 4px;
+        padding: 2px 6px;
+        font-size: 0.9em;
+    }
+
+    /* Compact tables */
+    .table-sm td, .table-sm th {
+        padding: 0.25rem;
+    }
+
+    /* Economics panel */
+    .economics-panel {
+        background: linear-gradient(135deg, #f8fff8 0%, #f0fff0 100%);
+        border-left: 4px solid #28a745;
+    }
+
+    /* Alerts panel */
+    .alerts-critical {
+        animation: pulse-critical 2s infinite;
+    }
+
+    @keyframes pulse-critical {
+        0% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7); }
+        70% { box-shadow: 0 0 0 10px rgba(220, 53, 69, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <!-- Data Source Banner -->
+    <div class="alert" id="data-source-alert">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h5 class="mb-1">
+                    <i class="fas fa-satellite me-2"></i>
+                    <span id="data-source-text">Norwegian Maritime Intelligence System</span>
+                </h5>
+                <p class="mb-0" id="data-source-details">
+                    Initializing empirical data sources...
+                </p>
+            </div>
+            <div>
+                <span class="badge data-source-badge bg-secondary" id="data-source-badge">INIT</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Diagnostic Panel (hidden by default, shows on error) -->
+    <div class="card mb-3 d-none" id="diagnostic-panel">
+        <div class="card-header">
+            <h6 class="mb-0">
+                <i class="fas fa-bug me-2"></i>
+                System Diagnostics
+                <button class="btn btn-sm btn-outline-secondary float-end" id="hide-diagnostics">
+                    Hide
+                </button>
+            </h6>
+        </div>
+        <div class="card-body diagnostic-panel">
+            <pre id="diagnostic-output">Running diagnostics...</pre>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Left Column: Norwegian Waters Map -->
+        <div class="col-lg-8 mb-4">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-map-marked-alt me-2"></i>
+                        <span id="map-title">Norwegian Commercial Waters</span>
+                    </h5>
+                    <div class="btn-group">
+                        <button class="btn btn-sm btn-outline-primary" id="refresh-vessel-data">
+                            <i class="fas fa-sync-alt me-1"></i> Refresh
+                        </button>
+                        <button class="btn btn-sm btn-outline-warning" id="show-diagnostics">
+                            <i class="fas fa-bug me-1"></i> Debug
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div id="real-time-map"></div>
+                </div>
+                <div class="card-footer">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle me-1"></i>
+                                <span id="map-status">Connecting to Norwegian AIS databases...</span>
+                            </small>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <small class="text-muted">
+                                <i class="fas fa-clock me-1"></i>
+                                Last update: <span id="last-update">--:--</span>
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Vessel Intelligence -->
+        <div class="col-lg-4 mb-4">
+            <!-- Commercial Vessel Card -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-ship me-2"></i>
+                        <span id="vessel-card-title">Commercial Vessel Tracking</span>
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div id="vessel-info-container">
+                        <div class="text-center py-4">
+                            <div class="spinner-border text-primary mb-3" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <h6>Connecting to Norwegian authorities...</h6>
+                            <p class="text-muted small">
+                                Kystdatahuset • BarentsWatch • Norwegian Coastal Admin
+                            </p>
+                            <div class="progress mt-3" style="height: 6px;">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                                     style="width: 100%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Norwegian Ports Status -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-industry me-2"></i>
+                        Norwegian Commercial Ports
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush" id="ports-scan-list">
+                        <!-- Ports populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<!-- Real-Time Simulation Engine -->
+<script src="{{ url_for('static', filename='js/split/simulation_core.js') }}"></script>
+
+
+    <!-- Turbine Alerts Integration (REAL-TIME + EMPIRICAL) -->
+    <script src="{{ url_for('static', filename='js/split/turbine_alerts.js') }}">
+// GUARANTEE simulation loads
+console.log('🚢 SIMULATION LOAD GUARANTEE');
+setTimeout(() => {
+    if (typeof SingleVesselSimulation !== 'undefined') {
+        console.log('✅ Starting Single Vessel Simulation...');
+        window.singleVesselSim = new SingleVesselSimulation();
+    } else {
+        console.error('❌ SingleVesselSimulation not available');
+        // Try manual start
+        if (window.singleVesselSim && typeof window.singleVesselSim.startRealTimeSimulation === 'function') {
+            console.log('🔄 Starting simulation manually...');
+            window.singleVesselSim.startRealTimeSimulation();
+        }
+    }
+}, 1500);
+// MANUAL START BUTTON for debugging
+function addManualStartButton() {
+    const container = document.querySelector('.container-fluid');
+    if (!container) return;
+    
+    const buttonHtml = `
+        <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1050;">
+            <div class="btn-group-vertical">
+                <button class="btn btn-sm btn-warning mb-1" id="manual-start-sim" title="Start Simulation">
+                    <i class="fas fa-play"></i> Start Sim
+                </button>
+                <button class="btn btn-sm btn-info" id="debug-info" title="Debug Info">
+                    <i class="fas fa-bug"></i> Debug
+                </button>
+            </div>
+        </div>
+    `;
+    
+    container.insertAdjacentHTML('beforeend', buttonHtml);
+    
+    // Add event listeners
+    document.getElementById('manual-start-sim')?.addEventListener('click', function() {
+        console.log('🎮 MANUAL START: Starting simulation...');
+        if (typeof SingleVesselSimulation !== 'undefined') {
+            window.singleVesselSim = new SingleVesselSimulation();
+            alert('Simulation started! Check console.');
+        } else {
+            alert('Simulation class not loaded. Refresh page.');
+        }
+    });
+    
+    document.getElementById('debug-info')?.addEventListener('click', function() {
+        console.log('=== DEBUG INFO ===');
+        console.log('SingleVesselSimulation:', typeof SingleVesselSimulation);
+        console.log('singleVesselSim:', window.singleVesselSim);
+        console.log('Map:', window.map ? 'Loaded' : 'Not loaded');
+        console.log('==================');
+        alert('Debug info logged to console');
+    });
+}
+
+// Add buttons after page loads
+setTimeout(addManualStartButton, 2000);</script>
+<script>
+// Real-Time Single Vessel Simulation
+// Shows ONE vessel with ONE route in real-time
+// Priority: Real-time data → Fallback empirical
+// NO MOCK DATA - Uses actual APIs when available
+
+// Single Vessel Real-Time Simulation
+class SingleVesselSimulation {
+    constructor() {
+        
+        // Performance tracking
+        this.performance = {
+            simulationStartTime: null,
+            vesselFoundTime: null,
+            totalLoadTime: null,
+            searchAttempts: 0
+        };
+        console.log('🚢 SingleVesselSimulation initializing with all features...');
+        
+        // State
+        this.currentVessel = null;
+        this.currentRoute = null;
+        this.weatherData = null;
+        this.windTurbines = [];
+        this.tankerData = null;
+        this.alertsData = null;
+        this.simulationActive = false;
+        
+        // Timing
+        this.departureTime = null;
+        this.estimatedArrival = null;
+        this.currentWaypointIndex = 0;
+        this.waypointETAs = [];
+        this.sunriseTime = null;
+        this.sunsetTime = null;
+        
+        // Economic data
+        this.fuelSaved = 0;
+        this.roiData = null;
+        this.optimizationStatus = null;
+        
+        // UI Elements cache
+        this.uiElements = {};
+        
+        // Norwegian ports in commercial priority order
+        this.NORWEGIAN_PORTS_PRIORITY = [
+            'bergen',     // 1. Bergen - Largest commercial port in West Norway
+            'oslo',       // 2. Oslo - Capital, largest port
+            'stavanger',  // 3. Stavanger - Oil industry center
+            'trondheim',  // 4. Trondheim - Central Norway
+            'alesund',    // 5. Ålesund - Fishing & tourism
+            'kristiansand', // 6. Kristiansand - Southern gateway
+            'drammen',    // 7. Drammen - Near Oslo
+            'sandefjord', // 8. Sandefjord - Historical
+            'andalsnes',  // 9. Åndalsnes - Tourism
+            'flekkefjord' // 10. Flekkefjord - Small port
+        ];
+        
+        // Port coordinates (accurate maritime positions)
+        this.PORT_COORDINATES = {
+            'bergen': { lat: 60.3940, lon: 5.3200, name: 'Bergen' },
+            'oslo': { lat: 59.9050, lon: 10.7000, name: 'Oslo' },
+            'stavanger': { lat: 58.9700, lon: 5.7300, name: 'Stavanger' },
+            'trondheim': { lat: 63.4400, lon: 10.4000, name: 'Trondheim' },
+            'alesund': { lat: 62.4722, lon: 6.1497, name: 'Ålesund' },
+            'kristiansand': { lat: 58.1467, lon: 7.9958, name: 'Kristiansand' },
+            'drammen': { lat: 59.7441, lon: 10.2045, name: 'Drammen' },
+            'sandefjord': { lat: 59.1312, lon: 10.2167, name: 'Sandefjord' },
+            'andalsnes': { lat: 62.5675, lon: 7.6870, name: 'Åndalsnes' },
+            'flekkefjord': { lat: 58.2970, lon: 6.6605, name: 'Flekkefjord' }
+        };
+        
+        // API endpoints
+        this.ENDPOINTS = {
+            ais: '/maritime/api/ais-data',
+            weather: '/maritime/api/weather',
+            routes: '/api/rtz/routes',
+            alerts: '/maritime/api/alerts/summary',
+            turbines: '/api/wind-turbines',
+            tankers: '/api/tanker-monitoring',
+            optimization: '/api/route-optimization'
+        };
+        
+        // Initialize
+        this.initMap();
+        this.cacheUIElements();
+        this.startRealTimeSimulation();
+    }
+    
+    initMap() {
+        // Initialize map if element exists
+        const mapElement = document.getElementById('real-time-map');
+        if (!mapElement) {
+            console.warn('Map element not found');
+            return;
+        }
+        
+        this.map = L.map('real-time-map').setView([63.5, 10.5], 6);
+        
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(this.map);
+        
+        // Add night/day layer based on time
+        this.updateMapTheme();
+    }
+    
+    cacheUIElements() {
+        // Cache frequently accessed UI elements
+        this.uiElements = {
+            dataSourceAlert: document.getElementById('data-source-alert'),
+            dataSourceText: document.getElementById('data-source-text'),
+            dataSourceDetails: document.getElementById('data-source-details'),
+            dataSourceBadge: document.getElementById('data-source-badge'),
+            vesselInfoContainer: document.getElementById('vessel-info-container'),
+            mapTitle: document.getElementById('map-title'),
+            mapStatus: document.getElementById('map-status'),
+            lastUpdate: document.getElementById('last-update'),
+            vesselCardTitle: document.getElementById('vessel-card-title')
+        };
+    }
+    
+        async startRealTimeSimulation() {
+        console.log('🚀 STARTING ENHANCED REAL-TIME SIMULATION...');
+        
+        // Step 1: Start IMMEDIATELY with empirical vessel (NO WAIT)
+        console.log('🚢 Step 1: Immediate empirical vessel creation...');
+        let vessel = this.createEmpiricalVessel();
+        this.updateDataSource('empirical', \`Empirical: \${vessel.name} in Bergen Fjord\`);
+        
+        // Step 2: Get route (fast)
+        console.log('🗺️ Step 2: Getting route...');
+        const route = await this.getActualRTZRoute(vessel);
+        
+        // Step 3: Start simulation IMMEDIATELY (don't wait for slow searches)
+        console.log('⏱️ Step 3: Starting simulation engine...');
+        this.startSimulationUpdates(vessel, route);
+        this.updateVesselUI(vessel, route);
+        this.updateMapWithVessel(vessel, route);
+        
+        // Step 4: Load other data in background (parallel, non-blocking)
+        console.log('📊 Step 4: Background data loading...');
+        this.loadBackgroundData();
+        
+        // Step 5: QUICK real-time vessel search in background
+        console.log('🔍 Step 5: Background real-time search (fast)...');
+        this.backgroundRealtimeSearch(vessel, route);
+        
+        console.log('✅ Enhanced simulation started successfully');
+        console.log(\`📊 Vessel: \${vessel.name}, Route: \${route.origin} to \${route.destination}\`);
+    }
+    
+    /**
+     * Load background data without blocking simulation
+     */
+    async loadBackgroundData() {
+        try {
+            await Promise.allSettled([
+                this.updateWeatherData(),
+                this.loadMaritimeAlerts(),
+                this.updateWindTurbineData(),
+                this.updateTankerData()
+            ]);
+            console.log('✅ Background data loaded');
+        } catch (error) {
+            console.warn('Background data load warnings:', error);
+        }
+    }
+    
+    /**
+     * Background real-time search (replaces vessel if found)
+     */
+    async backgroundRealtimeSearch(currentVessel, currentRoute) {
+        try {
+            console.log('🔄 Background: Searching for real-time vessel...');
+            const realtimeVessel = await this.searchRealTimeVessel();
+            
+            if (realtimeVessel) {
+                console.log(\`🎯 BACKGROUND FOUND: Real-time vessel: \${realtimeVessel.name}\`);
+                
+                // Update current vessel with real-time data
+                Object.assign(currentVessel, realtimeVessel);
+                currentVessel.data_source = 'realtime_ais';
+                
+                // Update UI to show real-time
+                this.updateDataSource('realtime', \`LIVE AIS: \${realtimeVessel.name}\`);
+                this.updateVesselUI(currentVessel, currentRoute);
+                this.updateMapWithVessel(currentVessel, currentRoute);
+                
+                console.log('🔄 Updated to real-time vessel');
+            } else {
+                console.log('📊 Background: No real-time vessel found, keeping empirical');
+            }
+        } catch (error) {
+            console.warn('Background search failed:', error);
+        }
+    }

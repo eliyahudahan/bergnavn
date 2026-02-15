@@ -1,0 +1,34 @@
+=== WAYPOINTS DIAGNOSTIC REPORT ===
+Date: Sat Feb 14 23:31:33 IST 2026
+
+1. API RTZ Status:
+{
+  "cities_count": 10,
+  "ports_count": 10,
+  "ports_list": [
+    "Bergen",
+    "Oslo",
+    "Stavanger",
+    "Trondheim",
+    "\u00c5lesund",
+    "\u00c5ndalsnes",
+    "Kristiansand",
+    "Drammen",
+    "Sandefjord",
+    "Flekkefjord"
+  ],
+  "routes_count": 50,
+  "success": true,
+  "timestamp": "2026-02-14T23:31:33.983019",
+  "unique_ports": 13
+}
+
+2. Waypoints in template:
+✅ waypoints-data found with 132 routes
+First route key: 0
+Waypoints count: 18
+Sample waypoint: {'lat': 60.74677877, 'lon': 4.65135633, 'name': 'Fedjeosen', 'radius': 0.3}
+
+✅ routes-data found with 50 routes
+First route: Bergen Fedjeosen Inbound0801
+Has waypoints in route object: False

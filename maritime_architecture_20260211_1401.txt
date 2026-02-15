@@ -1,0 +1,323 @@
+============================================================
+🌊 BERGENAVN MARITIME - PROJECT ARCHITECTURE
+📅 Generated: 2026-02-11 14:01:26
+📁 Project root: /home/framg/dev/bergnavn
+============================================================
+
+📁 RELEVANT DIRECTORY STRUCTURE:
+
+├── backend/
+│   ├── routes/
+│   │   ├── __init__.py
+│   │   ├── analytics_routes.py
+│   │   ├── api_analytics.py
+│   │   ├── api_vessels.py
+│   │   ├── api_weather.py
+│   │   ├── cruise_routes.py
+│   │   ├── empirical_analysis_routes.py
+│   │   ├── main_routes.py
+│   │   ├── maritime_api.py 
+│   │   ├── maritime_routes.py
+│   │   ├── maritime_routes.py.ais_fix_backup
+│   │   ├── maritime_routes.py.backup
+│   │   ├── maritime_routes.py.backup_final
+│   │   ├── maritime_routes.py.backup_pre_fix
+│   │   ├── maritime_routes.py.backup_redirect_fix
+│   │   ├── maritime_routes.py.endpoints_backup
+│   │   ├── maritime_routes.py.final_backup
+│   │   ├── ml_routes.py
+│   │   ├── nca_routes.py
+│   │   ├── recommendation_routes.py
+│   │   ├── route_routes.py
+│   │   ├── rtz_data_api.py
+│   │   ├── scientific_api.py
+│   │   ├── simulation_routes.py
+│   │   ├── system_dashboard.py
+│   │   ├── system_routes.py
+│   │   ├── turbine_api.py
+│   │   ├── weather_forecast.py
+│   │   ├── weather_routes.py
+│   │   └── weather_simple.py
+│   ├── services/
+│   │   ├── __init__.py
+│   │   ├── ais_service.py
+│   │   ├── alerts_service.py
+│   │   ├── async_executor.py
+│   │   ├── barentswatch_service.py
+│   │   ├── cleanup.py
+│   │   ├── cruise_service.py
+│   │   ├── data_integration_service.py
+│   │   ├── empirical_ais_service.py
+│   │   ├── empirical_data_analyzer.py
+│   │   ├── empirical_historical_service.py
+│   │   ├── empirical_visualization.py
+│   │   ├── empirical_weather.py
+│   │   ├── emprical_historical_service.py
+│   │   ├── final_organized_parser.py
+│   │   ├── fuel_calculation_service.py
+│   │   ├── fuel_optimizer_service.py
+│   │   ├── fuel_service.py
+│   │   ├── geocode_service.py
+│   │   ├── hazard_service.py
+│   │   ├── kystdatahuset_adapter.py
+│   │   ├── kystdatahuset_adapter.py.complete_backup
+│   │   ├── kystverket_ais_service.py
+│   │   ├── maritime_service.py
+│   │   ├── met_norway_service.py
+│   │   ├── port_service.py
+│   │   ├── recommendation_engine.py
+│   │   ├── risk_engine.py
+│   │   ├── route_evaluator.py
+│   │   ├── route_leg_service.py
+│   │   ├── route_service.py
+│   │   ├── rtz_generator.py
+│   │   ├── rtz_integration.py
+│   │   ├── rtz_loader_fixed.py
+│   │   ├── rtz_parser.py
+│   │   ├── schedule_service.py
+│   │   ├── scientific_truth_service.py
+│   │   ├── sea_depth_service.py
+│   │   ├── smart_weather_service.py
+│   │   ├── timezone_service.py
+│   │   ├── validation_service.py
+│   │   ├── weather_dl.py
+│   │   ├── weather_integration_service.py
+│   │   ├── weather_service.py
+│   │   └── weather_sync.py
+│   └── utils/
+│       ├── utils/
+│       │   └── db_check.py
+│       ├── __init__.py
+│       ├── distance_utils.py
+│       ├── empirical_rtz_data.py
+│       ├── helpers.py
+│       ├── port_coordinates.py
+│       ├── route_deduplicator.py
+│       ├── rtz_filename_parser.py
+│       ├── rtz_loader.py
+│       └── translations.py
+├── data/
+├── database/
+├── frontend/
+├── models/
+├── static/
+├── .coverage
+├── .env
+├── .env.example
+├── 7c647aadeec2,
+├── activate_rtz_now.py
+├── activate_rtz_routes.py
+├── add_missing_endpoints.py
+├── add_routes_to_map.py
+├── add_turbine_alerts.py
+├── alembic.ini
+├── app.py
+├── app.py.backup_blueprints_20260118_151627
+├── app.py.backup_indent
+├── app_clean.py
+├── app_minimal_backup.py
+├── babel.cfg
+├── backup_before_migration.sql
+├── backup_simulation.sh
+├── barentswatch_test_20251225_115245.json
+├── check_config.py
+├── check_dashboard.py
+├── check_dashboard_data.py
+├── check_database_reality.py
+├── check_migration_health.py
+├── check_real_routes.py
+├── check_reality.py
+├── check_results.py
+├── check_routes.py
+├── check_rtz_format.py
+├── check_secret.py
+├── complete_port_fix.py
+├── comprehensive_test.py
+├── correct_api_test.py
+├── create_data_inventory.py
+├── debug_health_endpoint.py
+├── debug_server.py
+├── debug_simulation.js
+├── dev_check.py
+├── dev_check_output.txt
+├── diagnose_rtz_issue.py
+├── diff_side_by_side.txt
+├── docker-compose.migrate.yml
+├── dump_project.sh
+├── dump_project_split.sh
+├── e6bf137bbda9,
+├── ers
+├── example.env
+├── export_structure.py
+├── final_complete_fix.py
+├── final_fix.py
+├── final_rtz_reorganization.py
+├── final_system_test.py
+├── find_real_count.py
+├── fix_ais_adapter.py
+├── fix_ais_api.py
+├── fix_ais_complete.py
+├── fix_all_issues_final.py
+├── fix_and_activate_rtz.py
+├── fix_clock_and_map.py
+├── fix_dashboard_complete.py
+├── fix_dashboard_final.py
+├── fix_dashboard_routes.py
+├── fix_duplicate.py
+├── fix_duplicates.py
+├── fix_exact_route.py
+├── fix_final_issues.py
+├── fix_health_endpoint.py
+├── fix_indentation.py
+├── fix_map_conflict.py
+├── fix_map_routes_display.py
+├── fix_maritime_routes_now.py
+├── fix_maritime_simulation.py
+├── fix_maritime_system.py
+├── fix_port_names.py
+├── fix_route_realistic.py
+├── fix_route_with_actual_data.py
+├── fix_rtz_duplicates.py
+├── fix_rtz_integration.py
+├── fix_rtz_integration_smart.py
+├── fix_rtz_properly.py
+├── fix_rtz_routes.py
+├── fix_rtz_structure.py
+├── fix_simulation.py
+├── fix_simulation_conflict.py
+├── fix_simulation_issues.py
+├── fix_simulation_loading.py
+├── fix_simulation_now.py
+├── fix_simulation_priority.py
+├── fix_simulation_redirect.py
+├── fix_simulation_template.py
+├── fix_simulation_template.sh
+├── fix_slow_search.py
+├── fix_template_completely.py
+├── fix_template_error.py
+├── fix_vessel_movement.py
+├── fix_xml_encoding.py
+├── full_system_check.py
+├── git_backup.sh
+├── git_progress_tracker.py
+├── how HEAD --stat
+├── init_db.py
+├── install_rtz_fix.sh
+├── maritime_architecture_20260211_1401.txt
+├── migration_check.py
+├── migration_check_output.txt
+├── performance_test.py
+├── project_data_inventory.txt
+├── project_export.zip
+├── project_history.txt
+├── project_st
+├── project_structure.txt
+├── proper_api_test.py
+├── readme.md
+├── real_norwegian_coastal_routes.py
+├── real_route_discovery.json
+├── remaining_problems.txt
+├── requirements.txt
+├── requirements_notebook.txt
+├── route_analysis.txt
+├── rtz_fixer.log
+├── rtz_processing.log
+├── rtz_zip_fixer.py
+├── rtz_zip_fixer_final.py
+├── run_and_test.py
+├── run_checks.sh
+├── run_validation.sh
+├── run_with_debug.py
+├── safe_fix_routes.sql
+├── safe_migrate.py
+├── safe_test.py
+├── setup_translations.py
+├── split_files.py
+├── switch_to_nca_api.py
+├── system_check.py
+├── system_summary.md
+├── test_api_endpoints.py
+├── test_api_fixed.py
+├── test_barentswatch_api.py
+├── test_barentswatch_auth.py
+├── test_barentswatch_fixed.py
+├── test_blueprints.sh
+├── test_route_fix.py
+├── test_rtz.py
+├── test_rtz_final.py
+├── test_rtz_integration.py
+├── test_simple.py
+├── test_simple_health.py
+├── test_simulation.sh
+├── update_alembic_version.sql
+├── update_dashboard_buttons.py
+├── validate_config.py
+├── validate_models.py
+├── validation_output.txt
+├── verify_fix.py
+├── verify_fixes.py
+├── verify_health_fix.py
+└── your_plan.md
+
+============================================================
+📋 CRITICAL MARITIME FILES
+============================================================
+✅ app.py                                             - Main Flask application
+✅ backend/routes/maritime_routes.py                  - Maritime dashboard blueprint
+✅ backend/routes/main_routes.py                      - Home/Legal/About routes
+✅ backend/routes/route_routes.py                     - Routes page (optional)
+✅ backend/services/empirical_historical_service.py   - Scientific empirical fallback
+✅ backend/services/barentswatch_service.py           - Real-time AIS
+✅ backend/services/met_norway_service.py             - Real-time weather
+✅ backend/rtz_loader_fixed.py                        - RTZ route loader
+✅ backend/templates/base.html                        - Base template
+✅ backend/templates/maritime_split/dashboard_base.html - Dashboard template
+✅ backend/templates/maritime_split/realtime_simulation.html - Simulation template
+✅ backend/static/js/split/maritime_map.js            - Map JavaScript
+✅ backend/static/js/split/ais_realtime.js            - AIS JavaScript
+✅ backend/utils/translations.py                      - Translations (if used)
+✅ .env                                               - Environment variables (API keys)
+
+============================================================
+🔌 MARITIME API ENDPOINTS
+============================================================
+
+📌 Direct endpoints in app.py:
+   • /
+   • /<lang>
+   • /api/health
+   • /api/simple-weather
+   • /maritime/api/ais-data
+   • /maritime/api/rtz/complete
+   • /maritime/api/rtz/routes
+   • /maritime/api/vessels/empirical-status
+   • /maritime/api/vessels/real-time
+   • /maritime/api/weather-dashboard
+
+📌 Maritime blueprint endpoints:
+   • /maritime/api/ais-data
+   • /maritime/api/health
+   • /maritime/api/rtz-status
+   • /maritime/api/rtz/routes
+   • /maritime/api/weather-dashboard
+   • /maritime/dashboard
+   • /maritime/simulation-dashboard
+   • /maritime/simulation-dashboard/<lang>
+
+📌 Maritime view functions (CRITICAL for url_for):
+   • maritime.maritime_dashboard
+   • maritime.simulation_dashboard
+
+============================================================
+📊 ARCHITECTURE SUMMARY
+============================================================
+
+✅ Total NCA routes: 34
+✅ Blueprints: maritime, main, routes, api_weather
+✅ Real-time services: BarentsWatch, MET Norway
+✅ Scientific fallback: empirical_historical_service
+
+🚀 Run with: python app.py
+🌐 Dashboard: http://localhost:5000/maritime/dashboard
+🎮 Simulation: http://localhost:5000/maritime/simulation-dashboard/en
+============================================================

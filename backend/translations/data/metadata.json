@@ -1,0 +1,3738 @@
+{
+  "total_keys": 401,
+  "english_count": 401,
+  "norwegian_count": 401,
+  "generated_at": "2026-02-09T22:53:16.605013",
+  "keys": {
+    "global.home": {
+      "key": "global.home",
+      "en": "Home",
+      "no": "Hjem",
+      "context": "global",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328732"
+    },
+    "global.legal": {
+      "key": "global.legal",
+      "en": "Legal",
+      "no": "Juridisk",
+      "context": "global",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328740"
+    },
+    "global.routes": {
+      "key": "global.routes",
+      "en": "Routes",
+      "no": "Ruter",
+      "context": "global",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328742"
+    },
+    "global.back_to_home": {
+      "key": "global.back_to_home",
+      "en": "Back to Home",
+      "no": "[TODO: Back to Home]",
+      "context": "global",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328744"
+    },
+    "global.footer_credit": {
+      "key": "global.footer_credit",
+      "en": "© 2025 BergNavn Maritime",
+      "no": "[TODO: © 2025 BergNavn Maritime]",
+      "context": "global",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328746"
+    },
+    "global.not_available": {
+      "key": "global.not_available",
+      "en": "N/A",
+      "no": "[TODO: N/A]",
+      "context": "global",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328748"
+    },
+    "global.home_welcome": {
+      "key": "global.home_welcome",
+      "en": "Welcome to BergNavn",
+      "no": "[TODO: Welcome to BergNavn]",
+      "context": "global",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328749"
+    },
+    "global.home_greeting": {
+      "key": "global.home_greeting",
+      "en": "Your real-time maritime platform",
+      "no": "[TODO: Your real-time maritime platform]",
+      "context": "global",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328750"
+    },
+    "global.home_description": {
+      "key": "global.home_description",
+      "en": "Track, analyze and optimize routes between Kristiansand and Oslo.",
+      "no": "[TODO: Track, analyze and optimize routes between Kristiansand and Oslo.]",
+      "context": "global",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328752"
+    },
+    "global.global_operations": {
+      "key": "global.global_operations",
+      "en": "Global Operations",
+      "no": "[TODO: Global Operations]",
+      "context": "global",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328753"
+    },
+    "global.global_operations_desc": {
+      "key": "global.global_operations_desc",
+      "en": "Monitor and optimize maritime traffic in real time.",
+      "no": "[TODO: Monitor and optimize maritime traffic in real time.]",
+      "context": "global",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328754"
+    },
+    "global.data_driven": {
+      "key": "global.data_driven",
+      "en": "Data Driven",
+      "no": "[TODO: Data Driven]",
+      "context": "global",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328756"
+    },
+    "global.data_driven_desc": {
+      "key": "global.data_driven_desc",
+      "en": "Analytics and forecasts based on real-time data.",
+      "no": "[TODO: Analytics and forecasts based on real-time data.]",
+      "context": "global",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328757"
+    },
+    "global.secure_platform": {
+      "key": "global.secure_platform",
+      "en": "Secure Platform",
+      "no": "[TODO: Secure Platform]",
+      "context": "global",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328758"
+    },
+    "global.secure_platform_desc": {
+      "key": "global.secure_platform_desc",
+      "en": "Robust and secure infrastructure.",
+      "no": "[TODO: Robust and secure infrastructure.]",
+      "context": "global",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328759"
+    },
+    "global.maritime_dashboard": {
+      "key": "global.maritime_dashboard",
+      "en": "Maritime Dashboard",
+      "no": "[TODO: Maritime Dashboard]",
+      "context": "global",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328760"
+    },
+    "global.maritime_description": {
+      "key": "global.maritime_description",
+      "en": "Real-time maritime tracking platform",
+      "no": "[TODO: Real-time maritime tracking platform]",
+      "context": "global",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328761"
+    },
+    "global.cargo_volume": {
+      "key": "global.cargo_volume",
+      "en": "Cargo Volume",
+      "no": "[TODO: Cargo Volume]",
+      "context": "global",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328764"
+    },
+    "global.route_eta": {
+      "key": "global.route_eta",
+      "en": "Route ETA",
+      "no": "[TODO: Route ETA]",
+      "context": "global",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328765"
+    },
+    "global.fuel_optimization": {
+      "key": "global.fuel_optimization",
+      "en": "Fuel Optimization",
+      "no": "[TODO: Fuel Optimization]",
+      "context": "global",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328766"
+    },
+    "home_page.welcome_message": {
+      "key": "home_page.welcome_message",
+      "en": "Welcome to BergNavn",
+      "no": "[TODO: Welcome to BergNavn]",
+      "context": "home_page",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328768"
+    },
+    "home_page.home_intro_text": {
+      "key": "home_page.home_intro_text",
+      "en": "Your real-time maritime platform",
+      "no": "[TODO: Your real-time maritime platform]",
+      "context": "home_page",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328770"
+    },
+    "home_page.view_cruises": {
+      "key": "home_page.view_cruises",
+      "en": "View Cruises",
+      "no": "[TODO: View Cruises]",
+      "context": "home_page",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328771"
+    },
+    "routes_page.routes_title": {
+      "key": "routes_page.routes_title",
+      "en": "Maritime Routes",
+      "no": "[TODO: Maritime Routes]",
+      "context": "routes_page",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328773"
+    },
+    "routes_page.route_id": {
+      "key": "routes_page.route_id",
+      "en": "Route ID",
+      "no": "[TODO: Route ID]",
+      "context": "routes_page",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328774"
+    },
+    "routes_page.route_name": {
+      "key": "routes_page.route_name",
+      "en": "Route Name",
+      "no": "[TODO: Route Name]",
+      "context": "routes_page",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328776"
+    },
+    "routes_page.origin": {
+      "key": "routes_page.origin",
+      "en": "Origin",
+      "no": "[TODO: Origin]",
+      "context": "routes_page",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328777"
+    },
+    "routes_page.destination": {
+      "key": "routes_page.destination",
+      "en": "Destination",
+      "no": "[TODO: Destination]",
+      "context": "routes_page",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328778"
+    },
+    "routes_page.duration": {
+      "key": "routes_page.duration",
+      "en": "Duration",
+      "no": "[TODO: Duration]",
+      "context": "routes_page",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328779"
+    },
+    "routes_page.hours": {
+      "key": "routes_page.hours",
+      "en": "hours",
+      "no": "[TODO: hours]",
+      "context": "routes_page",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328780"
+    },
+    "routes_page.no_routes_found": {
+      "key": "routes_page.no_routes_found",
+      "en": "No routes found",
+      "no": "[TODO: No routes found]",
+      "context": "routes_page",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328782"
+    },
+    "routes_page.routes_and_legs": {
+      "key": "routes_page.routes_and_legs",
+      "en": "Routes and Legs",
+      "no": "[TODO: Routes and Legs]",
+      "context": "routes_page",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328783"
+    },
+    "legal_page.legal_title": {
+      "key": "legal_page.legal_title",
+      "en": "Legal Information & Acknowledgments",
+      "no": "[TODO: Legal Information & Acknowledgments]",
+      "context": "legal_page",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328785"
+    },
+    "legal_page.legal_text_1": {
+      "key": "legal_page.legal_text_1",
+      "en": "BergNavn Maritime is a real-time maritime data platform that integrates official data sources from Norwegian authorities including Kystverket AIS data, SSB cargo statistics, MET Norway weather forecasts, and RouteInfo maritime routes.",
+      "no": "[TODO: BergNavn Maritime is a real-time maritime data platform that integrates official data sources from Norwegian authorities including Kystverket AIS data, SSB cargo statistics, MET Norway weather forecasts, and RouteInfo maritime routes.]",
+      "context": "legal_page",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328786"
+    },
+    "legal_page.legal_text_2": {
+      "key": "legal_page.legal_text_2",
+      "en": "All data is sourced from official Norwegian government APIs and used in compliance with their terms of service. The platform demonstrates advanced integration of real-time maritime data for route optimization and operational efficiency.",
+      "no": "[TODO: All data is sourced from official Norwegian government APIs and used in compliance with their terms of service. The platform demonstrates advanced integration of real-time maritime data for route optimization and operational efficiency.]",
+      "context": "legal_page",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328788"
+    },
+    "legal_page.legal_text_3": {
+      "key": "legal_page.legal_text_3",
+      "en": "This professional maritime platform showcases modern web technologies and data science applications in the maritime industry.",
+      "no": "[TODO: This professional maritime platform showcases modern web technologies and data science applications in the maritime industry.]",
+      "context": "legal_page",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328789"
+    },
+    "maritime_page.title": {
+      "key": "maritime_page.title",
+      "en": "Maritime Dashboard",
+      "no": "[TODO: Maritime Dashboard]",
+      "context": "maritime_page",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328790"
+    },
+    "maritime_page.cargo_volume": {
+      "key": "maritime_page.cargo_volume",
+      "en": "Cargo Volume",
+      "no": "[TODO: Cargo Volume]",
+      "context": "maritime_page",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328791"
+    },
+    "maritime_page.official_data": {
+      "key": "maritime_page.official_data",
+      "en": "Official Data",
+      "no": "[TODO: Official Data]",
+      "context": "maritime_page",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328792"
+    },
+    "maritime_page.route_eta": {
+      "key": "maritime_page.route_eta",
+      "en": "Route ETA",
+      "no": "[TODO: Route ETA]",
+      "context": "maritime_page",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328793"
+    },
+    "maritime_page.fuel_savings": {
+      "key": "maritime_page.fuel_savings",
+      "en": "Fuel Savings",
+      "no": "[TODO: Fuel Savings]",
+      "context": "maritime_page",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328794"
+    },
+    "maritime_page.live_map": {
+      "key": "maritime_page.live_map",
+      "en": "Live Maritime Map",
+      "no": "[TODO: Live Maritime Map]",
+      "context": "maritime_page",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328796"
+    },
+    "maritime_page.coming_soon": {
+      "key": "maritime_page.coming_soon",
+      "en": "Coming Soon",
+      "no": "[TODO: Coming Soon]",
+      "context": "maritime_page",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328797"
+    },
+    "maritime_page.route_visualization": {
+      "key": "maritime_page.route_visualization",
+      "en": "Route Visualization",
+      "no": "[TODO: Route Visualization]",
+      "context": "maritime_page",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328799"
+    },
+    "maritime_page.route_analytics": {
+      "key": "maritime_page.route_analytics",
+      "en": "Route Analytics",
+      "no": "[TODO: Route Analytics]",
+      "context": "maritime_page",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328800"
+    },
+    "maritime_page.data_sources": {
+      "key": "maritime_page.data_sources",
+      "en": "Data Sources",
+      "no": "[TODO: Data Sources]",
+      "context": "maritime_page",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328801"
+    },
+    "maritime_page.official_statistics": {
+      "key": "maritime_page.official_statistics",
+      "en": "Official Statistics",
+      "no": "[TODO: Official Statistics]",
+      "context": "maritime_page",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328802"
+    },
+    "maritime_page.weather_forecasts": {
+      "key": "maritime_page.weather_forecasts",
+      "en": "Weather Forecasts",
+      "no": "[TODO: Weather Forecasts]",
+      "context": "maritime_page",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328803"
+    },
+    "maritime_page.maritime_routes": {
+      "key": "maritime_page.maritime_routes",
+      "en": "Maritime Routes",
+      "no": "[TODO: Maritime Routes]",
+      "context": "maritime_page",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328804"
+    },
+    "cruises_page.title": {
+      "key": "cruises_page.title",
+      "en": "Available Cruises",
+      "no": "[TODO: Available Cruises]",
+      "context": "cruises_page",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328806"
+    },
+    "cruises_page.description": {
+      "key": "cruises_page.description",
+      "en": "Browse and book available maritime cruises",
+      "no": "[TODO: Browse and book available maritime cruises]",
+      "context": "cruises_page",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328807"
+    },
+    "dashboard_page.title": {
+      "key": "dashboard_page.title",
+      "en": "🛳️ Voyage Dashboard",
+      "no": "[TODO: 🛳️ Voyage Dashboard]",
+      "context": "dashboard_page",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328808"
+    },
+    "dashboard_page.subtitle": {
+      "key": "dashboard_page.subtitle",
+      "en": "Real-time maritime operations overview",
+      "no": "[TODO: Real-time maritime operations overview]",
+      "context": "dashboard_page",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328809"
+    },
+    "dummy_users.title": {
+      "key": "dummy_users.title",
+      "en": "Dummy Users",
+      "no": "[TODO: Dummy Users]",
+      "context": "dummy_users",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328810"
+    },
+    "dummy_users.description": {
+      "key": "dummy_users.description",
+      "en": "Test user accounts for development",
+      "no": "[TODO: Test user accounts for development]",
+      "context": "dummy_users",
+      "source": "translations.py",
+      "line": 0,
+      "html": false,
+      "updated": "2026-02-09T22:53:13.328812"
+    },
+    "global.auto_system_error___bergn_3579a6c9": {
+      "key": "global.auto_system_error___bergn_3579a6c9",
+      "en": "System Error - BergNavn Maritime",
+      "no": "[TODO: System Error - BergNavn Maritime]",
+      "context": "global",
+      "source": "error.html",
+      "line": 6,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.598824"
+    },
+    "global.auto_bergnavn_ddb055d6": {
+      "key": "global.auto_bergnavn_ddb055d6",
+      "en": "BergNavn",
+      "no": "[TODO: BergNavn]",
+      "context": "global",
+      "source": "error.html",
+      "line": 73,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.598870"
+    },
+    "global.auto_error_type_52824da3": {
+      "key": "global.auto_error_type_52824da3",
+      "en": "Error Type:",
+      "no": "[TODO: Error Type:]",
+      "context": "global",
+      "source": "error.html",
+      "line": 107,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.598889"
+    },
+    "global.auto_technical_details_a6946871": {
+      "key": "global.auto_technical_details_a6946871",
+      "en": "Technical Details:",
+      "no": "[TODO: Technical Details:]",
+      "context": "global",
+      "source": "error.html",
+      "line": 111,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.598903"
+    },
+    "global.auto_what_happened_2df728d5": {
+      "key": "global.auto_what_happened_2df728d5",
+      "en": "What happened?",
+      "no": "[TODO: What happened?]",
+      "context": "global",
+      "source": "error.html",
+      "line": 118,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.598914"
+    },
+    "global.auto_what_can_you_do_6e54b745": {
+      "key": "global.auto_what_can_you_do_6e54b745",
+      "en": "What can you do?",
+      "no": "[TODO: What can you do?]",
+      "context": "global",
+      "source": "error.html",
+      "line": 128,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.598924"
+    },
+    "global.auto_try_refreshing_the_p_c846e55c": {
+      "key": "global.auto_try_refreshing_the_p_c846e55c",
+      "en": "Try refreshing the page to see if the issue resolves itself",
+      "no": "[TODO: Try refreshing the page to see if the issue resolves itself]",
+      "context": "global",
+      "source": "error.html",
+      "line": 130,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.598935"
+    },
+    "global.auto_check_if_other_parts_707d66b7": {
+      "key": "global.auto_check_if_other_parts_707d66b7",
+      "en": "Check if other parts of the system are working",
+      "no": "[TODO: Check if other parts of the system are working]",
+      "context": "global",
+      "source": "error.html",
+      "line": 131,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.598947"
+    },
+    "global.auto_wait_a_few_minutes_a_1ad427b7": {
+      "key": "global.auto_wait_a_few_minutes_a_1ad427b7",
+      "en": "Wait a few minutes and try again if it's a temporary issue",
+      "no": "[TODO: Wait a few minutes and try again if it's a temporary issue]",
+      "context": "global",
+      "source": "error.html",
+      "line": 132,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.598958"
+    },
+    "global.auto_contact_support_if_t_5d5e8c48": {
+      "key": "global.auto_contact_support_if_t_5d5e8c48",
+      "en": "Contact support if the problem persists",
+      "no": "[TODO: Contact support if the problem persists]",
+      "context": "global",
+      "source": "error.html",
+      "line": 133,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.598968"
+    },
+    "global.auto_for_debugging_purpo_f5690f93": {
+      "key": "global.auto_for_debugging_purpo_f5690f93",
+      "en": "(For debugging purposes)",
+      "no": "[TODO: (For debugging purposes)]",
+      "context": "global",
+      "source": "error.html",
+      "line": 143,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.598980"
+    },
+    "global.auto_error_detected_631295e2": {
+      "key": "global.auto_error_detected_631295e2",
+      "en": "Error Detected",
+      "no": "[TODO: Error Detected]",
+      "context": "global",
+      "source": "error.html",
+      "line": 183,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.598989"
+    },
+    "global.auto_official_data_sour_63309617": {
+      "key": "global.auto_official_data_sour_63309617",
+      "en": "📊 Official Data Sources & Acknowledgments",
+      "no": "[TODO: 📊 Official Data Sources & Acknowledgments]",
+      "context": "global",
+      "source": "legal.html",
+      "line": 25,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599003"
+    },
+    "global.auto_norwegian_government_0c55a1c2": {
+      "key": "global.auto_norwegian_government_0c55a1c2",
+      "en": "Norwegian Government Sources",
+      "no": "[TODO: Norwegian Government Sources]",
+      "context": "global",
+      "source": "legal.html",
+      "line": 30,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599012"
+    },
+    "global.auto_statistics_norway__s_c6fc7e08": {
+      "key": "global.auto_statistics_norway__s_c6fc7e08",
+      "en": "Statistics Norway (SSB)",
+      "no": "[TODO: Statistics Norway (SSB)]",
+      "context": "global",
+      "source": "legal.html",
+      "line": 34,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599023"
+    },
+    "global.auto_official_maritime_ca_377f0fd7": {
+      "key": "global.auto_official_maritime_ca_377f0fd7",
+      "en": "Official maritime cargo statistics and trade data",
+      "no": "[TODO: Official maritime cargo statistics and trade data]",
+      "context": "global",
+      "source": "legal.html",
+      "line": 35,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599032"
+    },
+    "global.auto_norwegian_coastal_ad_9f52e0ee": {
+      "key": "global.auto_norwegian_coastal_ad_9f52e0ee",
+      "en": "Norwegian Coastal Administration (Kystverket)",
+      "no": "[TODO: Norwegian Coastal Administration (Kystverket)]",
+      "context": "global",
+      "source": "legal.html",
+      "line": 39,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599042"
+    },
+    "global.auto_real_time_ais_vessel_0d5f9cf3": {
+      "key": "global.auto_real_time_ais_vessel_0d5f9cf3",
+      "en": "Real-time AIS vessel tracking and maritime infrastructure",
+      "no": "[TODO: Real-time AIS vessel tracking and maritime infrastructure]",
+      "context": "global",
+      "source": "legal.html",
+      "line": 40,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599052"
+    },
+    "global.auto_met_norway_088c0474": {
+      "key": "global.auto_met_norway_088c0474",
+      "en": "MET Norway",
+      "no": "[TODO: MET Norway]",
+      "context": "global",
+      "source": "legal.html",
+      "line": 44,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599062"
+    },
+    "global.auto_weather_forecasting_9e706f75": {
+      "key": "global.auto_weather_forecasting_9e706f75",
+      "en": "Weather forecasting and meteorological data services",
+      "no": "[TODO: Weather forecasting and meteorological data services]",
+      "context": "global",
+      "source": "legal.html",
+      "line": 45,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599071"
+    },
+    "global.auto_routeinfo_service_449d3ef5": {
+      "key": "global.auto_routeinfo_service_449d3ef5",
+      "en": "RouteInfo Service",
+      "no": "[TODO: RouteInfo Service]",
+      "context": "global",
+      "source": "legal.html",
+      "line": 49,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599080"
+    },
+    "global.auto_official_maritime_ro_5f200d65": {
+      "key": "global.auto_official_maritime_ro_5f200d65",
+      "en": "Official maritime route planning and navigation data",
+      "no": "[TODO: Official maritime route planning and navigation data]",
+      "context": "global",
+      "source": "legal.html",
+      "line": 50,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599090"
+    },
+    "global.auto_technology___develop_02a20020": {
+      "key": "global.auto_technology___develop_02a20020",
+      "en": "Technology & Development",
+      "no": "[TODO: Technology & Development]",
+      "context": "global",
+      "source": "legal.html",
+      "line": 55,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599099"
+    },
+    "global.auto_flask_web_framework_c6bd4670": {
+      "key": "global.auto_flask_web_framework_c6bd4670",
+      "en": "Flask Web Framework",
+      "no": "[TODO: Flask Web Framework]",
+      "context": "global",
+      "source": "legal.html",
+      "line": 59,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599109"
+    },
+    "global.auto_python_based_web_app_d9c7cc40": {
+      "key": "global.auto_python_based_web_app_d9c7cc40",
+      "en": "Python-based web application development",
+      "no": "[TODO: Python-based web application development]",
+      "context": "global",
+      "source": "legal.html",
+      "line": 60,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599120"
+    },
+    "global.auto_data_science_integra_6f83f49e": {
+      "key": "global.auto_data_science_integra_6f83f49e",
+      "en": "Data Science Integration",
+      "no": "[TODO: Data Science Integration]",
+      "context": "global",
+      "source": "legal.html",
+      "line": 64,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599130"
+    },
+    "global.auto_real_time_analytics_150430f6": {
+      "key": "global.auto_real_time_analytics_150430f6",
+      "en": "Real-time analytics and optimization algorithms",
+      "no": "[TODO: Real-time analytics and optimization algorithms]",
+      "context": "global",
+      "source": "legal.html",
+      "line": 65,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599140"
+    },
+    "global.auto_modern_web_standards_c33c84f0": {
+      "key": "global.auto_modern_web_standards_c33c84f0",
+      "en": "Modern Web Standards",
+      "no": "[TODO: Modern Web Standards]",
+      "context": "global",
+      "source": "legal.html",
+      "line": 69,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599149"
+    },
+    "global.auto_bootstrap__postgresq_35908251": {
+      "key": "global.auto_bootstrap__postgresq_35908251",
+      "en": "Bootstrap, PostgreSQL, and responsive design",
+      "no": "[TODO: Bootstrap, PostgreSQL, and responsive design]",
+      "context": "global",
+      "source": "legal.html",
+      "line": 70,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599159"
+    },
+    "global.auto_development_approach_4569dabe": {
+      "key": "global.auto_development_approach_4569dabe",
+      "en": "Development Approach",
+      "no": "[TODO: Development Approach]",
+      "context": "global",
+      "source": "legal.html",
+      "line": 78,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599169"
+    },
+    "global.auto_compliance___stand_ecae9c1a": {
+      "key": "global.auto_compliance___stand_ecae9c1a",
+      "en": "✅ Compliance & Standards",
+      "no": "[TODO: ✅ Compliance & Standards]",
+      "context": "global",
+      "source": "legal.html",
+      "line": 92,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599182"
+    },
+    "global.auto_api_compliance_4086a2cc": {
+      "key": "global.auto_api_compliance_4086a2cc",
+      "en": "API Compliance",
+      "no": "[TODO: API Compliance]",
+      "context": "global",
+      "source": "legal.html",
+      "line": 98,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599193"
+    },
+    "global.auto_adheres_to_all_offic_eebd5213": {
+      "key": "global.auto_adheres_to_all_offic_eebd5213",
+      "en": "Adheres to all official API terms of service",
+      "no": "[TODO: Adheres to all official API terms of service]",
+      "context": "global",
+      "source": "legal.html",
+      "line": 99,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599203"
+    },
+    "global.auto_data_security_34b9bedb": {
+      "key": "global.auto_data_security_34b9bedb",
+      "en": "Data Security",
+      "no": "[TODO: Data Security]",
+      "context": "global",
+      "source": "legal.html",
+      "line": 103,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599212"
+    },
+    "global.auto_secure_handling_of_m_aedcde18": {
+      "key": "global.auto_secure_handling_of_m_aedcde18",
+      "en": "Secure handling of maritime operational data",
+      "no": "[TODO: Secure handling of maritime operational data]",
+      "context": "global",
+      "source": "legal.html",
+      "line": 104,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599221"
+    },
+    "global.auto_industry_standards_c8aee4b2": {
+      "key": "global.auto_industry_standards_c8aee4b2",
+      "en": "Industry Standards",
+      "no": "[TODO: Industry Standards]",
+      "context": "global",
+      "source": "legal.html",
+      "line": 108,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599230"
+    },
+    "global.auto_follows_maritime_ind_479c20d3": {
+      "key": "global.auto_follows_maritime_ind_479c20d3",
+      "en": "Follows maritime industry best practices",
+      "no": "[TODO: Follows maritime industry best practices]",
+      "context": "global",
+      "source": "legal.html",
+      "line": 109,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599245"
+    },
+    "global.auto_modern_stack_d839850e": {
+      "key": "global.auto_modern_stack_d839850e",
+      "en": "Modern Stack",
+      "no": "[TODO: Modern Stack]",
+      "context": "global",
+      "source": "legal.html",
+      "line": 113,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599256"
+    },
+    "global.auto_contemporary_technol_0cb7f4ec": {
+      "key": "global.auto_contemporary_technol_0cb7f4ec",
+      "en": "Contemporary technology implementation",
+      "no": "[TODO: Contemporary technology implementation]",
+      "context": "global",
+      "source": "legal.html",
+      "line": 114,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599266"
+    },
+    "global.auto_bergnavn_maritime_4c54e175": {
+      "key": "global.auto_bergnavn_maritime_4c54e175",
+      "en": "🌊 BergNavn Maritime",
+      "no": "[TODO: 🌊 BergNavn Maritime]",
+      "context": "global",
+      "source": "home.html",
+      "line": 9,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599277"
+    },
+    "global.auto_real_time_maritime_i_68c63f60": {
+      "key": "global.auto_real_time_maritime_i_68c63f60",
+      "en": "Real-time Maritime Intelligence",
+      "no": "[TODO: Real-time Maritime Intelligence]",
+      "context": "global",
+      "source": "home.html",
+      "line": 18,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599287"
+    },
+    "global.auto_live_ais_vessel_trac_3190426e": {
+      "key": "global.auto_live_ais_vessel_trac_3190426e",
+      "en": "Live AIS vessel tracking",
+      "no": "[TODO: Live AIS vessel tracking]",
+      "context": "global",
+      "source": "home.html",
+      "line": 21,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599297"
+    },
+    "global.auto_weather_integration_69fb4246": {
+      "key": "global.auto_weather_integration_69fb4246",
+      "en": "Weather integration (MET Norway)",
+      "no": "[TODO: Weather integration (MET Norway)]",
+      "context": "global",
+      "source": "home.html",
+      "line": 22,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599306"
+    },
+    "global.auto_hazard_detection___a_edded49d": {
+      "key": "global.auto_hazard_detection___a_edded49d",
+      "en": "Hazard detection & avoidance",
+      "no": "[TODO: Hazard detection & avoidance]",
+      "context": "global",
+      "source": "home.html",
+      "line": 23,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599317"
+    },
+    "global.auto_rtz_route_planning_16ac28d9": {
+      "key": "global.auto_rtz_route_planning_16ac28d9",
+      "en": "RTZ route planning",
+      "no": "[TODO: RTZ route planning]",
+      "context": "global",
+      "source": "home.html",
+      "line": 26,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599327"
+    },
+    "global.auto_risk_assessment_engi_51a6cca1": {
+      "key": "global.auto_risk_assessment_engi_51a6cca1",
+      "en": "Risk assessment engine",
+      "no": "[TODO: Risk assessment engine]",
+      "context": "global",
+      "source": "home.html",
+      "line": 27,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599337"
+    },
+    "global.auto_fuel_optimization_0533dffc": {
+      "key": "global.auto_fuel_optimization_0533dffc",
+      "en": "Fuel optimization",
+      "no": "[TODO: Fuel optimization]",
+      "context": "global",
+      "source": "home.html",
+      "line": 28,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599346"
+    },
+    "global.auto_trusted_by_norwegian_12ea5c37": {
+      "key": "global.auto_trusted_by_norwegian_12ea5c37",
+      "en": "Trusted by Norwegian Maritime Operators",
+      "no": "[TODO: Trusted by Norwegian Maritime Operators]",
+      "context": "global",
+      "source": "home.html",
+      "line": 46,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599355"
+    },
+    "global.auto_vessel_operators_d299022c": {
+      "key": "global.auto_vessel_operators_d299022c",
+      "en": "Vessel Operators",
+      "no": "[TODO: Vessel Operators]",
+      "context": "global",
+      "source": "home.html",
+      "line": 51,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599365"
+    },
+    "global.auto_port_authorities_dd1bf150": {
+      "key": "global.auto_port_authorities_dd1bf150",
+      "en": "Port Authorities",
+      "no": "[TODO: Port Authorities]",
+      "context": "global",
+      "source": "home.html",
+      "line": 57,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599374"
+    },
+    "global.auto_safety_agencies_e31fc0c8": {
+      "key": "global.auto_safety_agencies_e31fc0c8",
+      "en": "Safety Agencies",
+      "no": "[TODO: Safety Agencies]",
+      "context": "global",
+      "source": "home.html",
+      "line": 63,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599383"
+    },
+    "global.auto_fuel_companies_ae8d298e": {
+      "key": "global.auto_fuel_companies_ae8d298e",
+      "en": "Fuel Companies",
+      "no": "[TODO: Fuel Companies]",
+      "context": "global",
+      "source": "home.html",
+      "line": 69,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599392"
+    },
+    "global.auto_bergnavn_maritime_c3bc5c3b": {
+      "key": "global.auto_bergnavn_maritime_c3bc5c3b",
+      "en": "BergNavn Maritime",
+      "no": "[TODO: BergNavn Maritime]",
+      "context": "global",
+      "source": "base.html",
+      "line": 6,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599402"
+    },
+    "global.auto_maritime_intelligenc_373d7575": {
+      "key": "global.auto_maritime_intelligenc_373d7575",
+      "en": "Maritime Intelligence",
+      "no": "Maritim Intelligens",
+      "context": "global",
+      "source": "base.html",
+      "line": 30,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599411"
+    },
+    "global.auto_dashboard_149bb586": {
+      "key": "global.auto_dashboard_149bb586",
+      "en": "Dashboard",
+      "no": "Dashbord",
+      "context": "global",
+      "source": "base.html",
+      "line": 47,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599420"
+    },
+    "global.auto_simulation_b4d23d0c": {
+      "key": "global.auto_simulation_b4d23d0c",
+      "en": "Simulation",
+      "no": "Simulering",
+      "context": "global",
+      "source": "base.html",
+      "line": 56,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599430"
+    },
+    "global.auto_intelligent_route_op_a1fa9aeb": {
+      "key": "global.auto_intelligent_route_op_a1fa9aeb",
+      "en": "Intelligent Route Optimization System",
+      "no": "Intelligent ruteoptimaliseringssystem",
+      "context": "global",
+      "source": "base.html",
+      "line": 118,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599440"
+    },
+    "global.auto_norwegian_ports___le_8c46266b": {
+      "key": "global.auto_norwegian_ports___le_8c46266b",
+      "en": "Norwegian Ports: Ålesund, Andalsnes, Bergen, Drammen, Flekkefjord, Kristiansand, Oslo, Sandefjord, Stavanger, Trondheim",
+      "no": "[TODO: Norwegian Ports: Ålesund, Andalsnes, Bergen, Drammen, Flekkefjord, Kristiansand, Oslo, Sandefjord, Stavanger, Trondheim]",
+      "context": "global",
+      "source": "base.html",
+      "line": 123,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599452"
+    },
+    "global.auto_system_status_fbcdc58c": {
+      "key": "global.auto_system_status_fbcdc58c",
+      "en": "System Status",
+      "no": "Systemstatus",
+      "context": "global",
+      "source": "base.html",
+      "line": 132,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599463"
+    },
+    "global.auto_all_systems_operatio_dddb84c6": {
+      "key": "global.auto_all_systems_operatio_dddb84c6",
+      "en": "All Systems Operational",
+      "no": "[TODO: All Systems Operational]",
+      "context": "global",
+      "source": "base.html",
+      "line": 135,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599473"
+    },
+    "global.auto_data_updated_a82afc9b": {
+      "key": "global.auto_data_updated_a82afc9b",
+      "en": "Data updated: --:--",
+      "no": "[TODO: Data updated: --:--]",
+      "context": "global",
+      "source": "base.html",
+      "line": 140,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599484"
+    },
+    "global.auto_active_59407084": {
+      "key": "global.auto_active_59407084",
+      "en": "Active",
+      "no": "Aktiv",
+      "context": "global",
+      "source": "base.html",
+      "line": 144,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599494"
+    },
+    "global.auto_2025_bergnavn_mari_facb3f65": {
+      "key": "global.auto_2025_bergnavn_mari_facb3f65",
+      "en": "© 2025 BergNavn Maritime | Research & Development Platform",
+      "no": "[TODO: © 2025 BergNavn Maritime | Research & Development Platform]",
+      "context": "global",
+      "source": "base.html",
+      "line": 153,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599506"
+    },
+    "global.auto_about_05b63f7e": {
+      "key": "global.auto_about_05b63f7e",
+      "en": "About",
+      "no": "Om",
+      "context": "global",
+      "source": "base.html",
+      "line": 161,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599515"
+    },
+    "global.auto_contact_ba306d75": {
+      "key": "global.auto_contact_ba306d75",
+      "en": "Contact",
+      "no": "Kontakt",
+      "context": "global",
+      "source": "base.html",
+      "line": 162,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599524"
+    },
+    "global.auto_nca_official_mari_e1e76cd9": {
+      "key": "global.auto_nca_official_mari_e1e76cd9",
+      "en": "🗺️ NCA Official Maritime Routes",
+      "no": "[TODO: 🗺️ NCA Official Maritime Routes]",
+      "context": "global",
+      "source": "routes.html",
+      "line": 10,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599536"
+    },
+    "global.auto_source_2f8cc8d7": {
+      "key": "global.auto_source_2f8cc8d7",
+      "en": "Source:",
+      "no": "[TODO: Source:]",
+      "context": "global",
+      "source": "routes.html",
+      "line": 18,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599546"
+    },
+    "global.auto_coverage_ccc003b5": {
+      "key": "global.auto_coverage_ccc003b5",
+      "en": "Coverage:",
+      "no": "[TODO: Coverage:]",
+      "context": "global",
+      "source": "routes.html",
+      "line": 20,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599556"
+    },
+    "global.auto_total_routes_8e0365b4": {
+      "key": "global.auto_total_routes_8e0365b4",
+      "en": "Total Routes",
+      "no": "[TODO: Total Routes]",
+      "context": "global",
+      "source": "routes.html",
+      "line": 33,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599565"
+    },
+    "global.auto_database___rtz_files_b3dba325": {
+      "key": "global.auto_database___rtz_files_b3dba325",
+      "en": "Database + RTZ Files",
+      "no": "[TODO: Database + RTZ Files]",
+      "context": "global",
+      "source": "routes.html",
+      "line": 34,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599575"
+    },
+    "global.auto_postgresql___rtz_e5e680d7": {
+      "key": "global.auto_postgresql___rtz_e5e680d7",
+      "en": "PostgreSQL + RTZ",
+      "no": "[TODO: PostgreSQL + RTZ]",
+      "context": "global",
+      "source": "routes.html",
+      "line": 37,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599585"
+    },
+    "global.auto_total_distance_7d5dc034": {
+      "key": "global.auto_total_distance_7d5dc034",
+      "en": "Total Distance",
+      "no": "[TODO: Total Distance]",
+      "context": "global",
+      "source": "routes.html",
+      "line": 45,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599595"
+    },
+    "global.auto_nautical_miles__nm_cee5a7ec": {
+      "key": "global.auto_nautical_miles__nm_cee5a7ec",
+      "en": "Nautical Miles (NM)",
+      "no": "[TODO: Nautical Miles (NM)]",
+      "context": "global",
+      "source": "routes.html",
+      "line": 46,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599605"
+    },
+    "global.auto_estimated_094c1a95": {
+      "key": "global.auto_estimated_094c1a95",
+      "en": "Estimated",
+      "no": "[TODO: Estimated]",
+      "context": "global",
+      "source": "routes.html",
+      "line": 49,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599614"
+    },
+    "global.auto_waypoints_2a997723": {
+      "key": "global.auto_waypoints_2a997723",
+      "en": "Waypoints",
+      "no": "[TODO: Waypoints]",
+      "context": "global",
+      "source": "routes.html",
+      "line": 57,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599623"
+    },
+    "global.auto_navigation_points_b7676992": {
+      "key": "global.auto_navigation_points_b7676992",
+      "en": "Navigation Points",
+      "no": "[TODO: Navigation Points]",
+      "context": "global",
+      "source": "routes.html",
+      "line": 58,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599631"
+    },
+    "global.auto_total_count_6c3aea41": {
+      "key": "global.auto_total_count_6c3aea41",
+      "en": "Total Count",
+      "no": "[TODO: Total Count]",
+      "context": "global",
+      "source": "routes.html",
+      "line": 61,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599640"
+    },
+    "global.auto_active_ports_25e2d3c7": {
+      "key": "global.auto_active_ports_25e2d3c7",
+      "en": "Active Ports",
+      "no": "[TODO: Active Ports]",
+      "context": "global",
+      "source": "routes.html",
+      "line": 69,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599649"
+    },
+    "global.auto_with_route_data_7fafe2d5": {
+      "key": "global.auto_with_route_data_7fafe2d5",
+      "en": "With Route Data",
+      "no": "[TODO: With Route Data]",
+      "context": "global",
+      "source": "routes.html",
+      "line": 70,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599659"
+    },
+    "global.auto_rtz_route_availabili_b1f95a8a": {
+      "key": "global.auto_rtz_route_availabili_b1f95a8a",
+      "en": "RTZ route availability per port from Kystverket",
+      "no": "[TODO: RTZ route availability per port from Kystverket]",
+      "context": "global",
+      "source": "routes.html",
+      "line": 91,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599668"
+    },
+    "global.auto_data_available_8499554b": {
+      "key": "global.auto_data_available_8499554b",
+      "en": "Data Available",
+      "no": "[TODO: Data Available]",
+      "context": "global",
+      "source": "routes.html",
+      "line": 115,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599678"
+    },
+    "global.auto_no_data_f23473dc": {
+      "key": "global.auto_no_data_f23473dc",
+      "en": "No Data",
+      "no": "[TODO: No Data]",
+      "context": "global",
+      "source": "routes.html",
+      "line": 117,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599687"
+    },
+    "global.auto_route_9e23af19": {
+      "key": "global.auto_route_9e23af19",
+      "en": "Route",
+      "no": "[TODO: Route]",
+      "context": "global",
+      "source": "routes.html",
+      "line": 166,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599697"
+    },
+    "global.auto_distance__nm_726e2166": {
+      "key": "global.auto_distance__nm_726e2166",
+      "en": "Distance (NM)",
+      "no": "[TODO: Distance (NM)]",
+      "context": "global",
+      "source": "routes.html",
+      "line": 169,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599707"
+    },
+    "global.auto_source_19efeb9b": {
+      "key": "global.auto_source_19efeb9b",
+      "en": "Source",
+      "no": "[TODO: Source]",
+      "context": "global",
+      "source": "routes.html",
+      "line": 171,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599716"
+    },
+    "global.auto_status_6a793d03": {
+      "key": "global.auto_status_6a793d03",
+      "en": "Status",
+      "no": "[TODO: Status]",
+      "context": "global",
+      "source": "routes.html",
+      "line": 172,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599724"
+    },
+    "global.auto_nautical_miles_fa1700d1": {
+      "key": "global.auto_nautical_miles_fa1700d1",
+      "en": "nautical miles",
+      "no": "[TODO: nautical miles]",
+      "context": "global",
+      "source": "routes.html",
+      "line": 194,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599734"
+    },
+    "global.auto_file_system_9fd4519c": {
+      "key": "global.auto_file_system_9fd4519c",
+      "en": "File System",
+      "no": "[TODO: File System]",
+      "context": "global",
+      "source": "routes.html",
+      "line": 216,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599743"
+    },
+    "global.auto_inactive_44517be6": {
+      "key": "global.auto_inactive_44517be6",
+      "en": "Inactive",
+      "no": "[TODO: Inactive]",
+      "context": "global",
+      "source": "routes.html",
+      "line": 218,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599753"
+    },
+    "global.auto_no_rtz_routes_found_793e3a13": {
+      "key": "global.auto_no_rtz_routes_found_793e3a13",
+      "en": "No RTZ Routes Found",
+      "no": "[TODO: No RTZ Routes Found]",
+      "context": "global",
+      "source": "routes.html",
+      "line": 231,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599762"
+    },
+    "global.auto_action_required_0dd9cf5a": {
+      "key": "global.auto_action_required_0dd9cf5a",
+      "en": "Action Required:",
+      "no": "[TODO: Action Required:]",
+      "context": "global",
+      "source": "routes.html",
+      "line": 238,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599772"
+    },
+    "global.auto_verify_rtz_files_exi_79ab303e": {
+      "key": "global.auto_verify_rtz_files_exi_79ab303e",
+      "en": "Verify RTZ files exist in:",
+      "no": "[TODO: Verify RTZ files exist in:]",
+      "context": "global",
+      "source": "routes.html",
+      "line": 240,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599783"
+    },
+    "global.auto_backend_assets_route_2f990a32": {
+      "key": "global.auto_backend_assets_route_2f990a32",
+      "en": "backend/assets/routeinfo_routes/",
+      "no": "[TODO: backend/assets/routeinfo_routes/]",
+      "context": "global",
+      "source": "routes.html",
+      "line": 240,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599792"
+    },
+    "global.auto_run_database_migrati_00dfafe8": {
+      "key": "global.auto_run_database_migrati_00dfafe8",
+      "en": "Run database migrations:",
+      "no": "[TODO: Run database migrations:]",
+      "context": "global",
+      "source": "routes.html",
+      "line": 241,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599801"
+    },
+    "global.auto_flask_db_upgrade_f180b5de": {
+      "key": "global.auto_flask_db_upgrade_f180b5de",
+      "en": "flask db upgrade",
+      "no": "[TODO: flask db upgrade]",
+      "context": "global",
+      "source": "routes.html",
+      "line": 241,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599881"
+    },
+    "global.auto_click__scan_rtz_file_255259d2": {
+      "key": "global.auto_click__scan_rtz_file_255259d2",
+      "en": "Click \"Scan RTZ Files\" button above",
+      "no": "[TODO: Click \"Scan RTZ Files\" button above]",
+      "context": "global",
+      "source": "routes.html",
+      "line": 242,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599903"
+    },
+    "global.auto_data_sources_828d2174": {
+      "key": "global.auto_data_sources_828d2174",
+      "en": "Data Sources:",
+      "no": "[TODO: Data Sources:]",
+      "context": "global",
+      "source": "routes.html",
+      "line": 254,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599919"
+    },
+    "global.auto_last_scan_edf040b1": {
+      "key": "global.auto_last_scan_edf040b1",
+      "en": "Last Scan:",
+      "no": "[TODO: Last Scan:]",
+      "context": "global",
+      "source": "routes.html",
+      "line": 255,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599934"
+    },
+    "global.auto_postgresql_database_6dec66eb": {
+      "key": "global.auto_postgresql_database_6dec66eb",
+      "en": "PostgreSQL database storage",
+      "no": "[TODO: PostgreSQL database storage]",
+      "context": "global",
+      "source": "routes.html",
+      "line": 282,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599948"
+    },
+    "global.auto_direct_rtz_file_disc_35e69f07": {
+      "key": "global.auto_direct_rtz_file_disc_35e69f07",
+      "en": "direct RTZ file discovery",
+      "no": "[TODO: direct RTZ file discovery]",
+      "context": "global",
+      "source": "routes.html",
+      "line": 283,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599959"
+    },
+    "global.auto_to_add_more_routes_fac99d97": {
+      "key": "global.auto_to_add_more_routes_fac99d97",
+      "en": "To add more routes:",
+      "no": "[TODO: To add more routes:]",
+      "context": "global",
+      "source": "routes.html",
+      "line": 297,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599970"
+    },
+    "global.auto_add_rtz_files_to_ass_ea49b57b": {
+      "key": "global.auto_add_rtz_files_to_ass_ea49b57b",
+      "en": "Add RTZ files to assets directory",
+      "no": "[TODO: Add RTZ files to assets directory]",
+      "context": "global",
+      "source": "routes.html",
+      "line": 299,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599980"
+    },
+    "global.auto_click__scan_rtz_file_2418a1e6": {
+      "key": "global.auto_click__scan_rtz_file_2418a1e6",
+      "en": "Click \"Scan RTZ Files\" button",
+      "no": "[TODO: Click \"Scan RTZ Files\" button]",
+      "context": "global",
+      "source": "routes.html",
+      "line": 300,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.599990"
+    },
+    "global.auto_run_rtz_parser_to_sa_010b6901": {
+      "key": "global.auto_run_rtz_parser_to_sa_010b6901",
+      "en": "Run RTZ parser to save to DB",
+      "no": "[TODO: Run RTZ parser to save to DB]",
+      "context": "global",
+      "source": "routes.html",
+      "line": 301,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600000"
+    },
+    "maritime.auto_vessel_tracking_7980f56d": {
+      "key": "maritime.auto_vessel_tracking_7980f56d",
+      "en": "🚢 Vessel Tracking",
+      "no": "[TODO: 🚢 Vessel Tracking]",
+      "context": "maritime",
+      "source": "maritime/vessels.html",
+      "line": 10,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600016"
+    },
+    "maritime.auto_real_time_tracking_o_550c8762": {
+      "key": "maritime.auto_real_time_tracking_o_550c8762",
+      "en": "Real-time tracking of vessels in Norwegian waters",
+      "no": "[TODO: Real-time tracking of vessels in Norwegian waters]",
+      "context": "maritime",
+      "source": "maritime/vessels.html",
+      "line": 11,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600028"
+    },
+    "maritime.auto_vessel_map_b7ec1d9f": {
+      "key": "maritime.auto_vessel_map_b7ec1d9f",
+      "en": "Vessel Map",
+      "no": "[TODO: Vessel Map]",
+      "context": "maritime",
+      "source": "maritime/vessels.html",
+      "line": 19,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600039"
+    },
+    "maritime.auto_filters_e6eb1615": {
+      "key": "maritime.auto_filters_e6eb1615",
+      "en": "Filters",
+      "no": "[TODO: Filters]",
+      "context": "maritime",
+      "source": "maritime/vessels.html",
+      "line": 30,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600049"
+    },
+    "maritime.auto_vessel_type_c680a349": {
+      "key": "maritime.auto_vessel_type_c680a349",
+      "en": "Vessel Type",
+      "no": "[TODO: Vessel Type]",
+      "context": "maritime",
+      "source": "maritime/vessels.html",
+      "line": 34,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600060"
+    },
+    "maritime.auto_all_types_8bc760a3": {
+      "key": "maritime.auto_all_types_8bc760a3",
+      "en": "All Types",
+      "no": "[TODO: All Types]",
+      "context": "maritime",
+      "source": "maritime/vessels.html",
+      "line": 36,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600069"
+    },
+    "maritime.auto_cargo_ships_6618b53e": {
+      "key": "maritime.auto_cargo_ships_6618b53e",
+      "en": "Cargo Ships",
+      "no": "[TODO: Cargo Ships]",
+      "context": "maritime",
+      "source": "maritime/vessels.html",
+      "line": 37,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600079"
+    },
+    "maritime.auto_passenger_ships_b93114be": {
+      "key": "maritime.auto_passenger_ships_b93114be",
+      "en": "Passenger Ships",
+      "no": "[TODO: Passenger Ships]",
+      "context": "maritime",
+      "source": "maritime/vessels.html",
+      "line": 38,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600088"
+    },
+    "maritime.auto_tankers_3f34e6a8": {
+      "key": "maritime.auto_tankers_3f34e6a8",
+      "en": "Tankers",
+      "no": "[TODO: Tankers]",
+      "context": "maritime",
+      "source": "maritime/vessels.html",
+      "line": 39,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600098"
+    },
+    "maritime.auto_fishing_vessels_34862139": {
+      "key": "maritime.auto_fishing_vessels_34862139",
+      "en": "Fishing Vessels",
+      "no": "[TODO: Fishing Vessels]",
+      "context": "maritime",
+      "source": "maritime/vessels.html",
+      "line": 40,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600107"
+    },
+    "maritime.auto_all_statuses_6877a3b9": {
+      "key": "maritime.auto_all_statuses_6877a3b9",
+      "en": "All Statuses",
+      "no": "[TODO: All Statuses]",
+      "context": "maritime",
+      "source": "maritime/vessels.html",
+      "line": 46,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600117"
+    },
+    "maritime.auto_underway_c7760fc0": {
+      "key": "maritime.auto_underway_c7760fc0",
+      "en": "Underway",
+      "no": "[TODO: Underway]",
+      "context": "maritime",
+      "source": "maritime/vessels.html",
+      "line": 47,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600129"
+    },
+    "maritime.auto_anchored_a77d6953": {
+      "key": "maritime.auto_anchored_a77d6953",
+      "en": "Anchored",
+      "no": "[TODO: Anchored]",
+      "context": "maritime",
+      "source": "maritime/vessels.html",
+      "line": 48,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600140"
+    },
+    "maritime.auto_moored_c6ffb01d": {
+      "key": "maritime.auto_moored_c6ffb01d",
+      "en": "Moored",
+      "no": "[TODO: Moored]",
+      "context": "maritime",
+      "source": "maritime/vessels.html",
+      "line": 49,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600150"
+    },
+    "maritime.auto_vessels_list_dc4ab1e8": {
+      "key": "maritime.auto_vessels_list_dc4ab1e8",
+      "en": "Vessels List",
+      "no": "[TODO: Vessels List]",
+      "context": "maritime",
+      "source": "maritime/vessels.html",
+      "line": 65,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600160"
+    },
+    "maritime.auto_0_vessels_5ef0dde4": {
+      "key": "maritime.auto_0_vessels_5ef0dde4",
+      "en": "0 vessels",
+      "no": "[TODO: 0 vessels]",
+      "context": "maritime",
+      "source": "maritime/vessels.html",
+      "line": 66,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600170"
+    },
+    "maritime.auto_name_5a93aff5": {
+      "key": "maritime.auto_name_5a93aff5",
+      "en": "Name",
+      "no": "[TODO: Name]",
+      "context": "maritime",
+      "source": "maritime/vessels.html",
+      "line": 73,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600180"
+    },
+    "maritime.auto_type_86da786e": {
+      "key": "maritime.auto_type_86da786e",
+      "en": "Type",
+      "no": "[TODO: Type]",
+      "context": "maritime",
+      "source": "maritime/vessels.html",
+      "line": 74,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600190"
+    },
+    "maritime.auto_mmsi_0ab96028": {
+      "key": "maritime.auto_mmsi_0ab96028",
+      "en": "MMSI",
+      "no": "[TODO: MMSI]",
+      "context": "maritime",
+      "source": "maritime/vessels.html",
+      "line": 75,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600201"
+    },
+    "maritime.auto_speed_9341ffcf": {
+      "key": "maritime.auto_speed_9341ffcf",
+      "en": "Speed",
+      "no": "[TODO: Speed]",
+      "context": "maritime",
+      "source": "maritime/vessels.html",
+      "line": 76,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600210"
+    },
+    "maritime.auto_course_dbd66233": {
+      "key": "maritime.auto_course_dbd66233",
+      "en": "Course",
+      "no": "[TODO: Course]",
+      "context": "maritime",
+      "source": "maritime/vessels.html",
+      "line": 77,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600218"
+    },
+    "maritime.auto_maritime_operation_ef6788ac": {
+      "key": "maritime.auto_maritime_operation_ef6788ac",
+      "en": "🌊 Maritime Operations Center",
+      "no": "[TODO: 🌊 Maritime Operations Center]",
+      "context": "maritime",
+      "source": "maritime/home.html",
+      "line": 63,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600230"
+    },
+    "maritime.auto_real_time_maritime_i_f44bcc45": {
+      "key": "maritime.auto_real_time_maritime_i_f44bcc45",
+      "en": "Real-time maritime intelligence for Norwegian waters",
+      "no": "[TODO: Real-time maritime intelligence for Norwegian waters]",
+      "context": "maritime",
+      "source": "maritime/home.html",
+      "line": 64,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600240"
+    },
+    "maritime.auto_active_vessels_a2f52813": {
+      "key": "maritime.auto_active_vessels_a2f52813",
+      "en": "Active Vessels",
+      "no": "[TODO: Active Vessels]",
+      "context": "maritime",
+      "source": "maritime/home.html",
+      "line": 84,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600250"
+    },
+    "maritime.auto_norwegian_ports_6cec78df": {
+      "key": "maritime.auto_norwegian_ports_6cec78df",
+      "en": "Norwegian Ports",
+      "no": "Norske havner",
+      "context": "maritime",
+      "source": "maritime/home.html",
+      "line": 91,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600260"
+    },
+    "maritime.auto_24_7_be674318": {
+      "key": "maritime.auto_24_7_be674318",
+      "en": "24/7",
+      "no": "[TODO: 24/7]",
+      "context": "maritime",
+      "source": "maritime/home.html",
+      "line": 97,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600270"
+    },
+    "maritime.auto_monitoring_843efe94": {
+      "key": "maritime.auto_monitoring_843efe94",
+      "en": "Monitoring",
+      "no": "[TODO: Monitoring]",
+      "context": "maritime",
+      "source": "maritime/home.html",
+      "line": 98,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600279"
+    },
+    "maritime.auto_last_update_2d1fc404": {
+      "key": "maritime.auto_last_update_2d1fc404",
+      "en": "Last Update",
+      "no": "[TODO: Last Update]",
+      "context": "maritime",
+      "source": "maritime/home.html",
+      "line": 105,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600289"
+    },
+    "maritime.auto_live_dashboard_ff89e3fe": {
+      "key": "maritime.auto_live_dashboard_ff89e3fe",
+      "en": "Live Dashboard",
+      "no": "[TODO: Live Dashboard]",
+      "context": "maritime",
+      "source": "maritime/home.html",
+      "line": 116,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600298"
+    },
+    "maritime.auto_vessel_tracking_0bfb8c90": {
+      "key": "maritime.auto_vessel_tracking_0bfb8c90",
+      "en": "Vessel Tracking",
+      "no": "[TODO: Vessel Tracking]",
+      "context": "maritime",
+      "source": "maritime/home.html",
+      "line": 132,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600308"
+    },
+    "maritime.auto_ports_information_7ed6cb88": {
+      "key": "maritime.auto_ports_information_7ed6cb88",
+      "en": "Ports Information",
+      "no": "[TODO: Ports Information]",
+      "context": "maritime",
+      "source": "maritime/home.html",
+      "line": 148,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600318"
+    },
+    "maritime.auto_official_data_source_883689eb": {
+      "key": "maritime.auto_official_data_source_883689eb",
+      "en": "Official Data Sources",
+      "no": "[TODO: Official Data Sources]",
+      "context": "maritime",
+      "source": "maritime/home.html",
+      "line": 166,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600328"
+    },
+    "maritime.auto_weather_forecasts_57e5246e": {
+      "key": "maritime.auto_weather_forecasts_57e5246e",
+      "en": "Weather forecasts & observations",
+      "no": "[TODO: Weather forecasts & observations]",
+      "context": "maritime",
+      "source": "maritime/home.html",
+      "line": 174,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600339"
+    },
+    "maritime.auto_live_ee3837e9": {
+      "key": "maritime.auto_live_ee3837e9",
+      "en": "Live",
+      "no": "[TODO: Live]",
+      "context": "maritime",
+      "source": "maritime/home.html",
+      "line": 175,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600364"
+    },
+    "maritime.auto_kystverket_05349437": {
+      "key": "maritime.auto_kystverket_05349437",
+      "en": "Kystverket",
+      "no": "[TODO: Kystverket]",
+      "context": "maritime",
+      "source": "maritime/home.html",
+      "line": 182,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600385"
+    },
+    "maritime.auto_ais_vessel_tracking_021ece0f": {
+      "key": "maritime.auto_ais_vessel_tracking_021ece0f",
+      "en": "AIS vessel tracking data",
+      "no": "[TODO: AIS vessel tracking data]",
+      "context": "maritime",
+      "source": "maritime/home.html",
+      "line": 183,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600401"
+    },
+    "maritime.auto_kartverket_b23ee939": {
+      "key": "maritime.auto_kartverket_b23ee939",
+      "en": "Kartverket",
+      "no": "[TODO: Kartverket]",
+      "context": "maritime",
+      "source": "maritime/home.html",
+      "line": 191,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600412"
+    },
+    "maritime.auto_official_nautical_ch_682b1e5c": {
+      "key": "maritime.auto_official_nautical_ch_682b1e5c",
+      "en": "Official nautical charts",
+      "no": "[TODO: Official nautical charts]",
+      "context": "maritime",
+      "source": "maritime/home.html",
+      "line": 192,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600425"
+    },
+    "maritime.auto_integrated_f6a75940": {
+      "key": "maritime.auto_integrated_f6a75940",
+      "en": "Integrated",
+      "no": "[TODO: Integrated]",
+      "context": "maritime",
+      "source": "maritime/home.html",
+      "line": 193,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600435"
+    },
+    "maritime.auto_emodnet_cdb82a3c": {
+      "key": "maritime.auto_emodnet_cdb82a3c",
+      "en": "EMODnet",
+      "no": "[TODO: EMODnet]",
+      "context": "maritime",
+      "source": "maritime/home.html",
+      "line": 200,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600445"
+    },
+    "maritime.auto_bathymetry___sea_dat_8f36eea5": {
+      "key": "maritime.auto_bathymetry___sea_dat_8f36eea5",
+      "en": "Bathymetry & sea data",
+      "no": "[TODO: Bathymetry & sea data]",
+      "context": "maritime",
+      "source": "maritime/home.html",
+      "line": 201,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600456"
+    },
+    "maritime.auto_need_more_maritime_t_524211dc": {
+      "key": "maritime.auto_need_more_maritime_t_524211dc",
+      "en": "Need More Maritime Tools?",
+      "no": "[TODO: Need More Maritime Tools?]",
+      "context": "maritime",
+      "source": "maritime/home.html",
+      "line": 225,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600466"
+    },
+    "maritime.auto_explore_additional_m_9f83d4b3": {
+      "key": "maritime.auto_explore_additional_m_9f83d4b3",
+      "en": "Explore additional maritime resources and tools:",
+      "no": "[TODO: Explore additional maritime resources and tools:]",
+      "context": "maritime",
+      "source": "maritime/home.html",
+      "line": 226,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600476"
+    },
+    "maritime.auto_norwegian_ports_b442453c": {
+      "key": "maritime.auto_norwegian_ports_b442453c",
+      "en": "⚓ Norwegian Ports",
+      "no": "[TODO: ⚓ Norwegian Ports]",
+      "context": "maritime",
+      "source": "maritime/ports.html",
+      "line": 10,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600488"
+    },
+    "maritime.auto_comprehensive_inform_278a91ba": {
+      "key": "maritime.auto_comprehensive_inform_278a91ba",
+      "en": "Comprehensive information about ports and harbors in Norway",
+      "no": "[TODO: Comprehensive information about ports and harbors in Norway]",
+      "context": "maritime",
+      "source": "maritime/ports.html",
+      "line": 11,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600498"
+    },
+    "maritime.auto_bergen_port_9c6434ba": {
+      "key": "maritime.auto_bergen_port_9c6434ba",
+      "en": "Bergen Port",
+      "no": "[TODO: Bergen Port]",
+      "context": "maritime",
+      "source": "maritime/ports.html",
+      "line": 20,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600508"
+    },
+    "maritime.auto_location_c2e3b99f": {
+      "key": "maritime.auto_location_c2e3b99f",
+      "en": "Location:",
+      "no": "[TODO: Location:]",
+      "context": "maritime",
+      "source": "maritime/ports.html",
+      "line": 23,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600518"
+    },
+    "maritime.auto_60_3913_n__5_3221_e_3e8bf22c": {
+      "key": "maritime.auto_60_3913_n__5_3221_e_3e8bf22c",
+      "en": "60.3913°N, 5.3221°E",
+      "no": "[TODO: 60.3913°N, 5.3221°E]",
+      "context": "maritime",
+      "source": "maritime/ports.html",
+      "line": 23,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600529"
+    },
+    "maritime.auto_country_71d14690": {
+      "key": "maritime.auto_country_71d14690",
+      "en": "Country:",
+      "no": "[TODO: Country:]",
+      "context": "maritime",
+      "source": "maritime/ports.html",
+      "line": 24,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600539"
+    },
+    "maritime.auto_norway_1cf87012": {
+      "key": "maritime.auto_norway_1cf87012",
+      "en": "Norway",
+      "no": "[TODO: Norway]",
+      "context": "maritime",
+      "source": "maritime/ports.html",
+      "line": 24,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600548"
+    },
+    "maritime.auto_type_a857d40a": {
+      "key": "maritime.auto_type_a857d40a",
+      "en": "Type:",
+      "no": "[TODO: Type:]",
+      "context": "maritime",
+      "source": "maritime/ports.html",
+      "line": 25,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600558"
+    },
+    "maritime.auto_commercial_port_52543767": {
+      "key": "maritime.auto_commercial_port_52543767",
+      "en": "Commercial Port",
+      "no": "[TODO: Commercial Port]",
+      "context": "maritime",
+      "source": "maritime/ports.html",
+      "line": 25,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600568"
+    },
+    "maritime.auto_features_a0c02af6": {
+      "key": "maritime.auto_features_a0c02af6",
+      "en": "Features:",
+      "no": "[TODO: Features:]",
+      "context": "maritime",
+      "source": "maritime/ports.html",
+      "line": 26,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600577"
+    },
+    "maritime.auto_container_terminal_7502c202": {
+      "key": "maritime.auto_container_terminal_7502c202",
+      "en": "Container terminal, fishing harbor, ferry terminal",
+      "no": "[TODO: Container terminal, fishing harbor, ferry terminal]",
+      "context": "maritime",
+      "source": "maritime/ports.html",
+      "line": 26,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600586"
+    },
+    "maritime.auto_the_main_port_of_wes_51e65d87": {
+      "key": "maritime.auto_the_main_port_of_wes_51e65d87",
+      "en": "The main port of Western Norway, handling both cargo and passenger traffic.",
+      "no": "[TODO: The main port of Western Norway, handling both cargo and passenger traffic.]",
+      "context": "maritime",
+      "source": "maritime/ports.html",
+      "line": 27,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600597"
+    },
+    "maritime.auto_oslo_port_bf92741d": {
+      "key": "maritime.auto_oslo_port_bf92741d",
+      "en": "Oslo Port",
+      "no": "[TODO: Oslo Port]",
+      "context": "maritime",
+      "source": "maritime/ports.html",
+      "line": 35,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600607"
+    },
+    "maritime.auto_59_9139_n__10_7522_e_df9ac7b0": {
+      "key": "maritime.auto_59_9139_n__10_7522_e_df9ac7b0",
+      "en": "59.9139°N, 10.7522°E",
+      "no": "[TODO: 59.9139°N, 10.7522°E]",
+      "context": "maritime",
+      "source": "maritime/ports.html",
+      "line": 38,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600618"
+    },
+    "maritime.auto_capital_city_port_a7637e08": {
+      "key": "maritime.auto_capital_city_port_a7637e08",
+      "en": "Capital City Port",
+      "no": "[TODO: Capital City Port]",
+      "context": "maritime",
+      "source": "maritime/ports.html",
+      "line": 40,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600628"
+    },
+    "maritime.auto_cruise_terminal__fer_22e8e360": {
+      "key": "maritime.auto_cruise_terminal__fer_22e8e360",
+      "en": "Cruise terminal, ferry services, cargo facilities",
+      "no": "[TODO: Cruise terminal, ferry services, cargo facilities]",
+      "context": "maritime",
+      "source": "maritime/ports.html",
+      "line": 41,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600638"
+    },
+    "maritime.auto_norway_s_largest_pas_cdbe2371": {
+      "key": "maritime.auto_norway_s_largest_pas_cdbe2371",
+      "en": "Norway's largest passenger port, handling over 6 million passengers annually.",
+      "no": "[TODO: Norway's largest passenger port, handling over 6 million passengers annually.]",
+      "context": "maritime",
+      "source": "maritime/ports.html",
+      "line": 42,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600648"
+    },
+    "maritime.auto_stavanger_port_b20d3ccd": {
+      "key": "maritime.auto_stavanger_port_b20d3ccd",
+      "en": "Stavanger Port",
+      "no": "[TODO: Stavanger Port]",
+      "context": "maritime",
+      "source": "maritime/ports.html",
+      "line": 50,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600658"
+    },
+    "maritime.auto_58_9700_n__5_7331_e_90a975a5": {
+      "key": "maritime.auto_58_9700_n__5_7331_e_90a975a5",
+      "en": "58.9700°N, 5.7331°E",
+      "no": "[TODO: 58.9700°N, 5.7331°E]",
+      "context": "maritime",
+      "source": "maritime/ports.html",
+      "line": 53,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600669"
+    },
+    "maritime.auto_oil_industry_port_77fb407a": {
+      "key": "maritime.auto_oil_industry_port_77fb407a",
+      "en": "Oil Industry Port",
+      "no": "[TODO: Oil Industry Port]",
+      "context": "maritime",
+      "source": "maritime/ports.html",
+      "line": 55,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600679"
+    },
+    "maritime.auto_offshore_supply_base_fb520071": {
+      "key": "maritime.auto_offshore_supply_base_fb520071",
+      "en": "Offshore supply base, container terminal",
+      "no": "[TODO: Offshore supply base, container terminal]",
+      "context": "maritime",
+      "source": "maritime/ports.html",
+      "line": 56,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600688"
+    },
+    "maritime.auto_major_port_for_the_o_5f50daef": {
+      "key": "maritime.auto_major_port_for_the_o_5f50daef",
+      "en": "Major port for the offshore oil and gas industry in the North Sea.",
+      "no": "[TODO: Major port for the offshore oil and gas industry in the North Sea.]",
+      "context": "maritime",
+      "source": "maritime/ports.html",
+      "line": 57,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600699"
+    },
+    "maritime.auto_trondheim_port_236d12c4": {
+      "key": "maritime.auto_trondheim_port_236d12c4",
+      "en": "Trondheim Port",
+      "no": "[TODO: Trondheim Port]",
+      "context": "maritime",
+      "source": "maritime/ports.html",
+      "line": 65,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600708"
+    },
+    "maritime.auto_63_4305_n__10_3951_e_d5d3367c": {
+      "key": "maritime.auto_63_4305_n__10_3951_e_d5d3367c",
+      "en": "63.4305°N, 10.3951°E",
+      "no": "[TODO: 63.4305°N, 10.3951°E]",
+      "context": "maritime",
+      "source": "maritime/ports.html",
+      "line": 68,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600718"
+    },
+    "maritime.auto_historical_port_bf15dd69": {
+      "key": "maritime.auto_historical_port_bf15dd69",
+      "en": "Historical Port",
+      "no": "[TODO: Historical Port]",
+      "context": "maritime",
+      "source": "maritime/ports.html",
+      "line": 70,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600728"
+    },
+    "maritime.auto_cargo_terminal__pass_96bd1e1a": {
+      "key": "maritime.auto_cargo_terminal__pass_96bd1e1a",
+      "en": "Cargo terminal, passenger ferry services",
+      "no": "[TODO: Cargo terminal, passenger ferry services]",
+      "context": "maritime",
+      "source": "maritime/ports.html",
+      "line": 71,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600738"
+    },
+    "maritime.auto_important_port_in_ce_66455291": {
+      "key": "maritime.auto_important_port_in_ce_66455291",
+      "en": "Important port in Central Norway with historical significance.",
+      "no": "[TODO: Important port in Central Norway with historical significance.]",
+      "context": "maritime",
+      "source": "maritime/ports.html",
+      "line": 72,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600747"
+    },
+    "maritime.auto_norwegian_ports_map_0bb54c37": {
+      "key": "maritime.auto_norwegian_ports_map_0bb54c37",
+      "en": "Norwegian Ports Map",
+      "no": "[TODO: Norwegian Ports Map]",
+      "context": "maritime",
+      "source": "maritime/ports.html",
+      "line": 83,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600757"
+    },
+    "maritime_split.auto_real_time_vessel_tra_97f14d3c": {
+      "key": "maritime_split.auto_real_time_vessel_tra_97f14d3c",
+      "en": "Real-time vessel tracking & RTZ route management",
+      "no": "[TODO: Real-time vessel tracking & RTZ route management]",
+      "context": "maritime_split",
+      "source": "maritime_split/dashboard_base.html",
+      "line": 99,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600768"
+    },
+    "maritime_split.auto_live_04eec7a3": {
+      "key": "maritime_split.auto_live_04eec7a3",
+      "en": "LIVE",
+      "no": "[TODO: LIVE]",
+      "context": "maritime_split",
+      "source": "maritime_split/dashboard_base.html",
+      "line": 102,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600778"
+    },
+    "maritime_split.auto_loading_9d32dfd0": {
+      "key": "maritime_split.auto_loading_9d32dfd0",
+      "en": "LOADING",
+      "no": "[TODO: LOADING]",
+      "context": "maritime_split",
+      "source": "maritime_split/dashboard_base.html",
+      "line": 116,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600787"
+    },
+    "maritime_split.auto_loading_152f403d": {
+      "key": "maritime_split.auto_loading_152f403d",
+      "en": "Loading...",
+      "no": "[TODO: Loading...]",
+      "context": "maritime_split",
+      "source": "maritime_split/dashboard_base.html",
+      "line": 120,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600797"
+    },
+    "maritime_split.auto_filter_ports_7cf93fe9": {
+      "key": "maritime_split.auto_filter_ports_7cf93fe9",
+      "en": "Filter ports:",
+      "no": "[TODO: Filter ports:]",
+      "context": "maritime_split",
+      "source": "maritime_split/dashboard_base.html",
+      "line": 130,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600807"
+    },
+    "maritime_split.auto_data_sources_3c4b7e07": {
+      "key": "maritime_split.auto_data_sources_3c4b7e07",
+      "en": "Data sources:",
+      "no": "[TODO: Data sources:]",
+      "context": "maritime_split",
+      "source": "maritime_split/dashboard_base.html",
+      "line": 162,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600816"
+    },
+    "maritime_split.auto_api_status_a00c5821": {
+      "key": "maritime_split.auto_api_status_a00c5821",
+      "en": "API Status:",
+      "no": "[TODO: API Status:]",
+      "context": "maritime_split",
+      "source": "maritime_split/dashboard_base.html",
+      "line": 188,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600826"
+    },
+    "maritime_split.auto_updated_e474a1bf": {
+      "key": "maritime_split.auto_updated_e474a1bf",
+      "en": "Updated: --:--",
+      "no": "[TODO: Updated: --:--]",
+      "context": "maritime_split",
+      "source": "maritime_split/dashboard_base.html",
+      "line": 226,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600836"
+    },
+    "maritime_split.auto_auto_refresh_7a9fc826": {
+      "key": "maritime_split.auto_auto_refresh_7a9fc826",
+      "en": "Auto-refresh",
+      "no": "[TODO: Auto-refresh]",
+      "context": "maritime_split",
+      "source": "maritime_split/dashboard_base.html",
+      "line": 231,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600848"
+    },
+    "maritime_split.auto_loading_map_data_03d14814": {
+      "key": "maritime_split.auto_loading_map_data_03d14814",
+      "en": "Loading map data...",
+      "no": "[TODO: Loading map data...]",
+      "context": "maritime_split",
+      "source": "maritime_split/dashboard_base.html",
+      "line": 247,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600858"
+    },
+    "maritime_split.auto_rtz_route_start_5f7afca1": {
+      "key": "maritime_split.auto_rtz_route_start_5f7afca1",
+      "en": "RTZ Route Start",
+      "no": "[TODO: RTZ Route Start]",
+      "context": "maritime_split",
+      "source": "maritime_split/dashboard_base.html",
+      "line": 255,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600867"
+    },
+    "maritime_split.auto_rtz_route_end_1785f488": {
+      "key": "maritime_split.auto_rtz_route_end_1785f488",
+      "en": "RTZ Route End",
+      "no": "[TODO: RTZ Route End]",
+      "context": "maritime_split",
+      "source": "maritime_split/dashboard_base.html",
+      "line": 259,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600878"
+    },
+    "maritime_split.auto_route_waypoint_470ef924": {
+      "key": "maritime_split.auto_route_waypoint_470ef924",
+      "en": "Route Waypoint",
+      "no": "[TODO: Route Waypoint]",
+      "context": "maritime_split",
+      "source": "maritime_split/dashboard_base.html",
+      "line": 263,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600887"
+    },
+    "maritime_split.auto_vessels__live_4e58ed08": {
+      "key": "maritime_split.auto_vessels__live_4e58ed08",
+      "en": "Vessels (Live)",
+      "no": "[TODO: Vessels (Live)]",
+      "context": "maritime_split",
+      "source": "maritime_split/dashboard_base.html",
+      "line": 267,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600897"
+    },
+    "maritime_split.auto_met_a9367374": {
+      "key": "maritime_split.auto_met_a9367374",
+      "en": "MET",
+      "no": "[TODO: MET]",
+      "context": "maritime_split",
+      "source": "maritime_split/dashboard_base.html",
+      "line": 283,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600907"
+    },
+    "maritime_split.auto_c_3f2f50ee": {
+      "key": "maritime_split.auto_c_3f2f50ee",
+      "en": "--°C",
+      "no": "[TODO: --°C]",
+      "context": "maritime_split",
+      "source": "maritime_split/dashboard_base.html",
+      "line": 285,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.600918"
+    },
+    "maritime_split.auto_bergen__norway_7429013c": {
+      "key": "maritime_split.auto_bergen__norway_7429013c",
+      "en": "Bergen, Norway",
+      "no": "[TODO: Bergen, Norway]",
+      "context": "maritime_split",
+      "source": "maritime_split/dashboard_base.html",
+      "line": 288,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601005"
+    },
+    "maritime_split.auto_m_s_73970091": {
+      "key": "maritime_split.auto_m_s_73970091",
+      "en": "-- m/s",
+      "no": "[TODO: -- m/s]",
+      "context": "maritime_split",
+      "source": "maritime_split/dashboard_base.html",
+      "line": 296,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601018"
+    },
+    "maritime_split.auto_wind_f3e64956": {
+      "key": "maritime_split.auto_wind_f3e64956",
+      "en": "Wind",
+      "no": "[TODO: Wind]",
+      "context": "maritime_split",
+      "source": "maritime_split/dashboard_base.html",
+      "line": 297,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601028"
+    },
+    "maritime_split.auto_updating_99c7ea02": {
+      "key": "maritime_split.auto_updating_99c7ea02",
+      "en": "Updating...",
+      "no": "[TODO: Updating...]",
+      "context": "maritime_split",
+      "source": "maritime_split/dashboard_base.html",
+      "line": 300,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601086"
+    },
+    "maritime_split.auto_within_50km_radius_o_5ea3d834": {
+      "key": "maritime_split.auto_within_50km_radius_o_5ea3d834",
+      "en": "Within 50km radius of center",
+      "no": "[TODO: Within 50km radius of center]",
+      "context": "maritime_split",
+      "source": "maritime_split/dashboard_base.html",
+      "line": 320,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601108"
+    },
+    "maritime_split.auto_rtz_routes_603dc5f0": {
+      "key": "maritime_split.auto_rtz_routes_603dc5f0",
+      "en": "RTZ Routes",
+      "no": "[TODO: RTZ Routes]",
+      "context": "maritime_split",
+      "source": "maritime_split/dashboard_base.html",
+      "line": 329,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601123"
+    },
+    "maritime_split.auto_live_database_f246e96d": {
+      "key": "maritime_split.auto_live_database_f246e96d",
+      "en": "Live Database",
+      "no": "[TODO: Live Database]",
+      "context": "maritime_split",
+      "source": "maritime_split/dashboard_base.html",
+      "line": 341,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601134"
+    },
+    "maritime_split.auto_live_15a63c10": {
+      "key": "maritime_split.auto_live_15a63c10",
+      "en": "✓ Live ()",
+      "no": "[TODO: ✓ Live ()]",
+      "context": "maritime_split",
+      "source": "maritime_split/dashboard_base.html",
+      "line": 353,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601146"
+    },
+    "maritime_split.auto_offline_d2de049a": {
+      "key": "maritime_split.auto_offline_d2de049a",
+      "en": "✗ Offline",
+      "no": "[TODO: ✗ Offline]",
+      "context": "maritime_split",
+      "source": "maritime_split/dashboard_base.html",
+      "line": 355,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601156"
+    },
+    "maritime_split.auto_weather_api_26a77ae9": {
+      "key": "maritime_split.auto_weather_api_26a77ae9",
+      "en": "Weather API",
+      "no": "[TODO: Weather API]",
+      "context": "maritime_split",
+      "source": "maritime_split/dashboard_base.html",
+      "line": 359,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601165"
+    },
+    "maritime_split.auto_loading_ab0871f4": {
+      "key": "maritime_split.auto_loading_ab0871f4",
+      "en": "⏳ Loading",
+      "no": "[TODO: ⏳ Loading]",
+      "context": "maritime_split",
+      "source": "maritime_split/dashboard_base.html",
+      "line": 360,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601175"
+    },
+    "maritime_split.auto_ais_api_8836885d": {
+      "key": "maritime_split.auto_ais_api_8836885d",
+      "en": "AIS API",
+      "no": "[TODO: AIS API]",
+      "context": "maritime_split",
+      "source": "maritime_split/dashboard_base.html",
+      "line": 363,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601185"
+    },
+    "maritime_split.auto_data_quality_42d5bead": {
+      "key": "maritime_split.auto_data_quality_42d5bead",
+      "en": "Data Quality",
+      "no": "[TODO: Data Quality]",
+      "context": "maritime_split",
+      "source": "maritime_split/dashboard_base.html",
+      "line": 367,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601195"
+    },
+    "maritime_split.auto_excellent_929bc2d6": {
+      "key": "maritime_split.auto_excellent_929bc2d6",
+      "en": "Excellent",
+      "no": "[TODO: Excellent]",
+      "context": "maritime_split",
+      "source": "maritime_split/dashboard_base.html",
+      "line": 369,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601204"
+    },
+    "maritime_split.auto_good_224e6e60": {
+      "key": "maritime_split.auto_good_224e6e60",
+      "en": "Good",
+      "no": "[TODO: Good]",
+      "context": "maritime_split",
+      "source": "maritime_split/dashboard_base.html",
+      "line": 371,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601213"
+    },
+    "maritime_split.auto_limited_10f3a27f": {
+      "key": "maritime_split.auto_limited_10f3a27f",
+      "en": "Limited",
+      "no": "[TODO: Limited]",
+      "context": "maritime_split",
+      "source": "maritime_split/dashboard_base.html",
+      "line": 373,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601222"
+    },
+    "maritime_split.auto_last_check_ddfc61f8": {
+      "key": "maritime_split.auto_last_check_ddfc61f8",
+      "en": "Last check: --:--",
+      "no": "[TODO: Last check: --:--]",
+      "context": "maritime_split",
+      "source": "maritime_split/dashboard_base.html",
+      "line": 377,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601233"
+    },
+    "maritime_split.auto_real_rtz_data_availa_f447814c": {
+      "key": "maritime_split.auto_real_rtz_data_availa_f447814c",
+      "en": "Real RTZ Data Available",
+      "no": "[TODO: Real RTZ Data Available]",
+      "context": "maritime_split",
+      "source": "maritime_split/dashboard_base.html",
+      "line": 403,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601243"
+    },
+    "maritime_split.auto_showing_1432f838": {
+      "key": "maritime_split.auto_showing_1432f838",
+      "en": "Showing",
+      "no": "[TODO: Showing]",
+      "context": "maritime_split",
+      "source": "maritime_split/dashboard_base.html",
+      "line": 405,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601253"
+    },
+    "maritime_split.auto_professionally_surve_88a37c68": {
+      "key": "maritime_split.auto_professionally_surve_88a37c68",
+      "en": "professionally surveyed routes from NCA. Click any route to highlight it on the map.",
+      "no": "[TODO: professionally surveyed routes from NCA. Click any route to highlight it on the map.]",
+      "context": "maritime_split",
+      "source": "maritime_split/dashboard_base.html",
+      "line": 405,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601263"
+    },
+    "maritime_split.auto_origin___destination_029a9c91": {
+      "key": "maritime_split.auto_origin___destination_029a9c91",
+      "en": "Origin → Destination",
+      "no": "[TODO: Origin → Destination]",
+      "context": "maritime_split",
+      "source": "maritime_split/dashboard_base.html",
+      "line": 416,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601275"
+    },
+    "maritime_split.auto_distance_6352edb7": {
+      "key": "maritime_split.auto_distance_6352edb7",
+      "en": "Distance",
+      "no": "[TODO: Distance]",
+      "context": "maritime_split",
+      "source": "maritime_split/dashboard_base.html",
+      "line": 417,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601285"
+    },
+    "maritime_split.auto_port_8352c6a0": {
+      "key": "maritime_split.auto_port_8352c6a0",
+      "en": "Port",
+      "no": "[TODO: Port]",
+      "context": "maritime_split",
+      "source": "maritime_split/dashboard_base.html",
+      "line": 419,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601294"
+    },
+    "maritime_split.auto_actions_8be9dbd9": {
+      "key": "maritime_split.auto_actions_8be9dbd9",
+      "en": "Actions",
+      "no": "[TODO: Actions]",
+      "context": "maritime_split",
+      "source": "maritime_split/dashboard_base.html",
+      "line": 421,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601303"
+    },
+    "maritime_split.auto_nm_841855e2": {
+      "key": "maritime_split.auto_nm_841855e2",
+      "en": "NM",
+      "no": "[TODO: NM]",
+      "context": "maritime_split",
+      "source": "maritime_split/dashboard_base.html",
+      "line": 468,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601312"
+    },
+    "maritime_split.auto_verified_678da85a": {
+      "key": "maritime_split.auto_verified_678da85a",
+      "en": "Verified",
+      "no": "[TODO: Verified]",
+      "context": "maritime_split",
+      "source": "maritime_split/dashboard_base.html",
+      "line": 488,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601321"
+    },
+    "maritime_split.auto_just_now_2c18ade8": {
+      "key": "maritime_split.auto_just_now_2c18ade8",
+      "en": "Just now",
+      "no": "[TODO: Just now]",
+      "context": "maritime_split",
+      "source": "maritime_split/dashboard_base.html",
+      "line": 539,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601330"
+    },
+    "maritime_split.auto_route_data_tempor_d19f44f1": {
+      "key": "maritime_split.auto_route_data_tempor_d19f44f1",
+      "en": "⚠️ Route Data Temporarily Unavailable",
+      "no": "[TODO: ⚠️ Route Data Temporarily Unavailable]",
+      "context": "maritime_split",
+      "source": "maritime_split/dashboard_base.html",
+      "line": 550,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601341"
+    },
+    "maritime_split.auto_if_this_persists__en_f9085b09": {
+      "key": "maritime_split.auto_if_this_persists__en_f9085b09",
+      "en": "If this persists, ensure you're accessing:",
+      "no": "[TODO: If this persists, ensure you're accessing:]",
+      "context": "maritime_split",
+      "source": "maritime_split/dashboard_base.html",
+      "line": 563,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601352"
+    },
+    "maritime_split.auto_maritime_dashboard_85718f5e": {
+      "key": "maritime_split.auto_maritime_dashboard_85718f5e",
+      "en": "/maritime/dashboard",
+      "no": "[TODO: /maritime/dashboard]",
+      "context": "maritime_split",
+      "source": "maritime_split/dashboard_base.html",
+      "line": 563,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601363"
+    },
+    "maritime_split.auto_current_url_e5e443f9": {
+      "key": "maritime_split.auto_current_url_e5e443f9",
+      "en": "Current URL:",
+      "no": "[TODO: Current URL:]",
+      "context": "maritime_split",
+      "source": "maritime_split/dashboard_base.html",
+      "line": 564,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601373"
+    },
+    "maritime_split.auto_notification_1080d121": {
+      "key": "maritime_split.auto_notification_1080d121",
+      "en": "Notification",
+      "no": "[TODO: Notification]",
+      "context": "maritime_split",
+      "source": "maritime_split/dashboard_base.html",
+      "line": 578,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601382"
+    },
+    "maritime_split.auto_norwegian_ports_7a553fe9": {
+      "key": "maritime_split.auto_norwegian_ports_7a553fe9",
+      "en": "Norwegian Ports:",
+      "no": "[TODO: Norwegian Ports:]",
+      "context": "maritime_split",
+      "source": "maritime_split/dashboard_base.html",
+      "line": 600,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601392"
+    },
+    "maritime_split.auto_real_time_vessel_tra_71dbe896": {
+      "key": "maritime_split.auto_real_time_vessel_tra_71dbe896",
+      "en": "Real-time vessel tracking with live performance analysis",
+      "no": "[TODO: Real-time vessel tracking with live performance analysis]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 399,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601403"
+    },
+    "maritime_split.auto_real_time_mode_115317df": {
+      "key": "maritime_split.auto_real_time_mode_115317df",
+      "en": "REAL-TIME MODE",
+      "no": "[TODO: REAL-TIME MODE]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 402,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601413"
+    },
+    "maritime_split.auto_searching_f3bb4e0a": {
+      "key": "maritime_split.auto_searching_f3bb4e0a",
+      "en": "SEARCHING",
+      "no": "[TODO: SEARCHING]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 407,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601423"
+    },
+    "maritime_split.auto_capture_area_ae46b99c": {
+      "key": "maritime_split.auto_capture_area_ae46b99c",
+      "en": "Capture Area:",
+      "no": "[TODO: Capture Area:]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 434,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601433"
+    },
+    "maritime_split.auto_bergen__60_39_n__5_3_b07c4fff": {
+      "key": "maritime_split.auto_bergen__60_39_n__5_3_b07c4fff",
+      "en": "Bergen (60.39°N, 5.32°E)",
+      "no": "[TODO: Bergen (60.39°N, 5.32°E)]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 436,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601446"
+    },
+    "maritime_split.auto_oslo__59_91_n__10_75_ebb36ef0": {
+      "key": "maritime_split.auto_oslo__59_91_n__10_75_ebb36ef0",
+      "en": "Oslo (59.91°N, 10.75°E)",
+      "no": "[TODO: Oslo (59.91°N, 10.75°E)]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 437,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601459"
+    },
+    "maritime_split.auto_stavanger__58_97_n_a14502e7": {
+      "key": "maritime_split.auto_stavanger__58_97_n_a14502e7",
+      "en": "Stavanger (58.97°N, 5.73°E)",
+      "no": "[TODO: Stavanger (58.97°N, 5.73°E)]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 438,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601470"
+    },
+    "maritime_split.auto_trondheim__63_43_n_77707b22": {
+      "key": "maritime_split.auto_trondheim__63_43_n_77707b22",
+      "en": "Trondheim (63.43°N, 10.40°E)",
+      "no": "[TODO: Trondheim (63.43°N, 10.40°E)]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 439,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601481"
+    },
+    "maritime_split.auto_search_radius_2ca9921f": {
+      "key": "maritime_split.auto_search_radius_2ca9921f",
+      "en": "Search Radius:",
+      "no": "[TODO: Search Radius:]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 442,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601491"
+    },
+    "maritime_split.auto_10_km_25947a44": {
+      "key": "maritime_split.auto_10_km_25947a44",
+      "en": "10 km",
+      "no": "[TODO: 10 km]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 444,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601500"
+    },
+    "maritime_split.auto_20_km_daff5965": {
+      "key": "maritime_split.auto_20_km_daff5965",
+      "en": "20 km",
+      "no": "[TODO: 20 km]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 445,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601510"
+    },
+    "maritime_split.auto_50_km_ad8ed877": {
+      "key": "maritime_split.auto_50_km_ad8ed877",
+      "en": "50 km",
+      "no": "[TODO: 50 km]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 446,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601519"
+    },
+    "maritime_split.auto_100_km_61b2ac34": {
+      "key": "maritime_split.auto_100_km_61b2ac34",
+      "en": "100 km",
+      "no": "[TODO: 100 km]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 447,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601528"
+    },
+    "maritime_split.auto_capture_vessel_bd29921c": {
+      "key": "maritime_split.auto_capture_vessel_bd29921c",
+      "en": "Capture Vessel",
+      "no": "[TODO: Capture Vessel]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 454,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601537"
+    },
+    "maritime_split.auto_regulatory_compli_4ec865b6": {
+      "key": "maritime_split.auto_regulatory_compli_4ec865b6",
+      "en": "⚠️ Regulatory Compliance:",
+      "no": "[TODO: ⚠️ Regulatory Compliance:]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 471,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601548"
+    },
+    "maritime_split.auto_stage_1_4_ea98637b": {
+      "key": "maritime_split.auto_stage_1_4_ea98637b",
+      "en": "Stage 1/4",
+      "no": "[TODO: Stage 1/4]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 488,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601557"
+    },
+    "maritime_split.auto_search_8cf8baf7": {
+      "key": "maritime_split.auto_search_8cf8baf7",
+      "en": "Search",
+      "no": "[TODO: Search]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 500,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601566"
+    },
+    "maritime_split.auto_capture_3c7d831d": {
+      "key": "maritime_split.auto_capture_3c7d831d",
+      "en": "Capture",
+      "no": "[TODO: Capture]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 501,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601576"
+    },
+    "maritime_split.auto_analyze_aab79e18": {
+      "key": "maritime_split.auto_analyze_aab79e18",
+      "en": "Analyze",
+      "no": "[TODO: Analyze]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 502,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601587"
+    },
+    "maritime_split.auto_report_50a69326": {
+      "key": "maritime_split.auto_report_50a69326",
+      "en": "Report",
+      "no": "[TODO: Report]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 503,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601597"
+    },
+    "maritime_split.auto_search_start_c55303e9": {
+      "key": "maritime_split.auto_search_start_c55303e9",
+      "en": "Search Start",
+      "no": "[TODO: Search Start]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 509,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601607"
+    },
+    "maritime_split.auto_capture_time_e04935eb": {
+      "key": "maritime_split.auto_capture_time_e04935eb",
+      "en": "Capture Time",
+      "no": "[TODO: Capture Time]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 513,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601617"
+    },
+    "maritime_split.auto_analysis_start_d8910a80": {
+      "key": "maritime_split.auto_analysis_start_d8910a80",
+      "en": "Analysis Start",
+      "no": "[TODO: Analysis Start]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 517,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601627"
+    },
+    "maritime_split.auto_current_a6a420d7": {
+      "key": "maritime_split.auto_current_a6a420d7",
+      "en": "Current",
+      "no": "[TODO: Current]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 521,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601636"
+    },
+    "maritime_split.auto_analysis_duration_8f276b73": {
+      "key": "maritime_split.auto_analysis_duration_8f276b73",
+      "en": "Analysis Duration:",
+      "no": "[TODO: Analysis Duration:]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 529,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601647"
+    },
+    "maritime_split.auto_data_points_collecte_da52cde4": {
+      "key": "maritime_split.auto_data_points_collecte_da52cde4",
+      "en": "Data Points Collected:",
+      "no": "[TODO: Data Points Collected:]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 533,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601657"
+    },
+    "maritime_split.auto_data_quality_8413c72b": {
+      "key": "maritime_split.auto_data_quality_8413c72b",
+      "en": "Data Quality:",
+      "no": "[TODO: Data Quality:]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 537,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601668"
+    },
+    "maritime_split.auto_weather_source_b7103364": {
+      "key": "maritime_split.auto_weather_source_b7103364",
+      "en": "Weather Source:",
+      "no": "[TODO: Weather Source:]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 545,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601677"
+    },
+    "maritime_split.auto_ais_source_ed04dd2e": {
+      "key": "maritime_split.auto_ais_source_ed04dd2e",
+      "en": "AIS Source:",
+      "no": "[TODO: AIS Source:]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 549,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601687"
+    },
+    "maritime_split.auto_barentswatch_22d654c1": {
+      "key": "maritime_split.auto_barentswatch_22d654c1",
+      "en": "BarentsWatch",
+      "no": "[TODO: BarentsWatch]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 550,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601697"
+    },
+    "maritime_split.auto_last_update_6ec1bb7a": {
+      "key": "maritime_split.auto_last_update_6ec1bb7a",
+      "en": "Last Update:",
+      "no": "[TODO: Last Update:]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 553,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601706"
+    },
+    "maritime_split.auto_not_captured_44fb7ba3": {
+      "key": "maritime_split.auto_not_captured_44fb7ba3",
+      "en": "Not Captured",
+      "no": "[TODO: Not Captured]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 573,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601716"
+    },
+    "maritime_split.auto_no_vessel_captured_405bb3e8": {
+      "key": "maritime_split.auto_no_vessel_captured_405bb3e8",
+      "en": "No Vessel Captured",
+      "no": "[TODO: No Vessel Captured]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 580,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601727"
+    },
+    "maritime_split.auto_click__capture_vesse_a7497e18": {
+      "key": "maritime_split.auto_click__capture_vesse_a7497e18",
+      "en": "Click \"Capture Vessel\" to start real-time analysis",
+      "no": "[TODO: Click \"Capture Vessel\" to start real-time analysis]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 581,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601737"
+    },
+    "maritime_split.auto_vessel_name_75843e61": {
+      "key": "maritime_split.auto_vessel_name_75843e61",
+      "en": "Vessel Name",
+      "no": "[TODO: Vessel Name]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 587,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601746"
+    },
+    "maritime_split.auto_position_615d8cfb": {
+      "key": "maritime_split.auto_position_615d8cfb",
+      "en": "Position",
+      "no": "[TODO: Position]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 595,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601755"
+    },
+    "maritime_split.auto_kn_7384ca3d": {
+      "key": "maritime_split.auto_kn_7384ca3d",
+      "en": "-- kn",
+      "no": "[TODO: -- kn]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 600,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601765"
+    },
+    "maritime_split.auto__df06306a": {
+      "key": "maritime_split.auto__df06306a",
+      "en": "--°",
+      "no": "[TODO: --°]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 604,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601776"
+    },
+    "maritime_split.auto_wind_speed_02e59ac0": {
+      "key": "maritime_split.auto_wind_speed_02e59ac0",
+      "en": "Wind Speed",
+      "no": "[TODO: Wind Speed]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 637,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601786"
+    },
+    "maritime_split.auto_source_2d0e9ce4": {
+      "key": "maritime_split.auto_source_2d0e9ce4",
+      "en": "Source: --",
+      "no": "[TODO: Source: --]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 639,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601796"
+    },
+    "maritime_split.auto_auto_track_fc79048a": {
+      "key": "maritime_split.auto_auto_track_fc79048a",
+      "en": "Auto-track",
+      "no": "[TODO: Auto-track]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 657,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601805"
+    },
+    "maritime_split.auto_captured_vessel_891a522a": {
+      "key": "maritime_split.auto_captured_vessel_891a522a",
+      "en": "Captured Vessel",
+      "no": "[TODO: Captured Vessel]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 670,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601814"
+    },
+    "maritime_split.auto_other_vessels_55fe9263": {
+      "key": "maritime_split.auto_other_vessels_55fe9263",
+      "en": "Other Vessels",
+      "no": "[TODO: Other Vessels]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 674,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601824"
+    },
+    "maritime_split.auto_5_kn_d454c7b3": {
+      "key": "maritime_split.auto_5_kn_d454c7b3",
+      "en": "5 kn",
+      "no": "[TODO: 5 kn]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 708,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601833"
+    },
+    "maritime_split.auto_10_kn_ac147daa": {
+      "key": "maritime_split.auto_10_kn_ac147daa",
+      "en": "10 kn",
+      "no": "[TODO: 10 kn]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 709,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601844"
+    },
+    "maritime_split.auto_15_kn_50df3837": {
+      "key": "maritime_split.auto_15_kn_50df3837",
+      "en": "15 kn",
+      "no": "[TODO: 15 kn]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 710,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601853"
+    },
+    "maritime_split.auto_20_kn_3f74dba4": {
+      "key": "maritime_split.auto_20_kn_3f74dba4",
+      "en": "20 kn",
+      "no": "[TODO: 20 kn]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 711,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601862"
+    },
+    "maritime_split.auto_25_kn_87f61015": {
+      "key": "maritime_split.auto_25_kn_87f61015",
+      "en": "25 kn",
+      "no": "[TODO: 25 kn]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 712,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601872"
+    },
+    "maritime_split.auto_current_speed_b665ab7f": {
+      "key": "maritime_split.auto_current_speed_b665ab7f",
+      "en": "Current Speed",
+      "no": "[TODO: Current Speed]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 719,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601884"
+    },
+    "maritime_split.auto_reference_speed_9beaf863": {
+      "key": "maritime_split.auto_reference_speed_9beaf863",
+      "en": "Reference Speed",
+      "no": "[TODO: Reference Speed]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 723,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601893"
+    },
+    "maritime_split.auto_variation_648afafa": {
+      "key": "maritime_split.auto_variation_648afafa",
+      "en": "Variation",
+      "no": "[TODO: Variation]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 727,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601902"
+    },
+    "maritime_split.auto_speed_efficiency_7b2a6202": {
+      "key": "maritime_split.auto_speed_efficiency_7b2a6202",
+      "en": "Speed Efficiency",
+      "no": "[TODO: Speed Efficiency]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 733,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601913"
+    },
+    "maritime_split.auto__a6b5ea28": {
+      "key": "maritime_split.auto__a6b5ea28",
+      "en": "--%",
+      "no": "[TODO: --%]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 734,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601923"
+    },
+    "maritime_split.auto_route_adherence_083e91ea": {
+      "key": "maritime_split.auto_route_adherence_083e91ea",
+      "en": "Route Adherence",
+      "no": "[TODO: Route Adherence]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 737,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601932"
+    },
+    "maritime_split.auto_course_stability_f9981bb3": {
+      "key": "maritime_split.auto_course_stability_f9981bb3",
+      "en": "Course Stability",
+      "no": "[TODO: Course Stability]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 741,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601941"
+    },
+    "maritime_split.auto_calculated_fb1e1f50": {
+      "key": "maritime_split.auto_calculated_fb1e1f50",
+      "en": "Calculated",
+      "no": "[TODO: Calculated]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 755,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601950"
+    },
+    "maritime_split.auto_fuel_consumption_rat_7eb2716a": {
+      "key": "maritime_split.auto_fuel_consumption_rat_7eb2716a",
+      "en": "Fuel Consumption Rate",
+      "no": "[TODO: Fuel Consumption Rate]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 760,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601960"
+    },
+    "maritime_split.auto_t_h_ca7bc4df": {
+      "key": "maritime_split.auto_t_h_ca7bc4df",
+      "en": "-- t/h",
+      "no": "[TODO: -- t/h]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 761,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601970"
+    },
+    "maritime_split.auto_estimated_fuel_cost_da347535": {
+      "key": "maritime_split.auto_estimated_fuel_cost_da347535",
+      "en": "Estimated Fuel Cost",
+      "no": "[TODO: Estimated Fuel Cost]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 764,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601980"
+    },
+    "maritime_split.auto_usd_h_bb464397": {
+      "key": "maritime_split.auto_usd_h_bb464397",
+      "en": "-- USD/h",
+      "no": "[TODO: -- USD/h]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 765,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.601990"
+    },
+    "maritime_split.auto_co__emission_rate_a31200c2": {
+      "key": "maritime_split.auto_co__emission_rate_a31200c2",
+      "en": "CO₂ Emission Rate",
+      "no": "[TODO: CO₂ Emission Rate]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 768,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.602001"
+    },
+    "maritime_split.auto_nox_emission_rate_9d0a48ab": {
+      "key": "maritime_split.auto_nox_emission_rate_9d0a48ab",
+      "en": "NOx Emission Rate",
+      "no": "[TODO: NOx Emission Rate]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 772,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.602012"
+    },
+    "maritime_split.auto_kg_h_b0f67a92": {
+      "key": "maritime_split.auto_kg_h_b0f67a92",
+      "en": "-- kg/h",
+      "no": "[TODO: -- kg/h]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 773,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.602024"
+    },
+    "maritime_split.auto_cii_rating_79c915f3": {
+      "key": "maritime_split.auto_cii_rating_79c915f3",
+      "en": "CII Rating",
+      "no": "[TODO: CII Rating]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 776,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.602037"
+    },
+    "maritime_split.auto_cii_value_5267e687": {
+      "key": "maritime_split.auto_cii_value_5267e687",
+      "en": "CII Value",
+      "no": "[TODO: CII Value]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 780,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.602046"
+    },
+    "maritime_split.auto_g_t_nm_e3b09150": {
+      "key": "maritime_split.auto_g_t_nm_e3b09150",
+      "en": "-- g/t·nm",
+      "no": "[TODO: -- g/t·nm]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 781,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.602057"
+    },
+    "maritime_split.auto_fuel_efficiency_scor_c8eaf16e": {
+      "key": "maritime_split.auto_fuel_efficiency_scor_c8eaf16e",
+      "en": "Fuel Efficiency Score",
+      "no": "[TODO: Fuel Efficiency Score]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 787,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.602067"
+    },
+    "maritime_split.auto_100_29914d2d": {
+      "key": "maritime_split.auto_100_29914d2d",
+      "en": "--/100",
+      "no": "[TODO: --/100]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 788,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.602077"
+    },
+    "maritime_split.auto_0_points_3ab8d209": {
+      "key": "maritime_split.auto_0_points_3ab8d209",
+      "en": "0 points",
+      "no": "[TODO: 0 points]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 811,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.602087"
+    },
+    "maritime_split.auto_time_e28f28cb": {
+      "key": "maritime_split.auto_time_e28f28cb",
+      "en": "Time",
+      "no": "[TODO: Time]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 819,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.602098"
+    },
+    "maritime_split.auto_fuel_rate_4652ab07": {
+      "key": "maritime_split.auto_fuel_rate_4652ab07",
+      "en": "Fuel Rate",
+      "no": "[TODO: Fuel Rate]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 823,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.602108"
+    },
+    "maritime_split.auto_co__rate_1758c870": {
+      "key": "maritime_split.auto_co__rate_1758c870",
+      "en": "CO₂ Rate",
+      "no": "[TODO: CO₂ Rate]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 824,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.602118"
+    },
+    "maritime_split.auto_efficiency_af550f9a": {
+      "key": "maritime_split.auto_efficiency_af550f9a",
+      "en": "Efficiency",
+      "no": "[TODO: Efficiency]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 825,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.602127"
+    },
+    "maritime_split.auto_export_analysis_data_57a431cf": {
+      "key": "maritime_split.auto_export_analysis_data_57a431cf",
+      "en": "Export Analysis Data",
+      "no": "[TODO: Export Analysis Data]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 845,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.602179"
+    },
+    "maritime_split.auto_no_data_to_export_caaa2913": {
+      "key": "maritime_split.auto_no_data_to_export_caaa2913",
+      "en": "No data to export",
+      "no": "[TODO: No data to export]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 846,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.602199"
+    },
+    "maritime_split.auto_analysis_not_saved_87106b89": {
+      "key": "maritime_split.auto_analysis_not_saved_87106b89",
+      "en": "Analysis not saved",
+      "no": "[TODO: Analysis not saved]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 852,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.602210"
+    },
+    "maritime_split.auto_real_time_vessel_ana_9199b56c": {
+      "key": "maritime_split.auto_real_time_vessel_ana_9199b56c",
+      "en": "Real-Time Vessel Analysis System",
+      "no": "[TODO: Real-Time Vessel Analysis System]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 892,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.602220"
+    },
+    "maritime_split.auto_live_analysis_683dfb6d": {
+      "key": "maritime_split.auto_live_analysis_683dfb6d",
+      "en": "Live Analysis",
+      "no": "[TODO: Live Analysis]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 912,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.602230"
+    },
+    "maritime_split.auto_2025_bergnavn_mari_28159ed2": {
+      "key": "maritime_split.auto_2025_bergnavn_mari_28159ed2",
+      "en": "© 2025 BergNavn Maritime | Analysis System",
+      "no": "[TODO: © 2025 BergNavn Maritime | Analysis System]",
+      "context": "maritime_split",
+      "source": "maritime_split/realtime_simulation.html",
+      "line": 922,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.602242"
+    },
+    "maritime_split.auto_maritime_alerts_893f0b4c": {
+      "key": "maritime_split.auto_maritime_alerts_893f0b4c",
+      "en": "Maritime Alerts",
+      "no": "[TODO: Maritime Alerts]",
+      "context": "maritime_split",
+      "source": "maritime_split/alerts_block.html",
+      "line": 6,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.602253"
+    },
+    "maritime_split.auto_critical_6df17462": {
+      "key": "maritime_split.auto_critical_6df17462",
+      "en": "CRITICAL",
+      "no": "[TODO: CRITICAL]",
+      "context": "maritime_split",
+      "source": "maritime_split/alerts_block.html",
+      "line": 25,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.602262"
+    },
+    "maritime_split.auto_high_7c96358b": {
+      "key": "maritime_split.auto_high_7c96358b",
+      "en": "HIGH",
+      "no": "[TODO: HIGH]",
+      "context": "maritime_split",
+      "source": "maritime_split/alerts_block.html",
+      "line": 37,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.602271"
+    },
+    "maritime_split.auto_no_active_alerts_det_b252bdfd": {
+      "key": "maritime_split.auto_no_active_alerts_det_b252bdfd",
+      "en": "No active alerts detected",
+      "no": "[TODO: No active alerts detected]",
+      "context": "maritime_split",
+      "source": "maritime_split/alerts_block.html",
+      "line": 48,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.602282"
+    },
+    "maritime_split.auto_checking_maritime_al_36dbda48": {
+      "key": "maritime_split.auto_checking_maritime_al_36dbda48",
+      "en": "Checking maritime alerts...",
+      "no": "[TODO: Checking maritime alerts...]",
+      "context": "maritime_split",
+      "source": "maritime_split/alerts_block.html",
+      "line": 54,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.602291"
+    },
+    "maritime_split.auto_connecting_to_ais_an_0d3edd89": {
+      "key": "maritime_split.auto_connecting_to_ais_an_0d3edd89",
+      "en": "Connecting to AIS and weather services",
+      "no": "[TODO: Connecting to AIS and weather services]",
+      "context": "maritime_split",
+      "source": "maritime_split/alerts_block.html",
+      "line": 55,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.602302"
+    },
+    "maritime_split.auto_alert_service_unavai_bb1833b7": {
+      "key": "maritime_split.auto_alert_service_unavai_bb1833b7",
+      "en": "Alert Service Unavailable",
+      "no": "[TODO: Alert Service Unavailable]",
+      "context": "maritime_split",
+      "source": "maritime_split/alerts_block.html",
+      "line": 61,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.602312"
+    },
+    "maritime_split.auto_unable_to_connect_to_ce734987": {
+      "key": "maritime_split.auto_unable_to_connect_to_ce734987",
+      "en": "Unable to connect to alert service",
+      "no": "[TODO: Unable to connect to alert service]",
+      "context": "maritime_split",
+      "source": "maritime_split/alerts_block.html",
+      "line": 62,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.602424"
+    },
+    "maritime_split.auto_weather_ok_f3cb92f6": {
+      "key": "maritime_split.auto_weather_ok_f3cb92f6",
+      "en": "Weather OK",
+      "no": "[TODO: Weather OK]",
+      "context": "maritime_split",
+      "source": "maritime_split/alerts_block.html",
+      "line": 77,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.602446"
+    },
+    "maritime_split.auto_bergen_simulator_d728bef5": {
+      "key": "maritime_split.auto_bergen_simulator_d728bef5",
+      "en": "Bergen Simulator",
+      "no": "[TODO: Bergen Simulator]",
+      "context": "maritime_split",
+      "source": "maritime_split/simulation_integration.html",
+      "line": 26,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.602460"
+    },
+    "maritime_split.auto_60_391__5_322_96e78591": {
+      "key": "maritime_split.auto_60_391__5_322_96e78591",
+      "en": "60.391, 5.322",
+      "no": "[TODO: 60.391, 5.322]",
+      "context": "maritime_split",
+      "source": "maritime_split/simulation_integration.html",
+      "line": 33,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.602471"
+    },
+    "maritime_split.auto_15_0_knots_52e65e83": {
+      "key": "maritime_split.auto_15_0_knots_52e65e83",
+      "en": "15.0 knots",
+      "no": "[TODO: 15.0 knots]",
+      "context": "maritime_split",
+      "source": "maritime_split/simulation_integration.html",
+      "line": 37,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.602482"
+    },
+    "maritime_split.auto_heading_bcab0cc9": {
+      "key": "maritime_split.auto_heading_bcab0cc9",
+      "en": "Heading",
+      "no": "[TODO: Heading]",
+      "context": "maritime_split",
+      "source": "maritime_split/simulation_integration.html",
+      "line": 40,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.602495"
+    },
+    "maritime_split.auto_45_813c4be5": {
+      "key": "maritime_split.auto_45_813c4be5",
+      "en": "45°",
+      "no": "[TODO: 45°]",
+      "context": "maritime_split",
+      "source": "maritime_split/simulation_integration.html",
+      "line": 41,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.602506"
+    },
+    "maritime_split.auto_storm_warning_in_45_78a21d99": {
+      "key": "maritime_split.auto_storm_warning_in_45_78a21d99",
+      "en": "Storm warning in 45 minutes on current route",
+      "no": "[TODO: Storm warning in 45 minutes on current route]",
+      "context": "maritime_split",
+      "source": "maritime_split/simulation_integration.html",
+      "line": 57,
+      "html": false,
+      "updated": "2026-02-09T22:53:16.602519"
+    }
+  }
+}

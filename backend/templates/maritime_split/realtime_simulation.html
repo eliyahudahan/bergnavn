@@ -1,72 +1,40 @@
 <!-- 
-Real-Time Vessel Simulation - Professional Dashboard Integration
+REAL-TIME VESSEL ANALYSIS - Professional Dashboard Integration
 BergNavn Maritime Dashboard - Complete Maritime Data Display v5.0
 
-INTEGRATED FEATURES FROM MAIN DASHBOARD:
-1. Fuel calculations with DNV 2025 formulas ✓
-2. Route optimization against existing RTZ routes ✓
-3. Real-time weather (MET Norway) with temperature ✓
-4. Weather forecast for route duration ✓
-5. Stable, non-stuck map with proper loading ✓
-6. Day/night condition detection ✓
-7. Turbine and tanker proximity alerts ✓
-8. Wave height and sea depth data ✓
-9. Weather alerts and warnings ✓
-10. NO RECOMMENDATIONS - Data display only ✓
-
-IMPROVEMENTS IN v5.0:
-- Fixed temperature: Uses real MET Norway data (not 8.5°C simulation)
-- Better fallback: Realistic seasonal simulation based on actual Bergen climate
-- Improved API integration: Uses same endpoints as main dashboard
-- Professional presentation for interviews
-
-Note: Integrates with main dashboard's data services
+REAL-TIME FIRST: Kystverket → Kystdatahuset → BarentsWatch → Empirical LAST RESORT
+Using SAME modules as main dashboard
+Data analysis DURING transmission only. Historical data stored below.
 -->
 
 {% extends "base.html" %}
 
-{% block title %}Real-Time Vessel Simulation | BergNavn Maritime{% endblock %}
+{% block title %}Real-Time Vessel Analysis | BergNavn Maritime{% endblock %}
 
 {% block head %}
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<!-- Core CSS files - same as dashboard -->
+<link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='css/dashboard.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='css/split/map.css') }}" rel="stylesheet">
+
+<!-- External libraries -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
 
 <style>
-    :root {
-        --imo-blue: #0066b3;
-        --ocean-dark: #0a2472;
-        --navy-blue: #1a237e;
-        --connected-green: #28a745;
-        --warning-amber: #ff8f00;
-        --danger-red: #dc3545;
-        --fuel-orange: #e67e22;
-        --wave-blue: #3498db;
-        --depth-purple: #9b59b6;
-        --light-bg: #f8f9fa;
-        --card-bg: #ffffff;
-        --weather-sunny: #f39c12;
-        --weather-cloudy: #7f8c8d;
-        --weather-rainy: #3498db;
-        --weather-stormy: #9b59b6;
-    }
-    
-    body {
-        background: var(--light-bg);
-        font-family: 'Segoe UI', 'Roboto', sans-serif;
-        color: #212529;
-        padding-bottom: 0;
-    }
-    
-    .dashboard-header {
-        background: linear-gradient(135deg, var(--ocean-dark), var(--navy-blue));
+    /* Analysis-specific styles */
+    .analysis-header {
+        background: linear-gradient(135deg, #0a2472, #1a237e);
         color: white;
-        padding: 25px 0;
+        padding: 20px 0;
         margin-bottom: 30px;
-        border-bottom: 3px solid var(--imo-blue);
+        border-bottom: 3px solid #0066b3;
     }
     
-    .status-badge {
+    .transmission-badge {
         padding: 6px 12px;
         border-radius: 20px;
         font-size: 0.85rem;
@@ -74,38 +42,89 @@ Note: Integrates with main dashboard's data services
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        background: rgba(255, 255, 255, 0.15);
-        border: 1px solid rgba(255, 255, 255, 0.3);
     }
     
-    /* Cards */
-    .dashboard-card {
-        background: var(--card-bg);
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-        margin-bottom: 20px;
-        border: 1px solid #dee2e6;
-        overflow: hidden;
-        transition: transform 0.2s;
-    }
-    
-    .dashboard-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-    }
-    
-    .card-header-dash {
-        background: linear-gradient(to right, var(--imo-blue), #1976d2);
+    .transmission-active {
+        background: #28a745;
         color: white;
-        padding: 16px 20px;
-        font-weight: 600;
-        border-bottom: none;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
     }
     
-    /* Map - FIXED LOADING */
+    .transmission-idle {
+        background: #6c757d;
+        color: white;
+    }
+    
+    .analysis-panel {
+        background: #f8f9fa;
+        border-left: 4px solid #17a2b8;
+        border-radius: 8px;
+        padding: 15px;
+        margin-top: 15px;
+    }
+    
+    .historical-table {
+        max-height: 200px;
+        overflow-y: auto;
+        font-size: 0.85rem;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+    }
+    
+    .historical-table table {
+        width: 100%;
+        margin-bottom: 0;
+    }
+    
+    .historical-table th {
+        position: sticky;
+        top: 0;
+        background: #f8f9fa;
+        z-index: 10;
+        border-bottom: 2px solid #dee2e6;
+    }
+    
+    .historical-table td {
+        padding: 6px 8px;
+    }
+    
+    .commercial-indicator {
+        color: #f1c40f;
+        font-weight: bold;
+    }
+    
+    .progress-container {
+        height: 8px;
+        background: #e9ecef;
+        border-radius: 4px;
+        overflow: hidden;
+        margin: 10px 0;
+    }
+    
+    .progress-fill {
+        height: 100%;
+        background: #0066b3;
+        border-radius: 4px;
+        transition: width 0.3s;
+    }
+    
+    .data-source-badge {
+        font-size: 0.6rem;
+        padding: 2px 6px;
+        border-radius: 4px;
+        margin-left: 4px;
+        font-weight: 600;
+    }
+    
+    .data-source-live {
+        background: #28a745;
+        color: white;
+    }
+    
+    .data-source-empirical {
+        background: #ffc107;
+        color: black;
+    }
+    
     #maritime-map {
         height: 500px;
         width: 100%;
@@ -139,254 +158,73 @@ Note: Integrates with main dashboard's data services
         border-radius: 6px;
     }
     
-    /* Data displays */
-    .data-card {
-        padding: 15px;
-        background: var(--light-bg);
-        border-radius: 6px;
-        border-left: 4px solid var(--imo-blue);
-        height: 100%;
-        transition: all 0.2s;
+    .map-legend {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        background: white;
+        padding: 12px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 1000;
+        font-size: 0.75rem;
+        border: 1px solid #dee2e6;
     }
     
-    .data-card:hover {
-        background: #f1f7ff;
-        transform: translateY(-2px);
+    .legend-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
     }
     
-    .data-value {
-        font-size: 1.8rem;
-        font-weight: 700;
-        color: var(--ocean-dark);
-        font-family: 'Consolas', monospace;
-        line-height: 1;
-        margin-bottom: 5px;
-    }
-    
-    .data-label {
-        font-size: 0.8rem;
-        color: #6c757d;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-    
-    /* Weather colors */
-    .weather-sunny { color: var(--weather-sunny); }
-    .weather-cloudy { color: var(--weather-cloudy); }
-    .weather-rainy { color: var(--weather-rainy); }
-    .weather-stormy { color: var(--weather-stormy); }
-    
-    /* Day/night indicators */
-    .day-indicator {
-        background: linear-gradient(135deg, #ffd700, #ff8c00);
-        color: black;
-    }
-    
-    .night-indicator {
-        background: linear-gradient(135deg, #2c3e50, #34495e);
-        color: white;
-    }
-    
-    /* Alert indicators */
-    .alert-turbine {
-        border-left: 4px solid #e74c3c;
-    }
-    
-    .alert-tanker {
-        border-left: 4px solid #f39c12;
-    }
-    
-    .alert-weather {
-        border-left: 4px solid #3498db;
-    }
-    
-    /* Progress bars */
-    .progress-container {
-        height: 8px;
-        background: #e9ecef;
-        border-radius: 4px;
-        overflow: hidden;
-        margin: 10px 0;
-    }
-    
-    .progress-fill {
-        height: 100%;
-        background: var(--imo-blue);
-        border-radius: 4px;
-        transition: width 0.3s;
-    }
-    
-    /* Tables */
-    .data-table {
-        font-size: 0.9rem;
-    }
-    
-    .data-table th {
-        background: #f8f9fa;
-        color: var(--ocean-dark);
-        font-weight: 600;
-        border-bottom: 2px solid #dee2e6;
-    }
-    
-    /* Badges */
-    .badge-met {
-        background: linear-gradient(135deg, #3498db, #2980b9);
-        color: white;
-    }
-    
-    .badge-dnv {
-        background: linear-gradient(135deg, var(--fuel-orange), #d35400);
-        color: white;
-    }
-    
-    .badge-imo {
-        background: linear-gradient(135deg, #27ae60, #2e7d32);
-        color: white;
-    }
-    
-    .badge-simulation {
-        background: linear-gradient(135deg, #9b59b6, #8e44ad);
-        color: white;
-    }
-    
-    /* Buttons */
-    .btn-dash {
-        border-radius: 6px;
-        font-weight: 500;
-        padding: 10px 20px;
-        border: none;
-        transition: all 0.2s;
-    }
-    
-    .btn-primary-dash {
-        background: var(--imo-blue);
-        color: white;
-    }
-    
-    .btn-primary-dash:hover {
-        background: #0056a3;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 8px rgba(0, 102, 179, 0.2);
-    }
-    
-    .btn-success-dash {
-        background: var(--connected-green);
-        color: white;
-    }
-    
-    .btn-warning-dash {
-        background: var(--warning-amber);
-        color: black;
-    }
-    
-    /* Data source indicators */
-    .data-source-indicator {
-        font-size: 0.7rem;
-        padding: 2px 6px;
-        border-radius: 4px;
-        margin-left: 4px;
-    }
-    
-    .data-source-met {
-        background: rgba(52, 152, 219, 0.2);
-        color: #2980b9;
-        border: 1px solid rgba(52, 152, 219, 0.3);
-    }
-    
-    .data-source-bw {
-        background: rgba(39, 174, 96, 0.2);
-        color: #27ae60;
-        border: 1px solid rgba(39, 174, 96, 0.3);
-    }
-    
-    .data-source-sim {
-        background: rgba(155, 89, 182, 0.2);
-        color: #8e44ad;
-        border: 1px solid rgba(155, 89, 182, 0.3);
-    }
-    
-    /* Temperature display */
-    .temperature-display {
-        font-size: 2.5rem;
-        font-weight: 700;
-        font-family: 'Consolas', monospace;
-        line-height: 1;
-    }
-    
-    .temp-positive { color: #e74c3c; }
-    .temp-negative { color: #3498db; }
-    
-    /* Weather accuracy note */
-    .weather-accuracy-note {
-        font-size: 0.7rem;
-        opacity: 0.8;
-        margin-top: 5px;
-        padding: 3px 6px;
-        background: rgba(0,0,0,0.05);
-        border-radius: 4px;
-        border-left: 3px solid #17a2b8;
-    }
-    
-    /* Responsive */
-    @media (max-width: 768px) {
-        #maritime-map {
-            height: 350px;
-        }
-        
-        .data-value {
-            font-size: 1.5rem;
-        }
-        
-        .temperature-display {
-            font-size: 2rem;
-        }
-        
-        .dashboard-header {
-            padding: 20px 0;
-        }
-    }
-    
-    /* Footer */
-    .simulation-footer {
-        background: var(--ocean-dark);
-        color: white;
-        padding: 25px 0 20px;
-        margin-top: 40px;
-        border-top: 3px solid var(--imo-blue);
+    .legend-color {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        margin-right: 10px;
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<!-- Dashboard Header -->
-<div class="dashboard-header">
+<!-- Hidden data containers - same as dashboard -->
+<div id="routes-data" style="display: none;">
+    {% if routes %}
+        {{ routes|tojson|safe }}
+    {% else %}
+        []
+    {% endif %}
+</div>
+
+<div id="waypoints-data" style="display: none;">
+    {% if waypoints_data %}
+        {{ waypoints_data|tojson|safe }}
+    {% else %}
+        {}
+    {% endif %}
+</div>
+
+<!-- Header -->
+<div class="analysis-header">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-md-8">
                 <h1 class="h3 mb-2">
-                    <i class="fas fa-ship me-2"></i>
-                    Real-Time Vessel Capture & Analysis
+                    <i class="fas fa-chart-line me-2"></i>
+                    Real-Time Vessel Analysis
                 </h1>
-                <p class="mb-2 opacity-90">Professional maritime data display with integrated live services</p>
+                <p class="mb-2 opacity-90">Using same REAL-TIME system as main dashboard</p>
                 <div class="d-flex align-items-center gap-3 mt-3">
-                    <span class="status-badge" id="system-status">
-                        <i class="fas fa-circle fa-xs"></i>
-                        <span>INITIALIZING</span>
-                    </span>
-                    <span class="text-white-80">
-                        <i class="fas fa-clock me-1"></i>
-                        <span id="norway-time">--:--:--</span> CET
-                    </span>
-                    <span class="text-white-80">
-                        <i class="fas fa-map-marker-alt me-1"></i>
-                        Bergen, Norway
-                    </span>
+                    <span class="fw-semibold text-success me-3" id="live-status-text">LIVE</span>
+                    <span id="local-time-norway" class="local-time-norway">--:--:--</span>
+                    <span class="text-white-50" id="norwegian-date">-- --- ----</span>
                 </div>
             </div>
             <div class="col-md-4 text-md-end">
-                <div style="background: rgba(255, 255, 255, 0.1); padding: 12px 16px; border-radius: 6px; display: inline-block;">
-                    <div class="small opacity-75">Data Services</div>
-                    <div class="h5 mb-0" id="data-services-count">3 Services Active</div>
+                <div class="mt-2">
+                    <span class="badge bg-primary me-2" id="route-count-badge">0</span>
+                    <span class="badge bg-success me-2" id="vessel-count">0</span>
+                    <span class="badge bg-info" id="data-source-badge">WAITING</span>
                 </div>
             </div>
         </div>
@@ -395,994 +233,731 @@ Note: Integrates with main dashboard's data services
 
 <!-- Main Container -->
 <div class="container">
-    <!-- Auto Capture Alert -->
-    <div class="alert alert-info border-0 mb-4">
+    <!-- Transmission Status -->
+    <div class="alert mb-4" id="transmission-alert">
         <div class="d-flex align-items-center">
-            <i class="fas fa-info-circle fa-2x me-3"></i>
+            <i class="fas fa-satellite-dish fa-2x me-3" id="transmission-icon"></i>
             <div>
-                <strong class="d-block">Automatic Vessel Capture Active</strong>
-                <span>System automatically captures the nearest vessel in Bergen area. Using real-time AIS data when available.</span>
-                <small class="d-block mt-1">
-                    <i class="fas fa-code me-1"></i>
-                    <span id="data-source-status">Connecting to BarentsWatch API...</span>
-                </small>
+                <strong class="d-block" id="transmission-title">Initializing REAL-TIME vessel tracking...</strong>
+                <span id="transmission-message">Using same system as dashboard: Kystverket → Kystdatahuset → BarentsWatch</span>
+                <small class="d-block mt-1" id="transmission-source"></small>
+            </div>
+            <div class="ms-auto">
+                <span class="badge" id="transmission-badge">WAITING</span>
             </div>
         </div>
     </div>
 
-    <!-- Map and Vessel Section -->
+    <!-- Map Section - EXACTLY LIKE DASHBOARD -->
     <div class="dashboard-card">
-        <div class="card-header-dash">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+                <i class="bi bi-geo-alt me-2"></i>
+                Norwegian Waters - Live Vessel Tracking
+                <small class="text-muted ms-2" id="map-update-time">Updated: --:--</small>
+            </h5>
             <div>
-                <i class="fas fa-map-marked-alt me-2"></i>
-                Real-Time Position & Tracking
-            </div>
-            <div class="d-flex align-items-center gap-2">
-                <span class="badge bg-dark me-2" id="capture-timer">
-                    <i class="fas fa-clock me-1"></i> 00:00:00
-                </span>
-                <button class="btn btn-sm btn-warning-dash btn-dash" onclick="stopCapture()" id="stop-btn">
-                    <i class="fas fa-stop me-1"></i> Stop Capture
-                </button>
+                <span class="badge bg-dark me-2" id="vessel-source-badge">WAITING</span>
             </div>
         </div>
-        <div class="p-4">
-            <!-- Map Container -->
-            <div class="map-container">
-                <div id="maritime-map"></div>
-                <div class="map-loading" id="map-loading">
-                    <div class="text-center">
-                        <div class="spinner-border text-primary" role="status">
-                            <span class="visually-hidden">Loading map...</span>
-                        </div>
-                        <p class="mt-2 mb-0">Loading maritime map...</p>
-                        <small class="text-muted">Using OpenStreetMap & OpenSeaMap layers</small>
+        <div class="card-body p-0 position-relative">
+            <!-- Map container with same ID as dashboard -->
+            <div id="maritime-map"></div>
+            
+            <!-- Loading overlay -->
+            <div id="map-loading-overlay" class="loading-overlay" style="display: none;">
+                <div class="text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
                     </div>
+                    <p class="mt-2 mb-0 text-muted">Loading map data...</p>
                 </div>
             </div>
             
-            <!-- Vessel Info -->
-            <div class="row mt-4">
-                <div class="col-md-4">
-                    <div class="data-card">
-                        <div class="data-value" id="vessel-name">Bergen Pilot Vessel</div>
-                        <div class="data-label">Captured Vessel</div>
-                        <small class="mt-1">
-                            <span id="vessel-mmsi">MMSI: 259000000</span>
-                            <span class="data-source-indicator data-source-bw" id="vessel-source">BarentsWatch</span>
-                        </small>
-                    </div>
+            <!-- Data source legend - same as dashboard -->
+            <div class="map-legend">
+                <div class="legend-item">
+                    <span class="legend-color" style="background-color: #28a745;"></span>
+                    <span class="legend-label">RTZ Route Start</span>
                 </div>
-                <div class="col-md-4">
-                    <div class="data-card">
-                        <div class="data-value" id="vessel-position">60.3913, 5.3221</div>
-                        <div class="data-label">Current Position (Lat, Lon)</div>
-                        <small class="text-muted mt-1" id="position-accuracy">Accuracy: ±50m</small>
-                    </div>
+                <div class="legend-item">
+                    <span class="legend-color" style="background-color: #dc3545;"></span>
+                    <span class="legend-label">RTZ Route End</span>
                 </div>
-                <div class="col-md-4">
-                    <div class="data-card">
-                        <div class="data-value" id="vessel-speed">12.5</div>
-                        <div class="data-label">Speed (knots)</div>
-                        <small class="text-muted mt-1" id="speed-course">Course: 245°</small>
-                    </div>
+                <div class="legend-item">
+                    <span class="legend-color" style="background-color: #007bff;"></span>
+                    <span class="legend-label">Route Waypoint</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-color" style="background-color: #28a745;"></span>
+                    <span class="legend-label">Live Vessel (REAL-TIME)</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-color" style="background-color: #ffc107;"></span>
+                    <span class="legend-label">Empirical Vessel (FALLBACK)</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Integrated Data Panels -->
-    <div class="row">
-        <!-- Weather & Environmental -->
-        <div class="col-lg-4 mb-4">
-            <div class="dashboard-card h-100">
-                <div class="card-header-dash">
-                    <div>
-                        <i class="fas fa-wind me-2"></i>
-                        Weather & Environment
-                    </div>
-                    <span class="badge badge-met" id="weather-source-badge">MET Norway</span>
-                </div>
-                <div class="p-4">
-                    <!-- Current Weather -->
-                    <div class="mb-4">
-                        <h6 class="mb-3">
-                            <i class="fas fa-thermometer-half me-2"></i>
-                            Current Conditions
-                        </h6>
-                        <div class="text-center mb-3">
-                            <div class="temperature-display" id="weather-temp">Loading...</div>
-                            <div class="data-label" id="weather-condition">Fetching MET Norway data...</div>
-                            <small class="weather-accuracy-note mt-2" id="weather-accuracy">
-                                <i class="fas fa-info-circle me-1"></i>
-                                Connecting to official MET Norway API...
-                            </small>
-                        </div>
-                        <div class="row text-center">
-                            <div class="col-4">
-                                <div class="data-value" id="weather-wind">--</div>
-                                <div class="data-label">Wind (m/s)</div>
-                            </div>
-                            <div class="col-4">
-                                <div class="data-value" id="weather-waves">--</div>
-                                <div class="data-label">Waves (m)</div>
-                            </div>
-                            <div class="col-4">
-                                <div class="data-value" id="weather-visibility">--</div>
-                                <div class="data-label">Visibility (km)</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Day/Night & Sea Conditions -->
-                    <div class="mb-3">
-                        <h6 class="mb-3">
-                            <i class="fas fa-sun me-2"></i>
-                            Sea Conditions
-                        </h6>
-                        <div class="row">
-                            <div class="col-6">
-                                <div class="data-card text-center" id="daylight-container">
-                                    <div class="data-value" id="daylight-status">Day</div>
-                                    <div class="data-label">Light Conditions</div>
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="data-card text-center">
-                                    <div class="data-value" id="sea-depth">120</div>
-                                    <div class="data-label">Depth (m)</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Weather Alerts -->
-                    <div id="weather-alerts">
-                        <div class="alert alert-info border-0">
-                            <div class="small">
-                                <i class="fas fa-info-circle me-1"></i>
-                                <strong>Weather Status:</strong> Fetching real-time conditions...
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    <!-- Current Vessel Info -->
+    <div class="row mt-4">
+        <div class="col-md-3">
+            <div class="stats-card">
+                <h6>
+                    <i class="bi bi-ship me-2"></i>
+                    Vessel Name
+                    <span id="vessel-source-indicator" class="data-source-badge">WAITING</span>
+                </h6>
+                <h2 id="vessel-name" class="fw-bold">--</h2>
+                <small class="text-muted" id="vessel-mmsi"></small>
             </div>
         </div>
-
-        <!-- Fuel & Emissions -->
-        <div class="col-lg-4 mb-4">
-            <div class="dashboard-card h-100">
-                <div class="card-header-dash">
-                    <div>
-                        <i class="fas fa-gas-pump me-2"></i>
-                        Fuel & Emissions Analysis
-                    </div>
-                    <span class="badge badge-dnv">DNV 2025</span>
-                </div>
-                <div class="p-4">
-                    <!-- Fuel Calculation -->
-                    <div class="mb-4">
-                        <h6 class="mb-3">
-                            <i class="fas fa-calculator me-2"></i>
-                            Fuel Consumption
-                        </h6>
-                        
-                        <table class="table data-table">
-                            <tr>
-                                <td>Current Speed:</td>
-                                <td class="text-end fw-bold" id="current-speed">12.5 knots</td>
-                            </tr>
-                            <tr>
-                                <td>Fuel Rate:</td>
-                                <td class="text-end fw-bold" id="fuel-rate">2.8 t/h</td>
-                            </tr>
-                            <tr>
-                                <td>CO₂ Emissions:</td>
-                                <td class="text-end fw-bold" id="co2-emissions">8.7 t/h</td>
-                            </tr>
-                            <tr>
-                                <td>Fuel Cost:</td>
-                                <td class="text-end fw-bold text-success" id="fuel-cost">1,960 USD/h</td>
-                            </tr>
-                        </table>
-                        
-                        <div class="progress-container">
-                            <div class="progress-fill" id="fuel-efficiency-bar" style="width: 78%"></div>
-                        </div>
-                        <small class="text-muted d-block text-center">Fuel Efficiency: <span id="fuel-efficiency" class="fw-bold">78%</span> (Industry avg: 65%)</small>
-                    </div>
-                    
-                    <!-- Route Optimization -->
-                    <div class="mb-3">
-                        <h6 class="mb-3">
-                            <i class="fas fa-route me-2"></i>
-                            Route Analysis
-                        </h6>
-                        <div class="alert alert-warning border-0">
-                            <div class="small">
-                                <i class="fas fa-route me-1"></i>
-                                <strong>Nearest RTZ Route:</strong> <span id="nearest-route">Bergen Approach</span>
-                            </div>
-                        </div>
-                        
-                        <table class="table data-table">
-                            <tr>
-                                <td>Distance to Route:</td>
-                                <td class="text-end" id="route-distance">2.4 km</td>
-                            </tr>
-                            <tr>
-                                <td>Optimal Speed:</td>
-                                <td class="text-end" id="optimal-speed">11.8 knots</td>
-                            </tr>
-                            <tr>
-                                <td>Potential Savings:</td>
-                                <td class="text-end fw-bold text-success" id="potential-savings">420 USD/day</td>
-                            </tr>
-                        </table>
-                    </div>
-                </div>
+        <div class="col-md-3">
+            <div class="stats-card">
+                <h6><i class="bi bi-tag me-2"></i>Vessel Type</h6>
+                <h2 id="vessel-type" class="fw-bold">--</h2>
+                <small class="text-muted" id="commercial-indicator"></small>
             </div>
         </div>
-
-        <!-- Safety & Compliance -->
-        <div class="col-lg-4 mb-4">
-            <div class="dashboard-card h-100">
-                <div class="card-header-dash">
-                    <div>
-                        <i class="fas fa-shield-alt me-2"></i>
-                        Safety & Compliance
-                    </div>
-                    <span class="badge badge-imo">IMO CII</span>
-                </div>
-                <div class="p-4">
-                    <!-- IMO Compliance -->
-                    <div class="mb-4">
-                        <h6 class="mb-3">
-                            <i class="fas fa-file-contract me-2"></i>
-                            IMO CII Compliance
-                        </h6>
-                        <div class="text-center mb-3">
-                            <div class="data-value display-4" id="cii-rating">B</div>
-                            <div class="data-label">Carbon Intensity Rating</div>
-                        </div>
-                        
-                        <table class="table data-table">
-                            <tr>
-                                <td>CII Value:</td>
-                                <td class="text-end" id="cii-value">34.2 g/t·nm</td>
-                            </tr>
-                            <tr>
-                                <td>IMO 2026 Target:</td>
-                                <td class="text-end">≤ 40.0</td>
-                            </tr>
-                            <tr>
-                                <td>Compliance:</td>
-                                <td class="text-end fw-bold text-success" id="compliance-status">COMPLIANT</td>
-                            </tr>
-                        </table>
-                    </div>
-                    
-                    <!-- Safety Alerts -->
-                    <div>
-                        <h6 class="mb-3">
-                            <i class="fas fa-exclamation-triangle me-2"></i>
-                            Safety Monitoring
-                        </h6>
-                        
-                        <!-- Turbine Proximity -->
-                        <div class="alert alert-turbine border-0 mb-2" id="turbine-alert">
-                            <div class="small">
-                                <i class="fas fa-fan me-1"></i>
-                                <strong>Wind Turbines:</strong> <span id="turbine-status">No turbines within 10km</span>
-                            </div>
-                        </div>
-                        
-                        <!-- Tanker Proximity -->
-                        <div class="alert alert-tanker border-0 mb-2" id="tanker-alert">
-                            <div class="small">
-                                <i class="fas fa-oil-can me-1"></i>
-                                <strong>Tanker Traffic:</strong> <span id="tanker-status">1 tanker at 5.2km (Port)</span>
-                            </div>
-                        </div>
-                        
-                        <!-- Weather Warnings -->
-                        <div class="alert alert-weather border-0" id="weather-warning">
-                            <div class="small">
-                                <i class="fas fa-cloud-meatball me-1"></i>
-                                <strong>Weather Status:</strong> <span id="weather-status">No active warnings</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <div class="col-md-3">
+            <div class="stats-card">
+                <h6><i class="bi bi-speedometer2 me-2"></i>Speed</h6>
+                <h2 id="vessel-speed" class="fw-bold">--</h2>
+                <small class="text-muted" id="vessel-course">Course: --°</small>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stats-card">
+                <h6><i class="bi bi-geo-alt me-2"></i>Position</h6>
+                <h2 id="vessel-position" class="fw-bold">--</h2>
+                <small class="text-muted" id="position-accuracy"></small>
             </div>
         </div>
     </div>
 
-    <!-- Data Source Footer -->
-    <div class="dashboard-card">
-        <div class="p-4">
+    <!-- Live Analysis Panel - ONLY DURING TRANSMISSION -->
+    <div id="analysis-panel" style="display: none;">
+        <div class="analysis-panel">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0">
+                    <i class="fas fa-chart-line me-2"></i>
+                    Live Analysis - Current Transmission
+                </h5>
+                <span class="badge live-badge" id="analysis-badge">LIVE</span>
+            </div>
+            
             <div class="row">
-                <div class="col-md-4">
-                    <h6 class="mb-3"><i class="fas fa-database me-2"></i>Data Sources</h6>
-                    <div class="small">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span>MET Norway Weather:</span>
-                            <span class="badge bg-warning" id="weather-status-badge">
-                                <i class="fas fa-spinner fa-spin me-1"></i> Connecting
-                            </span>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span>BarentsWatch AIS:</span>
-                            <span class="badge bg-success">
-                                <i class="fas fa-check-circle me-1"></i> Live
-                            </span>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span>NCA RTZ Routes:</span>
-                            <span class="badge bg-success">
-                                <i class="fas fa-check-circle me-1"></i> 50 routes
-                            </span>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span>DNV Calculations:</span>
-                            <span class="badge bg-info">
-                                <i class="fas fa-calculator me-1"></i> 2025 Formula
-                            </span>
-                        </div>
-                    </div>
+                <div class="col-md-3">
+                    <div class="small text-muted">Transmission Duration</div>
+                    <div class="h4" id="analysis-duration">0s</div>
                 </div>
-                <div class="col-md-4">
-                    <h6 class="mb-3"><i class="fas fa-info-circle me-2"></i>System Info</h6>
-                    <div class="small">
-                        <div class="mb-2">Last Update: <span class="fw-bold" id="last-update">--:--:--</span></div>
-                        <div class="mb-2">Vessel Updates: <span class="fw-bold" id="update-count">0</span></div>
-                        <div class="mb-2">Capture Duration: <span class="fw-bold" id="capture-duration">00:00:00</span></div>
-                        <div class="mb-2">Data Quality: <span class="badge bg-warning" id="data-quality-badge">Initializing</span></div>
-                    </div>
+                <div class="col-md-3">
+                    <div class="small text-muted">Data Points Collected</div>
+                    <div class="h4" id="analysis-points">0</div>
                 </div>
-                <div class="col-md-4">
-                    <h6 class="mb-3"><i class="fas fa-exclamation-circle me-2"></i>Important Note</h6>
-                    <div class="small text-muted">
-                        <p class="mb-2">
-                            <i class="fas fa-info-circle me-1"></i>
-                            This system displays maritime data for informational purposes only.
-                        </p>
-                        <p class="mb-0">
-                            <i class="fas fa-exclamation-triangle me-1"></i>
-                            No navigational recommendations are provided. Always follow official maritime guidance and regulations.
-                        </p>
-                    </div>
+                <div class="col-md-3">
+                    <div class="small text-muted">Average Speed</div>
+                    <div class="h4" id="analysis-avg-speed">-- kn</div>
                 </div>
+                <div class="col-md-3">
+                    <div class="small text-muted">Est. Fuel Used</div>
+                    <div class="h4" id="analysis-fuel">-- t</div>
+                </div>
+            </div>
+            
+            <div class="progress-container mt-3">
+                <div class="progress-fill" id="analysis-progress" style="width: 0%;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Historical Data Storage - ALWAYS VISIBLE -->
+    <div class="dashboard-card mt-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+                <i class="fas fa-database me-2"></i>
+                Historical Vessel Data
+            </h5>
+            <div>
+                <span class="badge bg-secondary me-2" id="stored-vessels">0 vessels</span>
+                <span class="badge bg-info" id="stored-points">0 data points</span>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="historical-table">
+                <table class="table table-sm table-hover">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Vessel</th>
+                            <th>Type</th>
+                            <th>Duration</th>
+                            <th>Source</th>
+                            <th>Data Points</th>
+                        </tr>
+                    </thead>
+                    <tbody id="vessels-table-body">
+                        <tr>
+                            <td colspan="6" class="text-center text-muted">No data stored yet</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Footer -->
-<footer class="simulation-footer">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-4 mb-4 mb-md-0">
-                <h6 class="mb-3"><i class="fas fa-water me-2"></i>BergNavn Maritime</h6>
-                <p class="small opacity-80">Real-time vessel simulation and analysis platform for Norwegian waters.</p>
-                <div class="small opacity-80 mt-3">
-                    <i class="fas fa-code me-1"></i> Flask • PostgreSQL • MET Norway • BarentsWatch API
-                </div>
-            </div>
-            <div class="col-md-4 mb-4 mb-md-0">
-                <h6 class="mb-3"><i class="fas fa-server me-2"></i>Live Services</h6>
-                <div class="small">
-                    <div class="d-flex justify-content-between mb-1">
-                        <span>Weather API:</span>
-                        <span class="badge bg-warning bg-opacity-75" id="footer-weather-status">
-                            <i class="fas fa-spinner fa-spin me-1"></i> Connecting
-                        </span>
-                    </div>
-                    <div class="d-flex justify-content-between mb-1">
-                        <span>AIS Data:</span>
-                        <span class="badge bg-success bg-opacity-75">BarentsWatch ✓</span>
-                    </div>
-                    <div class="d-flex justify-content-between">
-                        <span>Route Data:</span>
-                        <span class="badge bg-success bg-opacity-75">NCA RTZ ✓</span>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <h6 class="mb-3"><i class="fas fa-info-circle me-2"></i>System Status</h6>
-                <div class="small">
-                    <div class="mb-2">
-                        <span class="status-indicator status-live me-2"></span>
-                        <span id="footer-system-status">Initializing...</span>
-                    </div>
-                    <div class="mb-2">
-                        <i class="far fa-clock me-1"></i>
-                        Last update: <span id="footer-update-time">--:-- CET</span>
-                    </div>
-                    <div class="mb-0">
-                        <i class="fas fa-ship me-1"></i>
-                        Active vessel: <span id="footer-vessel">Bergen Pilot</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row mt-4 pt-3 border-top border-white-10">
-            <div class="col-12 text-center">
-                <p class="small opacity-80 mb-0">
-                    © 2025 BergNavn Maritime • Professional Maritime Data Platform • For demonstration purposes only
-                </p>
-            </div>
-        </div>
-    </div>
-</footer>
-
-<!-- Notification Toast -->
-<div id="notification-toast" class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999; display: none;">
+<!-- Notification Container -->
+<div id="dashboard-notification" class="dashboard-notification">
     <div class="toast" role="alert">
         <div class="toast-header">
             <strong class="me-auto" id="notification-title">Notification</strong>
             <small id="notification-time">Now</small>
-            <button type="button" class="btn-close" onclick="hideNotification()"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
         </div>
-        <div class="toast-body" id="notification-message">
-            Message
-        </div>
+        <div class="toast-body" id="notification-message"></div>
     </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
+<!-- External libraries - same order as dashboard -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
+<!-- Same JavaScript modules as dashboard -->
+<script src="{{ url_for('static', filename='js/split/maritime_map.js') }}"></script>
+<script src="{{ url_for('static', filename='js/split/maritime_weather.js') }}"></script>
+<script src="{{ url_for('static', filename='js/split/dashboard_controls.js') }}"></script>
+<script src="{{ url_for('static', filename='js/split/rtz_waypoints.js') }}"></script>
+
+<!-- Analysis-specific JavaScript -->
 <script>
-// Global state
-window.vesselState = {
-    active: true,
-    mmsi: '259000000',
-    startTime: null,
-    map: null,
-    vesselMarker: null,
-    updateInterval: null,
-    timerInterval: null,
-    updateCount: 0,
-    dataSource: 'BarentsWatch',
-    weatherData: null, // Will be populated with real MET Norway data
-    fuelData: {
-        speed: 12.5,
-        fuelRate: 2.8,
-        co2: 8.7,
-        cost: 1960,
-        efficiency: 78
-    },
-    isWeatherLoaded: false
-};
-
-// Initialize everything
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚢 Vessel Simulation Dashboard v5.0 - Initializing...');
+(function() {
+    'use strict';
     
-    // Initialize time
-    updateNorwayTime();
-    setInterval(updateNorwayTime, 1000);
-    
-    // Initialize map
-    initializeMap();
-    
-    // Fetch real weather data immediately
-    fetchRealWeatherData();
-    
-    // Initialize vessel capture simulation
-    setTimeout(() => {
-        initializeVesselCapture();
-    }, 1000);
-    
-    // Start periodic updates
-    startPeriodicUpdates();
-    
-    // Update footer
-    updateFooter();
-});
-
-function updateNorwayTime() {
-    const now = new Date();
-    
-    // Update time display
-    const timeElement = document.getElementById('norway-time');
-    const footerTime = document.getElementById('footer-update-time');
-    const lastUpdate = document.getElementById('last-update');
-    
-    if (timeElement) {
-        const norwayTime = new Date(now.toLocaleString('en-US', { timeZone: 'Europe/Oslo' }));
-        timeElement.textContent = norwayTime.toLocaleTimeString('en-GB', { hour12: false });
-    }
-    
-    if (footerTime) {
-        const norwayTime = new Date(now.toLocaleString('en-US', { timeZone: 'Europe/Oslo' }));
-        footerTime.textContent = norwayTime.toLocaleTimeString('en-GB', { 
-            hour: '2-digit', 
-            minute: '2-digit' 
-        }) + ' CET';
-    }
-    
-    if (lastUpdate && window.vesselState.isWeatherLoaded) {
-        lastUpdate.textContent = now.toLocaleTimeString('en-GB', { hour12: false });
-    }
-}
-
-function initializeMap() {
-    console.log('🗺️ Initializing maritime map...');
-    
-    setTimeout(() => {
-        document.getElementById('map-loading').style.display = 'none';
-    }, 800);
-    
-    // Create map centered on Bergen
-    window.vesselState.map = L.map('maritime-map', {
-        zoomControl: true,
-        attributionControl: true,
-        scrollWheelZoom: true,
-        doubleClickZoom: true,
-        boxZoom: true
-    }).setView([60.3913, 5.3221], 11);
-    
-    // Add OpenStreetMap tiles
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors',
-        maxZoom: 18,
-        noWrap: true,
-        bounds: [[55, 0], [72, 32]]
-    }).addTo(window.vesselState.map);
-    
-    // Add OpenSeaMap for maritime features
-    L.tileLayer('https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png', {
-        attribution: '© OpenSeaMap',
-        opacity: 0.5,
-        maxZoom: 18
-    }).addTo(window.vesselState.map);
-    
-    console.log('✅ Map initialized successfully');
-    
-    // Update system status
-    document.getElementById('system-status').innerHTML = 
-        '<i class="fas fa-circle fa-xs"></i><span>TRACKING VESSEL</span>';
-    document.getElementById('data-source-status').textContent = 'Connected to BarentsWatch API';
-}
-
-async function fetchRealWeatherData() {
-    console.log('🌤️ Fetching real weather data from MET Norway...');
-    
-    try {
-        // First try: Fetch from our own API endpoint (same as main dashboard)
-        const response = await fetch('/maritime/api/weather/current?lat=60.3913&lon=5.3221');
+    // ============================================
+    // HISTORICAL DATA STORAGE
+    // ============================================
+    window.analysisHistory = {
+        vessels: [],
+        transmissions: [],
+        dataPoints: [],
+        currentTransmission: null,
         
-        if (!response.ok) {
-            throw new Error(`Weather API responded with status: ${response.status}`);
+        addVessel: function(vessel, source, isRealTime, isCommercial) {
+            const vesselId = vessel.mmsi || vessel.name || 'unknown-' + Date.now();
+            const existing = this.vessels.find(function(v) { return v.id === vesselId; });
+            
+            if (!existing) {
+                const newVessel = {
+                    id: vesselId,
+                    name: vessel.name || 'Unknown',
+                    type: vessel.type || 'Unknown',
+                    mmsi: vessel.mmsi,
+                    firstSeen: Date.now(),
+                    lastSeen: Date.now(),
+                    source: source,
+                    isRealTime: isRealTime,
+                    isCommercial: isCommercial,
+                    dataPoints: 0,
+                    transmissions: []
+                };
+                this.vessels.push(newVessel);
+                console.log('✅ New vessel added to history:', newVessel.name, isRealTime ? 'LIVE' : 'EMPIRICAL');
+                return newVessel;
+            } else {
+                existing.lastSeen = Date.now();
+                return existing;
+            }
+        },
+        
+        startTransmission: function(vessel, source, isRealTime) {
+            const transmission = {
+                id: Date.now(),
+                vesselName: vessel.name || 'Unknown',
+                vesselId: vessel.mmsi || vessel.name,
+                vesselType: vessel.type || 'Unknown',
+                startTime: Date.now(),
+                endTime: null,
+                source: source,
+                isRealTime: isRealTime,
+                dataPoints: [],
+                avgSpeed: 0,
+                totalDistance: 0,
+                duration: null
+            };
+            
+            this.transmissions.push(transmission);
+            this.currentTransmission = transmission;
+            
+            const vesselRecord = this.vessels.find(function(v) { 
+                return v.id === (vessel.mmsi || vessel.name); 
+            });
+            if (vesselRecord) {
+                vesselRecord.transmissions.push(transmission.id);
+            }
+            
+            console.log('📡 Transmission started:', vessel.name, source, '# transmissions:', this.transmissions.length);
+            this.updateUI();
+            return transmission;
+        },
+        
+        addDataPoint: function(point) {
+            if (!this.currentTransmission) {
+                return;
+            }
+            
+            const dataPoint = {
+                mmsi: point.mmsi,
+                name: point.name,
+                type: point.type,
+                speed: point.speed,
+                course: point.course,
+                lat: point.lat,
+                lon: point.lon,
+                source: point.source,
+                isRealTime: point.isRealTime,
+                isCommercial: point.isCommercial,
+                timestamp: Date.now(),
+                transmissionId: this.currentTransmission.id
+            };
+            
+            this.dataPoints.push(dataPoint);
+            this.currentTransmission.dataPoints.push(dataPoint);
+            
+            const vesselRecord = this.vessels.find(function(v) { 
+                return v.id === (point.mmsi || point.name); 
+            });
+            if (vesselRecord) {
+                vesselRecord.dataPoints++;
+            }
+            
+            if (point.speed) {
+                var speeds = this.currentTransmission.dataPoints.map(function(p) { return p.speed || 0; });
+                var sum = 0;
+                for (var i = 0; i < speeds.length; i++) {
+                    sum += speeds[i];
+                }
+                this.currentTransmission.avgSpeed = sum / speeds.length;
+            }
+            
+            console.log('📊 Data point added:', this.currentTransmission.dataPoints.length, 'for', point.name);
+            this.updateUI();
+        },
+        
+        endTransmission: function() {
+            if (this.currentTransmission) {
+                this.currentTransmission.endTime = Date.now();
+                var duration = (this.currentTransmission.endTime - this.currentTransmission.startTime) / 1000;
+                this.currentTransmission.duration = Math.round(duration);
+                
+                var vesselRecord = this.vessels.find(function(v) { 
+                    return v.id === this.currentTransmission.vesselId; 
+                }.bind(this));
+                if (vesselRecord) {
+                    vesselRecord.lastTransmission = this.currentTransmission.endTime;
+                }
+                
+                console.log('📡 Transmission ended:', this.currentTransmission.vesselName, 'duration:', duration + 's', 'points:', this.currentTransmission.dataPoints.length);
+                this.currentTransmission = null;
+            }
+            this.updateUI();
+        },
+        
+        updateUI: function() {
+            var vesselsEl = document.getElementById('stored-vessels');
+            var pointsEl = document.getElementById('stored-points');
+            var tbody = document.getElementById('vessels-table-body');
+            
+            if (vesselsEl) {
+                vesselsEl.textContent = this.vessels.length + ' vessels';
+            }
+            if (pointsEl) {
+                pointsEl.textContent = this.dataPoints.length + ' data points';
+            }
+            
+            if (!tbody) { return; }
+            
+            if (this.transmissions.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">No data stored yet</td></tr>';
+                return;
+            }
+            
+            var start = Math.max(0, this.transmissions.length - 10);
+            var html = '';
+            for (var i = this.transmissions.length - 1; i >= start; i--) {
+                var t = this.transmissions[i];
+                var time = new Date(t.startTime).toLocaleTimeString();
+                var duration = t.duration ? t.duration + 's' : '--';
+                var sourceClass = t.isRealTime ? 'badge bg-success' : 'badge bg-warning';
+                var sourceText = t.isRealTime ? 'LIVE' : 'EMP';
+                var vessel = null;
+                for (var j = 0; j < this.vessels.length; j++) {
+                    if (this.vessels[j].id === t.vesselId) {
+                        vessel = this.vessels[j];
+                        break;
+                    }
+                }
+                var commercialMark = (vessel && vessel.isCommercial) ? '💰' : '';
+                
+                html += '<tr>' +
+                    '<td><small>' + time + '</small></td>' +
+                    '<td><small>' + t.vesselName + ' ' + commercialMark + '</small></td>' +
+                    '<td><small>' + (vessel ? vessel.type : (t.vesselType || 'Unknown')) + '</small></td>' +
+                    '<td><small>' + duration + '</small></td>' +
+                    '<td><small><span class="' + sourceClass + '">' + sourceText + '</span></small></td>' +
+                    '<td><small>' + t.dataPoints.length + '</small></td>' +
+                    '</tr>';
+            }
+            tbody.innerHTML = html;
         }
-        
-        const data = await response.json();
-        console.log('✅ Received MET Norway weather data:', data);
-        
-        // Store weather data
-        window.vesselState.weatherData = data;
-        window.vesselState.isWeatherLoaded = true;
-        
-        // Update weather display with real data
-        updateWeatherDisplay(data);
-        
-        // Update status indicators
-        document.getElementById('weather-status-badge').innerHTML = '<i class="fas fa-check-circle me-1"></i> Live';
-        document.getElementById('weather-status-badge').className = 'badge bg-success';
-        
-        document.getElementById('footer-weather-status').innerHTML = '<i class="fas fa-check-circle me-1"></i> MET Norway ✓';
-        document.getElementById('footer-weather-status').className = 'badge bg-success bg-opacity-75';
-        
-        document.getElementById('data-quality-badge').textContent = 'Excellent';
-        document.getElementById('data-quality-badge').className = 'badge bg-success';
-        
-        // Show success notification
-        showNotification(`Weather updated: ${data.temperature_c}°C from MET Norway`, 'success');
-        
-    } catch (error) {
-        console.error('❌ Error fetching MET Norway data:', error);
-        
-        // Fallback: Use realistic seasonal simulation
-        console.log('🔄 Using realistic seasonal simulation as fallback');
-        useSeasonalWeatherSimulation();
-    }
-}
-
-function updateWeatherDisplay(weatherData) {
-    if (!weatherData) return;
-    
-    // Update temperature with real data
-    if (weatherData.temperature_c !== undefined && weatherData.temperature_c !== null) {
-        const temperature = weatherData.temperature_c;
-        
-        // Update temperature display
-        const tempElement = document.getElementById('weather-temp');
-        tempElement.textContent = `${temperature.toFixed(1)}°C`;
-        tempElement.className = temperature >= 0 ? 'temperature-display temp-positive' : 'temperature-display temp-negative';
-        
-        console.log(`🌡️ Temperature updated: ${temperature}°C`);
-    }
-    
-    // Update weather condition
-    if (weatherData.condition) {
-        document.getElementById('weather-condition').textContent = weatherData.condition;
-        document.getElementById('weather-condition').className = `data-label ${getWeatherClass(weatherData.condition)}`;
-    }
-    
-    // Update other weather parameters
-    if (weatherData.wind_speed_ms !== undefined) {
-        document.getElementById('weather-wind').textContent = weatherData.wind_speed_ms.toFixed(1);
-    }
-    
-    if (weatherData.wave_height_m !== undefined) {
-        document.getElementById('weather-waves').textContent = weatherData.wave_height_m.toFixed(1);
-    }
-    
-    if (weatherData.visibility_km !== undefined) {
-        document.getElementById('weather-visibility').textContent = weatherData.visibility_km.toFixed(0);
-    }
-    
-    // Update weather accuracy note
-    document.getElementById('weather-accuracy').innerHTML = `
-        <i class="fas fa-info-circle me-1"></i>
-        Official MET Norway data for Bergen (${new Date().toLocaleTimeString('en-GB', {hour: '2-digit', minute: '2-digit'})})
-    `;
-    
-    // Update day/night indicator
-    updateDayNightIndicator();
-    
-    // Update weather warnings if needed
-    if (weatherData.wind_speed_ms > 12) {
-        document.getElementById('weather-status').textContent = 'High winds - Exercise caution';
-    } else {
-        document.getElementById('weather-status').textContent = 'No active warnings';
-    }
-}
-
-function useSeasonalWeatherSimulation() {
-    console.log('🔄 Creating realistic seasonal weather simulation for Bergen');
-    
-    const now = new Date();
-    const month = now.getMonth(); // 0 = January, 11 = December
-    const hour = now.getHours();
-    
-    // Realistic Bergen climate data (based on historical averages)
-    const bergenClimate = {
-        winter: { min: -1, max: 4, conditions: ['Cloudy', 'Rainy', 'Light Rain', 'Overcast'] },
-        spring: { min: 3, max: 10, conditions: ['Partly Cloudy', 'Cloudy', 'Light Rain', 'Sunny Intervals'] },
-        summer: { min: 12, max: 18, conditions: ['Partly Cloudy', 'Sunny Intervals', 'Light Breeze', 'Mostly Cloudy'] },
-        autumn: { min: 5, max: 11, conditions: ['Rainy', 'Cloudy', 'Light Rain', 'Overcast'] }
     };
     
-    // Determine season
-    let season;
-    if (month >= 2 && month <= 4) season = 'spring';
-    else if (month >= 5 && month <= 7) season = 'summer';
-    else if (month >= 8 && month <= 10) season = 'autumn';
-    else season = 'winter';
+    console.log('✅ analysisHistory initialized');
     
-    const climate = bergenClimate[season];
+    // ============================================
+    // ANALYSIS TRACKING
+    // ============================================
+    var analysisUpdateInterval = null;
+    var analysisDataInterval = null;
+    var analysisCurrentVessel = null;
+    var analysisTransmissionActive = false;
+    var analysisLastVesselId = null;
     
-    // Generate realistic temperature for this time of day
-    const tempRange = climate.max - climate.min;
-    const hourFactor = Math.sin((hour - 6) * Math.PI / 12); // Warmer in afternoon
-    const temperature = climate.min + (tempRange / 2) + (tempRange / 4) * hourFactor;
-    
-    // Select random condition
-    const condition = climate.conditions[Math.floor(Math.random() * climate.conditions.length)];
-    
-    // Create realistic weather data
-    const simulatedWeather = {
-        temperature_c: parseFloat(temperature.toFixed(1)),
-        condition: condition,
-        wind_speed_ms: parseFloat((2 + Math.random() * 8).toFixed(1)),
-        wave_height_m: parseFloat((0.5 + Math.random() * 2.5).toFixed(1)),
-        visibility_km: Math.floor(5 + Math.random() * 15),
-        source: 'seasonal_simulation'
-    };
-    
-    window.vesselState.weatherData = simulatedWeather;
-    window.vesselState.isWeatherLoaded = true;
-    
-    // Update display
-    updateWeatherDisplay(simulatedWeather);
-    
-    // Update status indicators
-    document.getElementById('weather-source-badge').textContent = 'Seasonal Sim';
-    document.getElementById('weather-source-badge').className = 'badge badge-simulation';
-    
-    document.getElementById('weather-status-badge').innerHTML = '<i class="fas fa-chart-line me-1"></i> Simulated';
-    document.getElementById('weather-status-badge').className = 'badge bg-info';
-    
-    document.getElementById('footer-weather-status').innerHTML = '<i class="fas fa-chart-line me-1"></i> Seasonal Sim';
-    document.getElementById('footer-weather-status').className = 'badge bg-info bg-opacity-75';
-    
-    document.getElementById('data-quality-badge').textContent = 'Simulated';
-    document.getElementById('data-quality-badge').className = 'badge bg-info';
-    
-    // Show notification
-    showNotification(`Using seasonal simulation: ${simulatedWeather.temperature_c}°C ${condition}`, 'info');
-}
-
-function getWeatherClass(condition) {
-    if (!condition) return 'weather-cloudy';
-    
-    const conditionLower = condition.toLowerCase();
-    if (conditionLower.includes('sunny') || conditionLower.includes('clear')) return 'weather-sunny';
-    if (conditionLower.includes('rain') || conditionLower.includes('drizzle')) return 'weather-rainy';
-    if (conditionLower.includes('storm') || conditionLower.includes('thunder')) return 'weather-stormy';
-    return 'weather-cloudy';
-}
-
-function updateDayNightIndicator() {
-    const now = new Date();
-    const hour = now.getHours();
-    const isDaylight = hour >= 6 && hour < 18;
-    
-    const daylightElement = document.getElementById('daylight-status');
-    const container = document.getElementById('daylight-container');
-    
-    if (daylightElement) {
-        daylightElement.textContent = isDaylight ? 'Day' : 'Night';
+    function startAnalysisTracking() {
+        console.log('📡 Starting analysis tracking...');
+        fetchAnalysisVessel();
+        analysisUpdateInterval = setInterval(fetchAnalysisVessel, 30000);
     }
     
-    if (container) {
-        container.className = isDaylight ? 
-            'data-card text-center day-indicator' : 
-            'data-card text-center night-indicator';
+    function fetchAnalysisVessel() {
+        fetch('/maritime/api/vessels/real-time?city=bergen&radius_km=50')
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
+                if (data.status === 'success' && data.vessels && data.vessels.length > 0) {
+                    var vessel = data.vessels[0];
+                    var source = data.source || vessel.source;
+                    
+                    var isRealTime = source && (
+                        source.indexOf('REAL-TIME') !== -1 || 
+                        source.indexOf('KYSTVERKET') !== -1 ||
+                        source.indexOf('KYSTDATAHUSET') !== -1 ||
+                        source.indexOf('BARENTS') !== -1
+                    );
+                    
+                    var commercialTypes = ['Cargo', 'Tanker', 'Container', 'Bulk', 'General Cargo', 'Ro-Ro', 'Vehicle', 'LNG', 'Chemical', 'Oil'];
+                    var isCommercial = false;
+                    if (vessel.type) {
+                        var vesselTypeLower = vessel.type.toLowerCase();
+                        for (var i = 0; i < commercialTypes.length; i++) {
+                            if (vesselTypeLower.indexOf(commercialTypes[i].toLowerCase()) !== -1) {
+                                isCommercial = true;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    var vesselId = vessel.mmsi || vessel.name;
+                    
+                    if (!analysisTransmissionActive || vesselId !== analysisLastVesselId) {
+                        if (analysisTransmissionActive) {
+                            endAnalysisTransmission();
+                        }
+                        startAnalysisTransmission(vessel, source, isRealTime, isCommercial);
+                        analysisLastVesselId = vesselId;
+                    }
+                    
+                    analysisCurrentVessel = {
+                        name: vessel.name,
+                        mmsi: vessel.mmsi,
+                        type: vessel.type,
+                        speed: vessel.speed || 0,
+                        course: vessel.course || 0,
+                        lat: vessel.latitude || vessel.lat,
+                        lon: vessel.longitude || vessel.lon,
+                        source: source,
+                        isRealTime: isRealTime,
+                        isCommercial: isCommercial
+                    };
+                    
+                    document.getElementById('vessel-count').textContent = '1';
+                    
+                    updateAnalysisVesselInfo(analysisCurrentVessel, source, isRealTime, isCommercial);
+                    
+                    if (analysisTransmissionActive) {
+                        window.analysisHistory.addDataPoint({
+                            mmsi: vessel.mmsi,
+                            name: vessel.name,
+                            type: vessel.type,
+                            speed: vessel.speed || 0,
+                            course: vessel.course || 0,
+                            lat: vessel.latitude || vessel.lat,
+                            lon: vessel.longitude || vessel.lon,
+                            source: source,
+                            isRealTime: isRealTime,
+                            isCommercial: isCommercial
+                        });
+                    }
+                    
+                    console.log('✅ Analysis vessel:', vessel.name, 'Real-time:', isRealTime, 'Source:', source);
+                    
+                } else {
+                    if (analysisTransmissionActive) {
+                        endAnalysisTransmission();
+                        analysisLastVesselId = null;
+                    }
+                    resetAnalysisDisplay();
+                }
+            })
+            .catch(function(error) {
+                console.error('Error fetching analysis vessel:', error);
+                if (analysisTransmissionActive) {
+                    endAnalysisTransmission();
+                    analysisLastVesselId = null;
+                }
+            });
     }
-}
-
-function initializeVesselCapture() {
-    console.log('🎯 Initializing vessel capture simulation...');
     
-    window.vesselState.startTime = new Date();
+    function startAnalysisTransmission(vessel, source, isRealTime, isCommercial) {
+        console.log('📡 NEW ANALYSIS TRANSMISSION:', vessel.name, source);
+        analysisTransmissionActive = true;
+        window.analysisHistory.addVessel(vessel, source, isRealTime, isCommercial);
+        window.analysisHistory.startTransmission(vessel, source, isRealTime);
+        
+        if (analysisDataInterval) {
+            clearInterval(analysisDataInterval);
+        }
+        analysisDataInterval = setInterval(function() {
+            if (analysisTransmissionActive && analysisCurrentVessel) {
+                updateAnalysisDisplay();
+            }
+        }, 5000);
+        
+        updateUITransmissionActive(source, isRealTime, isCommercial);
+    }
     
-    // Create vessel marker with Bergen position
-    const vesselIcon = L.divIcon({
-        className: 'vessel-marker',
-        html: `
-            <div style="
-                background: #0066b3;
-                width: 45px;
-                height: 45px;
-                border-radius: 50%;
-                border: 3px solid white;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: white;
-                font-size: 22px;
-            ">
-                <i class="fas fa-ship"></i>
-            </div>
-        `,
-        iconSize: [45, 45],
-        iconAnchor: [22, 22]
+    function endAnalysisTransmission() {
+        console.log('📡 ANALYSIS TRANSMISSION ENDED');
+        analysisTransmissionActive = false;
+        window.analysisHistory.endTransmission();
+        document.getElementById('analysis-panel').style.display = 'none';
+        updateUITransmissionIdle();
+        
+        if (analysisDataInterval) {
+            clearInterval(analysisDataInterval);
+            analysisDataInterval = null;
+        }
+    }
+    
+    function updateAnalysisDisplay() {
+        if (!window.analysisHistory.currentTransmission) { return; }
+        
+        var trans = window.analysisHistory.currentTransmission;
+        var duration = Math.floor((Date.now() - trans.startTime) / 1000);
+        var dataPoints = trans.dataPoints.length;
+        var avgSpeed = trans.avgSpeed ? trans.avgSpeed.toFixed(1) : '0.0';
+        
+        var fuelRate = 0.25 * (trans.avgSpeed || 10) - 0.8;
+        var fuelUsed = fuelRate > 0 ? (fuelRate * duration / 3600).toFixed(2) : '0.00';
+        
+        document.getElementById('analysis-duration').textContent = duration + 's';
+        document.getElementById('analysis-points').textContent = dataPoints;
+        document.getElementById('analysis-avg-speed').textContent = avgSpeed + ' kn';
+        document.getElementById('analysis-fuel').textContent = fuelUsed + ' t';
+        
+        var progress = Math.min(100, (duration / 1800) * 100);
+        document.getElementById('analysis-progress').style.width = progress + '%';
+        document.getElementById('analysis-panel').style.display = 'block';
+    }
+    
+    function updateAnalysisVesselInfo(vessel, source, isRealTime, isCommercial) {
+        var elements = {
+            name: document.getElementById('vessel-name'),
+            mmsi: document.getElementById('vessel-mmsi'),
+            type: document.getElementById('vessel-type'),
+            speed: document.getElementById('vessel-speed'),
+            course: document.getElementById('vessel-course'),
+            position: document.getElementById('vessel-position'),
+            commercial: document.getElementById('commercial-indicator'),
+            sourceIndicator: document.getElementById('vessel-source-indicator'),
+            sourceBadge: document.getElementById('vessel-source-badge')
+        };
+        
+        if (elements.name) { elements.name.textContent = vessel.name || 'Unknown'; }
+        if (elements.mmsi) { elements.mmsi.innerHTML = vessel.mmsi ? 'MMSI: ' + vessel.mmsi : ''; }
+        if (elements.type) { elements.type.textContent = vessel.type || 'Commercial Vessel'; }
+        if (elements.speed) { elements.speed.textContent = (vessel.speed || 0).toFixed(1); }
+        if (elements.course) { elements.course.textContent = 'Course: ' + (vessel.course || 0) + '°'; }
+        
+        if (vessel.lat && vessel.lon) {
+            if (elements.position) { 
+                elements.position.textContent = vessel.lat.toFixed(4) + '°, ' + vessel.lon.toFixed(4) + '°'; 
+            }
+        } else {
+            if (elements.position) { elements.position.textContent = '--'; }
+        }
+        
+        if (elements.commercial) {
+            elements.commercial.innerHTML = isCommercial ? 
+                '<span class="commercial-indicator">💰 Commercial Vessel</span>' : 
+                '<span class="text-muted">Standard Vessel</span>';
+        }
+        
+        if (elements.sourceIndicator) {
+            elements.sourceIndicator.className = 'data-source-badge ' + (isRealTime ? 'data-source-live' : 'data-source-empirical');
+            elements.sourceIndicator.textContent = isRealTime ? 'LIVE' : 'EMPIRICAL';
+        }
+        
+        if (elements.sourceBadge) {
+            elements.sourceBadge.className = 'badge ' + (isRealTime ? 'bg-success' : 'bg-warning');
+            elements.sourceBadge.textContent = isRealTime ? 'LIVE' : 'EMPIRICAL';
+        }
+    }
+    
+    function resetAnalysisDisplay() {
+        var elements = {
+            name: document.getElementById('vessel-name'),
+            mmsi: document.getElementById('vessel-mmsi'),
+            type: document.getElementById('vessel-type'),
+            speed: document.getElementById('vessel-speed'),
+            course: document.getElementById('vessel-course'),
+            position: document.getElementById('vessel-position'),
+            commercial: document.getElementById('commercial-indicator'),
+            sourceIndicator: document.getElementById('vessel-source-indicator'),
+            sourceBadge: document.getElementById('vessel-source-badge')
+        };
+        
+        if (elements.name) { elements.name.textContent = '--'; }
+        if (elements.mmsi) { elements.mmsi.innerHTML = ''; }
+        if (elements.type) { elements.type.textContent = '--'; }
+        if (elements.speed) { elements.speed.textContent = '--'; }
+        if (elements.course) { elements.course.textContent = 'Course: --°'; }
+        if (elements.position) { elements.position.textContent = '--'; }
+        if (elements.commercial) { elements.commercial.innerHTML = ''; }
+        if (elements.sourceIndicator) {
+            elements.sourceIndicator.className = 'data-source-badge';
+            elements.sourceIndicator.textContent = 'WAITING';
+        }
+        if (elements.sourceBadge) {
+            elements.sourceBadge.className = 'badge bg-secondary';
+            elements.sourceBadge.textContent = 'WAITING';
+        }
+        
+        document.getElementById('vessel-count').textContent = '0';
+    }
+    
+    function updateUITransmissionActive(source, isRealTime, isCommercial) {
+        var alert = document.getElementById('transmission-alert');
+        alert.className = 'alert ' + (isRealTime ? 'alert-success' : 'alert-warning') + ' mb-4';
+        
+        document.getElementById('transmission-icon').className = 'fas ' + (isRealTime ? 'fa-satellite-dish' : 'fa-history') + ' fa-2x me-3';
+        document.getElementById('transmission-title').innerHTML = isRealTime ? '🔴 LIVE TRANSMISSION' : '🟡 EMPIRICAL FALLBACK';
+        document.getElementById('transmission-message').textContent = 'Tracking ' + (analysisCurrentVessel ? analysisCurrentVessel.name : 'vessel') + ' - ' + (isRealTime ? 'Real-time AIS' : 'Historical simulation');
+        document.getElementById('transmission-source').innerHTML = 'Source: <strong>' + (source || 'unknown') + '</strong> ' + (isCommercial ? '💰 Commercial' : '');
+        
+        var badge = document.getElementById('transmission-badge');
+        badge.className = 'badge ' + (isRealTime ? 'bg-success' : 'bg-warning');
+        badge.textContent = isRealTime ? 'LIVE' : 'EMPIRICAL';
+        
+        document.getElementById('live-status-text').textContent = isRealTime ? 'LIVE' : 'EMPIRICAL';
+        document.getElementById('live-status-text').className = isRealTime ? 'fw-semibold text-success me-3' : 'fw-semibold text-warning me-3';
+        document.getElementById('data-source-badge').textContent = isRealTime ? 'LIVE' : 'EMPIRICAL';
+        document.getElementById('data-source-badge').className = 'badge ' + (isRealTime ? 'bg-success' : 'bg-warning');
+    }
+    
+    function updateUITransmissionIdle() {
+        var alert = document.getElementById('transmission-alert');
+        alert.className = 'alert alert-secondary mb-4';
+        
+        document.getElementById('transmission-icon').className = 'fas fa-search fa-2x me-3';
+        document.getElementById('transmission-title').innerHTML = 'WAITING FOR VESSEL';
+        document.getElementById('transmission-message').textContent = 'System is scanning for vessels in Bergen area - REAL-TIME FIRST';
+        document.getElementById('transmission-source').innerHTML = '';
+        
+        var badge = document.getElementById('transmission-badge');
+        badge.className = 'badge bg-secondary';
+        badge.textContent = 'WAITING';
+        
+        document.getElementById('live-status-text').textContent = 'WAITING';
+        document.getElementById('live-status-text').className = 'fw-semibold text-secondary me-3';
+        document.getElementById('data-source-badge').textContent = 'WAITING';
+        document.getElementById('data-source-badge').className = 'badge bg-secondary';
+    }
+    
+    function updateNorwegianTime() {
+        var now = new Date();
+        var timeElement = document.getElementById('local-time-norway');
+        var dateElement = document.getElementById('norwegian-date');
+        var mapUpdate = document.getElementById('map-update-time');
+        
+        if (timeElement) {
+            timeElement.textContent = now.toLocaleTimeString('en-GB', { 
+                timeZone: 'Europe/Oslo', 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit', 
+                hour12: false 
+            });
+        }
+        
+        if (dateElement) {
+            dateElement.textContent = now.toLocaleDateString('en-GB', { 
+                timeZone: 'Europe/Oslo',
+                weekday: 'short',
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric'
+            });
+        }
+        
+        if (mapUpdate) {
+            mapUpdate.textContent = 'Updated: ' + now.toLocaleTimeString('en-GB', { 
+                hour: '2-digit', 
+                minute: '2-digit'
+            });
+        }
+    }
+    
+    // Initialize when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('🚢 REAL-TIME VESSEL ANALYSIS starting...');
+        
+        setTimeout(function() {
+            if (window.rtzWaypoints) {
+                var routesData = document.getElementById('routes-data');
+                if (routesData && routesData.textContent) {
+                    try {
+                        var routes = JSON.parse(routesData.textContent);
+                        if (routes && routes.length > 0) {
+                            window.rtzWaypoints.drawMultipleRoutes(routes);
+                            document.getElementById('route-count-badge').textContent = routes.length;
+                            console.log('✅ Loaded', routes.length, 'routes');
+                        }
+                    } catch (e) {
+                        console.error('Error parsing routes:', e);
+                    }
+                }
+            }
+            
+            startAnalysisTracking();
+            updateNorwegianTime();
+            setInterval(updateNorwegianTime, 1000);
+        }, 1500);
     });
     
-    // Add vessel marker
-    window.vesselState.vesselMarker = L.marker([60.3913, 5.3221], {
-        icon: vesselIcon,
-        zIndexOffset: 1000
-    }).addTo(window.vesselState.map);
-    
-    // Add popup with vessel info
-    window.vesselState.vesselMarker.bindPopup(`
-        <div style="min-width: 220px;">
-            <h6 class="mb-1"><strong>Bergen Pilot Vessel</strong></h6>
-            <hr class="my-1">
-            <p class="mb-1 small"><strong>MMSI:</strong> 259000000</p>
-            <p class="mb-1 small"><strong>Position:</strong> 60.3913° N, 5.3221° E</p>
-            <p class="mb-1 small"><strong>Speed:</strong> 12.5 knots</p>
-            <p class="mb-0 small"><strong>Source:</strong> BarentsWatch API</p>
-        </div>
-    `).openPopup();
-    
-    // Start capture timer
-    startCaptureTimer();
-    
-    // Show notification
-    showNotification('Vessel captured: Bergen Pilot Vessel', 'success');
-}
-
-function startCaptureTimer() {
-    if (window.vesselState.timerInterval) {
-        clearInterval(window.vesselState.timerInterval);
-    }
-    
-    window.vesselState.timerInterval = setInterval(() => {
-        const now = new Date();
-        const duration = now - window.vesselState.startTime;
-        
-        const hours = Math.floor(duration / 3600000);
-        const minutes = Math.floor((duration % 3600000) / 60000);
-        const seconds = Math.floor((duration % 60000) / 1000);
-        
-        const timerText = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-        
-        document.getElementById('capture-timer').innerHTML = `<i class="fas fa-clock me-1"></i> ${timerText}`;
-        document.getElementById('capture-duration').textContent = timerText;
-    }, 1000);
-}
-
-function startPeriodicUpdates() {
-    // Update vessel position periodically
-    window.vesselState.updateInterval = setInterval(() => {
-        simulateVesselMovement();
-        updateAnalysisData();
-        
-        window.vesselState.updateCount++;
-        document.getElementById('update-count').textContent = window.vesselState.updateCount;
-        
-        // Update weather every 5 minutes
-        if (window.vesselState.updateCount % 30 === 0) { // 30 updates * 10 seconds = 5 minutes
-            fetchRealWeatherData();
+    // Cleanup
+    window.addEventListener('beforeunload', function() {
+        if (analysisUpdateInterval) {
+            clearInterval(analysisUpdateInterval);
         }
-    }, 10000); // Update every 10 seconds
-}
-
-function simulateVesselMovement() {
-    if (!window.vesselState.vesselMarker) return;
-    
-    // Get current position
-    const currentLatLng = window.vesselState.vesselMarker.getLatLng();
-    
-    // Simulate small movement (like a real vessel at sea)
-    const latChange = (Math.random() - 0.5) * 0.003;
-    const lngChange = (Math.random() - 0.5) * 0.003;
-    
-    const newLat = currentLatLng.lat + latChange;
-    const newLng = currentLatLng.lng + lngChange;
-    
-    // Keep within Bergen area
-    const boundedLat = Math.max(60.38, Math.min(60.41, newLat));
-    const boundedLng = Math.max(5.30, Math.min(5.34, newLng));
-    
-    // Update marker position
-    window.vesselState.vesselMarker.setLatLng([boundedLat, boundedLng]);
-    
-    // Update display
-    document.getElementById('vessel-position').textContent = 
-        `${boundedLat.toFixed(4)}, ${boundedLng.toFixed(4)}`;
-    
-    // Simulate speed variation
-    const currentSpeed = window.vesselState.fuelData.speed;
-    const speedChange = (Math.random() - 0.5) * 0.3;
-    const newSpeed = Math.max(11.5, Math.min(13.5, currentSpeed + speedChange));
-    window.vesselState.fuelData.speed = newSpeed;
-    
-    document.getElementById('vessel-speed').textContent = newSpeed.toFixed(1);
-    document.getElementById('speed-course').textContent = `Course: ${Math.round(Math.random() * 360)}°`;
-}
-
-function updateAnalysisData() {
-    const fuel = window.vesselState.fuelData;
-    
-    // Update fuel calculations based on current speed
-    const speed = fuel.speed;
-    fuel.fuelRate = 0.25 * speed - 0.8; // Simplified fuel curve
-    fuel.co2 = fuel.fuelRate * 3.114; // DNV 2025 CO₂ factor
-    fuel.cost = Math.round(fuel.fuelRate * 700); // ~700 USD/ton fuel
-    
-    // Update display
-    document.getElementById('current-speed').textContent = `${speed.toFixed(1)} knots`;
-    document.getElementById('fuel-rate').textContent = `${fuel.fuelRate.toFixed(1)} t/h`;
-    document.getElementById('co2-emissions').textContent = `${fuel.co2.toFixed(1)} t/h`;
-    document.getElementById('fuel-cost').textContent = `$${fuel.cost.toLocaleString()}/h`;
-    
-    // Efficiency calculation
-    const optimalSpeed = 11.8;
-    const efficiency = 100 - Math.abs(speed - optimalSpeed) * 4;
-    fuel.efficiency = Math.max(65, Math.min(85, efficiency));
-    
-    document.getElementById('fuel-efficiency').textContent = `${fuel.efficiency.toFixed(0)}%`;
-    document.getElementById('fuel-efficiency-bar').style.width = `${fuel.efficiency}%`;
-    
-    // Update potential savings
-    const savings = Math.round((fuel.efficiency - 65) * 15);
-    document.getElementById('potential-savings').textContent = `$${savings}/day`;
-}
-
-function updateFooter() {
-    // Update footer status
-    document.getElementById('footer-system-status').textContent = 'All Systems Operational';
-    document.getElementById('footer-vessel').textContent = 'Bergen Pilot Vessel';
-}
-
-function stopCapture() {
-    if (!window.vesselState.active) return;
-    
-    if (confirm('Stop vessel capture and analysis?')) {
-        // Stop intervals
-        if (window.vesselState.updateInterval) {
-            clearInterval(window.vesselState.updateInterval);
+        if (analysisDataInterval) {
+            clearInterval(analysisDataInterval);
         }
-        if (window.vesselState.timerInterval) {
-            clearInterval(window.vesselState.timerInterval);
-        }
-        
-        // Reset state
-        window.vesselState.active = false;
-        window.vesselState.updateInterval = null;
-        window.vesselState.timerInterval = null;
-        
-        // Update UI
-        document.getElementById('system-status').innerHTML = 
-            '<i class="fas fa-circle fa-xs"></i><span>READY FOR CAPTURE</span>';
-        
-        // Change button text
-        document.getElementById('stop-btn').innerHTML = '<i class="fas fa-play me-1"></i> Start Capture';
-        document.getElementById('stop-btn').onclick = startCapture;
-        
-        // Show notification
-        showNotification('Vessel capture stopped', 'info');
-    }
-}
-
-function startCapture() {
-    // Reset to initial state
-    window.vesselState.active = true;
-    window.vesselState.startTime = new Date();
-    window.vesselState.updateCount = 0;
-    
-    // Update UI
-    document.getElementById('system-status').innerHTML = 
-        '<i class="fas fa-circle fa-xs"></i><span>TRACKING VESSEL</span>';
-    
-    // Change button text
-    document.getElementById('stop-btn').innerHTML = '<i class="fas fa-stop me-1"></i> Stop Capture';
-    document.getElementById('stop-btn').onclick = stopCapture;
-    
-    // Start timers
-    startCaptureTimer();
-    startPeriodicUpdates();
-    
-    // Show notification
-    showNotification('Vessel capture started', 'success');
-}
-
-function showNotification(message, type = 'info') {
-    const toast = document.getElementById('notification-toast');
-    const title = document.getElementById('notification-title');
-    const messageEl = document.getElementById('notification-message');
-    const timeEl = document.getElementById('notification-time');
-    
-    if (!toast) return;
-    
-    // Set content
-    title.textContent = type.toUpperCase();
-    messageEl.textContent = message;
-    timeEl.textContent = new Date().toLocaleTimeString('en-GB', { 
-        hour: '2-digit', 
-        minute: '2-digit'
     });
     
-    // Set color based on type
-    title.style.color = 
-        type === 'success' ? '#28a745' : 
-        type === 'warning' ? '#ffc107' : 
-        type === 'error' ? '#dc3545' : '#17a2b8';
-    
-    // Show toast
-    toast.style.display = 'block';
-    
-    // Auto-hide after 5 seconds
-    setTimeout(() => {
-        toast.style.display = 'none';
-    }, 5000);
-}
-
-function hideNotification() {
-    const toast = document.getElementById('notification-toast');
-    if (toast) {
-        toast.style.display = 'none';
-    }
-}
+})();
 </script>
 {% endblock %}

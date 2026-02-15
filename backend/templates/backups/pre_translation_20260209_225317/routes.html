@@ -1,0 +1,376 @@
+{% extends "base.html" %}
+
+{% block title %}NCA Maritime Routes | BergNavn{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <h1 class="text-gradient">🗺️ NCA Official Maritime Routes</h1>
+            <p class="lead">
+                Verified route corridors from the Norwegian Coastal Administration (Kystverket)
+            </p>
+            <div class="alert alert-primary d-inline-block">
+                <small class="d-flex align-items-center">
+                    <i class="bi bi-shield-check me-2 fs-5"></i>
+                    <span>
+                        <strong>Source:</strong> RTZ route files from Kystverket Routeinfo.no
+                        <span class="mx-2">•</span>
+                        <strong>Coverage:</strong> {{ cities_with_routes|length }}/10 active Norwegian ports
+                    </span>
+                </small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Real-Time Statistics -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card maritime-card text-center h-100">
+                <div class="card-body">
+                    <h3 class="text-primary mb-1">{{ routes|length }}</h3>
+                    <p class="mb-0 fw-semibold">Total Routes</p>
+                    <small class="text-muted">Database + RTZ Files</small>
+                </div>
+                <div class="card-footer py-2">
+                    <small><i class="bi bi-database me-1"></i>PostgreSQL + RTZ</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card maritime-card text-center h-100">
+                <div class="card-body">
+                    <h3 class="text-success mb-1">{{ "%.1f"|format(total_distance) }}</h3>
+                    <p class="mb-0 fw-semibold">Total Distance</p>
+                    <small class="text-muted">Nautical Miles (NM)</small>
+                </div>
+                <div class="card-footer py-2">
+                    <small><i class="bi bi-rulers me-1"></i>Estimated</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card maritime-card text-center h-100">
+                <div class="card-body">
+                    <h3 class="text-warning mb-1">{{ waypoint_count }}</h3>
+                    <p class="mb-0 fw-semibold">Waypoints</p>
+                    <small class="text-muted">Navigation Points</small>
+                </div>
+                <div class="card-footer py-2">
+                    <small><i class="bi bi-signpost me-1"></i>Total Count</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card maritime-card text-center h-100">
+                <div class="card-body">
+                    <h3 class="text-info mb-1">{{ active_ports_count }}</h3>
+                    <p class="mb-0 fw-semibold">Active Ports</p>
+                    <small class="text-muted">With Route Data</small>
+                </div>
+                <div class="card-footer py-2">
+                    <small>
+                        <i class="bi bi-pin-map me-1"></i>
+                        {{ cities_with_routes|length }}/10
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Port Status Grid -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card maritime-card">
+                <div class="card-header">
+                    <h5 class="mb-0 d-flex align-items-center">
+                        <i class="bi bi-pin-map-fill me-2 text-primary"></i>
+                        Norwegian Port Coverage
+                    </h5>
+                    <p class="mb-0 text-muted small">RTZ route availability per port from Kystverket</p>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        {% set port_list = ['Ålesund', 'Andalsnes', 'Bergen', 'Drammen', 'Flekkefjord', 'Kristiansand', 'Oslo', 'Sandefjord', 'Stavanger', 'Trondheim'] %}
+                        {% for port in port_list %}
+                        <div class="col-md-4 col-lg-2 col-6">
+                            <div class="port-status-card text-center p-3 rounded
+                                {% if port in cities_with_routes %}
+                                    border-success border-2
+                                {% else %}
+                                    border-light border
+                                {% endif %}">
+                                <div class="mb-2">
+                                    <i class="bi bi-geo fs-4 
+                                        {% if port in cities_with_routes %}
+                                            text-success
+                                        {% else %}
+                                            text-secondary
+                                        {% endif %}"></i>
+                                </div>
+                                <h6 class="mb-1">{{ port }}</h6>
+                                <small class="d-block">
+                                    {% if port in cities_with_routes %}
+                                        <span class="badge bg-success">Data Available</span>
+                                    {% else %}
+                                        <span class="badge bg-light text-dark">No Data</span>
+                                    {% endif %}
+                                </small>
+                                {% if port in cities_with_routes %}
+                                    <small class="text-muted d-block mt-1">
+                                        <i class="bi bi-file-earmark-zip me-1"></i>
+                                        {% set port_routes = [] %}
+                                        {% for route in routes if route.origin == port or route.destination == port %}
+                                            {% set _ = port_routes.append(route) %}
+                                        {% endfor %}
+                                        {{ port_routes|length }} routes
+                                    </small>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Routes Table -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card maritime-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="bi bi-signpost-split me-2"></i>
+                        NCA Verified Maritime Routes
+                    </h5>
+                    <div>
+                        <a href="{{ url_for('routes_bp.scan_rtz_files') }}" 
+                           class="btn btn-sm btn-outline-success me-2"
+                           target="_blank">
+                            <i class="bi bi-search me-1"></i>Scan RTZ Files
+                        </a>
+                        <span class="badge bg-primary">
+                            <i class="bi bi-database me-1"></i>
+                            {{ routes|length }} Routes
+                        </span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {% if routes and routes|length > 0 %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Route</th>
+                                    <th>Origin</th>
+                                    <th>Destination</th>
+                                    <th>Distance (NM)</th>
+                                    <th>Waypoints</th>
+                                    <th>Source</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for route in routes %}
+                                <tr>
+                                    <td>
+                                        <strong class="d-block">{{ route.name|default('NCA Route') }}</strong>
+                                        <small class="text-muted d-block mt-1">{{ route.description|default('Official Kystverket corridor') }}</small>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25">
+                                            <i class="bi bi-geo-alt me-1"></i>{{ route.origin|default('Unknown') }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25">
+                                            <i class="bi bi-geo-alt-fill me-1"></i>{{ route.destination|default('Unknown') }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <strong class="d-block">{{ "%.1f"|format(route.total_distance_nm|default(0)) }}</strong>
+                                        <small class="text-muted">nautical miles</small>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info bg-opacity-10 text-info">
+                                            {{ route.waypoint_count|default(0) }} points
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <small class="d-flex align-items-center">
+                                            {% if route.source == 'NCA' %}
+                                            <i class="bi bi-shield-check me-1 text-success"></i>
+                                            Kystverket RTZ
+                                            {% else %}
+                                            <i class="bi bi-file-earmark-zip me-1"></i>
+                                            RTZ File
+                                            {% endif %}
+                                        </small>
+                                    </td>
+                                    <td>
+                                        {% if route.is_active is defined and route.is_active %}
+                                        <span class="badge bg-success">Active</span>
+                                        {% elif route.source == 'RTZ File' %}
+                                        <span class="badge bg-warning">File System</span>
+                                        {% else %}
+                                        <span class="badge bg-secondary">Inactive</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5">
+                        <div class="mb-3">
+                            <i class="bi bi-file-earmark-zip text-muted fs-1"></i>
+                        </div>
+                        <h5 class="text-muted">No RTZ Routes Found</h5>
+                        <p class="text-muted mb-3">
+                            No RTZ route data is currently available in the system.
+                        </p>
+                        <div class="alert alert-warning text-start">
+                            <small>
+                                <i class="bi bi-exclamation-triangle me-2"></i>
+                                <strong>Action Required:</strong>
+                                <ul class="mb-0 mt-2">
+                                    <li>Verify RTZ files exist in: <code>backend/assets/routeinfo_routes/</code></li>
+                                    <li>Run database migrations: <code>flask db upgrade</code></li>
+                                    <li>Click "Scan RTZ Files" button above</li>
+                                </ul>
+                            </small>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="card-footer">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <small class="text-muted">
+                                <i class="bi bi-info-circle me-1"></i>
+                                <strong>Data Sources:</strong> PostgreSQL Database • Kystverket RTZ Files • 
+                                <strong>Last Scan:</strong> <span id="data-timestamp">{{ timestamp }}</span>
+                            </small>
+                        </div>
+                        <div class="col-md-6 text-md-end">
+                            <small class="text-muted">
+                                <i class="bi bi-check-circle me-1 text-success"></i>
+                                {{ cities_with_routes|length }}/10 ports active
+                                <span class="ms-2">•</span>
+                                <i class="bi bi-hdd me-1"></i>
+                                {{ routes|length }} total routes
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- System Integration Info -->
+    <div class="row mt-4">
+        <div class="col-md-8">
+            <div class="alert alert-secondary">
+                <h6 class="alert-heading d-flex align-items-center">
+                    <i class="bi bi-diagram-3 me-2"></i>
+                    System Integration
+                </h6>
+                <small class="d-block mb-1">
+                    This system combines <strong>PostgreSQL database storage</strong> with 
+                    <strong>direct RTZ file discovery</strong> for maximum flexibility.
+                </small>
+                <small class="d-block">
+                    Routes are loaded from database if available, otherwise discovered directly from 
+                    <code>backend/assets/routeinfo_routes/</code> directory structure.
+                </small>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="alert alert-info">
+                <h6 class="alert-heading d-flex align-items-center">
+                    <i class="bi bi-lightbulb me-2"></i>
+                    Quick Actions
+                </h6>
+                <small class="d-block mb-1">To add more routes:</small>
+                <ol class="small mb-0 ps-3">
+                    <li>Add RTZ files to assets directory</li>
+                    <li>Click "Scan RTZ Files" button</li>
+                    <li>Run RTZ parser to save to DB</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Update timestamp display
+function updateDataTimestamp() {
+    const now = new Date();
+    const options = {
+        timeZone: 'Europe/Oslo',
+        hour: '2-digit',
+        minute: '2-digit',
+        day: 'numeric',
+        month: 'short'
+    };
+    const formatter = new Intl.DateTimeFormat('en-GB', options);
+    const timestampElement = document.getElementById('data-timestamp');
+    if (timestampElement) {
+        timestampElement.textContent = formatter.format(now);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    updateDataTimestamp();
+    
+    // Update timestamp every minute
+    setInterval(updateDataTimestamp, 60000);
+    
+    // Add click handlers for port status cards
+    document.querySelectorAll('.port-status-card').forEach(card => {
+        card.addEventListener('click', function() {
+            const portName = this.querySelector('h6').textContent.trim();
+            console.log('Port selected:', portName);
+            
+            // Filter table by this port
+            const rows = document.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                const origin = row.querySelector('td:nth-child(2)').textContent;
+                const destination = row.querySelector('td:nth-child(3)').textContent;
+                
+                if (origin.includes(portName) || destination.includes(portName)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    });
+    
+    // Add scan button functionality
+    const scanButton = document.querySelector('a[href*="scan-rtz"]');
+    if (scanButton) {
+        scanButton.addEventListener('click', function(e) {
+            if (!e.ctrlKey && !e.metaKey) {
+                e.preventDefault();
+                fetch(this.href)
+                    .then(response => response.json())
+                    .then(data => {
+                        alert(`Scanned ${data.cities_found} cities with RTZ files`);
+                        location.reload();
+                    })
+                    .catch(err => {
+                        console.error('Scan failed:', err);
+                        alert('Scan failed: ' + err.message);
+                    });
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

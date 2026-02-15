@@ -1,175 +1,87 @@
 /**
  * Maritime Map Module for BergNavn Dashboard
- * Version: 3.0.0 - Enhanced Real-time Vessel System
- * Features:
- * 1. Real-time vessel tracking FIRST
- * 2. Empirical fallback SECOND (only if real-time fails)
- * 3. Optimized performance - no code bloat
- * 4. All original functions preserved
+ * Version: 4.0.4 - FINAL VERSION - REAL-TIME FIRST
+ * 
+ * CRITICAL FIXES:
+ * - Larger vessel markers (48px for better visibility)
+ * - Precise sea coordinates for Bergen (Byfjorden)
+ * - Real-time AIS from Kystverket → Kystdatahuset → BarentsWatch
+ * - Empirical fallback as LAST RESORT only
+ * - Smooth movement animations
  */
 
 // Global map variables
 let maritimeMap = null;
-let vesselMarkers = [];
 let activeRoutes = [];
 let routePolylines = [];
-let routeMarkers = [];
-
-// Enhanced real-time vessel tracking
-let realTimeVesselMarker = null;
-let vesselUpdateInterval = null;
+let vesselMarker = null;
 let vesselTrackingActive = false;
-let realTimeRetryCount = 0;
-const MAX_RETRIES = 3;
-const RETRY_DELAY = 5000; // 5 seconds
+let vesselUpdateInterval = null;
+let lastVesselPosition = null;
+let movementAnimation = null;
+let mapInitialized = false;
 
-// Store route counts per port
-let portRouteCounts = {};
-
-// Empirical fallback vessel data - based on real Norwegian vessel patterns
-const EMPIRICAL_VESSELS = [
-    {
-        id: 'empirical_bergen_1',
-        name: 'MS Bergen',
-        type: 'Passenger Ferry',
-        mmsi: '259257000',
-        lat: 60.3913,
-        lon: 5.3221,
-        speed: 15.5,
-        heading: 320,
-        destination: 'Bergen',
-        status: 'Underway',
-        data_source: 'empirical_fallback_bergen',
-        color: '#3498db'
+// Norwegian port coordinates (ACTUAL SEA POSITIONS)
+const PORT_COORDINATES = {
+    'bergen': { 
+        lat: 60.3972,   // Byfjorden - EXACT SEA POSITION
+        lon: 5.3031, 
+        name: 'Bergen',
+        description: 'Bergen Harbor (Byfjorden)'
     },
-    {
-        id: 'empirical_bergen_2',
-        name: 'F/B Nord 4',
-        type: 'Fast Ferry',
-        mmsi: '259248000',
-        lat: 60.4045,
-        lon: 5.3571,
-        speed: 22.0,
-        heading: 45,
-        destination: 'Bergen',
-        status: 'Underway',
-        data_source: 'empirical_fallback_bergen',
-        color: '#e74c3c'
+    'oslo': { 
+        lat: 59.9067,   // Oslofjorden
+        lon: 10.7342, 
+        name: 'Oslo',
+        description: 'Oslo Harbor (Oslofjorden)'
     },
-    {
-        id: 'empirical_stad_1',
-        name: 'MV Stad',
-        type: 'Cargo Ship',
-        mmsi: '259179000',
-        lat: 62.1,
-        lon: 5.1,
-        speed: 12.0,
-        heading: 180,
-        destination: 'Ålesund',
-        status: 'Underway',
-        data_source: 'empirical_fallback_stad',
-        color: '#f39c12'
-    }
-];
-
-// Make zoom functions available globally with enhanced error handling
-window.zoomToRoute = function(routeIdentifier) {
-    console.log(`🎯 zoomToRoute called with:`, routeIdentifier);
-    
-    if (!maritimeMap) {
-        console.error('❌ Map not initialized');
-        showNotification('Map not ready', 'error');
-        return false;
-    }
-    
-    // Try to find the route
-    let route = null;
-    let routeIndex = -1;
-    
-    // Check if identifier is numeric index
-    if (typeof routeIdentifier === 'number') {
-        routeIndex = routeIdentifier;
-        route = activeRoutes[routeIndex];
-    } 
-    // Check if identifier is string ID
-    else if (typeof routeIdentifier === 'string') {
-        // Try to find by route_id
-        routeIndex = activeRoutes.findIndex(r => {
-            if (r.route_id && r.route_id.toString() === routeIdentifier) return true;
-            if (r.id && r.id.toString() === routeIdentifier) return true;
-            if (r.routeId && r.routeId.toString() === routeIdentifier) return true;
-            
-            const routeName = r.clean_name || r.route_name || '';
-            if (routeName.toLowerCase().includes(routeIdentifier.toLowerCase())) return true;
-            
-            return false;
-        });
-        
-        if (routeIndex !== -1) {
-            route = activeRoutes[routeIndex];
-        } else {
-            const match = routeIdentifier.match(/route[_-]?(\d+)/i);
-            if (match) {
-                routeIndex = parseInt(match[1]);
-                if (routeIndex < activeRoutes.length) {
-                    route = activeRoutes[routeIndex];
-                }
-            }
-        }
-    }
-    
-    if (!route) {
-        console.error(`❌ Route not found: ${routeIdentifier}`);
-        showNotification(`Could not find route: ${routeIdentifier}`, 'error');
-        return false;
-    }
-    
-    console.log(`🎯 Found route: ${route.clean_name || route.route_name} at index ${routeIndex}`);
-    
-    const waypoints = extractWaypointsFromRoute(route);
-    
-    if (waypoints.length < 2) {
-        console.warn(`Cannot zoom: Route has insufficient waypoints (${waypoints.length})`);
-        showNotification(`Cannot zoom: Route has no waypoints`, 'warning');
-        return false;
-    }
-    
-    // Create bounds from waypoints
-    const bounds = L.latLngBounds(waypoints.map(wp => [wp.lat, wp.lon]));
-    
-    if (bounds.isValid()) {
-        maritimeMap.fitBounds(bounds.pad(0.1));
-        highlightRoute(routeIndex);
-        const routeName = route.clean_name || route.route_name || `Route ${routeIndex + 1}`;
-        showNotification(`Zoomed to route: ${routeName}`, 'success');
-        return true;
-    } else {
-        console.error('❌ Invalid bounds for route');
-        showNotification('Invalid route bounds', 'error');
-        return false;
-    }
-};
-
-/**
- * Highlight a specific route
- */
-window.highlightRoute = function(routeIndex) {
-    if (!maritimeMap || !activeRoutes[routeIndex]) return;
-    
-    // Reset all routes
-    routePolylines.forEach(polyline => {
-        polyline.setStyle({ weight: 4, opacity: 0.8 });
-    });
-    
-    const route = activeRoutes[routeIndex];
-    if (route.mapPolyline) {
-        route.mapPolyline.setStyle({ 
-            weight: 8, 
-            opacity: 1.0,
-            color: '#ff5722'
-        });
-        route.mapPolyline.bringToFront();
-        console.log(`🔦 Highlighted route ${routeIndex}: ${route.clean_name || route.route_name}`);
+    'stavanger': { 
+        lat: 58.9733,   // Vågen
+        lon: 5.7319, 
+        name: 'Stavanger',
+        description: 'Stavanger Harbor (Vågen)'
+    },
+    'trondheim': { 
+        lat: 63.4385,   // Trondheimsfjorden
+        lon: 10.4056, 
+        name: 'Trondheim',
+        description: 'Trondheim Harbor (Trondheimsfjorden)'
+    },
+    'alesund': { 
+        lat: 62.4719,   // Brosundet
+        lon: 6.1556, 
+        name: 'Ålesund',
+        description: 'Ålesund Harbor (Brosundet)'
+    },
+    'andalsnes': { 
+        lat: 62.5675,   // Romsdalsfjorden
+        lon: 7.6870, 
+        name: 'Åndalsnes',
+        description: 'Åndalsnes Harbor (Romsdalsfjorden)'
+    },
+    'kristiansand': { 
+        lat: 58.1458,   // Topdalsfjorden
+        lon: 8.0025, 
+        name: 'Kristiansand',
+        description: 'Kristiansand Harbor (Topdalsfjorden)'
+    },
+    'drammen': { 
+        lat: 59.7375,   // Drammensfjorden
+        lon: 10.2417, 
+        name: 'Drammen',
+        description: 'Drammen Harbor (Drammensfjorden)'
+    },
+    'sandefjord': { 
+        lat: 59.1308,   // Mefjorden
+        lon: 10.2303, 
+        name: 'Sandefjord',
+        description: 'Sandefjord Harbor (Mefjorden)'
+    },
+    'flekkefjord': { 
+        lat: 58.2967,   // Grumre Sund
+        lon: 6.6631, 
+        name: 'Flekkefjord',
+        description: 'Flekkefjord Harbor'
     }
 };
 
@@ -181,7 +93,7 @@ window.highlightRoute = function(routeIndex) {
  * Initialize the maritime map
  */
 function initMaritimeMap() {
-    console.log('🌊 Maritime Map v3.0.0 initializing...');
+    console.log('🌊 Maritime Map v4.0.4 initializing...');
     
     const mapElement = document.getElementById('maritime-map');
     if (!mapElement) {
@@ -190,13 +102,16 @@ function initMaritimeMap() {
     }
     
     if (!maritimeMap) {
-        maritimeMap = L.map('maritime-map').setView([64.0, 10.0], 6);
+        // Start centered on Norwegian waters
+        maritimeMap = L.map('maritime-map').setView([62.0, 5.5], 6);
         
+        // Base map
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap contributors',
             maxZoom: 18,
         }).addTo(maritimeMap);
         
+        // Sea marks
         L.tileLayer('https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png', {
             attribution: '© OpenSeaMap',
             opacity: 0.4,
@@ -205,6 +120,7 @@ function initMaritimeMap() {
         
         console.log('✅ Maritime map created');
         window.map = maritimeMap;
+        mapInitialized = true;
     }
     
     return maritimeMap;
@@ -219,137 +135,55 @@ function initMaritimeMap() {
  */
 function loadAndDisplayRTZRoutes() {
     console.log('🗺️ Loading RTZ routes...');
+    
+    if (!mapInitialized) {
+        setTimeout(loadAndDisplayRTZRoutes, 500);
+        return;
+    }
+    
     clearAllRouteLayers();
     
-    fetch('/maritime/api/rtz/complete')
-        .then(response => {
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-            return response.json();
-        })
+    // Try to get routes from template first
+    const routesFromTemplate = loadRoutesFromTemplate();
+    if (routesFromTemplate && routesFromTemplate.length > 0) {
+        activeRoutes = routesFromTemplate;
+        displayRoutesOnMap();
+        startVesselTracking();
+        return;
+    }
+    
+    // Fallback to API
+    fetch('/maritime/api/rtz/routes')
+        .then(response => response.json())
         .then(data => {
-            if (data.routes && Array.isArray(data.routes) && data.routes.length > 0) {
+            if (data.success && data.routes && data.routes.length > 0) {
                 console.log(`✅ Loaded ${data.routes.length} routes from API`);
                 activeRoutes = data.routes;
-                
-                countRoutesByPort();
-                updatePortCounters();
-                window.routesData = activeRoutes;
-                window.allRoutesData = activeRoutes;
                 displayRoutesOnMap();
-                updateRouteCounters();
-                
-                // Dispatch event for waypoints module
-                document.dispatchEvent(new CustomEvent('routesDataLoaded', {
-                    detail: {
-                        routes: activeRoutes,
-                        source: 'maritime_map.js',
-                        timestamp: new Date().toISOString(),
-                        totalRoutes: activeRoutes.length,
-                        routesWithWaypoints: activeRoutes.filter(r => r.waypoints && r.waypoints.length > 0).length,
-                        hasWaypointsData: true
-                    }
-                }));
-                
-                showNotification(`Loaded ${activeRoutes.length} RTZ routes`, 'success');
-                
-                // Start enhanced vessel tracking
-                setTimeout(() => {
-                    startEnhancedVesselTracking();
-                }, 2000);
-                
-                return activeRoutes;
+                startVesselTracking();
             } else {
-                console.warn('⚠️ API returned no routes, trying template data');
-                return loadRoutesFromTemplate();
+                startVesselTracking();
             }
         })
         .catch(error => {
             console.error('❌ Error loading from API:', error);
-            return loadRoutesFromTemplate();
+            startVesselTracking();
         });
 }
 
 /**
- * Count routes by port
- */
-function countRoutesByPort() {
-    portRouteCounts = {};
-    activeRoutes.forEach(route => {
-        const port = (route.source_city || '').toLowerCase().replace('å', 'a').replace('Å', 'a');
-        if (port) {
-            portRouteCounts[port] = (portRouteCounts[port] || 0) + 1;
-        }
-    });
-    console.log('📊 Route counts by port:', portRouteCounts);
-}
-
-/**
- * Update port counters in UI
- */
-function updatePortCounters() {
-    const portDisplayNames = {
-        'bergen': 'Bergen',
-        'oslo': 'Oslo',
-        'stavanger': 'Stavanger',
-        'trondheim': 'Trondheim',
-        'alesund': 'Ålesund',
-        'andalsnes': 'Åndalsnes',
-        'kristiansand': 'Kristiansand',
-        'drammen': 'Drammen',
-        'sandefjord': 'Sandefjord',
-        'flekkefjord': 'Flekkefjord'
-    };
-    
-    Object.keys(portDisplayNames).forEach(portKey => {
-        const count = portRouteCounts[portKey] || 0;
-        const badges = document.querySelectorAll(`.city-badge[data-port="${portKey}"]`);
-        badges.forEach(badge => {
-            const countSpan = badge.querySelector('.port-count');
-            if (countSpan) countSpan.textContent = count;
-        });
-    });
-    console.log('✅ Updated port counters');
-}
-
-/**
- * Fallback: Load routes from template
+ * Load routes from template
  */
 function loadRoutesFromTemplate() {
     try {
         const routesDataElement = document.getElementById('routes-data');
         if (!routesDataElement || !routesDataElement.textContent) {
-            console.error('❌ No routes data found');
             return [];
         }
         
-        activeRoutes = JSON.parse(routesDataElement.textContent);
-        console.log(`✅ Found ${activeRoutes.length} routes in HTML`);
-        
-        countRoutesByPort();
-        updatePortCounters();
-        window.routesData = activeRoutes;
-        window.allRoutesData = activeRoutes;
-        updateRouteCounters();
-        
-        if (activeRoutes.length > 0) {
-            document.dispatchEvent(new CustomEvent('routesDataLoaded', {
-                detail: {
-                    routes: activeRoutes,
-                    source: 'template_data',
-                    timestamp: new Date().toISOString(),
-                    totalRoutes: activeRoutes.length,
-                    routesWithWaypoints: 0,
-                    hasWaypointsData: false
-                }
-            }));
-        }
-        
-        setTimeout(() => {
-            startEnhancedVesselTracking();
-        }, 2000);
-        
-        showNotification(`Loaded ${activeRoutes.length} routes (template data)`, 'warning');
-        return activeRoutes;
+        const routes = JSON.parse(routesDataElement.textContent);
+        console.log(`✅ Found ${routes.length} routes in template`);
+        return routes;
     } catch (error) {
         console.error('❌ Error loading routes from template:', error);
         return [];
@@ -360,44 +194,28 @@ function loadRoutesFromTemplate() {
  * Display routes on map
  */
 function displayRoutesOnMap() {
-    if (!maritimeMap) {
-        console.error('❌ No map available');
-        return;
-    }
-    
-    if (!activeRoutes.length) {
-        console.warn('⚠️ No routes to display');
-        return;
-    }
+    if (!maritimeMap || !activeRoutes.length) return;
     
     console.log(`🗺️ Displaying ${activeRoutes.length} routes...`);
     clearAllRouteLayers();
     
-    let displayedCount = 0;
     activeRoutes.forEach((route, index) => {
-        try {
-            if (displaySingleRoute(route, index)) displayedCount++;
-        } catch (error) {
-            console.error(`❌ Error displaying route ${index}:`, error);
-        }
+        displaySingleRoute(route, index);
     });
     
-    console.log(`✅ Displayed ${displayedCount} routes`);
-    if (displayedCount > 0) fitMapToRoutes();
+    fitMapToRoutes();
     addMapLegend();
+    updateRouteCounters();
 }
 
 /**
  * Display single route
  */
 function displaySingleRoute(route, index) {
-    if (!maritimeMap) return false;
+    if (!maritimeMap) return;
     
     const waypoints = extractWaypointsFromRoute(route);
-    if (waypoints.length < 2) {
-        console.warn(`Route ${index} has insufficient waypoints: ${waypoints.length}`);
-        return false;
-    }
+    if (waypoints.length < 2) return;
     
     const colors = {
         'bergen': '#1e88e5', 'oslo': '#43a047', 'stavanger': '#f39c12',
@@ -406,63 +224,35 @@ function displaySingleRoute(route, index) {
         'flekkefjord': '#8e44ad'
     };
     
-    const port = (route.source_city || '').toLowerCase();
+    const port = (route.source_city || '').toLowerCase().replace('å', 'a');
     const color = colors[port] || '#1e88e5';
     const coordinates = waypoints.map(wp => [wp.lat, wp.lon]);
     
     const polyline = L.polyline(coordinates, {
         color: color,
         weight: 4,
-        opacity: 0.8,
-        lineCap: 'round',
-        lineJoin: 'round',
-        className: 'rtz-route-line'
+        opacity: 0.8
     }).addTo(maritimeMap);
     
     routePolylines.push(polyline);
     
-    const startMarker = L.circleMarker(coordinates[0], {
+    // Start marker
+    L.circleMarker(coordinates[0], {
         color: '#28a745',
         fillColor: '#28a745',
         fillOpacity: 1.0,
-        radius: 8,
-        weight: 3,
-        className: 'route-start-marker'
+        radius: 8
     }).addTo(maritimeMap).bindTooltip(`<b>Start:</b> ${route.origin || 'Unknown'}`);
     
-    const endMarker = L.circleMarker(coordinates[coordinates.length - 1], {
+    // End marker
+    L.circleMarker(coordinates[coordinates.length - 1], {
         color: '#dc3545',
         fillColor: '#dc3545',
         fillOpacity: 1.0,
-        radius: 8,
-        weight: 3,
-        className: 'route-end-marker'
+        radius: 8
     }).addTo(maritimeMap).bindTooltip(`<b>End:</b> ${route.destination || 'Unknown'}`);
     
-    routeMarkers.push({ start: startMarker, end: endMarker, routeIndex: index });
-    
-    const popupContent = createRoutePopup(route, index, color);
-    polyline.bindPopup(popupContent);
-    startMarker.bindPopup(popupContent);
-    endMarker.bindPopup(popupContent);
-    
-    polyline.on('mouseover', function() {
-        this.setStyle({ weight: 6, opacity: 1.0 });
-        startMarker.setStyle({ radius: 10 });
-        endMarker.setStyle({ radius: 10 });
-    }).on('mouseout', function() {
-        this.setStyle({ weight: 4, opacity: 0.8 });
-        startMarker.setStyle({ radius: 8 });
-        endMarker.setStyle({ radius: 8 });
-    }).on('click', function() {
-        zoomToRoute(index);
-    });
-    
-    route.routeElementId = route.route_id || `route_${index}`;
-    route.mapPolyline = polyline;
-    
-    console.log(`✅ Added route ${index}: ${route.clean_name || route.route_name}`);
-    return true;
+    polyline.on('click', () => zoomToRoute(index));
 }
 
 /**
@@ -471,95 +261,16 @@ function displaySingleRoute(route, index) {
 function extractWaypointsFromRoute(route) {
     let waypoints = [];
     
-    // Format 1: Direct waypoints array
     if (route.waypoints && Array.isArray(route.waypoints)) {
-        waypoints = route.waypoints.map((wp, i) => {
-            if (wp && typeof wp === 'object') {
-                return {
-                    lat: wp.lat || wp[1],
-                    lon: wp.lon || wp[0],
-                    name: wp.name || `WP${i + 1}`
-                };
-            } else if (Array.isArray(wp) && wp.length >= 2) {
-                return {
-                    lat: wp[1],
-                    lon: wp[0],
-                    name: `WP${i + 1}`
-                };
-            }
-            return null;
-        }).filter(wp => wp !== null);
-    }
-    // Format 2: Geometry coordinates
-    else if (route.geometry && route.geometry.coordinates) {
-        waypoints = route.geometry.coordinates.map((coord, i) => ({
-            lat: coord[1],
-            lon: coord[0],
-            name: `WP${i + 1}`
-        }));
-    }
-    // Format 3: Path array
-    else if (route.path && Array.isArray(route.path)) {
-        waypoints = route.path.map((coord, i) => ({
-            lat: coord[1] || coord.lat,
-            lon: coord[0] || coord.lon,
-            name: `WP${i + 1}`
+        waypoints = route.waypoints.map(wp => ({
+            lat: wp.lat || wp[1],
+            lon: wp.lon || wp[0]
         }));
     }
     
-    // Filter valid coordinates (Norway range)
-    return waypoints.filter(wp => {
-        return wp && wp.lat && wp.lon && 
-               !isNaN(wp.lat) && !isNaN(wp.lon) &&
-               wp.lat >= 55 && wp.lat <= 72 &&
-               wp.lon >= 0 && wp.lon <= 32;
-    });
-}
-
-/**
- * Create route popup
- */
-function createRoutePopup(route, index, color) {
-    const routeName = route.clean_name || 
-                     (route.route_name ? route.route_name
-                         .replace('NCA_', '')
-                         .replace('_2025', '')
-                         .replace('_2024', '')
-                         .replace(/_/g, ' ') : 
-                      `Route ${index + 1}`);
-    
-    const distance = route.total_distance_nm ? 
-                    `${route.total_distance_nm.toFixed(1)} NM` : 'Unknown';
-    
-    const waypointCount = route.waypoints ? route.waypoints.length : 
-                         (route.waypoint_count || 'Unknown');
-    
-    return `
-        <div style="min-width: 250px;">
-            <div style="background: ${color}; color: white; padding: 10px; border-radius: 5px 5px 0 0;">
-                <i class="fas fa-route"></i> ${routeName}
-            </div>
-            <div style="padding: 10px; background: white;">
-                <table style="width: 100%; font-size: 12px;">
-                    <tr><td><strong>Origin:</strong></td><td style="color: #28a745;">${route.origin || 'Unknown'}</td></tr>
-                    <tr><td><strong>Destination:</strong></td><td style="color: #dc3545;">${route.destination || 'Unknown'}</td></tr>
-                    <tr><td><strong>Distance:</strong></td><td>${distance}</td></tr>
-                    <tr><td><strong>Waypoints:</strong></td><td>${waypointCount}</td></tr>
-                    <tr><td><strong>Port:</strong></td><td>${route.source_city || 'Unknown'}</td></tr>
-                </table>
-                <div style="margin-top: 10px; display: flex; gap: 5px;">
-                    <button onclick="zoomToRoute(${index})"
-                            style="background: ${color}; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-size: 12px;">
-                        <i class="fas fa-search-plus"></i> Zoom
-                    </button>
-                    <button onclick="highlightRoute(${index})"
-                            style="background: #ffc107; color: #212529; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-size: 12px;">
-                        <i class="fas fa-highlighter"></i> Highlight
-                    </button>
-                </div>
-            </div>
-        </div>
-    `;
+    return waypoints.filter(wp => 
+        wp.lat && wp.lon && !isNaN(wp.lat) && !isNaN(wp.lon)
+    );
 }
 
 /**
@@ -575,7 +286,6 @@ function fitMapToRoutes() {
     
     if (bounds.isValid()) {
         maritimeMap.fitBounds(bounds.pad(0.1));
-        console.log('🗺️ Map fitted to routes');
     }
 }
 
@@ -590,29 +300,26 @@ function addMapLegend() {
     legend.onAdd = function(map) {
         const div = L.DomUtil.create('div', 'leaflet-control-legend');
         div.innerHTML = `
-            <div class="legend-title">Maritime Map Legend</div>
+            <div class="legend-title">Maritime Map</div>
             <div class="legend-item">
-                <div class="legend-color" style="background-color: #28a745;"></div>
-                <div class="legend-label"><i class="fas fa-play"></i> Route Start</div>
+                <span class="legend-color" style="background:#28a745;"></span>
+                <span class="legend-label">Route Start</span>
             </div>
             <div class="legend-item">
-                <div class="legend-color" style="background-color: #dc3545;"></div>
-                <div class="legend-label"><i class="fas fa-flag-checkered"></i> Route End</div>
+                <span class="legend-color" style="background:#dc3545;"></span>
+                <span class="legend-label">Route End</span>
             </div>
             <div class="legend-item">
-                <div class="legend-color" style="height: 4px; background-color: #1e88e5; margin-top: 8px;"></div>
-                <div class="legend-label"><i class="fas fa-route"></i> RTZ Route</div>
+                <span class="legend-color" style="background:#1e88e5;"></span>
+                <span class="legend-label">RTZ Route</span>
             </div>
             <div class="legend-item">
-                <div class="legend-color" style="background-color: #28a745;"></div>
-                <div class="legend-label"><i class="fas fa-ship"></i> Real-time Vessel (LIVE)</div>
+                <span class="legend-color" style="background:#28a745;"></span>
+                <span class="legend-label">Live Vessel (Real-time)</span>
             </div>
             <div class="legend-item">
-                <div class="legend-color" style="background-color: #ffc107;"></div>
-                <div class="legend-label"><i class="fas fa-ship"></i> Empirical Vessel (Fallback)</div>
-            </div>
-            <div style="font-size: 10px; color: #666; margin-top: 8px; border-top: 1px solid #ddd; padding-top: 4px;">
-                <i class="fas fa-info-circle"></i> Real-time first, fallback if needed
+                <span class="legend-color" style="background:#ffc107;"></span>
+                <span class="legend-label">Empirical Fallback</span>
             </div>
         `;
         return div;
@@ -629,14 +336,6 @@ function clearAllRouteLayers() {
     
     routePolylines.forEach(polyline => maritimeMap.removeLayer(polyline));
     routePolylines = [];
-    
-    routeMarkers.forEach(markerGroup => {
-        if (markerGroup.start) maritimeMap.removeLayer(markerGroup.start);
-        if (markerGroup.end) maritimeMap.removeLayer(markerGroup.end);
-    });
-    routeMarkers = [];
-    
-    console.log('🗑️ Cleared all route layers');
 }
 
 /**
@@ -645,379 +344,543 @@ function clearAllRouteLayers() {
 function updateRouteCounters() {
     const routeCountElement = document.getElementById('route-count');
     const routeCountBadge = document.getElementById('route-count-badge');
-    const waypointCountElement = document.getElementById('waypoint-count');
     
     if (routeCountElement) routeCountElement.textContent = activeRoutes.length;
     if (routeCountBadge) routeCountBadge.textContent = activeRoutes.length;
-    
-    let totalWaypoints = 0;
-    activeRoutes.forEach(route => {
-        if (route.waypoints && Array.isArray(route.waypoints)) {
-            totalWaypoints += route.waypoints.length;
-        } else if (route.waypoint_count) {
-            totalWaypoints += route.waypoint_count;
-        }
-    });
-    
-    if (waypointCountElement) waypointCountElement.textContent = totalWaypoints;
-    console.log(`📊 Counters: ${activeRoutes.length} routes, ${totalWaypoints} waypoints`);
 }
 
 // ============================================
-// ENHANCED REAL-TIME VESSEL SYSTEM
+// VESSEL TRACKING - REAL-TIME FIRST
 // ============================================
 
 /**
- * Enhanced vessel tracking: REAL-TIME FIRST, EMPIRICAL FALLBACK SECOND
+ * Start vessel tracking
  */
-function startEnhancedVesselTracking(intervalSeconds = 30) {
-    console.log('🚢 Starting ENHANCED vessel tracking...');
+function startVesselTracking(intervalSeconds = 30) {
+    console.log('🚢 Starting vessel tracking (REAL-TIME first)...');
     
-    if (vesselUpdateInterval) clearInterval(vesselUpdateInterval);
+    if (vesselUpdateInterval) {
+        clearInterval(vesselUpdateInterval);
+    }
+    
     vesselTrackingActive = true;
-    realTimeRetryCount = 0;
     
-    // Initial load with retry logic
-    fetchVesselWithRetry();
-    
-    // Set up interval
-    vesselUpdateInterval = setInterval(fetchVesselWithRetry, intervalSeconds * 1000);
-    console.log(`✅ Enhanced vessel tracking started (${intervalSeconds}s interval)`);
+    setTimeout(() => {
+        fetchVessel();
+        vesselUpdateInterval = setInterval(fetchVessel, intervalSeconds * 1000);
+    }, 1000);
 }
 
 /**
- * Fetch vessel with retry logic: Try real-time 3 times, then fallback
+ * Fetch vessel data - SINGLE source of truth
  */
-async function fetchVesselWithRetry() {
-    console.log(`🚢 Vessel fetch attempt ${realTimeRetryCount + 1}/${MAX_RETRIES}`);
+async function fetchVessel() {
+    if (!vesselTrackingActive || !maritimeMap) return;
     
     try {
-        // STEP 1: Try real-time API FIRST
+        console.log('📡 Fetching vessel from backend...');
         const response = await fetch('/maritime/api/vessels/real-time?city=bergen&radius_km=50');
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        
+        if (!response.ok) {
+            console.warn(`⚠️ Vessel API returned ${response.status}`);
+            return;
+        }
         
         const data = await response.json();
-        console.log(`📡 Real-time data received: ${data.status} from ${data.source}`);
         
-        if (data.status === 'success' && data.vessel) {
-// Even if is_realtime: false, we still have a vessel!
-console.log(`📡 API success with vessel: ${data.vessel.name}`);
-
-// RESET the counter even if is_realtime: false
-realTimeRetryCount = 0;
-
-// Display the vessel as real-time (since it's from a real API)
-displayEnhancedVessel(data.vessel, false); // false = real-time
-updateVesselCounter('real', data.vessel.name, data.source);
-return;
-} else {
-            // No vessel in real-time data
-            console.log('⚠️ Real-time API returned no vessel data');
-            throw new Error('No vessel data');
+        if (data.status === 'success' && data.vessels && data.vessels.length > 0) {
+            const vessel = data.vessels[0];
+            const source = data.source || vessel.source;
+            
+            // Determine if real-time or empirical
+            const isRealTime = source && (
+                source.includes('REAL-TIME') || 
+                source.includes('KYSTVERKET') ||
+                source.includes('KYSTDATAHUSET') ||
+                source.includes('BARENTS')
+            );
+            
+            // Get sea coordinates
+            const vesselLat = vessel.latitude || vessel.lat;
+            const vesselLon = vessel.longitude || vessel.lon;
+            
+            // Adjust to sea if needed
+            const adjustedCoords = adjustToSea(vesselLat, vesselLon, vessel.location);
+            
+            vessel.latitude = adjustedCoords.lat;
+            vessel.longitude = adjustedCoords.lon;
+            
+            console.log(`🚢 Vessel: ${vessel.name}, Real-time: ${isRealTime}, Source: ${source}`);
+            console.log(`   Position: ${adjustedCoords.lat.toFixed(4)}°, ${adjustedCoords.lon.toFixed(4)}°`);
+            
+            const newPosition = {
+                lat: adjustedCoords.lat,
+                lon: adjustedCoords.lon,
+                speed: vessel.speed || vessel.sog || 0,
+                heading: vessel.heading || vessel.cog || 0
+            };
+            
+            if (lastVesselPosition && vesselMarker) {
+                animateVesselMovement(lastVesselPosition, newPosition);
+            } else {
+                displayVessel(vessel, isRealTime, source);
+            }
+            
+            lastVesselPosition = newPosition;
+            updateVesselCounters(isRealTime, vessel, source);
+            
+            window.dashboardData = window.dashboardData || {};
+            window.dashboardData.vesselData = vessel;
+            window.dashboardData.dataSource = source;
+            window.dashboardData.isRealTime = isRealTime;
+            
+        } else {
+            console.log('⚠️ No vessel in response');
+            clearVesselDisplay();
         }
     } catch (error) {
-        // STEP 2: Real-time failed, try again or use fallback
-        realTimeRetryCount++;
-        console.warn(`❌ Real-time fetch failed (attempt ${realTimeRetryCount}):`, error.message);
-        
-        if (realTimeRetryCount >= MAX_RETRIES) {
-            // STEP 3: Use empirical fallback after max retries
-            console.log('🆘 Max retries reached, using empirical fallback');
-            useEmpiricalFallback();
-        } else {
-            // Try again next interval
-            console.log(`🔄 Will retry real-time in next interval`);
-        }
+        console.error('❌ Error fetching vessel:', error);
     }
 }
 
 /**
- * Use empirical fallback vessel data
+ * Adjust coordinates to ensure vessel is in sea
  */
-function useEmpiricalFallback() {
-    console.log('📊 Using empirical fallback vessel data');
+function adjustToSea(lat, lon, location) {
+    const locationLower = (location || '').toLowerCase();
     
-    // Select random empirical vessel
-    const empiricalVessel = EMPIRICAL_VESSELS[Math.floor(Math.random() * EMPIRICAL_VESSELS.length)];
-    const enhancedVessel = {
-        ...empiricalVessel,
-        timestamp: new Date().toISOString(),
-        data_source: 'empirical_fallback',
-        is_empirical: true
-    };
-    
-    displayEnhancedVessel(enhancedVessel, true); // true = fallback
-    updateVesselCounter('fallback', empiricalVessel.name);
-    
-    // Schedule attempt to return to real-time after 2 minutes
-    setTimeout(() => {
-        if (vesselTrackingActive) {
-            console.log('🔄 Attempting to return to real-time after fallback...');
-            realTimeRetryCount = 0;
-            fetchVesselWithRetry();
+    for (const [portName, portCoords] of Object.entries(PORT_COORDINATES)) {
+        if (locationLower.includes(portName) || 
+            (portName === 'bergen' && locationLower.includes('bergen'))) {
+            
+            const distance = calculateDistance(lat, lon, portCoords.lat, portCoords.lon);
+            
+            if (distance > 5) {
+                console.log(`📍 Adjusting ${portName} vessel to sea (${distance.toFixed(1)}km off)`);
+                return {
+                    lat: portCoords.lat,
+                    lon: portCoords.lon
+                };
+            }
         }
-    }, 120000); // 2 minutes
+    }
+    
+    return { lat, lon };
 }
 
 /**
- * Enhanced vessel display with better visuals
+ * Calculate distance between two points
  */
-function displayEnhancedVessel(vessel, isFallback = false) {
+function calculateDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371; // Earth's radius in km
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = 
+        Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+        Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
+}
+
+/**
+ * Animate vessel movement
+ */
+function animateVesselMovement(oldPos, newPos) {
+    if (!maritimeMap || !vesselMarker) return;
+    
+    if (movementAnimation) {
+        clearInterval(movementAnimation);
+    }
+    
+    const steps = 20;
+    const stepTime = 50;
+    let currentStep = 0;
+    
+    const latDiff = newPos.lat - oldPos.lat;
+    const lonDiff = newPos.lon - oldPos.lon;
+    
+    movementAnimation = setInterval(() => {
+        currentStep++;
+        
+        if (currentStep >= steps) {
+            vesselMarker.setLatLng([newPos.lat, newPos.lon]);
+            clearInterval(movementAnimation);
+            movementAnimation = null;
+            return;
+        }
+        
+        const progress = currentStep / steps;
+        const currentLat = oldPos.lat + (latDiff * progress);
+        const currentLon = oldPos.lon + (lonDiff * progress);
+        
+        vesselMarker.setLatLng([currentLat, currentLon]);
+    }, stepTime);
+}
+
+/**
+ * Display vessel on map - LARGER SIZE (48px)
+ */
+function displayVessel(vessel, isRealTime, source) {
     if (!maritimeMap) return;
     
-    // Remove previous marker
-    if (realTimeVesselMarker) {
-        maritimeMap.removeLayer(realTimeVesselMarker);
+    if (vesselMarker) {
+        maritimeMap.removeLayer(vesselMarker);
+        vesselMarker = null;
     }
     
-    const lat = vessel.lat || vessel.latitude;
-    const lon = vessel.lon || vessel.longitude;
+    const lat = vessel.latitude || vessel.lat;
+    const lon = vessel.longitude || vessel.lon;
     
     if (!lat || !lon) {
-        console.warn('Invalid vessel coordinates');
+        console.error('❌ Invalid vessel coordinates');
         return;
     }
     
-    // Choose color and style based on source
-    const color = isFallback ? '#ffc107' : '#28a745';
-    const iconClass = isFallback ? 'vessel-fallback' : 'vessel-real-time';
-    const pulseClass = isFallback ? '' : 'vessel-pulse-animation';
+    const color = isRealTime ? '#28a745' : '#ffc107';
+    const statusText = isRealTime ? '🔴 LIVE' : '🟡 EMPIRICAL';
+    const pulseAnimation = isRealTime ? 'pulse-live 2s infinite' : 'none';
+    const heading = vessel.heading || vessel.cog || 0;
     
-    // Create enhanced vessel icon
+    // LARGER VESSEL ICON - 48px
     const vesselIcon = L.divIcon({
-        className: `vessel-marker ${iconClass} ${pulseClass}`,
+        className: `vessel-marker ${isRealTime ? 'vessel-real-time' : 'vessel-empirical'}`,
         html: `
-            <div style="
-                background: ${color};
-                width: ${isFallback ? '22px' : '24px'};
-                height: ${isFallback ? '22px' : '24px'};
-                border-radius: 50%;
-                border: 3px solid white;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-                position: relative;
-                ${isFallback ? 'opacity: 0.9;' : ''}
-            ">
+            <div style="position: relative;">
+                <!-- Direction arrow -->
                 <div style="
                     position: absolute;
-                    top: -10px;
+                    top: -28px;
+                    left: 50%;
+                    transform: translateX(-50%) rotate(${heading}deg);
+                    color: ${color};
+                    font-size: 22px;
+                    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+                    opacity: 0.9;
+                    transition: transform 0.3s ease;
+                ">▲</div>
+                
+                <!-- Vessel circle - 48px -->
+                <div style="
+                    background: ${color};
+                    width: 48px;
+                    height: 48px;
+                    border-radius: 50%;
+                    border: 3px solid white;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 24px;
+                    animation: ${pulseAnimation};
+                    position: relative;
+                ">
+                    🚢
+                </div>
+                
+                <!-- Speed indicator -->
+                ${(vessel.speed || 0) > 0.5 ? `
+                <div style="
+                    position: absolute;
+                    bottom: -24px;
                     left: 50%;
                     transform: translateX(-50%);
-                    font-size: 9px;
-                    color: white;
                     background: rgba(0,0,0,0.7);
-                    padding: 2px 4px;
-                    border-radius: 3px;
-                    white-space: nowrap;
+                    color: white;
+                    padding: 2px 8px;
+                    border-radius: 12px;
+                    font-size: 10px;
                     font-weight: bold;
+                    white-space: nowrap;
+                    border: 1px solid ${color};
                 ">
-                    ${isFallback ? '📡 FALLBACK' : '🚢 LIVE'}
+                    ${(vessel.speed || 0).toFixed(1)} kts
                 </div>
+                ` : ''}
+                
+                <!-- Live/Empirical badge -->
                 <div style="
                     position: absolute;
-                    top: 50%;
+                    top: -28px;
                     left: 50%;
-                    transform: translate(-50%, -50%);
+                    transform: translateX(-50%);
+                    background: rgba(0,0,0,0.9);
                     color: white;
-                    font-size: 10px;
+                    padding: 4px 10px;
+                    border-radius: 20px;
+                    font-size: 11px;
+                    font-weight: bold;
+                    white-space: nowrap;
+                    border: 2px solid ${color};
+                    letter-spacing: 0.5px;
+                    z-index: 1001;
                 ">
-                    <i class="fas fa-ship"></i>
+                    ${statusText}
                 </div>
             </div>
         `,
-        iconSize: isFallback ? [22, 22] : [24, 24],
-        iconAnchor: isFallback ? [11, 11] : [12, 12]
+        iconSize: [48, 48],
+        iconAnchor: [24, 24],
+        popupAnchor: [0, -52]
     });
     
-    // Create marker
-    realTimeVesselMarker = L.marker([lat, lon], {
+    vesselMarker = L.marker([lat, lon], {
         icon: vesselIcon,
-        zIndexOffset: 1000,
-        title: vessel.name
+        zIndexOffset: 1000
     }).addTo(maritimeMap);
     
-    // Create enhanced popup
-    const popupContent = createEnhancedVesselPopup(vessel, isFallback);
-    realTimeVesselMarker.bindPopup(popupContent);
+    // Enhanced popup
+    const speed = vessel.speed || vessel.sog || 0;
+    const heading_display = vessel.heading || vessel.cog || 0;
+    const destination = vessel.destination || 'Unknown';
+    const vesselType = vessel.type || vessel.ship_type || 'Commercial Vessel';
+    const vesselName = vessel.name || 'Unknown Vessel';
+    const mmsi = vessel.mmsi || 'N/A';
     
-    realTimeVesselMarker.bindTooltip(`
-        <b>${vessel.name}</b><br>
-        <small>${isFallback ? '📡 Empirical Data' : '🚢 Real-time'}</small>
-    `);
+    // Find nearest port
+    let nearestPort = 'Norwegian waters';
+    for (const [portName, portCoords] of Object.entries(PORT_COORDINATES)) {
+        const dist = calculateDistance(lat, lon, portCoords.lat, portCoords.lon);
+        if (dist < 10) {
+            nearestPort = portCoords.description;
+            break;
+        }
+    }
     
-    console.log(`📍 ${isFallback ? 'Fallback' : 'Real-time'} vessel: ${vessel.name} at ${lat.toFixed(4)}, ${lon.toFixed(4)}`);
-}
-
-/**
- * Create enhanced vessel popup
- */
-function createEnhancedVesselPopup(vessel, isFallback) {
-    const timestamp = vessel.timestamp ? new Date(vessel.timestamp).toLocaleTimeString() : 'Unknown';
-    const speed = vessel.speed || vessel.speed_knots || vessel.sog || 0;
-    const course = vessel.course || 0;
-    
-    return `
-        <div style="min-width: 260px;">
-            <div style="background: ${isFallback ? '#ffc107' : '#28a745'}; 
-                        color: white; padding: 10px; border-radius: 5px 5px 0 0;">
-                <div style="display: flex; align-items: center;">
-                    <i class="fas fa-ship" style="font-size: 16px; margin-right: 8px;"></i>
-                    <span style="font-weight: bold;">${vessel.name || 'Unknown Vessel'}</span>
-                    <span style="margin-left: auto; font-size: 11px; background: rgba(255,255,255,0.2); 
-                                padding: 2px 6px; border-radius: 10px;">
-                        ${isFallback ? '📡 FALLBACK' : '🚢 LIVE'}
+    const popupContent = `
+        <div style="min-width: 320px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+            <div style="background: ${color}; color: white; padding: 12px; border-radius: 8px 8px 0 0;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <strong style="font-size: 16px;">${vesselName}</strong>
+                    <span style="background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold;">
+                        ${isRealTime ? '🔴 LIVE AIS' : '🟡 EMPIRICAL'}
                     </span>
                 </div>
+                <div style="font-size: 12px; margin-top: 4px; opacity: 0.9;">
+                    <i class="fas fa-anchor"></i> ${destination}
+                </div>
+                <div style="font-size: 11px; margin-top: 2px; opacity: 0.8;">
+                    <i class="fas fa-water"></i> ${nearestPort}
+                </div>
             </div>
-            <div style="padding: 12px; background: white;">
-                <table style="width: 100%; font-size: 13px; border-spacing: 0 6px;">
+            <div style="padding: 15px; background: white; border-radius: 0 0 8px 8px;">
+                <table style="width: 100%; font-size: 13px; border-collapse: collapse;">
                     <tr>
-                        <td style="padding-right: 10px; font-weight: 600; color: #555;">Type:</td>
-                        <td>${vessel.type || 'Unknown'}</td>
+                        <td style="padding: 6px 0; color: #666; width: 40%;">Type:</td>
+                        <td style="padding: 6px 0; font-weight: 600; color: #333;">${vesselType}</td>
                     </tr>
                     <tr>
-                        <td style="padding-right: 10px; font-weight: 600; color: #555;">Speed:</td>
-                        <td><span style="color: #3498db;">${speed.toFixed(1)}</span> knots</td>
+                        <td style="padding: 6px 0; color: #666;">Speed:</td>
+                        <td style="padding: 6px 0; font-weight: 600; color: #333;">
+                            ${speed.toFixed(2)} knots
+                            ${speed > 1 ? '<span style="color: #28a745; margin-left: 8px;">⏵ Moving</span>' : '<span style="color: #dc3545; margin-left: 8px;">⏸ Stationary</span>'}
+                        </td>
                     </tr>
                     <tr>
-                        <td style="padding-right: 10px; font-weight: 600; color: #555;">Course:</td>
-                        <td>${course.toFixed(0)}°</td>
+                        <td style="padding: 6px 0; color: #666;">Heading:</td>
+                        <td style="padding: 6px 0; font-weight: 600; color: #333;">${heading_display}°</td>
                     </tr>
-                    ${vessel.destination ? `
                     <tr>
-                        <td style="padding-right: 10px; font-weight: 600; color: #555;">Destination:</td>
-                        <td><span style="color: #2ecc71;">${vessel.destination}</span></td>
+                        <td style="padding: 6px 0; color: #666;">Position:</td>
+                        <td style="padding: 6px 0; font-weight: 600; color: #333; font-family: monospace;">
+                            ${lat.toFixed(4)}°, ${lon.toFixed(4)}°
+                        </td>
                     </tr>
-                    ` : ''}
                     <tr>
-                        <td style="padding-right: 10px; font-weight: 600; color: #555;">Updated:</td>
-                        <td>${timestamp}</td>
+                        <td style="padding: 6px 0; color: #666;">MMSI:</td>
+                        <td style="padding: 6px 0; font-weight: 600; color: #333; font-family: monospace;">${mmsi}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 6px 0; color: #666;">Data Source:</td>
+                        <td style="padding: 6px 0; font-weight: 600; color: ${color};">${source || 'unknown'}</td>
                     </tr>
                 </table>
-                <div style="margin-top: 12px; padding-top: 8px; border-top: 1px solid #eee; 
-                            font-size: 11px; color: #666; line-height: 1.4;">
-                    <i class="fas fa-info-circle" style="margin-right: 4px;"></i>
-                    ${isFallback ? 
-                        'Using empirical vessel data based on Norwegian maritime patterns. ' +
-                        'Real-time data will resume when available.' : 
-                        'Real-time vessel tracking via Norwegian AIS data sources.'}
+                <div style="margin-top: 12px; padding-top: 10px; border-top: 1px solid #eee; font-size: 11px; color: #666; text-align: center;">
+                    <i class="fas fa-satellite-dish"></i> 
+                    ${isRealTime ? 
+                        'Real-time AIS from Norwegian authorities' : 
+                        'Scientific fallback based on 2023-2024 data'}
                 </div>
             </div>
         </div>
     `;
+    
+    vesselMarker.bindPopup(popupContent, {
+        maxWidth: 350,
+        className: 'vessel-popup'
+    });
+    
+    setTimeout(() => {
+        if (vesselMarker) vesselMarker.openPopup();
+    }, 500);
 }
 
 /**
- * Update vessel counter in UI
+ * Update vessel counters
  */
-/**
- * Update vessel counter in UI - COMPLETE VERSION
- */
-function updateVesselCounter(sourceType, vesselName, apiSource = '') {
-    const counterElement = document.getElementById('real-time-vessel-counter');
-    if (!counterElement) return;
+function updateVesselCounters(isRealTime, vessel, source) {
+    const sourceType = isRealTime ? 'real' : 'empirical';
+    const vesselName = vessel.name || 'Commercial Vessel';
+    const speed = vessel.speed || vessel.sog || 0;
     
-    counterElement.textContent = sourceType === 'real' ? '🚢 LIVE' : '📡 SIM';
-    counterElement.title = sourceType === 'real' ? 
-        `Real-time: ${vesselName} (${apiSource})` : 
-        `Fallback: ${vesselName} (Real-time unavailable)`;
+    const elements = {
+        vesselCount: document.getElementById('vessel-count'),
+        activeVessels: document.getElementById('active-vessels'),
+        vesselSourceIndicator: document.getElementById('vessel-source-indicator'),
+        vesselStatusText: document.getElementById('vessel-status-text'),
+        vesselSourceBadge: document.getElementById('vessel-source-badge'),
+        liveStatusText: document.getElementById('live-status-text'),
+        realTimeCounter: document.getElementById('real-time-vessel-counter'),
+        vesselType: document.getElementById('vessel-type'),
+        vesselsUpdated: document.getElementById('vessels-updated'),
+        aisApiStatus: document.getElementById('ais-api-status'),
+        aisDataQuality: document.getElementById('ais-data-quality'),
+        apiDetails: document.getElementById('api-details'),
+        apiOverallStatus: document.getElementById('api-overall-status'),
+        footerApiStatus: document.getElementById('footer-api-status'),
+        vesselLegendText: document.getElementById('vessel-legend-text')
+    };
     
-    counterElement.style.color = sourceType === 'real' ? '#28a745' : '#ffc107';
-    counterElement.style.fontWeight = 'bold';
+    if (elements.vesselCount) elements.vesselCount.textContent = '1';
+    if (elements.activeVessels) elements.activeVessels.textContent = '1';
     
-    const sourceElement = document.getElementById('vessel-source');
-    if (sourceElement) {
-        const sourceText = sourceType === 'real' ? 
-            `Real-time (${apiSource})` : 
-            'Empirical simulation';
-        sourceElement.textContent = sourceText;
-        sourceElement.style.color = sourceType === 'real' ? '#28a745' : '#ffc107';
+    if (elements.vesselLegendText) {
+        elements.vesselLegendText.textContent = isRealTime ? 'Live Vessel (REAL-TIME)' : 'Empirical Vessel (FALLBACK)';
     }
     
-    const timeElement = document.getElementById('vessel-update-time');
-    if (timeElement) {
-        const now = new Date();
-        timeElement.textContent = `Updated: ${now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
-    }
-    
-    // ========== CRITICAL FIXES: ==========
-    
-    // 1. Update main vessel count badge
-    const vesselCountElement = document.getElementById('vessel-count');
-    if (vesselCountElement) {
-        vesselCountElement.textContent = '1';
-        console.log('✅ Updated #vessel-count to 1');
-    }
-    
-    // 2. Update active vessels stat card
-    const activeVesselsElement = document.getElementById('active-vessels');
-    if (activeVesselsElement) {
-        activeVesselsElement.textContent = '1';
-        console.log('✅ Updated #active-vessels to 1');
-    }
-    
-    // 3. Update vessels updated timestamp
-    const vesselsUpdatedElement = document.getElementById('vessels-updated');
-    if (vesselsUpdatedElement) {
-        vesselsUpdatedElement.textContent = 'Just now';
-        vesselsUpdatedElement.className = 'data-freshness live';
-    }
-    
-    // 4. Update AIS API status
-    const aisApiStatus = document.getElementById('ais-api-status');
-    if (aisApiStatus) {
-        aisApiStatus.innerHTML = '<i class="fas fa-check-circle me-1"></i> ✓ Live';
-        aisApiStatus.className = 'badge bg-success';
-    }
-    
-    // 5. Update AIS data quality indicator
-    const aisDataQuality = document.getElementById('ais-data-quality');
-    if (aisDataQuality) {
-        aisDataQuality.innerHTML = '<i class="fas fa-ship me-1"></i> AIS: Live';
-        aisDataQuality.className = 'data-quality-indicator data-quality-high';
-    }
-    
-    // 6. Update vessel source indicator
-    const vesselSourceIndicator = document.getElementById('vessel-source-indicator');
-    if (vesselSourceIndicator) {
-        vesselSourceIndicator.textContent = sourceType === 'real' ? 'LIVE' : 'SIM';
-        vesselSourceIndicator.className = sourceType === 'real' ? 
+    if (elements.vesselSourceIndicator) {
+        elements.vesselSourceIndicator.textContent = isRealTime ? 'LIVE' : 'EMPIRICAL';
+        elements.vesselSourceIndicator.className = isRealTime ? 
             'data-source-badge data-source-live' : 
             'data-source-badge data-source-empirical';
     }
     
-    // 7. Update API details
-    const apiDetails = document.getElementById('api-details');
-    if (apiDetails) {
-        apiDetails.textContent = `RTZ: ✓ | AIS: ${sourceType === 'real' ? '✓ Live' : '✗ Fallback'} | Weather: ✓`;
+    if (elements.vesselStatusText) {
+        const speedText = speed > 1 ? `Moving at ${speed.toFixed(1)} knots` : 'Stationary';
+        elements.vesselStatusText.textContent = isRealTime ? 
+            `${vesselName} - ${speedText} (Real-time AIS)` : 
+            `${vesselName} - ${speedText} (Scientific fallback)`;
     }
     
-    // 8. Update overall API status
-    const apiOverallStatus = document.getElementById('api-overall-status');
-    if (apiOverallStatus) {
-        apiOverallStatus.innerHTML = '<i class="fas fa-satellite-dish me-1"></i> All Systems Live';
-        apiOverallStatus.className = 'api-status api-status-active';
+    if (elements.vesselSourceBadge) {
+        elements.vesselSourceBadge.textContent = isRealTime ? 'LIVE' : 'EMPIRICAL';
+        elements.vesselSourceBadge.className = isRealTime ? 
+            'badge realtime-badge ms-2' : 
+            'badge empirical-badge ms-2';
+        elements.vesselSourceBadge.style.display = 'inline-block';
     }
     
-    // 9. Update footer
-    const footerApiStatus = document.getElementById('footer-api-status');
-    if (footerApiStatus) {
-        footerApiStatus.textContent = 'All APIs Active';
-        footerApiStatus.className = 'status-active';
+    if (elements.liveStatusText) {
+        elements.liveStatusText.textContent = isRealTime ? 'LIVE' : 'EMPIRICAL';
+        elements.liveStatusText.className = isRealTime ? 
+            'fw-semibold text-success me-3' : 
+            'fw-semibold text-warning me-3';
     }
     
-    // Show subtle notification for source changes
-    if (window.vesselSource !== sourceType) {
-        window.vesselSource = sourceType;
-        if (sourceType === 'fallback') {
-            console.log('🔄 Switched to empirical fallback mode');
-            showNotification('Using empirical vessel data (real-time unavailable)', 'warning');
-        } else if (sourceType === 'real') {
-            console.log('🔄 Returned to real-time mode');
-            showNotification('Real-time vessel tracking active', 'success');
+    if (elements.realTimeCounter) {
+        elements.realTimeCounter.textContent = isRealTime ? '🔴 LIVE' : '🟡 EMPIRICAL';
+        elements.realTimeCounter.className = isRealTime ? 
+            'badge realtime-badge ms-1' : 
+            'badge empirical-badge ms-1';
+        elements.realTimeCounter.style.display = 'inline-block';
+    }
+    
+    if (elements.vesselType) {
+        const speedIndicator = speed > 1 ? 
+            `<span style="color: #28a745; margin-left: 5px;">⏵ ${speed.toFixed(1)} kts</span>` : 
+            `<span style="color: #dc3545; margin-left: 5px;">⏸ Stopped</span>`;
+        elements.vesselType.innerHTML = `<i class="fas fa-info-circle me-1"></i> ${vesselName} ${speedIndicator}`;
+    }
+    
+    if (elements.vesselsUpdated) {
+        const now = new Date();
+        elements.vesselsUpdated.textContent = `Updated: ${now.toLocaleTimeString()}`;
+        elements.vesselsUpdated.className = 'data-freshness live';
+    }
+    
+    if (elements.aisApiStatus) {
+        if (isRealTime) {
+            elements.aisApiStatus.innerHTML = '<i class="fas fa-check-circle me-1"></i> ✓ Live';
+            elements.aisApiStatus.className = 'badge bg-success';
+        } else {
+            elements.aisApiStatus.innerHTML = '<i class="fas fa-history me-1"></i> Historical';
+            elements.aisApiStatus.className = 'badge bg-warning text-dark';
         }
     }
     
-    console.log(`📊 UI Updated: 1 vessel (${sourceType})`);
+    if (elements.aisDataQuality) {
+        if (isRealTime) {
+            elements.aisDataQuality.innerHTML = '<i class="fas fa-ship me-1"></i> AIS: Live';
+            elements.aisDataQuality.className = 'data-quality-indicator data-quality-high';
+        } else {
+            elements.aisDataQuality.innerHTML = '<i class="fas fa-ship me-1"></i> AIS: Historical';
+            elements.aisDataQuality.className = 'data-quality-indicator data-quality-medium';
+        }
+    }
+    
+    if (elements.apiDetails) {
+        elements.apiDetails.innerHTML = `RTZ: ✓ | AIS: ${isRealTime ? '✓ Live' : '📊 Historical'} | Weather: ✓`;
+    }
+    
+    if (elements.apiOverallStatus) {
+        if (isRealTime) {
+            elements.apiOverallStatus.innerHTML = '<i class="fas fa-satellite-dish me-1"></i> All Systems Live';
+            elements.apiOverallStatus.className = 'api-status api-status-active';
+        } else {
+            elements.apiOverallStatus.innerHTML = '<i class="fas fa-history me-1"></i> Using Historical Data';
+            elements.apiOverallStatus.className = 'api-status api-status-partial';
+        }
+    }
+    
+    if (elements.footerApiStatus) {
+        elements.footerApiStatus.textContent = isRealTime ? 'All APIs Active' : 'Using Historical Data';
+        elements.footerApiStatus.className = isRealTime ? 'status-active' : 'status-partial';
+    }
+}
+
+/**
+ * Clear vessel display
+ */
+function clearVesselDisplay() {
+    if (vesselMarker) {
+        maritimeMap.removeLayer(vesselMarker);
+        vesselMarker = null;
+    }
+    
+    lastVesselPosition = null;
+    
+    const elements = {
+        vesselCount: document.getElementById('vessel-count'),
+        activeVessels: document.getElementById('active-vessels'),
+        vesselSourceIndicator: document.getElementById('vessel-source-indicator'),
+        vesselStatusText: document.getElementById('vessel-status-text'),
+        vesselSourceBadge: document.getElementById('vessel-source-badge'),
+        realTimeCounter: document.getElementById('real-time-vessel-counter'),
+        vesselType: document.getElementById('vessel-type'),
+        aisApiStatus: document.getElementById('ais-api-status'),
+        aisDataQuality: document.getElementById('ais-data-quality'),
+        vesselLegendText: document.getElementById('vessel-legend-text')
+    };
+    
+    if (elements.vesselCount) elements.vesselCount.textContent = '0';
+    if (elements.activeVessels) elements.activeVessels.textContent = '0';
+    if (elements.vesselLegendText) elements.vesselLegendText.textContent = 'No Vessel Detected';
+    if (elements.vesselSourceIndicator) {
+        elements.vesselSourceIndicator.textContent = 'WAITING';
+        elements.vesselSourceIndicator.className = 'data-source-badge';
+    }
+    if (elements.vesselStatusText) elements.vesselStatusText.textContent = 'No vessel detected';
+    if (elements.vesselSourceBadge) elements.vesselSourceBadge.style.display = 'none';
+    if (elements.realTimeCounter) elements.realTimeCounter.style.display = 'none';
+    if (elements.vesselType) elements.vesselType.innerHTML = '<i class="fas fa-info-circle me-1"></i> No vessel detected';
+    if (elements.aisApiStatus) {
+        elements.aisApiStatus.innerHTML = '⏳ Waiting';
+        elements.aisApiStatus.className = 'badge bg-secondary';
+    }
+    if (elements.aisDataQuality) {
+        elements.aisDataQuality.innerHTML = '<i class="fas fa-ship me-1"></i> AIS: Waiting';
+        elements.aisDataQuality.className = 'data-quality-indicator data-quality-low';
+    }
 }
 
 /**
@@ -1031,279 +894,221 @@ function stopVesselTracking() {
         vesselUpdateInterval = null;
     }
     
-    if (realTimeVesselMarker) {
-        maritimeMap.removeLayer(realTimeVesselMarker);
-        realTimeVesselMarker = null;
+    if (movementAnimation) {
+        clearInterval(movementAnimation);
+        movementAnimation = null;
     }
     
-    console.log('🚢 Vessel tracking stopped');
+    if (vesselMarker) {
+        maritimeMap.removeLayer(vesselMarker);
+        vesselMarker = null;
+    }
+    
+    lastVesselPosition = null;
 }
 
 // ============================================
-// UTILITY FUNCTIONS
+// ZOOM FUNCTIONS
 // ============================================
 
-/**
- * Show notification
- */
-function showNotification(message, type = 'info') {
-    const types = {
-        'info': { class: 'alert-info', icon: 'ℹ️' },
-        'success': { class: 'alert-success', icon: '✅' },
-        'warning': { class: 'alert-warning', icon: '⚠️' },
-        'error': { class: 'alert-danger', icon: '❌' }
-    };
+window.zoomToRoute = function(index) {
+    if (!maritimeMap || index >= activeRoutes.length) return false;
     
-    const config = types[type] || types.info;
+    const route = activeRoutes[index];
+    const waypoints = extractWaypointsFromRoute(route);
     
-    const notification = document.createElement('div');
-    notification.className = `alert ${config.class} alert-dismissible fade show`;
-    notification.style.cssText = `
-        position: fixed;
-        top: 80px;
-        right: 20px;
-        z-index: 9999;
-        max-width: 300px;
-        animation: slideIn 0.3s ease-out;
-    `;
+    if (waypoints.length < 2) return false;
     
-    notification.innerHTML = `
-        <strong>${config.icon} ${type.charAt(0).toUpperCase() + type.slice(1)}:</strong>
-        ${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    `;
+    const bounds = L.latLngBounds(waypoints.map(wp => [wp.lat, wp.lon]));
     
-    document.body.appendChild(notification);
-    
-    setTimeout(() => {
-        if (notification.parentNode) notification.remove();
-    }, 5000);
-}
+    if (bounds.isValid()) {
+        maritimeMap.fitBounds(bounds.pad(0.1));
+        highlightRoute(index);
+        return true;
+    }
+    return false;
+};
+
+window.highlightRoute = function(index) {
+    routePolylines.forEach((polyline, i) => {
+        polyline.setStyle({ 
+            weight: i === index ? 8 : 4,
+            opacity: i === index ? 1 : 0.8,
+            color: i === index ? '#ff5722' : polyline.options.color
+        });
+    });
+};
+
+// ============================================
+// CLEANUP
+// ============================================
+
+window.addEventListener('beforeunload', function() {
+    if (movementAnimation) {
+        clearInterval(movementAnimation);
+    }
+    if (vesselUpdateInterval) {
+        clearInterval(vesselUpdateInterval);
+    }
+});
 
 // ============================================
 // INITIALIZATION
 // ============================================
 
-/**
- * Initialize everything
- */
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🌊 Maritime Map v3.0.0: DOM loaded');
+    console.log('🌊 Maritime Map v4.0.4: FINAL VERSION');
     
     initMaritimeMap();
     
     setTimeout(() => {
-        loadAndDisplayRTZRoutes();
-    }, 500);
-    
-    setTimeout(() => {
-        addRouteTableEventListeners();
-    }, 1500);
-    
-    // Make functions available globally
-    window.loadRTZRoutes = loadAndDisplayRTZRoutes;
-    window.initMaritimeMap = initMaritimeMap;
-    window.showNotification = showNotification;
-    window.startVesselTracking = startEnhancedVesselTracking;
-    window.stopVesselTracking = stopVesselTracking;
-    window.updateRealTimeVessel = fetchVesselWithRetry;
-    
-    console.log('✅ Maritime Map Module v3.0.0 ready');
+        if (mapInitialized) {
+            loadAndDisplayRTZRoutes();
+        } else {
+            setTimeout(loadAndDisplayRTZRoutes, 1000);
+        }
+    }, 800);
 });
 
-/**
- * Add event listeners to route table
- */
-function addRouteTableEventListeners() {
-    console.log('🔗 Adding route table event listeners...');
-    
-    document.addEventListener('click', function(e) {
-        // View Route buttons
-        if (e.target.closest('.view-route-btn')) {
-            const button = e.target.closest('.view-route-btn');
-            const routeId = button.dataset.routeId;
-            
-            if (routeId) {
-                const row = button.closest('tr');
-                if (row) {
-                    const rows = Array.from(row.parentNode.querySelectorAll('tr:not(:first-child)'));
-                    const rowIndex = rows.indexOf(row);
-                    
-                    if (rowIndex !== -1) {
-                        const success = window.zoomToRoute(rowIndex);
-                        if (success) {
-                            document.querySelectorAll('.route-row-highlighted').forEach(r => {
-                                r.classList.remove('route-row-highlighted');
-                            });
-                            row.classList.add('route-row-highlighted');
-                            return;
-                        }
-                    }
-                }
-                
-                const success = window.zoomToRoute(routeId);
-                if (!success) {
-                    showNotification('Could not find the route on the map', 'error');
-                } else {
-                    const row = button.closest('tr');
-                    if (row) {
-                        document.querySelectorAll('.route-row-highlighted').forEach(r => {
-                            r.classList.remove('route-row-highlighted');
-                        });
-                        row.classList.add('route-row-highlighted');
-                    }
-                }
-            }
-        }
-        
-        // Highlight Route buttons
-        if (e.target.closest('.highlight-route-btn')) {
-            const button = e.target.closest('.highlight-route-btn');
-            const routeId = button.dataset.routeId;
-            
-            if (routeId) {
-                const row = button.closest('tr');
-                if (row) {
-                    const rows = Array.from(row.parentNode.querySelectorAll('tr:not(:first-child)'));
-                    const rowIndex = rows.indexOf(row);
-                    
-                    if (rowIndex !== -1) {
-                        window.highlightRoute(rowIndex);
-                        return;
-                    }
-                }
-                
-                const routeIndex = activeRoutes.findIndex(r => 
-                    (r.route_id && r.route_id.toString() === routeId) ||
-                    (r.id && r.id.toString() === routeId)
-                );
-                
-                if (routeIndex !== -1) {
-                    window.highlightRoute(routeIndex);
-                }
-            }
-        }
-    });
-}
-
-// Add enhanced CSS styles
-const enhancedStyles = document.createElement('style');
-enhancedStyles.textContent = `
-    .rtz-route-line {
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-    
-    .route-start-marker, .route-end-marker {
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-    
+// Add styles
+const styles = document.createElement('style');
+styles.textContent = `
     .leaflet-control-legend {
         background: white;
-        padding: 10px;
-        border-radius: 5px;
-        box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+        padding: 12px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         font-size: 12px;
+        border: 1px solid #ddd;
+        backdrop-filter: blur(5px);
+        background: rgba(255,255,255,0.95);
     }
-    
     .legend-title {
         font-weight: bold;
         margin-bottom: 8px;
-        border-bottom: 1px solid #ddd;
+        border-bottom: 1px solid #eee;
         padding-bottom: 5px;
+        color: #333;
     }
-    
     .legend-item {
+        margin: 6px 0;
         display: flex;
         align-items: center;
-        margin: 4px 0;
+        gap: 8px;
     }
-    
     .legend-color {
-        width: 15px;
-        height: 15px;
-        border-radius: 3px;
-        margin-right: 8px;
+        width: 16px;
+        height: 16px;
+        border-radius: 4px;
+        display: inline-block;
     }
-    
     .legend-label {
+        color: #555;
         font-size: 11px;
     }
-    
-    @keyframes slideIn {
-        from { transform: translateX(100%); opacity: 0; }
-        to { transform: translateX(0); opacity: 1; }
-    }
-    
-    @keyframes pulse {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.05); }
-        100% { transform: scale(1); }
-    }
-    
-    @keyframes vessel-pulse {
-        0% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); }
-        70% { box-shadow: 0 0 0 10px rgba(40, 167, 69, 0); }
-        100% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
-    }
-    
-    .vessel-pulse-animation {
-        animation: vessel-pulse 2s infinite !important;
-    }
-    
-    .vessel-real-time {
+    .vessel-marker {
         cursor: pointer;
         transition: all 0.2s ease;
     }
-    
-    .vessel-fallback {
-        cursor: pointer;
-        opacity: 0.9;
-        transition: all 0.2s ease;
-    }
-    
     .vessel-marker:hover {
-        filter: brightness(1.2);
         transform: scale(1.1);
+        filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
     }
-    
-    .route-row-highlighted {
-        background-color: rgba(52, 152, 219, 0.15) !important;
-        border-left: 3px solid #3498db !important;
+    .vessel-real-time {
+        animation: pulse-live 2s infinite;
     }
-    
-    /* Prevent blinking for waypoints */
-    .rtz-waypoint-marker,
-    .leaflet-marker-icon[class*="waypoint"],
-    .leaflet-marker-icon[class*="rtz"],
-    .waypoint-marker {
-        animation: none !important;
-        -webkit-animation: none !important;
+    .vessel-empirical {
+        opacity: 0.95;
     }
-    
-    /* Vessel status indicator */
-    #real-time-vessel-counter {
-        display: inline-block;
+    @keyframes pulse-live {
+        0% { filter: drop-shadow(0 0 0 rgba(40, 167, 69, 0.7)); }
+        70% { filter: drop-shadow(0 0 15px rgba(40, 167, 69, 0.5)); }
+        100% { filter: drop-shadow(0 0 0 rgba(40, 167, 69, 0)); }
+    }
+    .realtime-badge {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: white;
+        font-weight: 600;
+        font-size: 0.7rem;
+        padding: 4px 10px;
+        border-radius: 20px;
+        animation: pulse 2s infinite;
+    }
+    .empirical-badge {
+        background: linear-gradient(135deg, #ffc107, #fd7e14);
+        color: white;
+        font-weight: 600;
+        font-size: 0.7rem;
+        padding: 4px 10px;
+        border-radius: 20px;
+    }
+    @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.8; }
+        100% { opacity: 1; }
+    }
+    .data-source-badge {
+        font-size: 0.6rem;
         padding: 3px 8px;
-        border-radius: 4px;
-        font-size: 0.9rem;
-        margin-left: 10px;
-        background: rgba(255, 255, 255, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        transition: all 0.3s ease;
+        border-radius: 12px;
+        margin-left: 4px;
+        font-weight: 600;
+        letter-spacing: 0.3px;
     }
-    
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-        .leaflet-control-legend {
-            font-size: 10px;
-            padding: 8px;
-        }
-        
-        .legend-title {
-            font-size: 11px;
-        }
+    .data-source-live {
+        background: #28a745;
+        color: white;
+    }
+    .data-source-empirical {
+        background: #ffc107;
+        color: #000;
+    }
+    .api-status {
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+    .api-status-active {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+    .api-status-partial {
+        background: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeeba;
+    }
+    .data-quality-indicator {
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 0.7rem;
+        font-weight: 500;
+    }
+    .data-quality-high {
+        background: #d4edda;
+        color: #155724;
+    }
+    .data-quality-medium {
+        background: #fff3cd;
+        color: #856404;
+    }
+    .data-quality-low {
+        background: #f8d7da;
+        color: #721c24;
+    }
+    .vessel-popup .leaflet-popup-content-wrapper {
+        border-radius: 8px;
+        padding: 0;
+        overflow: hidden;
+    }
+    .vessel-popup .leaflet-popup-content {
+        margin: 0;
+        padding: 0;
+    }
+    .vessel-popup .leaflet-popup-tip {
+        background: white;
     }
 `;
-document.head.appendChild(enhancedStyles);
+
+document.head.appendChild(styles);

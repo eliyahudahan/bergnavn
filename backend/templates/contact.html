@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Contact Us | BergNavn Maritime{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <h1 class="text-center mb-5">Contact Us</h1>
+      
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body p-5">
+          <div class="text-center mb-4">
+            <i class="bi bi-envelope-paper display-1 text-primary"></i>
+          </div>
+          
+          <h5 class="text-center mb-4">Get in touch with our maritime team</h5>
+          
+          <div class="row mt-5">
+            <div class="col-md-6 mb-4">
+              <div class="d-flex align-items-center">
+                <i class="bi bi-envelope fs-2 text-primary me-3"></i>
+                <div>
+                  <h6 class="mb-1">Email</h6>
+                  <a href="mailto:contact@bergnavn.no" class="text-decoration-none">contact@bergnavn.no</a>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 mb-4">
+              <div class="d-flex align-items-center">
+                <i class="bi bi-telephone fs-2 text-primary me-3"></i>
+                <div>
+                  <h6 class="mb-1">Phone</h6>
+                  <a href="tel:+4755123456" class="text-decoration-none">+47 55 12 34 56</a>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 mb-4">
+              <div class="d-flex align-items-center">
+                <i class="bi bi-geo-alt fs-2 text-primary me-3"></i>
+                <div>
+                  <h6 class="mb-1">Address</h6>
+                  <p class="mb-0">Bergen Maritime Hub<br>5059 Bergen, Norway</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 mb-4">
+              <div class="d-flex align-items-center">
+                <i class="bi bi-clock fs-2 text-primary me-3"></i>
+                <div>
+                  <h6 class="mb-1">Hours</h6>
+                  <p class="mb-0">24/7 Maritime Support</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <hr class="my-4">
+          
+          <div class="text-center">
+            <p class="text-muted">For technical support or maritime inquiries, our team is available around the clock.</p>
+            <div class="mt-4">
+              <span class="badge bg-success me-2">Kystverket Partner</span>
+              <span class="badge bg-info">MET Norway Certified</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

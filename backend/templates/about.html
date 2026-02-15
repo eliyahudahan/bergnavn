@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}About Us | BergNavn Maritime{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      <h1 class="text-center mb-5">About BergNavn Maritime</h1>
+      
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body p-5">
+          <div class="text-center mb-4">
+            <span class="display-1">🌊</span>
+          </div>
+          
+          <h4 class="text-center mb-4">Intelligent Maritime Route Optimization & Safety Monitoring</h4>
+          
+          <p class="lead mb-4">BergNavn Maritime provides real-time vessel tracking and route analysis for Norwegian waters, integrating official data sources including Kystverket AIS, MET Norway weather, and Norwegian Coastal Administration routes.</p>
+          
+          <div class="row mt-5">
+            <div class="col-md-4 text-center mb-4">
+              <i class="bi bi-ship display-4 text-primary mb-3"></i>
+              <h5>Live AIS Tracking</h5>
+              <p class="text-muted">Real-time vessel positions from Kystverket, Kystdatahuset, and BarentsWatch</p>
+            </div>
+            <div class="col-md-4 text-center mb-4">
+              <i class="bi bi-cloud-sun display-4 text-primary mb-3"></i>
+              <h5>MET Norway Weather</h5>
+              <p class="text-muted">Official Norwegian meteorological data for maritime conditions</p>
+            </div>
+            <div class="col-md-4 text-center mb-4">
+              <i class="bi bi-route display-4 text-primary mb-3"></i>
+              <h5>RTZ Routes</h5>
+              <p class="text-muted">Professional routes from Norwegian Coastal Administration</p>
+            </div>
+          </div>
+          
+          <hr class="my-4">
+          
+          <div class="row">
+            <div class="col-md-6">
+              <h6>Key Features</h6>
+              <ul class="list-unstyled">
+                <li><i class="bi bi-check-circle-fill text-success me-2"></i> REAL-TIME FIRST: Kystverket → Kystdatahuset → BarentsWatch</li>
+                <li><i class="bi bi-check-circle-fill text-success me-2"></i> Empirical fallback as LAST RESORT only</li>
+                <li><i class="bi bi-check-circle-fill text-success me-2"></i> 50+ RTZ routes from NCA</li>
+                <li><i class="bi bi-check-circle-fill text-success me-2"></i> Commercial vessel detection (💰)</li>
+                <li><i class="bi bi-check-circle-fill text-success me-2"></i> Historical data persistence</li>
+              </ul>
+            </div>
+            <div class="col-md-6">
+              <h6>Data Sources</h6>
+              <ul class="list-unstyled">
+                <li><i class="bi bi-check-circle-fill text-success me-2"></i> Kystverket AIS (official Norwegian)</li>
+                <li><i class="bi bi-check-circle-fill text-success me-2"></i> Kystdatahuset (open AIS)</li>
+                <li><i class="bi bi-check-circle-fill text-success me-2"></i> BarentsWatch (commercial AIS)</li>
+                <li><i class="bi bi-check-circle-fill text-success me-2"></i> MET Norway (weather)</li>
+                <li><i class="bi bi-check-circle-fill text-success me-2"></i> Norwegian Coastal Administration (routes)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,313 @@
+<!-- Maritime Dashboard Integration for Simulation -->
+<!-- This block can be included in dashboard_base.html -->
+
+{% block simulation_integration %}
+<div class="row mb-4" id="simulation-section">
+    <div class="col-12">
+        <div class="card maritime-card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bi bi-rocket-takeoff me-2"></i>
+                    Bergen Ship Simulation
+                </h5>
+                <div>
+                    <span class="badge bg-info" id="simulation-status">Live</span>
+                    <button class="btn btn-sm btn-outline-primary ms-2" id="refresh-simulation">
+                        <i class="bi bi-arrow-clockwise"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <!-- Ship Status -->
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <div class="fs-1">🚢</div>
+                            <strong id="ship-name">Bergen Simulator</strong>
+                        </div>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="row">
+                            <div class="col-6 col-md-3">
+                                <small class="text-muted d-block">Position</small>
+                                <strong id="ship-position">60.391, 5.322</strong>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <small class="text-muted d-block">Speed</small>
+                                <strong id="ship-speed">15.0 knots</strong>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <small class="text-muted d-block">Heading</small>
+                                <strong id="ship-heading">45°</strong>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <small class="text-muted d-block">Status</small>
+                                <strong id="ship-status">Underway</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Operator Decision Panel -->
+                <div class="alert alert-warning" id="decision-panel" style="display: none;">
+                    <h6 class="alert-heading">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        Decision Required
+                    </h6>
+                    <p id="decision-context">Storm warning in 45 minutes on current route</p>
+                    
+                    <div class="btn-group mt-2" id="decision-buttons">
+                        <!-- Buttons will be populated by JavaScript -->
+                    </div>
+                    
+                    <textarea class="form-control mt-2" id="decision-notes" 
+                              placeholder="Why did you choose this? (Optional)" rows="2"></textarea>
+                    
+                    <button class="btn btn-sm btn-primary mt-2" id="submit-decision">
+                        <i class="bi bi-check-circle me-1"></i>Submit Decision
+                    </button>
+                </div>
+                
+                <!-- Alerts Display -->
+                <div id="simulation-alerts">
+                    <!-- Alerts will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block simulation_javascript %}
+<script>
+// Simulation integration JavaScript
+class SimulationManager {
+    constructor() {
+        this.simulationInterval = null;
+        this.updateFrequency = 5000; // 5 seconds
+        this.operatorId = 'operator_' + Math.random().toString(36).substr(2, 9);
+    }
+    
+    start() {
+        console.log('🚀 Starting simulation updates');
+        this.updateSimulation();
+        this.simulationInterval = setInterval(() => this.updateSimulation(), this.updateFrequency);
+    }
+    
+    stop() {
+        if (this.simulationInterval) {
+            clearInterval(this.simulationInterval);
+            console.log('⏹️ Stopped simulation updates');
+        }
+    }
+    
+    async updateSimulation() {
+        try {
+            const response = await fetch('/maritime/api/simulation/status');
+            const data = await response.json();
+            
+            if (data.simulation) {
+                this.updateDisplay(data.simulation);
+                this.checkForDecisions(data.simulation);
+            }
+        } catch (error) {
+            console.error('Simulation update error:', error);
+        }
+    }
+    
+    updateDisplay(simulationData) {
+        // Update position
+        const positionElement = document.getElementById('ship-position');
+        if (positionElement && simulationData.position) {
+            positionElement.textContent = 
+                `${simulationData.position.lat?.toFixed(3) || '0.000'}, ${simulationData.position.lon?.toFixed(3) || '0.000'}`;
+        }
+        
+        // Update speed
+        const speedElement = document.getElementById('ship-speed');
+        if (speedElement) {
+            speedElement.textContent = `${simulationData.speed_knots?.toFixed(1) || '0.0'} knots`;
+        }
+        
+        // Update heading
+        const headingElement = document.getElementById('ship-heading');
+        if (headingElement) {
+            headingElement.textContent = `${Math.round(simulationData.heading || 0)}°`;
+        }
+        
+        // Update status
+        const statusElement = document.getElementById('ship-status');
+        if (statusElement) {
+            statusElement.textContent = simulationData.status || 'Unknown';
+            statusElement.className = simulationData.status === 'underway' ? 'text-success' : 'text-warning';
+        }
+        
+        // Update alerts
+        this.updateAlerts(simulationData.alerts || []);
+    }
+    
+    updateAlerts(alerts) {
+        const alertsContainer = document.getElementById('simulation-alerts');
+        if (!alertsContainer) return;
+        
+        if (alerts.length === 0) {
+            alertsContainer.innerHTML = `
+                <div class="alert alert-success">
+                    <i class="bi bi-check-circle me-2"></i>
+                    No active alerts - All systems operational
+                </div>
+            `;
+            return;
+        }
+        
+        let alertsHtml = '';
+        alerts.forEach(alert => {
+            const alertClass = alert.type === 'CRITICAL' ? 'danger' : 
+                              alert.type === 'HIGH' ? 'warning' : 'info';
+            
+            alertsHtml += `
+                <div class="alert alert-${alertClass}">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <i class="bi bi-exclamation-triangle me-2"></i>
+                            <strong>${alert.type} ALERT</strong><br>
+                            <small>${alert.message}</small>
+                        </div>
+                        <small class="text-muted">${new Date(alert.timestamp).toLocaleTimeString()}</small>
+                    </div>
+                </div>
+            `;
+        });
+        
+        alertsContainer.innerHTML = alertsHtml;
+    }
+    
+    async checkForDecisions(simulationData) {
+        // Check if we need operator decisions
+        if (simulationData.alerts && simulationData.alerts.some(a => a.action_required)) {
+            await this.showDecisionPanel();
+        }
+    }
+    
+    async showDecisionPanel() {
+        try {
+            const response = await fetch('/maritime/api/simulation/operator-panel');
+            const data = await response.json();
+            
+            if (data.decision_options) {
+                const panel = document.getElementById('decision-panel');
+                const buttonsContainer = document.getElementById('decision-buttons');
+                
+                if (panel && buttonsContainer) {
+                    // Show panel
+                    panel.style.display = 'block';
+                    
+                    // Create decision buttons
+                    buttonsContainer.innerHTML = '';
+                    data.decision_options.forEach(option => {
+                        const button = document.createElement('button');
+                        button.type = 'button';
+                        button.className = 'btn btn-outline-primary me-2';
+                        button.textContent = option.label;
+                        button.dataset.type = option.type;
+                        button.dataset.value = option.value || '';
+                        
+                        button.addEventListener('click', () => {
+                            this.selectDecision(option.type, option.value);
+                        });
+                        
+                        buttonsContainer.appendChild(button);
+                    });
+                    
+                    // Add submit button handler
+                    const submitButton = document.getElementById('submit-decision');
+                    if (submitButton) {
+                        submitButton.addEventListener('click', () => this.submitDecision());
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('Error showing decision panel:', error);
+        }
+    }
+    
+    selectDecision(type, value) {
+        this.currentDecision = { type, value };
+        
+        // Highlight selected button
+        const buttons = document.querySelectorAll('#decision-buttons button');
+        buttons.forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.dataset.type === type && btn.dataset.value == value) {
+                btn.classList.add('active');
+            }
+        });
+        
+        console.log(`Selected decision: ${type} = ${value}`);
+    }
+    
+    async submitDecision() {
+        if (!this.currentDecision) {
+            alert('Please select a decision first');
+            return;
+        }
+        
+        try {
+            const notes = document.getElementById('decision-notes').value || '';
+            
+            const response = await fetch('/maritime/api/simulation/decision', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    operator_id: this.operatorId,
+                    decision_type: this.currentDecision.type,
+                    decision_data: { value: this.currentDecision.value },
+                    context: { timestamp: new Date().toISOString() },
+                    notes: notes
+                })
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                alert('✅ Decision recorded successfully!');
+                
+                // Hide decision panel
+                const panel = document.getElementById('decision-panel');
+                if (panel) panel.style.display = 'none';
+                
+                // Clear selection
+                this.currentDecision = null;
+            }
+        } catch (error) {
+            console.error('Error submitting decision:', error);
+            alert('Error submitting decision: ' + error.message);
+        }
+    }
+}
+
+// Initialize simulation when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    const simulationManager = new SimulationManager();
+    window.simulationManager = simulationManager;
+    
+    // Start simulation updates
+    simulationManager.start();
+    
+    // Refresh button
+    const refreshButton = document.getElementById('refresh-simulation');
+    if (refreshButton) {
+        refreshButton.addEventListener('click', () => {
+            simulationManager.updateSimulation();
+        });
+    }
+    
+    // Stop simulation on page unload
+    window.addEventListener('beforeunload', () => {
+        simulationManager.stop();
+    });
+});
+</script>
+{% endblock %}

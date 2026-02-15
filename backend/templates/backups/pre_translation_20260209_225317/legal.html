@@ -1,20 +1,20 @@
 {% extends "base.html" %}
 
-{% block title %}Legal Information | BergNavn Maritime{% endblock %}
+{% block title %}{{ translate('legal', lang, 'global') }}{% endblock %}
 
 {% block content %}
 <div class="container my-5">
   <div class="row justify-content-center">
     <div class="col-lg-10">
-      <h1 class="text-center mb-4">Legal Information</h1>
+      <h1 class="text-center mb-4">{{ translate('legal_title', lang, 'legal_page') }}</h1>
       
       <!-- Main Legal Information Card -->
       <div class="card border-0 shadow-sm mb-4">
         <div class="card-body">
           <div class="text-start">
-            <p class="mb-4">BergNavn Maritime provides maritime route optimization and safety monitoring services for informational purposes only.</p>
-            <p class="mb-4">All data displayed is for reference and analysis purposes. No navigational decisions should be made solely based on this platform. Always follow official maritime guidance and regulations.</p>
-            <p class="mb-0">By using this platform, you acknowledge that BergNavn Maritime is not liable for any decisions made based on the information provided.</p>
+            <p class="mb-4">{{ translate('legal_text_1', lang, 'legal_page') }}</p>
+            <p class="mb-4">{{ translate('legal_text_2', lang, 'legal_page') }}</p>
+            <p class="mb-0">{{ translate('legal_text_3', lang, 'legal_page') }}</p>
           </div>
         </div>
       </div>

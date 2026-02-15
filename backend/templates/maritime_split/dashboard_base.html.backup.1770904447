@@ -1,0 +1,939 @@
+<!-- backend/templates/maritime_split/dashboard_base.html -->
+<!-- REAL-TIME MARITIME DASHBOARD v6.0 - NO SYNTAX ERRORS, NO DUPLICATES -->
+<!-- NCA ROUTES: 34 verified, displayed by rtz_routes_fixed.js -->
+<!-- REAL-TIME FIRST: BarentsWatch + MET Norway, empirical LAST RESORT -->
+{% extends "base.html" %}
+
+{% block title %}Maritime Dashboard | BergNavn{% endblock %}
+
+{% block head %}
+<!-- Core CSS files -->
+<link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='css/dashboard.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='css/split/map.css') }}" rel="stylesheet">
+
+<!-- External libraries -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+<style>
+/* ----- REAL-TIME INDICATORS ----- */
+.realtime-badge {
+    background: linear-gradient(135deg, #00e676, #00c853);
+    color: white;
+    font-weight: 600;
+    font-size: 0.7rem;
+    padding: 4px 10px;
+    border-radius: 20px;
+    animation: pulse 2s infinite;
+}
+.empirical-badge {
+    background: linear-gradient(135deg, #ff9800, #f57c00);
+    color: white;
+    font-weight: 600;
+    font-size: 0.7rem;
+    padding: 4px 10px;
+    border-radius: 20px;
+}
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.8; }
+    100% { opacity: 1; }
+}
+
+/* ----- MAP ----- */
+#maritime-map {
+    height: 600px;
+    width: 100%;
+    border-radius: 8px;
+    z-index: 1;
+}
+
+/* ----- ROUTE TABLE ----- */
+.route-row {
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.route-row:hover {
+    background-color: rgba(52, 152, 219, 0.08) !important;
+}
+.route-row.active {
+    background-color: rgba(52, 152, 219, 0.15) !important;
+    border-left: 3px solid #3498db !important;
+}
+.route-row-highlighted {
+    background-color: rgba(52, 152, 219, 0.15) !important;
+    border-left: 3px solid #3498db !important;
+}
+.view-route-btn {
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+.route-row:hover .view-route-btn {
+    opacity: 1;
+}
+
+/* ----- PORT FILTER ----- */
+.city-badge {
+    display: inline-flex;
+    align-items: center;
+    background: #6c757d;
+    color: white;
+    padding: 5px 12px;
+    margin: 3px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.city-badge:hover {
+    background: #5a6268;
+    transform: translateY(-1px);
+}
+.city-badge.active {
+    background: #3498db;
+}
+.city-badge .port-count {
+    background: rgba(255, 255, 255, 0.3);
+    color: white;
+    font-size: 0.7rem;
+    padding: 1px 5px;
+    border-radius: 10px;
+    margin-left: 4px;
+}
+
+/* ----- MAP OVERLAY ----- */
+#map-loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1001;
+    border-radius: 8px;
+}
+
+/* ----- MAP LEGEND ----- */
+.map-legend {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background: white;
+    padding: 12px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 1000;
+    font-size: 0.75rem;
+    border: 1px solid #dee2e6;
+}
+.legend-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+}
+.legend-color {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+/* ----- VESSEL ----- */
+.vessel-marker {
+    transition: all 0.3s;
+}
+.vessel-marker:hover {
+    transform: scale(1.2);
+    z-index: 1001 !important;
+}
+.vessel-capture-log {
+    background: #f8f9fa;
+    border-left: 4px solid #28a745;
+    padding: 12px 16px;
+    border-radius: 4px;
+    margin-bottom: 16px;
+    font-size: 0.9rem;
+}
+.vessel-capture-log.empirical {
+    border-left-color: #ffc107;
+}
+.vessel-capture-log .source.realtime {
+    color: #28a745;
+    font-weight: 600;
+}
+.vessel-capture-log .source.empirical {
+    color: #ffc107;
+    font-weight: 600;
+}
+
+/* ----- DISCLAIMER ----- */
+.disclaimer {
+    font-size: 0.8rem;
+    color: #6c757d;
+    font-style: italic;
+    border-left: 3px solid #ffc107;
+    padding-left: 12px;
+    margin-bottom: 16px;
+}
+
+/* ----- WAYPOINT TOGGLE ----- */
+.waypoint-toggle {
+    margin-left: 12px;
+}
+
+/* ----- DATA SOURCE BADGES ----- */
+.data-source-empirical {
+    background-color: #17a2b8 !important;
+    color: white !important;
+    font-size: 0.7rem !important;
+    padding: 2px 6px !important;
+    border-radius: 4px !important;
+    margin-left: 4px;
+}
+.data-source-live {
+    background-color: #28a745 !important;
+    color: white !important;
+    font-size: 0.7rem !important;
+    padding: 2px 6px !important;
+    border-radius: 4px !important;
+    margin-left: 4px;
+}
+.weather-accuracy-note {
+    font-size: 0.7rem;
+    opacity: 0.8;
+    margin-top: 5px;
+    padding: 3px 6px;
+    background: rgba(0,0,0,0.05);
+    border-radius: 4px;
+    border-left: 3px solid #17a2b8;
+}
+
+/* ----- STATUS INDICATORS ----- */
+.status-indicator {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 6px;
+}
+.status-live {
+    background-color: #28a745;
+    animation: pulse 2s infinite;
+}
+.status-empirical {
+    background-color: #ffc107;
+}
+.status-operational {
+    background-color: #28a745;
+}
+.status-partial {
+    background-color: #ffc107;
+}
+.status-loading {
+    background-color: #6c757d;
+}
+
+/* ----- CARDS ----- */
+.dashboard-card {
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    background: white;
+}
+.stats-card {
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    height: 100%;
+}
+.dashboard-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px 0;
+    margin-bottom: 30px;
+}
+
+/* ----- FOOTER ----- */
+.maritime-dashboard-footer {
+    background: #2c3e50;
+    color: white;
+    padding: 40px 0;
+    margin-top: 40px;
+}
+.footer-heading {
+    color: white;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+.footer-text {
+    color: rgba(255,255,255,0.8);
+}
+.footer-link {
+    color: rgba(255,255,255,0.8);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+.footer-link:hover {
+    color: white;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- HIDDEN DATA CONTAINERS -->
+<div id="routes-data" style="display: none;">{{ routes|tojson|safe if routes else '[]' }}</div>
+<div id="waypoints-data" style="display: none;">{{ waypoints_data|tojson|safe if waypoints_data else '{}' }}</div>
+
+<!-- DASHBOARD HEADER -->
+<div class="dashboard-header">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="h2 mb-2">
+                    <i class="fas fa-ship me-2"></i>Maritime Dashboard
+                    <span class="badge {{ 'realtime-badge' if realtime_available else 'empirical-badge' }}" id="status-badge">
+                        {{ 'REAL-TIME' if realtime_available else 'EMPIRICAL FALLBACK' }}
+                    </span>
+                </h1>
+                <div class="d-flex align-items-center mt-2">
+                    <span class="status-indicator {{ 'status-live' if realtime_available else 'status-empirical' }}" id="status-indicator"></span>
+                    <span class="fw-semibold {{ 'text-success' if realtime_available else 'text-warning' }} me-3" id="status-text">
+                        {{ 'Live AIS & Weather' if realtime_available else 'Scientific Fallback (LAST RESORT)' }}
+                    </span>
+                    <span id="local-time-norway">--:--:--</span>
+                    <span class="ms-3 text-white-50" id="norwegian-date">-- --- ----</span>
+                </div>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <div class="mt-2">
+                    <span class="badge bg-primary me-2">
+                        <i class="fas fa-database me-1"></i>
+                        <span id="route-count-badge">{{ route_count|default('0') }}</span> NCA Routes
+                    </span>
+                    <span class="badge bg-success me-2">
+                        <i class="fas fa-ship me-1"></i>
+                        <span id="vessel-count">{{ ais_vessel_count|default('0') }}</span> Vessels
+                    </span>
+                    <span class="badge bg-warning text-dark" id="weather-status-badge">
+                        <i class="fas fa-wind me-1"></i>
+                        <span id="weather-status-text">{{ weather_data.source|default('Loading') }}</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- VESSEL CAPTURE LOG -->
+        <div class="row mt-3">
+            <div class="col-12">
+                <div class="vessel-capture-log {{ 'empirical' if not realtime_available }}" id="vessel-capture-log">
+                    <div class="d-flex align-items-center flex-wrap">
+                        <span class="timestamp" id="vessel-timestamp">{{ timestamp|default('--:--:--') }}</span>
+                        {% if captured_vessel %}
+                            <span class="source {{ 'realtime' if realtime_available else 'empirical' }}" id="vessel-source">
+                                {{ captured_vessel.source|default('AIS') }}
+                            </span>
+                            <span class="mx-2">•</span>
+                            <span class="fw-semibold" id="vessel-name">{{ captured_vessel.name|default('MS BERGENSFJORD') }}</span>
+                            <span class="mx-2">near</span>
+                            <span class="fw-semibold" id="vessel-location">{{ captured_vessel.location|default('Bergen') }}</span>
+                            {% if captured_vessel.speed %}
+                                <span class="mx-2">•</span>
+                                <span id="vessel-speed">{{ captured_vessel.speed }} kn</span>
+                            {% endif %}
+                        {% else %}
+                            <span class="source empirical">NO VESSEL DATA</span>
+                            <span class="mx-2">•</span>
+                            <span>Waiting for AIS signal</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- PORT FILTER -->
+        <div class="row mt-3">
+            <div class="col-12">
+                <div class="d-flex flex-wrap align-items-center">
+                    <span class="me-2 text-white-50">Filter ports:</span>
+                    {% if ports_list and ports_list|length > 0 %}
+                        {% for port in ports_list %}
+                        {% set port_normalized = port|lower|replace('å', 'a')|replace('Å', 'a') %}
+                        <span class="city-badge" data-port="{{ port_normalized }}">
+                            {{ port }}
+                            <span class="badge bg-secondary bg-opacity-50 ms-1 port-count">
+                                {{ port_counts.get(port, '0') if port_counts else '0' }}
+                            </span>
+                        </span>
+                        {% endfor %}
+                    {% else %}
+                        {% set default_ports = ['Bergen', 'Oslo', 'Stavanger', 'Trondheim', 'Ålesund', 'Åndalsnes', 'Kristiansand', 'Drammen', 'Sandefjord', 'Flekkefjord'] %}
+                        {% for port in default_ports %}
+                        {% set port_normalized = port|lower|replace('å', 'a')|replace('Å', 'a') %}
+                        <span class="city-badge" data-port="{{ port_normalized }}">
+                            {{ port }}
+                            <span class="badge bg-secondary bg-opacity-50 ms-1 port-count">0</span>
+                        </span>
+                        {% endfor %}
+                    {% endif %}
+                    <span class="city-badge ms-2" id="reset-filters" data-port="reset" style="background: #dc3545;">
+                        <i class="fas fa-times me-1"></i> Clear
+                    </span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- NO RECOMMENDATIONS DISCLAIMER -->
+        <div class="row mt-2">
+            <div class="col-12">
+                <div class="disclaimer">
+                    <i class="fas fa-info-circle me-1 text-warning"></i>
+                    <strong>ANALYSIS ONLY:</strong> Data for operator decision-making. No route recommendations.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MAIN DASHBOARD -->
+<div class="container-fluid mt-4">
+    <!-- CONTROL BAR -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <span class="fw-semibold text-muted">System Status:</span>
+                    <span class="api-status ms-2" id="api-overall-status">
+                        <i class="fas fa-satellite-dish me-1"></i>
+                        {{ 'All Systems Operational' if realtime_available else 'Using Fallback' }}
+                    </span>
+                    <small class="text-muted ms-3" id="api-details">
+                        NCA: {{ route_count|default('0') }} routes | 
+                        AIS: {{ 'Live' if realtime_available else 'Empirical' }} | 
+                        Weather: {{ weather_data.source|default('MET Norway') }}
+                    </small>
+                </div>
+                <div class="btn-group btn-group-sm">
+                    <button class="btn btn-outline-primary" id="refresh-btn" type="button" title="Refresh all data">
+                        <i class="bi bi-arrow-clockwise me-1"></i> Refresh
+                    </button>
+                    <button class="btn btn-outline-success active" id="rtz-toggle-btn" type="button" title="Toggle Routes">
+                        <i class="fas fa-route me-1"></i> Routes
+                    </button>
+                    <button class="btn btn-outline-info active" id="weather-toggle-btn" type="button" title="Toggle Weather">
+                        <i class="bi bi-cloud-sun me-1"></i> Weather
+                    </button>
+                    <button class="btn btn-outline-warning active" id="ais-toggle-btn" type="button" title="Toggle AIS">
+                        <i class="bi bi-ship me-1"></i> AIS
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- MAP SECTION -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="dashboard-card">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="bi bi-geo-alt me-2"></i>
+                        Norwegian Waters - NCA Routes Overview
+                        <small class="text-muted ms-2" id="map-update-time">Updated: {{ timestamp|default('--:--') }}</small>
+                    </h5>
+                    <div>
+                        <div class="form-check form-switch d-inline-block me-3">
+                            <input class="form-check-input" type="checkbox" id="auto-refresh-toggle" checked>
+                            <label class="form-check-label" for="auto-refresh-toggle">Auto-refresh (30s)</label>
+                        </div>
+                        <div class="form-check form-switch d-inline-block me-3 waypoint-toggle">
+                            <input class="form-check-input" type="checkbox" id="toggle-waypoints" checked>
+                            <label class="form-check-label" for="toggle-waypoints">Waypoints</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-0 position-relative">
+                    <div id="maritime-map"></div>
+                    
+                    <!-- Loading overlay -->
+                    <div id="map-loading-overlay" class="loading-overlay" style="display: none;">
+                        <div class="text-center">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-2 mb-0 text-muted" id="map-loading-text">Loading NCA routes...</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Map legend -->
+                    <div class="map-legend">
+                        <h6 class="mb-2 small fw-bold">Map Legend</h6>
+                        <div class="legend-item">
+                            <span class="legend-color" style="background-color: #28a745;"></span>
+                            <span>Route Start</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color" style="background-color: #dc3545;"></span>
+                            <span>Route End</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color" style="background-color: #007bff;"></span>
+                            <span>Route Path</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color" style="background-color: #6c757d;"></span>
+                            <span>Waypoint</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color" style="background-color: #ffc107;"></span>
+                            <span>Live Vessel</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- STATS CARDS -->
+    <div class="row mb-4">
+        <!-- Weather -->
+        <div class="col-md-3 mb-3">
+            <div class="stats-card">
+                <h6>
+                    <i class="bi bi-cloud-sun me-2 weather-icon" id="weather-main-icon"></i>
+                    Current Weather
+                    <span id="weather-source-indicator" class="data-source-badge {{ 'data-source-live' if weather_data and weather_data.source == 'MET Norway Live' else 'data-source-empirical' }}">
+                        {{ weather_data.source|default('MET Norway') }}
+                    </span>
+                </h6>
+                <h2 id="weather-temp" class="fw-bold">{{ weather_data.temperature_c|default('--') }}°C</h2>
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div>
+                        <small class="text-muted d-block" id="weather-location">{{ weather_data.location|default('Bergen, Norway') }}</small>
+                        <small class="text-muted" id="weather-condition">{{ weather_data.condition|default('Loading...') }}</small>
+                        <small class="weather-accuracy-note" id="weather-accuracy">
+                            <i class="fas fa-info-circle me-1"></i>
+                            {{ 'MET Norway Live' if weather_data and weather_data.source == 'MET Norway Live' else 'Historical data' }}
+                        </small>
+                    </div>
+                    <div class="text-end">
+                        <div class="fw-semibold" id="weather-wind">{{ weather_data.wind_speed_ms|default('--') }} m/s</div>
+                        <small class="text-muted">Wind</small>
+                    </div>
+                </div>
+                <small class="data-freshness" id="weather-updated">Updated: {{ timestamp|default('--:--') }}</small>
+            </div>
+        </div>
+        
+        <!-- Vessels -->
+        <div class="col-md-3 mb-3">
+            <div class="stats-card">
+                <h6>
+                    <i class="bi bi-ship me-2"></i>
+                    Active Vessels
+                    <span id="vessel-source-indicator" class="data-source-badge {{ 'data-source-live' if realtime_available else 'data-source-empirical' }}">
+                        {{ 'LIVE' if realtime_available else 'EMPIRICAL' }}
+                    </span>
+                </h6>
+                <h2 id="active-vessels" class="fw-bold">{{ ais_vessel_count|default('0') }}</h2>
+                <div class="mb-2">
+                    <small class="text-muted d-block" id="vessel-type">
+                        <i class="fas fa-info-circle me-1"></i>
+                        {{ captured_vessel.name|default('MS BERGENSFJORD') if captured_vessel else 'No vessel data' }}
+                    </small>
+                    <small class="text-muted" id="vessel-range">
+                        {{ captured_vessel.location|default('Bergen') if captured_vessel else 'Waiting for signal' }}
+                    </small>
+                </div>
+                <small class="data-freshness" id="vessels-updated">Updated: {{ timestamp|default('--:--') }}</small>
+            </div>
+        </div>
+        
+        <!-- NCA Routes -->
+        <div class="col-md-3 mb-3">
+            <div class="stats-card">
+                <h6><i class="fas fa-route me-2"></i>NCA Routes</h6>
+                <h2 id="route-count" class="fw-bold">{{ route_count|default('0') }}</h2>
+                <div class="mb-2">
+                    <small class="text-muted d-block">
+                        <i class="fas fa-map-marker-alt me-1"></i>
+                        <span id="waypoint-count">{{ waypoint_count|default('0') }}</span> waypoints
+                    </small>
+                    <small class="text-muted">
+                        <i class="fas fa-anchor me-1"></i>
+                        <span id="unique-ports-count">{{ unique_ports_count|default('0') }}</span> ports
+                    </small>
+                </div>
+                <small class="data-freshness live" id="routes-updated">NCA Verified</small>
+            </div>
+        </div>
+        
+        <!-- System Status -->
+        <div class="col-md-3 mb-3">
+            <div class="stats-card">
+                <h6><i class="fas fa-server me-2"></i>System Status</h6>
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <small>NCA Routes</small>
+                        <span class="badge bg-success">{{ route_count|default('0') }} verified</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-1">
+                        <small>AIS Service</small>
+                        <span class="badge {{ 'bg-success' if realtime_available else 'bg-warning' }}" id="ais-api-status">
+                            {{ 'Live' if realtime_available else 'Empirical' }}
+                        </span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-1">
+                        <small>Weather API</small>
+                        <span class="badge {{ 'bg-success' if weather_data and weather_data.source == 'MET Norway Live' else 'bg-warning' }}" id="weather-api-status">
+                            {{ 'Live' if weather_data and weather_data.source == 'MET Norway Live' else 'Fallback' }}
+                        </span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <small>Data Quality</small>
+                        <span class="badge {{ 'bg-success' if route_count|default('0')|int >= 30 else 'bg-info' }}" id="data-quality-status">
+                            {{ 'Excellent' if route_count|default('0')|int >= 30 else 'Good' }}
+                        </span>
+                    </div>
+                </div>
+                <small class="text-muted">Last check: <span id="system-time">{{ timestamp|default('--:--') }}</span></small>
+            </div>
+        </div>
+    </div>
+
+    <!-- ROUTES TABLE -->
+    <div class="row">
+        <div class="col-12">
+            <div class="dashboard-card">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-route me-2"></i>
+                        Norwegian Coastal Routes Database
+                        <span class="badge bg-primary ms-2" id="table-route-count">{{ route_count|default('0') }}</span>
+                        <span class="badge bg-warning ms-2" id="duplicate-warning" style="display: none;">
+                            <i class="fas fa-exclamation-triangle"></i> Duplicates removed
+                        </span>
+                        <small class="text-muted ms-3" id="routes-data-source">
+                            <i class="fas fa-database me-1"></i>
+                            Norwegian Coastal Administration (Verified)
+                        </small>
+                    </h5>
+                    <div class="d-flex align-items-center">
+                        <input type="text" class="form-control form-control-sm" id="route-search" placeholder="Search routes..." style="width: 200px;">
+                    </div>
+                </div>
+                <div class="card-body">
+                    {% if routes and routes|length > 0 %}
+                        <div class="alert alert-info mb-3">
+                            <div class="d-flex">
+                                <i class="fas fa-info-circle me-2 mt-1"></i>
+                                <div>
+                                    <small class="fw-semibold">NCA Route Data Available</small>
+                                    <br>
+                                    <small>Showing <strong>{{ routes|length }}</strong> professionally surveyed routes. Click any route to highlight on map.</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="route-table-container">
+                            <div class="table-responsive">
+                                <table class="table table-sm table-hover" id="routes-table">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Route Name</th>
+                                            <th>Origin → Destination</th>
+                                            <th>Distance</th>
+                                            <th>Waypoints</th>
+                                            <th>Port</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="routes-table-body">
+                                        {% for route in routes %}
+                                        {% set city_name = route.source_city if route.source_city else route.source_city_name if route.source_city_name else '' %}
+                                        {% if city_name == "Alesund" %}
+                                            {% set city_name = "Ålesund" %}
+                                        {% endif %}
+                                        {% if city_name == "Andalsnes" %}
+                                            {% set city_name = "Åndalsnes" %}
+                                        {% endif %}
+                                        
+                                        <tr class="route-row" data-route-index="{{ loop.index0 }}" data-city="{{ city_name|lower if city_name else '' }}">
+                                            <td class="text-muted fw-semibold">{{ loop.index }}</td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <span class="badge bg-success me-2" style="width: 8px; height: 8px; padding: 0; border-radius: 50%;"></span>
+                                                    <strong class="route-name-display">
+                                                        {% if route.clean_name %}
+                                                            {{ route.clean_name }}
+                                                        {% elif route.route_name %}
+                                                            {{ route.route_name|replace('NCA_', '')|replace('_2025', '')|replace('_', ' ')|title }}
+                                                        {% else %}
+                                                            Route {{ loop.index }}
+                                                        {% endif %}
+                                                    </strong>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <span class="badge bg-success bg-opacity-25 me-1 px-2 py-1">
+                                                        {{ route.origin|default('N/A') }}
+                                                    </span>
+                                                    <i class="fas fa-arrow-right mx-1 text-muted small"></i>
+                                                    <span class="badge bg-danger bg-opacity-25 ms-1 px-2 py-1">
+                                                        {{ route.destination|default('N/A') }}
+                                                    </span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span class="fw-bold">{{ "%.1f"|format(route.total_distance_nm|default('0')) }}</span>
+                                                <small class="text-muted">NM</small>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-info bg-opacity-25 px-2 py-1">{{ route.waypoint_count|default(route.waypoints|length|default('0')) }}</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-primary bg-opacity-25 px-2 py-1">{{ city_name|title if city_name else '--' }}</span>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm">
+                                                    <button class="btn btn-outline-primary view-route-btn" 
+                                                            data-route-index="{{ loop.index0 }}"
+                                                            type="button"
+                                                            title="Zoom to route on map">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-3 pt-3 border-top">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <small class="text-muted">
+                                        <i class="bi bi-list-check me-1"></i>
+                                        Total routes: <strong>{{ routes|length }}</strong>
+                                    </small>
+                                </div>
+                                <div class="col-md-4">
+                                    <small class="text-muted">
+                                        <i class="bi bi-geo-alt me-1"></i>
+                                        Active ports: <strong id="active-ports-display">{{ unique_ports_count|default('0') }}</strong>
+                                    </small>
+                                </div>
+                                <div class="col-md-4">
+                                    <small class="text-muted">
+                                        <i class="bi bi-clock me-1"></i>
+                                        Data updated: <span id="route-update-time" class="fw-semibold">{{ timestamp|default('Just now') }}</span>
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <div class="mb-3">
+                                <i class="fas fa-ship text-muted fa-4x"></i>
+                            </div>
+                            <h5 class="text-muted mb-3">Loading NCA Route Data</h5>
+                            <p class="text-muted mb-4">
+                                Loading {{ route_count|default('34') }} professionally surveyed routes from Norwegian Coastal Administration...
+                            </p>
+                            <div class="d-flex justify-content-center gap-3">
+                                <button class="btn btn-outline-primary" type="button" id="reload-btn">
+                                    <i class="fas fa-sync-alt me-1"></i> Reload
+                                </button>
+                                <a href="/maritime/api/rtz-status" target="_blank" class="btn btn-outline-info">
+                                    <i class="fas fa-code me-1"></i> API Status
+                                </a>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- NOTIFICATION CONTAINER -->
+<div id="notification-area" style="position: fixed; top: 20px; right: 20px; z-index: 9999; max-width: 350px;"></div>
+{% endblock %}
+
+{% block footer %}
+<!-- Maritime Dashboard Footer -->
+<footer class="maritime-dashboard-footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 mb-4 mb-md-0">
+                <h6 class="footer-heading">
+                    <i class="fas fa-water me-2"></i>BergNavn Maritime
+                </h6>
+                <p class="footer-text mb-2">Norwegian Coastal Route Management</p>
+                <div class="port-list mb-2">
+                    <strong class="footer-subheading">NCA Ports:</strong><br>
+                    Bergen • Oslo • Stavanger • Trondheim • Ålesund<br>
+                    Åndalsnes • Kristiansand • Drammen • Sandefjord • Flekkefjord
+                </div>
+                <p class="footer-tech small">
+                    <i class="fas fa-code me-1"></i>
+                    Flask • BarentsWatch • MET Norway • NCA
+                </p>
+            </div>
+            
+            <div class="col-md-4 mb-4 mb-md-0">
+                <h6 class="footer-heading">
+                    <i class="fas fa-server me-2"></i>System Status
+                </h6>
+                <div class="system-status">
+                    <p class="footer-text mb-2">
+                        <span class="status-indicator {{ 'status-operational' if route_count|default('0')|int > 0 else 'status-partial' }} me-2"></span>
+                        <span id="footer-system-status">
+                            {{ route_count|default('0') }} NCA Routes Active
+                        </span>
+                    </p>
+                    <p class="footer-text small mb-2">
+                        <i class="far fa-clock me-1"></i>
+                        Data updated: <span id="footer-update-time">{{ timestamp|default('--:--') }}</span>
+                    </p>
+                    <p class="footer-text small">
+                        <i class="fas fa-plug me-1"></i>
+                        API Status: <span id="footer-api-status" class="{{ 'text-success' if route_count|default('0')|int > 0 else 'text-warning' }}">Active</span>
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <h6 class="footer-heading">
+                    <i class="fas fa-info-circle me-2"></i>Information
+                </h6>
+                <div class="footer-links mb-3">
+                    <a href="/about" class="footer-link d-block mb-1">About</a>
+                    <a href="/contact" class="footer-link d-block mb-1">Contact</a>
+                    <a href="/legal" class="footer-link d-block">Legal</a>
+                </div>
+                <div class="copyright">
+                    <p class="copyright-text mb-1">© 2025 BergNavn Maritime</p>
+                    <p class="copyright-source small">
+                        <i class="fas fa-database me-1"></i>
+                        Data: NCA • BarentsWatch • MET Norway
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+{% endblock %}
+
+{% block scripts %}
+<!-- EXTERNAL LIBRARIES -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- MARITIME JS MODULES -->
+<script src="{{ url_for('static', filename='js/split/maritime_map.js') }}"></script>
+<script src="{{ url_for('static', filename='js/split/rtz_routes_fixed.js') }}"></script>
+<script src="{{ url_for('static', filename='js/split/ais_realtime.js') }}"></script>
+<script src="{{ url_for('static', filename='js/split/maritime_weather.js') }}"></script>
+<script src="{{ url_for('static', filename='js/split/dashboard_controls.js') }}"></script>
+<script src="{{ url_for('static', filename='js/split/rtz_waypoints.js') }}"></script>
+
+<!-- DASHBOARD INIT -->
+<script>
+// Global dashboard data
+window.dashboardData = {
+    routes: {{ routes|tojson|safe if routes else '[]' }},
+    waypoints: {{ waypoints_data|tojson|safe if waypoints_data else '{}' }},
+    realtimeAvailable: {{ 'true' if realtime_available else 'false' }},
+    map: null,
+    routeLayers: {},
+    vesselMarkers: []
+};
+
+// Time display functions
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚢 Dashboard v6.0 - Initialized');
+    console.log('📊 Routes loaded: ' + (window.dashboardData.routes ? window.dashboardData.routes.length : 0));
+    
+    updateNorwegianTime();
+    setInterval(updateNorwegianTime, 1000);
+    
+    setTimeout(updateFooterStatus, 2000);
+    
+    // Add reload button handler
+    const reloadBtn = document.getElementById('reload-btn');
+    if (reloadBtn) {
+        reloadBtn.addEventListener('click', function() {
+            window.location.reload();
+        });
+    }
+});
+
+function updateNorwegianTime() {
+    const now = new Date();
+    const timeEl = document.getElementById('local-time-norway');
+    const dateEl = document.getElementById('norwegian-date');
+    const footerTime = document.getElementById('footer-update-time');
+    
+    if (timeEl) {
+        timeEl.textContent = now.toLocaleTimeString('en-GB', {
+            timeZone: 'Europe/Oslo',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        });
+    }
+    if (dateEl) {
+        dateEl.textContent = now.toLocaleDateString('en-GB', {
+            timeZone: 'Europe/Oslo',
+            weekday: 'short',
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric'
+        });
+    }
+    if (footerTime) {
+        footerTime.textContent = now.toLocaleTimeString('en-GB', {
+            hour: '2-digit',
+            minute: '2-digit',
+            timeZone: 'Europe/Oslo'
+        });
+    }
+}
+
+function updateFooterStatus() {
+    const footerStatus = document.getElementById('footer-system-status');
+    if (footerStatus && window.dashboardData.routes && window.dashboardData.routes.length > 0) {
+        footerStatus.textContent = window.dashboardData.routes.length + ' NCA Routes Active';
+    }
+}
+
+// Zoom function for route buttons
+window.zoomToRoute = function(index) {
+    if (window.rtzManager && typeof window.rtzManager.zoomToRoute === 'function') {
+        window.rtzManager.zoomToRoute(index);
+        return true;
+    }
+    console.warn('⚠️ rtzManager not ready');
+    return false;
+};
+
+// Debug helper
+window.debug = {
+    routes: window.dashboardData.routes,
+    rtzManager: window.rtzManager
+};
+</script>
+{% endblock %}

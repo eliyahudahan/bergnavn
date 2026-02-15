@@ -1,0 +1,1 @@
+your-linter-command: command not found

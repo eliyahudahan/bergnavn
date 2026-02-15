@@ -1,0 +1,146 @@
+<!-- backend/templates/maritime/ports.html -->
+{% extends "base.html" %}
+
+{% block title %}Ports Information | BergNavn{% endblock %}
+
+{% block content %}
+<div class="container mt-5 pt-4">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="text-gradient">⚓ Norwegian Ports</h1>
+            <p class="lead">Comprehensive information about ports and harbors in Norway</p>
+        </div>
+    </div>
+
+    <!-- Ports Grid -->
+    <div class="row mt-4">
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-building me-2"></i>Bergen Port</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Location:</strong> 60.3913°N, 5.3221°E</p>
+                    <p><strong>Country:</strong> Norway</p>
+                    <p><strong>Type:</strong> Commercial Port</p>
+                    <p><strong>Features:</strong> Container terminal, fishing harbor, ferry terminal</p>
+                    <p>The main port of Western Norway, handling both cargo and passenger traffic.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="bi bi-building me-2"></i>Oslo Port</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Location:</strong> 59.9139°N, 10.7522°E</p>
+                    <p><strong>Country:</strong> Norway</p>
+                    <p><strong>Type:</strong> Capital City Port</p>
+                    <p><strong>Features:</strong> Cruise terminal, ferry services, cargo facilities</p>
+                    <p>Norway's largest passenger port, handling over 6 million passengers annually.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="bi bi-building me-2"></i>Stavanger Port</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Location:</strong> 58.9700°N, 5.7331°E</p>
+                    <p><strong>Country:</strong> Norway</p>
+                    <p><strong>Type:</strong> Oil Industry Port</p>
+                    <p><strong>Features:</strong> Offshore supply base, container terminal</p>
+                    <p>Major port for the offshore oil and gas industry in the North Sea.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-warning text-white">
+                    <h5 class="mb-0"><i class="bi bi-building me-2"></i>Trondheim Port</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Location:</strong> 63.4305°N, 10.3951°E</p>
+                    <p><strong>Country:</strong> Norway</p>
+                    <p><strong>Type:</strong> Historical Port</p>
+                    <p><strong>Features:</strong> Cargo terminal, passenger ferry services</p>
+                    <p>Important port in Central Norway with historical significance.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ports Map -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-geo-alt me-2"></i>Norwegian Ports Map</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div id="ports-map" style="height: 400px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function initPortsMap() {
+    const map = L.map('ports-map').setView([63.0, 10.0], 5);
+    
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Norwegian ports data
+    const ports = [
+        { name: 'Bergen', lat: 60.3913, lon: 5.3221, type: 'commercial' },
+        { name: 'Oslo', lat: 59.9139, lon: 10.7522, type: 'capital' },
+        { name: 'Stavanger', lat: 58.9700, lon: 5.7331, type: 'industrial' },
+        { name: 'Trondheim', lat: 63.4305, lon: 10.3951, type: 'historical' },
+        { name: 'Ålesund', lat: 62.4722, lon: 6.1497, type: 'fishing' },
+        { name: 'Kristiansand', lat: 58.1467, lon: 7.9956, type: 'ferry' },
+        { name: 'Tromsø', lat: 69.6496, lon: 18.9570, type: 'arctic' },
+        { name: 'Bodø', lat: 67.2804, lon: 14.4049, type: 'coastal' }
+    ];
+
+    ports.forEach(port => {
+        const icon = L.divIcon({
+            className: 'port-marker',
+            html: `<i class="bi bi-geo-alt-fill" style="color: ${
+                port.type === 'commercial' ? '#3498db' :
+                port.type === 'capital' ? '#2ecc71' :
+                port.type === 'industrial' ? '#e74c3c' :
+                port.type === 'historical' ? '#f39c12' :
+                port.type === 'fishing' ? '#9b59b6' : '#95a5a6'
+            }; font-size: 20px;"></i>`,
+            iconSize: [25, 25]
+        });
+
+        L.marker([port.lat, port.lon], { icon })
+            .bindPopup(`<strong>${port.name}</strong><br>${port.type.charAt(0).toUpperCase() + port.type.slice(1)} Port`)
+            .addTo(map);
+    });
+
+    return map;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    initPortsMap();
+});
+</script>
+<style>
+.port-marker {
+    background: transparent;
+    border: none;
+}
+</style>
+{% endblock %}

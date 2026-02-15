@@ -1,0 +1,36 @@
+=== DEFAULT WITH NUMBERS ===
+
+=== DATA-ROUTE-ID (SHOULD BE INDEX) ===
+
+=== MISSING |INT FILTER ===
+319:                        <span id="route-count-badge">{{ route_count|default('0') }}</span> NCA Routes
+563:                <h2 id="route-count" class="fw-bold">{{ route_count|default('0') }}</h2>
+585:                        <span class="badge bg-success">{{ route_count|default('0') }} verified</span>
+619:                        <span class="badge bg-primary ms-2" id="table-route-count">{{ route_count|default('0') }}</span>
+
+=== UNCLOSED SPANS ===
+302:                    <span class="badge {{ 'realtime-badge' if realtime_available else 'empirical-badge' }}" id="status-badge">
+308:                    <span class="fw-semibold {{ 'text-success' if realtime_available else 'text-warning' }} me-3" id="status-text">
+317:                    <span class="badge bg-primary me-2">
+321:                    <span class="badge bg-success me-2">
+325:                    <span class="badge bg-warning text-dark" id="weather-status-badge">
+340:                            <span class="source {{ 'realtime' if realtime_available else 'empirical' }}" id="vessel-source">
+369:                        <span class="city-badge" data-port="{{ port_normalized }}">
+371:                            <span class="badge bg-secondary bg-opacity-50 ms-1 port-count">
+380:                        <span class="city-badge" data-port="{{ port_normalized }}">
+413:                    <span class="api-status ms-2" id="api-overall-status">
+512:                    <span id="weather-source-indicator" class="data-source-badge {{ 'data-source-live' if weather_data and weather_data.source == 'MET Norway Live' else 'data-source-empirical' }}">
+541:                    <span id="vessel-source-indicator" class="data-source-badge {{ 'data-source-live' if realtime_available else 'data-source-empirical' }}">
+589:                        <span class="badge {{ 'bg-success' if realtime_available else 'bg-warning' }}" id="ais-api-status">
+595:                        <span class="badge {{ 'bg-success' if weather_data and weather_data.source == 'MET Norway Live' else 'bg-warning' }}" id="weather-api-status">
+601:                        <span class="badge {{ 'bg-success' if route_count|default('0')|int >= 30 else 'bg-info' }}" id="data-quality-status">
+687:                                                    <span class="badge bg-success bg-opacity-25 me-1 px-2 py-1">
+691:                                                    <span class="badge bg-danger bg-opacity-25 ms-1 px-2 py-1">
+802:                        <span id="footer-system-status">
+
+=== POTENTIAL UNDEFINED VARIABLES ===
+688:                                                        {{ route.origin|default('N/A') }}
+692:                                                        {{ route.destination|default('N/A') }}
+697:                                                <span class="fw-bold">{{ "%.1f"|format(route.total_distance_nm|default('0')) }}</span>
+
+=== DUPLICATE ATTRIBUTES ===

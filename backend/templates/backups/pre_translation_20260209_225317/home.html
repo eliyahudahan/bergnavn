@@ -37,8 +37,8 @@
             <a href="{{ url_for('maritime.maritime_dashboard', lang=lang) }}" class="btn btn-primary btn-lg px-4 me-md-2">
                 <i class="bi bi-speedometer2"></i> Maritime Dashboard
             </a>
-            <a href="{{ url_for('maritime.simulation_dashboard', lang=lang) }}" class="btn btn-outline-primary btn-lg px-4">
-                <i class="bi bi-graph-up"></i> Vessel Analysis
+            <a href="{{ url_for('routes_bp.view_routes', lang=lang) }}" class="btn btn-outline-primary btn-lg px-4">
+                <i class="bi bi-geo-alt"></i> View Routes
             </a>
         </div>
         
@@ -69,16 +69,6 @@
                         <small class="d-block mt-2">Fuel Companies</small>
                     </div>
                 </div>
-            </div>
-        </div>
-        
-        <!-- Real-time Status Indicator -->
-        <div class="mt-4">
-            <div class="d-inline-flex align-items-center gap-3 p-3 bg-light rounded-pill">
-                <span class="status-indicator status-operational"></span>
-                <span class="fw-semibold">Live AIS Feed: Operational</span>
-                <span class="badge bg-success">Kystverket ✓</span>
-                <span class="badge bg-success">MET Norway ✓</span>
             </div>
         </div>
     </div>

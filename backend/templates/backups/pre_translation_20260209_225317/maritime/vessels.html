@@ -1,0 +1,174 @@
+<!-- backend/templates/maritime/vessels.html -->
+{% extends "base.html" %}
+
+{% block title %}Vessel Tracking | BergNavn{% endblock %}
+
+{% block content %}
+<div class="container mt-5 pt-4">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="text-gradient">🚢 Vessel Tracking</h1>
+            <p class="lead">Real-time tracking of vessels in Norwegian waters</p>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-geo-alt me-2"></i>Vessel Map</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div id="vessels-map" style="height: 400px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-filter me-2"></i>Filters</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">Vessel Type</label>
+                        <select class="form-select" id="vessel-type-filter">
+                            <option value="all">All Types</option>
+                            <option value="cargo">Cargo Ships</option>
+                            <option value="passenger">Passenger Ships</option>
+                            <option value="tanker">Tankers</option>
+                            <option value="fishing">Fishing Vessels</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Status</label>
+                        <select class="form-select" id="status-filter">
+                            <option value="all">All Statuses</option>
+                            <option value="underway">Underway</option>
+                            <option value="anchored">Anchored</option>
+                            <option value="moored">Moored</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary w-100" onclick="loadVessels()">
+                        <i class="bi bi-arrow-clockwise me-1"></i> Refresh
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vessels Table -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-table me-2"></i>Vessels List</h5>
+                    <span class="badge bg-primary" id="vessel-count">0 vessels</span>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="vessels-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Type</th>
+                                    <th>MMSI</th>
+                                    <th>Speed</th>
+                                    <th>Course</th>
+                                    <th>Destination</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="vessels-table-body">
+                                <!-- Loaded by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let vesselsMap = null;
+
+function initVesselsMap() {
+    if (!vesselsMap) {
+        vesselsMap = L.map('vessels-map').setView([60.392, 5.324], 8);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(vesselsMap);
+    }
+    return vesselsMap;
+}
+
+async function loadVessels() {
+    try {
+        const response = await fetch('/maritime/api/ais-data');
+        const data = await response.json();
+        
+        // Update count
+        document.getElementById('vessel-count').textContent = `${data.vessels.length} vessels`;
+        
+        // Update table
+        const tableBody = document.getElementById('vessels-table-body');
+        tableBody.innerHTML = '';
+        
+        data.vessels.forEach(vessel => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><strong>${vessel.name}</strong></td>
+                <td><span class="badge bg-secondary">${vessel.type || 'Unknown'}</span></td>
+                <td><small>${vessel.mmsi || 'N/A'}</small></td>
+                <td>${vessel.speed || 0} kn</td>
+                <td>${vessel.course || 0}°</td>
+                <td>${vessel.destination || 'Unknown'}</td>
+                <td><span class="badge bg-success">${vessel.status || 'Unknown'}</span></td>
+            `;
+            tableBody.appendChild(row);
+        });
+        
+        // Update map
+        updateVesselsMap(data.vessels);
+        
+    } catch (error) {
+        console.error('Error loading vessels:', error);
+    }
+}
+
+function updateVesselsMap(vessels) {
+    initVesselsMap();
+    
+    // Clear existing markers
+    if (window.vesselMarkers) {
+        window.vesselMarkers.forEach(marker => vesselsMap.removeLayer(marker));
+    }
+    window.vesselMarkers = [];
+    
+    // Add markers
+    vessels.forEach(vessel => {
+        if (vessel.lat && vessel.lon) {
+            const marker = L.marker([vessel.lat, vessel.lon])
+                .bindPopup(`<strong>${vessel.name}</strong><br>${vessel.type || 'Unknown'}`);
+            marker.addTo(vesselsMap);
+            window.vesselMarkers.push(marker);
+        }
+    });
+    
+    // Fit bounds if we have markers
+    if (window.vesselMarkers.length > 0) {
+        const group = new L.featureGroup(window.vesselMarkers);
+        vesselsMap.fitBounds(group.getBounds().pad(0.1));
+    }
+}
+
+// Initialize on load
+document.addEventListener('DOMContentLoaded', function() {
+    initVesselsMap();
+    loadVessels();
+});
+</script>
+{% endblock %}

@@ -1,0 +1,22 @@
+================================================================================
+MARITIME DASHBOARD TEMPLATE - ERROR DETECTION REPORT
+Generated: 2026-02-12 16:04:32
+File: backend/templates/maritime_split/dashboard_base.html
+================================================================================
+
+🔴 CRITICAL ERRORS (MUST FIX)
+--------------------------------------------------------------------------------
+
+✅ No critical errors found!
+
+
+🟡 WARNINGS (Recommended fixes)
+--------------------------------------------------------------------------------
+
+✅ No warnings found!
+
+
+📊 SUMMARY
+--------------------------------------------------------------------------------
+Critical errors: 0
+Warnings: 0

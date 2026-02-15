@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maritime Routes - BergNavn</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+        .route-map {
+            height: 500px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .route-table {
+            font-size: 0.9rem;
+        }
+        .highlight-route {
+            background-color: #e3f2fd !important;
+            cursor: pointer;
+        }
+        .nav-brand {
+            font-weight: bold;
+            color: #1e88e5;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand nav-brand" href="{{ url_for('main.index') }}">
+                🚢 BergNavn Maritime
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="{{ url_for('main.index') }}">Home</a>
+                <a class="nav-link active" href="{{ url_for('routes.list_routes') }}">Routes</a>
+                <a class="nav-link" href="{{ url_for('dashboard.dashboard') }}">Dashboard</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-12">
+                <h1>🗺️ Maritime Routes</h1>
+                <p class="lead">Official maritime routes and navigation data from Norwegian Coastal Administration</p>
+            </div>
+        </div>
+
+        <!-- Interactive Map -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">📍 Route Visualization</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="routeMap" class="route-map"></div>
+                        <small class="text-muted">Click on routes in the table below to highlight them on the map</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Routes Table -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">📊 Available Routes</h5>
+                        <span class="badge bg-primary">{{ routes|length }} routes</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover route-table">
+                                <thead>
+                                    <tr>
+                                        <th>Route ID</th>
+                                        <th>Route Name</th>
+                                        <th>Origin</th>
+                                        <th>Destination</th>
+                                        <th>Distance</th>
+                                        <th>Duration</th>
+                                        <th>Waypoints</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for route in routes %}
+                                    <tr class="route-row" data-route-id="{{ route.id }}">
+                                        <td>{{ route.id }}</td>
+                                        <td>
+                                            <strong>{{ route.name }}</strong>
+                                            {% if route.description %}
+                                            <br><small class="text-muted">{{ route.description }}</small>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if route.origin and route.origin != 'Unknown' %}
+                                            <span class="badge bg-success">{{ route.origin }}</span>
+                                            {% else %}
+                                            <span class="badge bg-secondary">N/A</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if route.destination and route.destination != 'Unknown' %}
+                                            <span class="badge bg-danger">{{ route.destination }}</span>
+                                            {% else %}
+                                            <span class="badge bg-secondary">N/A</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if route.total_distance_nm %}
+                                            <strong>{{ "%.1f"|format(route.total_distance_nm) }} nm</strong>
+                                            {% else %}
+                                            <span class="text-muted">N/A</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if route.duration_days %}
+                                            {% if route.duration_days < 1 %}
+                                            {{ "%.1f"|format(route.duration_days * 24) }} hours
+                                            {% else %}
+                                            {{ "%.1f"|format(route.duration_days) }} days
+                                            {% endif %}
+                                            {% else %}
+                                            <span class="text-muted">N/A</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if route.legs %}
+                                            <span class="badge bg-info">{{ route.legs|length }} legs</span>
+                                            {% else %}
+                                            <span class="badge bg-secondary">N/A</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-dark text-light mt-5 py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <p>&copy; 2025 BergNavn Maritime | Integrated with official Norwegian data APIs</p>
+                </div>
+                <div class="col-md-6 text-end">
+                    <a href="{{ url_for('main.legal') }}" class="text-light">Legal & Acknowledgments</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+        // Initialize map centered on Norway
+        const map = L.map('routeMap').setView([64.0, 10.0], 5);
+        
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Route data for mapping (would come from API in production)
+        const routeData = {
+            {% for route in routes %}
+            {{ route.id }}: {
+                name: "{{ route.name }}",
+                origin: "{{ route.origin }}",
+                destination: "{{ route.destination }}",
+                waypoints: [
+                    {% if route.legs %}
+                    {% for leg in route.legs %}
+                    [{{ leg.departure_lat }}, {{ leg.departure_lon }}],
+                    {% endfor %}
+                    [{{ route.legs[-1].arrival_lat }}, {{ route.legs[-1].arrival_lon }}]
+                    {% endif %}
+                ]
+            },
+            {% endfor %}
+        };
+
+        // Add route lines to map
+        Object.keys(routeData).forEach(routeId => {
+            const route = routeData[routeId];
+            if (route.waypoints && route.waypoints.length > 1) {
+                const polyline = L.polyline(route.waypoints, {
+                    color: '#1e88e5',
+                    weight: 3,
+                    opacity: 0.7
+                }).addTo(map);
+                
+                // Add popup
+                polyline.bindPopup(`
+                    <strong>${route.name}</strong><br>
+                    ${route.origin} → ${route.destination}
+                `);
+            }
+        });
+
+        // Highlight route on table row click
+        document.querySelectorAll('.route-row').forEach(row => {
+            row.addEventListener('click', function() {
+                // Remove highlight from all rows
+                document.querySelectorAll('.route-row').forEach(r => {
+                    r.classList.remove('highlight-route');
+                });
+                
+                // Add highlight to clicked row
+                this.classList.add('highlight-route');
+                
+                // TODO: Highlight corresponding route on map
+                // This would require more complex map interaction logic
+            });
+        });
+    </script>
+</body>
+</html>
