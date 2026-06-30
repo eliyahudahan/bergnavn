@@ -18,9 +18,10 @@ It connects to Norwegian AIS data and weather APIs for route visualization.
 git clone <repo>
 cd bergnavn
 python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
+source venv/bin/activate
 pip install -r requirements.txt
 flask run
+
 📁 Structure
 text
 backend/
@@ -39,8 +40,6 @@ database/          # Schema
 AIS: Norwegian Coastal Administration (Kystverket)
 
 Weather: MET Norway
-
-Live data: TCP stream (historical: HAIS)
 
 📄 License
 MIT
